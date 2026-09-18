@@ -9,22 +9,27 @@
 </head>
 <body>
   <div id="app">
+    <nav id="activity-bar">
+      <button class="activity-icon active" data-section="cours" title="Cours">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/>
+        </svg>
+      </button>
+      <button class="activity-icon" data-section="notions" title="Notions">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 5H7l5 7-5 7h10"/>
+        </svg>
+      </button>
+    </nav>
     <aside id="sidebar">
       <div id="sidebar-header">
-        <div id="app-title">
-          <span class="app-logo">∑</span>
-          <span class="app-name">Maths</span>
-        </div>
         <button id="btn-open-folder" title="Sélectionner le dossier des cours">Ouvrir un dossier</button>
         <div id="folder-display" title="">Aucun dossier sélectionné</div>
       </div>
-      <nav id="sections">
-        <button class="section active" data-section="cours">Cours</button>
-        <button class="section" data-section="notions">Notions</button>
-      </nav>
       <div id="sidebar-list">
         <div id="cours-list" class="list active"></div>
-        <div id="notions-list" class="list"></div>
+        <div id="notions-list" class="list hidden"></div>
       </div>
       <div id="sidebar-footer">
         <button id="btn-rescan" title="Re-scanner le dossier">↻ Actualiser</button>
@@ -34,23 +39,36 @@
       <div id="empty-state">
         <div class="empty-icon">∑</div>
         <h1>Bienvenue</h1>
-        <p>Sélectionnez le dossier contenant vos cours (PDF), vos fichiers LaTeX et votre <code>settings.tex</code>.</p>
-        <p class="hint">Les notions sont détectées via les environnements <code>\begin{Nom}{Titre}...\end{Nom}</code>.</p>
+        <p>Sélectionnez le dossier contenant vos cours en PDF, vos fichiers LaTeX et votre <code>settings.tex</code>.</p>
+        <p class="hint">La section Cours affiche uniquement les PDF. Les notions sont détectées via les environnements <code>\begin{Nom}{Titre}...\end{Nom}</code>.</p>
       </div>
       <div id="reader-cours" class="reader hidden">
-        <div id="pdf-toolbar" class="toolbar hidden">
-          <button id="pdf-prev" title="Page précédente">◀</button>
-          <span id="pdf-page-num">1 / 1</span>
-          <button id="pdf-next" title="Page suivante">▶</button>
-          <span class="toolbar-sep"></span>
-          <label for="pdf-zoom">Zoom</label>
-          <input id="pdf-zoom" type="range" min="50" max="250" value="100" />
-          <span id="pdf-zoom-value">100 %</span>
-          <span class="toolbar-spacer"></span>
-          <span id="pdf-title"></span>
+        <div id="pdf-outline-panel">
+          <div id="pdf-outline-header">Sommaire</div>
+          <ul id="pdf-outline-list"></ul>
         </div>
-        <div id="pdf-container"></div>
-        <div id="tex-course-view" class="tex-view hidden"></div>
+        <div class="pdf-main">
+          <div id="pdf-toolbar" class="toolbar">
+            <button id="pdf-first" title="Première page">⏮</button>
+            <button id="pdf-prev" title="Page précédente">◀</button>
+            <span class="pdf-nav-group">
+              <input id="pdf-page-input" type="number" min="1" value="1" />
+              <span id="pdf-page-total">/ 1</span>
+            </span>
+            <button id="pdf-next" title="Page suivante">▶</button>
+            <button id="pdf-last" title="Dernière page">⏭</button>
+            <span class="toolbar-sep"></span>
+            <button id="pdf-zoom-out" title="Zoom arrière">−</button>
+            <span id="pdf-zoom-value" title="Niveau de zoom">100 %</span>
+            <button id="pdf-zoom-in" title="Zoom avant">+</button>
+            <button id="pdf-fit-width" class="toggled" title="Ajuster à la largeur de la page">⇔</button>
+            <span class="toolbar-sep"></span>
+            <button id="pdf-toggle-outline" class="toggled" title="Afficher / masquer le sommaire">☰ Sommaire</button>
+            <span class="toolbar-spacer"></span>
+            <span id="pdf-title"></span>
+          </div>
+          <div id="pdf-container"></div>
+        </div>
       </div>
       <div id="reader-notions" class="reader hidden">
         <div id="notions-toolbar" class="toolbar">

@@ -7,25 +7,30 @@
   }
 
   const els = {
+    activityIcons: document.querySelectorAll('.activity-icon'),
     openFolderBtn: document.getElementById('btn-open-folder'),
     rescanBtn: document.getElementById('btn-rescan'),
     folderDisplay: document.getElementById('folder-display'),
-    sections: document.querySelectorAll('.section'),
     coursList: document.getElementById('cours-list'),
     notionsList: document.getElementById('notions-list'),
     emptyState: document.getElementById('empty-state'),
     readerCours: document.getElementById('reader-cours'),
     readerNotions: document.getElementById('reader-notions'),
-    pdfToolbar: document.getElementById('pdf-toolbar'),
-    pdfContainer: document.getElementById('pdf-container'),
+    pdfOutlinePanel: document.getElementById('pdf-outline-panel'),
+    pdfOutlineList: document.getElementById('pdf-outline-list'),
+    pdfToggleOutline: document.getElementById('pdf-toggle-outline'),
+    pdfFirst: document.getElementById('pdf-first'),
     pdfPrev: document.getElementById('pdf-prev'),
     pdfNext: document.getElementById('pdf-next'),
-    pdfPageNum: document.getElementById('pdf-page-num'),
-    pdfZoom: document.getElementById('pdf-zoom'),
+    pdfLast: document.getElementById('pdf-last'),
+    pdfPageInput: document.getElementById('pdf-page-input'),
+    pdfPageTotal: document.getElementById('pdf-page-total'),
+    pdfZoomIn: document.getElementById('pdf-zoom-in'),
+    pdfZoomOut: document.getElementById('pdf-zoom-out'),
     pdfZoomValue: document.getElementById('pdf-zoom-value'),
+    pdfFitWidth: document.getElementById('pdf-fit-width'),
+    pdfContainer: document.getElementById('pdf-container'),
     pdfTitle: document.getElementById('pdf-title'),
-    texCourseView: document.getElementById('tex-course-view'),
-    notionsToolbar: document.getElementById('notions-toolbar'),
     notionsSearch: document.getElementById('notions-search'),
     notionsContent: document.getElementById('notions-content'),
     copyLatexBtn: document.getElementById('btn-copy-latex'),
@@ -35,12 +40,16 @@
   const state = {
     section: 'cours',
     scan: null,
-    activeCourse: null,
+    activePdf: null,
     showingSource: false,
+    notions: [],
     pdf: null,
     pdfCurrentPage: 1,
-    pdfZoomScale: 1.0,
-    notions: []
+    pdfZoomScale: null,
+    pdfFitWidth: true,
+    pdfOutline: [],
+    pdfRendering: false,
+    pdfScrollTimer: null
   };
 
   function show(el, visible) {
@@ -64,8 +73,12 @@
     return parts[parts.length - 1];
   }
 
+  function stripExtension(name) {
+    return name.replace(/\.[^.]+$/, '');
+  }
+
   function courseNameToTitle(name) {
-    return name.replace(/[-_]/g, ' ');
+    return stripExtension(name).replace(/[-_]/g, ' ');
   }
 
   function buildKatexMacros(macros) {
@@ -172,92 +185,59 @@
     return div;
   }
 
+  function buildGroupHeader(labelText, count) {
+    const header = document.createElement('div');
+    header.className = 'item-group-header';
+    const label = document.createElement('span');
+    label.textContent = labelText;
+    header.appendChild(label);
+    if (count !== undefined) {
+      const countSpan = document.createElement('span');
+      countSpan.className = 'item-count';
+      countSpan.textContent = count;
+      header.appendChild(countSpan);
+    }
+    return header;
+  }
+
   function renderSidebar() {
     clearElement(els.coursList);
     clearElement(els.notionsList);
 
     if (!state.scan) {
-      const empty = document.createElement('div');
-      empty.className = 'list-empty';
-      empty.textContent = 'Sélectionnez un dossier';
-      els.coursList.appendChild(empty);
-      const empty2 = document.createElement('div');
-      empty2.className = 'list-empty';
-      empty2.textContent = '—';
-      els.notionsList.appendChild(empty2);
+      els.coursList.appendChild(buildEmptyItem('Sélectionnez un dossier'));
+      els.notionsList.appendChild(buildEmptyItem('—'));
       return;
     }
 
-    const groupPdfs = Array.isArray(state.scan.pdfFiles) ? state.scan.pdfFiles : [];
-    const texCourses = Array.isArray(state.scan.courses) ? state.scan.courses : [];
-
-    if (groupPdfs.length === 0 && texCourses.length === 0) {
-      const empty = document.createElement('div');
-      empty.className = 'list-empty';
-      empty.textContent = 'Aucun PDF ni fichier .tex trouvé';
-      els.coursList.appendChild(empty);
+    const pdfFiles = Array.isArray(state.scan.pdfFiles) ? state.scan.pdfFiles : [];
+    if (pdfFiles.length === 0) {
+      els.coursList.appendChild(buildEmptyItem('Aucun PDF trouvé'));
+    } else {
+      els.coursList.appendChild(buildGroupHeader('Cours PDF', pdfFiles.length));
+      pdfFiles.forEach((filePath) => {
+        const name = basename(filePath);
+        els.coursList.appendChild(
+          buildListItem({
+            icon: 'PDF',
+            label: courseNameToTitle(name),
+            title: filePath,
+            active: state.activePdf === filePath,
+            onClick: () => openPdf(filePath)
+          })
+        );
+      });
     }
 
-    groupPdfs.forEach((filePath) => {
-      const name = basename(filePath).replace(/\.pdf$/i, '');
-      els.coursList.appendChild(
-        buildListItem({
-          icon: '📄',
-          label: courseNameToTitle(name),
-          title: filePath,
-          active: state.activeCourse && state.activeCourse.path === filePath,
-          onClick: () => openPdf(filePath)
-        })
-      );
-    });
-
-    texCourses.forEach((course) => {
-      const filePath = course.path.replace(/\.tex$/i, '.pdf');
-      const pdfExists = groupPdfs.some((p) => p.toLowerCase() === filePath.toLowerCase());
-      if (pdfExists) {
-        return;
-      }
-      els.coursList.appendChild(
-        buildListItem({
-          icon: '∑',
-          label: courseNameToTitle(course.name),
-          title: course.path,
-          active: state.activeCourse && state.activeCourse.path === course.path,
-          onClick: () => openTexCourse(course)
-        })
-      );
-    });
-
-    const notions = state.notions;
-    if (notions.length === 0) {
-      const empty = document.createElement('div');
-      empty.className = 'list-empty';
-      empty.textContent = 'Aucune notion détectée';
-      els.notionsList.appendChild(empty);
+    if (state.notions.length === 0) {
+      els.notionsList.appendChild(buildEmptyItem('Aucune notion détectée'));
     } else {
-      const grouped = groupNotionsByEnvironment(notions);
+      const grouped = groupNotionsByEnvironment(state.notions);
       for (const group of grouped) {
-        const header = document.createElement('div');
-        header.className = 'item';
-        header.style.fontWeight = 'bold';
-        header.style.cursor = 'default';
-        const icon = document.createElement('span');
-        icon.className = 'item-icon';
-        icon.textContent = 'ᛘ';
-        const label = document.createElement('span');
-        label.className = 'item-label';
-        label.textContent = group.environment;
-        header.appendChild(icon);
-        header.appendChild(label);
-        const count = document.createElement('span');
-        count.className = 'item-count';
-        count.textContent = group.notions.length;
-        header.appendChild(count);
-        els.notionsList.appendChild(header);
+        els.notionsList.appendChild(buildGroupHeader(group.environment, group.notions.length));
         for (const notion of group.notions) {
           els.notionsList.appendChild(
             buildListItem({
-              icon: '•',
               label: notion.title,
               title: `${notion.course} — ${notion.title}`,
               onClick: () => scrollToNotion(notion)
@@ -266,6 +246,13 @@
         }
       }
     }
+  }
+
+  function buildEmptyItem(text) {
+    const div = document.createElement('div');
+    div.className = 'list-empty';
+    div.textContent = text;
+    return div;
   }
 
   function groupNotionsByEnvironment(notions) {
@@ -293,7 +280,7 @@
 
   function switchSection(section) {
     state.section = section;
-    for (const btn of els.sections) {
+    for (const btn of els.activityIcons) {
       btn.classList.toggle('active', btn.dataset.section === section);
     }
     show(els.coursList, section === 'cours');
@@ -339,7 +326,7 @@
       return;
     }
     state.scan = result;
-    state.activeCourse = null;
+    state.activePdf = null;
     state.notions = flattenNotions(result);
     els.folderDisplay.textContent = result.folder;
     els.folderDisplay.title = result.folder;
@@ -367,117 +354,209 @@
   /* ---------- PDF viewer ---------- */
 
   async function openPdf(filePath) {
-    state.activeCourse = { type: 'pdf', path: filePath };
-    show(els.pdfToolbar, true);
-    show(els.pdfContainer, true);
-    show(els.texCourseView, false);
+    state.activePdf = filePath;
+    state.pdf = null;
+    state.pdfOutline = [];
+    state.pdfCurrentPage = 1;
     clearElement(els.pdfContainer);
+    clearElement(els.pdfOutlineList);
     els.pdfTitle.textContent = basename(filePath);
+    els.pdfPageInput.value = '1';
+    els.pdfPageTotal.textContent = '/ …';
+
+    const loading = document.createElement('div');
+    loading.className = 'pdf-loading';
+    loading.textContent = 'Chargement du PDF…';
+    els.pdfContainer.appendChild(loading);
 
     const result = await window.api.readPdf(filePath);
     if (result.error) {
-      const err = document.createElement('div');
-      err.className = 'notions-empty';
-      err.textContent = `Impossible de lire le PDF : ${result.error}`;
-      els.pdfContainer.appendChild(err);
+      loading.textContent = `Impossible de lire le PDF : ${result.error}`;
+      loading.className = 'pdf-error';
       return;
     }
     try {
       const pdf = await window.pdfjsLib.getDocument({ data: result.data }).promise;
       state.pdf = pdf;
-      state.pdfCurrentPage = 1;
-      renderAllPdfPages();
+      els.pdfPageTotal.textContent = `/ ${pdf.numPages}`;
+      await loadOutline(pdf);
+      await renderPdf();
     } catch (err) {
-      const errDiv = document.createElement('div');
-      errDiv.className = 'notions-empty';
-      errDiv.textContent = `Erreur PDF : ${err.message}`;
-      els.pdfContainer.appendChild(errDiv);
+      loading.textContent = `Erreur PDF : ${err.message}`;
+      loading.className = 'pdf-error';
     }
   }
 
-  function renderAllPdfPages() {
+  async function loadOutline(pdf) {
+    state.pdfOutline = [];
+    try {
+      const outline = await pdf.getOutline();
+      if (!outline || outline.length === 0) {
+        renderOutlineList();
+        return;
+      }
+      const flat = [];
+      await flattenOutline(pdf, outline, 0, flat);
+      state.pdfOutline = flat;
+    } catch (err) {
+      state.pdfOutline = [];
+    }
+    renderOutlineList();
+  }
+
+  async function flattenOutline(pdf, items, depth, out) {
+    for (const item of items) {
+      let pageNum = null;
+      try {
+        if (item.dest) {
+          let dest = item.dest;
+          if (typeof dest === 'string') {
+            dest = await pdf.getDestination(dest);
+          }
+          if (Array.isArray(dest) && dest.length > 0) {
+            const pageIndex = await pdf.getPageIndex(dest[0]);
+            pageNum = pageIndex + 1;
+          }
+        }
+      } catch (err) {
+        pageNum = null;
+      }
+      out.push({
+        title: item.title || 'Sans titre',
+        page: pageNum,
+        depth
+      });
+      if (item.items && item.items.length > 0) {
+        await flattenOutline(pdf, item.items, depth + 1, out);
+      }
+    }
+  }
+
+  function renderOutlineList() {
+    clearElement(els.pdfOutlineList);
+    if (state.pdfOutline.length === 0) {
+      const li = document.createElement('li');
+      li.className = 'outline-empty';
+      li.textContent = 'Aucun sommaire dans ce PDF';
+      els.pdfOutlineList.appendChild(li);
+      return;
+    }
+    for (const entry of state.pdfOutline) {
+      const li = document.createElement('li');
+      li.style.paddingLeft = `${12 + entry.depth * 14}px`;
+      if (entry.page !== null) {
+        li.dataset.page = String(entry.page);
+      }
+      if (entry.page === state.pdfCurrentPage) {
+        li.classList.add('active');
+      }
+      const label = document.createElement('span');
+      label.className = 'outline-label';
+      label.textContent = entry.title;
+      li.appendChild(label);
+      if (entry.page !== null) {
+        const page = document.createElement('span');
+        page.className = 'outline-page';
+        page.textContent = entry.page;
+        li.appendChild(page);
+      }
+      if (entry.page !== null) {
+        li.addEventListener('click', () => goToPdfPage(entry.page, false));
+      }
+      els.pdfOutlineList.appendChild(li);
+    }
+  }
+
+  function highlightOutlineEntry() {
+    const items = els.pdfOutlineList.querySelectorAll('li:not(.outline-empty)');
+    items.forEach((li) => {
+      li.classList.toggle('active', parseInt(li.dataset.page || '0', 10) === state.pdfCurrentPage);
+    });
+  }
+
+  async function currentScale() {
+    const pdf = state.pdf;
+    if (!pdf) {
+      return 1;
+    }
+    if (state.pdfFitWidth) {
+      const page = await pdf.getPage(1);
+      const base = page.getViewport({ scale: 1 });
+      const available = els.pdfContainer.clientWidth - 32;
+      return Math.max(0.1, available / base.width);
+    }
+    return state.pdfZoomScale || 1;
+  }
+
+  async function renderPdf(keepPage = true) {
+    const pdf = state.pdf;
+    if (!pdf || state.pdfRendering) {
+      return;
+    }
+    state.pdfRendering = true;
+    const scale = await currentScale();
+    const targetPage = state.pdfCurrentPage;
+
+    clearElement(els.pdfContainer);
+    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+      const page = await pdf.getPage(pageNum);
+      const viewport = page.getViewport({ scale });
+      const canvas = document.createElement('canvas');
+      canvas.className = 'pdf-page-canvas';
+      canvas.dataset.pageNum = String(pageNum);
+      canvas.width = Math.floor(viewport.width);
+      canvas.height = Math.floor(viewport.height);
+      els.pdfContainer.appendChild(canvas);
+      const context = canvas.getContext('2d');
+      await page.render({ canvasContext: context, viewport }).promise;
+    }
+
+    if (keepPage) {
+      goToPdfPage(targetPage, false);
+    }
+    updateZoomLabel(scale);
+    state.pdfRendering = false;
+  }
+
+  function updateZoomLabel(scale) {
+    els.pdfZoomValue.textContent = `${Math.round(scale * 100)} %`;
+  }
+
+  function goToPdfPage(pageNum, fromInput = false) {
     const pdf = state.pdf;
     if (!pdf) {
       return;
     }
-    clearElement(els.pdfContainer);
-    const zoom = state.pdfZoomScale;
-    const queue = [];
-    for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-      queue.push(pageNum);
+    const target = Math.min(Math.max(1, pageNum), pdf.numPages);
+    state.pdfCurrentPage = target;
+    if (!fromInput) {
+      els.pdfPageInput.value = String(target);
     }
-    els.pdfPageNum.textContent = `${state.pdfCurrentPage} / ${pdf.numPages}`;
-
-    (async function renderNext() {
-      while (queue.length > 0) {
-        const pageNum = queue.shift();
-        const page = await pdf.getPage(pageNum);
-        const viewport = page.getViewport({ scale: zoom });
-        const canvas = document.createElement('canvas');
-        canvas.className = 'pdf-page-canvas';
-        canvas.dataset.pageNum = String(pageNum);
-        canvas.width = Math.floor(viewport.width);
-        canvas.height = Math.floor(viewport.height);
-        els.pdfContainer.appendChild(canvas);
-        const context = canvas.getContext('2d');
-        await page.render({
-          canvasContext: context,
-          viewport
-        }).promise;
-      }
-    })();
+    els.pdfPageTotal.textContent = `/ ${pdf.numPages}`;
+    const canvas = els.pdfContainer.querySelector(`canvas[data-page-num="${target}"]`);
+    if (canvas) {
+      canvas.scrollIntoView({ block: 'start' });
+      els.pdfContainer.scrollTop -= 8;
+    }
+    highlightOutlineEntry();
   }
 
   function updateVisiblePdfPage() {
     const container = els.pdfContainer;
-    const center = container.scrollTop + container.clientHeight / 2;
+    const center = container.scrollTop + container.clientHeight / 3;
     const canvases = container.querySelectorAll('canvas.pdf-page-canvas');
     for (const canvas of canvases) {
       const top = canvas.offsetTop;
       const bottom = top + canvas.offsetHeight;
       if (center >= top && center < bottom) {
-        const idx = parseInt(canvas.dataset.pageNum || '1', 10);
-        state.pdfCurrentPage = idx;
-        els.pdfPageNum.textContent = `${idx} / ${state.pdf ? state.pdf.numPages : 1}`;
+        const pageNum = parseInt(canvas.dataset.pageNum || '1', 10);
+        if (pageNum !== state.pdfCurrentPage) {
+          state.pdfCurrentPage = pageNum;
+          els.pdfPageInput.value = String(pageNum);
+          highlightOutlineEntry();
+        }
         return;
       }
-    }
-  }
-
-  /* ---------- TeX course viewer ---------- */
-
-  async function openTexCourse(course) {
-    state.activeCourse = { type: 'tex', path: course.path };
-    show(els.pdfToolbar, false);
-    show(els.pdfContainer, false);
-    show(els.texCourseView, true);
-    clearElement(els.texCourseView);
-    const result = await window.api.readTex(course.path);
-    const macros = buildKatexMacros(state.scan && state.scan.settings ? state.scan.settings.macros : []);
-    if (result.error) {
-      els.texCourseView.innerHTML = `<div class="error">Erreur : ${escapeHtml(result.error)}</div>`;
-      return;
-    }
-    const header = document.createElement('h2');
-    header.textContent = courseNameToTitle(course.name);
-    header.style.margin = '16px 20px';
-    els.texCourseView.appendChild(header);
-    for (const notion of course.notions) {
-      const card = buildNotionCard({
-        environment: notion.environment,
-        title: notion.title,
-        body: notion.body,
-        args: notion.args,
-        course: course.name,
-        id: `course-${course.name}-${notion.index}`
-      }, macros);
-      els.texCourseView.appendChild(card);
-    }
-    if (course.notions.length === 0) {
-      const info = document.createElement('p');
-      info.className = 'notions-empty';
-      info.textContent = 'Aucune notion détectée dans ce fichier.';
-      els.texCourseView.appendChild(info);
     }
   }
 
@@ -574,40 +653,66 @@
 
   els.openFolderBtn.addEventListener('click', openFolderDialog);
   els.rescanBtn.addEventListener('click', rescan);
-  for (const btn of els.sections) {
+  for (const btn of els.activityIcons) {
     btn.addEventListener('click', () => switchSection(btn.dataset.section));
   }
-  els.pdfPrev.addEventListener('click', () => {
-    if (!state.pdf) {
-      return;
-    }
-    const target = Math.max(1, state.pdfCurrentPage - 1);
-    const canvas = els.pdfContainer.querySelector(`canvas[data-page-num="${target}"]`);
-    if (canvas) {
-      canvas.scrollIntoView({ block: 'start' });
-    }
-  });
-  els.pdfNext.addEventListener('click', () => {
-    if (!state.pdf) {
-      return;
-    }
-    const target = Math.min(state.pdf.numPages, state.pdfCurrentPage + 1);
-    const canvas = els.pdfContainer.querySelector(`canvas[data-page-num="${target}"]`);
-    if (canvas) {
-      canvas.scrollIntoView({ block: 'start' });
+
+  els.pdfFirst.addEventListener('click', () => goToPdfPage(1));
+  els.pdfPrev.addEventListener('click', () => goToPdfPage(state.pdfCurrentPage - 1));
+  els.pdfNext.addEventListener('click', () => goToPdfPage(state.pdfCurrentPage + 1));
+  els.pdfLast.addEventListener('click', () => goToPdfPage(state.pdf ? state.pdf.numPages : 1));
+  els.pdfPageInput.addEventListener('change', () => {
+    const value = parseInt(els.pdfPageInput.value, 10);
+    if (!isNaN(value)) {
+      goToPdfPage(value, true);
     }
   });
+  els.pdfPageInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      els.pdfPageInput.blur();
+    }
+  });
+
+  els.pdfZoomIn.addEventListener('click', () => {
+    state.pdfFitWidth = false;
+    els.pdfFitWidth.classList.remove('toggled');
+    state.pdfZoomScale = Math.min(4, (state.pdfZoomScale || 1) * 1.2);
+    renderPdf();
+  });
+  els.pdfZoomOut.addEventListener('click', () => {
+    state.pdfFitWidth = false;
+    els.pdfFitWidth.classList.remove('toggled');
+    state.pdfZoomScale = Math.max(0.2, (state.pdfZoomScale || 1) / 1.2);
+    renderPdf();
+  });
+  els.pdfFitWidth.addEventListener('click', () => {
+    state.pdfFitWidth = !state.pdfFitWidth;
+    els.pdfFitWidth.classList.toggle('toggled', state.pdfFitWidth);
+    renderPdf();
+  });
+
+  els.pdfToggleOutline.addEventListener('click', () => {
+    const visible = !els.pdfOutlinePanel.classList.contains('hidden');
+    show(els.pdfOutlinePanel, !visible);
+    els.pdfToggleOutline.classList.toggle('toggled', !visible);
+  });
+
   els.pdfContainer.addEventListener('scroll', () => {
-    updateVisiblePdfPage();
+    if (state.pdfScrollTimer) {
+      clearTimeout(state.pdfScrollTimer);
+    }
+    state.pdfScrollTimer = setTimeout(updateVisiblePdfPage, 80);
   });
-  els.pdfZoom.addEventListener('input', () => {
-    state.pdfZoomScale = parseInt(els.pdfZoom.value, 10) / 100;
-    els.pdfZoomValue.textContent = `${els.pdfZoom.value} %`;
-    renderAllPdfPages();
-  });
+
   els.notionsSearch.addEventListener('input', renderNotions);
   els.copyLatexBtn.addEventListener('click', copyNotionsLatex);
   els.toggleSourceBtn.addEventListener('click', toggleSource);
+
+  window.addEventListener('resize', () => {
+    if (state.pdf && state.pdfFitWidth && state.section === 'cours') {
+      renderPdf();
+    }
+  });
 
   /* ---------- Init ---------- */
 
@@ -620,6 +725,7 @@
     } else {
       renderSidebar();
     }
+    renderNotions();
   }
 
   init();

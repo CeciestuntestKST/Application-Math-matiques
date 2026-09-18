@@ -1,12 +1,26 @@
 :root {
-  --zotero-bg: #f5f5f5;
-  --zotero-sidebar: #ececec;
-  --zotero-border: #d6d6d6;
-  --zotero-text: #333333;
-  --zotero-text-light: #777777;
-  --zotero-accent: #29a2c9;
-  --zotero-accent-hover: #1e86ab;
-  --zotero-selected: #e2ecf0;
+  --vs-bg: #1e1e1e;
+  --vs-bg-deep: #141414;
+  --vs-bg-panel: #181818;
+  --vs-sidebar: #181818;
+  --vs-sidebar-hover: #1f1f1f;
+  --vs-sidebar-active: #2a2d2e;
+  --vs-activity-bar: #181818;
+  --vs-border: #2b2b2b;
+  --vs-border-strong: #3c3c3c;
+  --vs-text: #cccccc;
+  --vs-text-bright: #e8e8e8;
+  --vs-text-dim: #8b8b8b;
+  --vs-accent: #29a2c9;
+  --vs-accent-hover: #3ab5da;
+  --vs-selected: #04395e;
+  --vs-focus: #0e639c;
+  --vs-button-bg: #0e639c;
+  --vs-button-hover: #1177bb;
+  --vs-input-bg: #3c3c3c;
+  --vs-toolbar: #1f1f1f;
+  --vs-canvas-bg: #313131;
+  --vs-katex-text: #dcdcdc;
   --zotero-white: #ffffff;
 }
 
@@ -20,8 +34,8 @@ html, body {
   height: 100%;
   font-family: -apple-system, "Segoe UI", "Lucida Grande", sans-serif;
   font-size: 13px;
-  color: var(--zotero-text);
-  background: var(--zotero-white);
+  color: var(--vs-text);
+  background: var(--vs-bg);
   overflow: hidden;
 }
 
@@ -34,94 +48,99 @@ html, body {
   display: none !important;
 }
 
+/* ---------- Activity bar (icônes de sections) ---------- */
+
+#activity-bar {
+  width: 48px;
+  min-width: 48px;
+  background: var(--vs-activity-bar);
+  border-right: 1px solid var(--vs-border);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding-top: 4px;
+}
+
+.activity-icon {
+  position: relative;
+  height: 46px;
+  border: none;
+  background: transparent;
+  color: var(--vs-text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+.activity-icon:hover {
+  color: var(--vs-text-bright);
+}
+
+.activity-icon.active {
+  color: var(--vs-text-bright);
+}
+
+.activity-icon.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--vs-accent);
+}
+
 /* ---------- Sidebar ---------- */
 
 #sidebar {
-  width: 240px;
-  min-width: 240px;
-  background: var(--zotero-sidebar);
-  border-right: 1px solid var(--zotero-border);
+  width: 230px;
+  min-width: 230px;
+  background: var(--vs-sidebar);
+  border-right: 1px solid var(--vs-border);
   display: flex;
   flex-direction: column;
 }
 
 #sidebar-header {
   padding: 10px;
-  border-bottom: 1px solid var(--zotero-border);
-}
-
-#app-title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: bold;
-  font-size: 14px;
-  margin-bottom: 10px;
-  color: var(--zotero-text);
-}
-
-.app-logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  background: var(--zotero-accent);
-  color: white;
-  border-radius: 4px;
-  font-size: 15px;
+  border-bottom: 1px solid var(--vs-border);
 }
 
 #btn-open-folder,
 #btn-rescan {
   width: 100%;
   padding: 5px 8px;
-  border: 1px solid var(--zotero-border);
-  border-radius: 4px;
-  background: var(--zotero-white);
-  color: var(--zotero-text);
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: var(--vs-button-bg);
+  color: #ffffff;
   cursor: pointer;
   font-size: 12px;
 }
 
-#btn-open-folder:hover,
+#btn-rescan {
+  background: transparent;
+  border-color: var(--vs-border-strong);
+  color: var(--vs-text);
+}
+
+#btn-open-folder:hover {
+  background: var(--vs-button-hover);
+}
+
 #btn-rescan:hover {
-  background: var(--zotero-selected);
+  background: var(--vs-sidebar-hover);
 }
 
 #folder-display {
   margin-top: 6px;
   font-size: 11px;
-  color: var(--zotero-text-light);
+  color: var(--vs-text-dim);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-#sections {
-  display: flex;
-  border-bottom: 1px solid var(--zotero-border);
-}
-
-.section {
-  flex: 1;
-  padding: 7px 0;
-  border: none;
-  background: transparent;
-  color: var(--zotero-text-light);
-  cursor: pointer;
-  font-size: 12px;
-  border-bottom: 2px solid transparent;
-}
-
-.section:hover {
-  color: var(--zotero-text);
-}
-
-.section.active {
-  color: var(--zotero-text);
-  border-bottom-color: var(--zotero-accent);
-  font-weight: bold;
 }
 
 #sidebar-list {
@@ -136,48 +155,65 @@ html, body {
 .item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   padding: 4px 10px;
   cursor: pointer;
   user-select: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .item:hover {
-  background: var(--zotero-selected);
+  background: var(--vs-sidebar-hover);
 }
 
 .item.active {
-  background: var(--zotero-selected);
-  font-weight: bold;
+  background: var(--vs-sidebar-active);
 }
 
 .item .item-icon {
   width: 16px;
   text-align: center;
   flex-shrink: 0;
-  color: var(--zotero-accent);
+  color: var(--vs-accent);
+}
+
+.item .item-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item-group-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px 3px;
+  font-weight: bold;
+  font-size: 11px;
+  color: var(--vs-text-bright);
+  cursor: default;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .item .item-count {
   margin-left: auto;
   font-size: 10px;
-  color: var(--zotero-text-light);
+  color: var(--vs-text-dim);
   padding-left: 8px;
+  flex-shrink: 0;
 }
 
 .list-empty {
   padding: 8px 10px;
-  color: var(--zotero-text-light);
+  color: var(--vs-text-dim);
   font-size: 11px;
   font-style: italic;
 }
 
 #sidebar-footer {
   padding: 8px 10px;
-  border-top: 1px solid var(--zotero-border);
+  border-top: 1px solid var(--vs-border);
 }
 
 /* ---------- Content ---------- */
@@ -188,6 +224,7 @@ html, body {
   position: relative;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 #empty-state {
@@ -197,33 +234,35 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: var(--zotero-text-light);
+  color: var(--vs-text-dim);
   text-align: center;
   padding: 20px;
 }
 
 .empty-icon {
   font-size: 60px;
-  color: var(--zotero-border);
+  color: #3a3a3a;
   line-height: 1;
 }
 
 #empty-state h1 {
   font-size: 20px;
-  color: var(--zotero-text);
+  color: var(--vs-text-bright);
+  font-weight: normal;
 }
 
 #empty-state code {
-  background: var(--zotero-bg);
-  padding: 1px 4px;
+  background: var(--vs-input-bg);
+  padding: 1px 5px;
   border-radius: 3px;
   font-family: Consolas, "Courier New", monospace;
   font-size: 11px;
+  color: var(--vs-text-bright);
 }
 
 #empty-state .hint {
   font-size: 11px;
-  max-width: 420px;
+  max-width: 460px;
 }
 
 /* ---------- Toolbar ---------- */
@@ -231,43 +270,53 @@ html, body {
 .toolbar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
-  border-bottom: 1px solid var(--zotero-border);
-  background: var(--zotero-bg);
-  min-height: 34px;
+  gap: 6px;
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--vs-border);
+  background: var(--vs-toolbar);
+  min-height: 36px;
 }
 
 .toolbar button {
-  padding: 4px 10px;
-  border: 1px solid var(--zotero-border);
-  border-radius: 4px;
-  background: var(--zotero-white);
+  padding: 4px 9px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--vs-text);
   cursor: pointer;
   font-size: 12px;
+  line-height: 1.2;
 }
 
 .toolbar button:hover {
-  background: var(--zotero-selected);
+  background: var(--vs-sidebar-hover);
+}
+
+.toolbar button.toggled {
+  background: var(--vs-selected);
+  color: var(--vs-text-bright);
 }
 
 .toolbar input[type="search"] {
   flex: 1;
   max-width: 300px;
   padding: 4px 8px;
-  border: 1px solid var(--zotero-border);
-  border-radius: 4px;
+  border: 1px solid var(--vs-border-strong);
+  border-radius: 3px;
   font-size: 12px;
+  background: var(--vs-input-bg);
+  color: var(--vs-text-bright);
+  outline: none;
 }
 
-.toolbar input[type="range"] {
-  width: 120px;
+.toolbar input[type="search"]:focus {
+  border-color: var(--vs-focus);
 }
 
 .toolbar-sep {
   width: 1px;
   height: 18px;
-  background: var(--zotero-border);
+  background: var(--vs-border-strong);
 }
 
 .toolbar-spacer {
@@ -276,7 +325,7 @@ html, body {
 
 #pdf-title {
   font-size: 11px;
-  color: var(--zotero-text-light);
+  color: var(--vs-text-dim);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -287,14 +336,129 @@ html, body {
 .reader {
   flex: 1;
   display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
+
+#reader-cours {
+  flex-direction: row;
+}
+
+#pdf-outline-panel {
+  width: 240px;
+  min-width: 240px;
+  background: var(--vs-bg-panel);
+  border-right: 1px solid var(--vs-border);
+  display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+#pdf-outline-header {
+  padding: 9px 12px 6px;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--vs-text-bright);
+  border-bottom: 1px solid var(--vs-border);
+}
+
+#pdf-outline-list {
+  flex: 1;
+  overflow-y: auto;
+  list-style: none;
+  padding: 6px 0;
+}
+
+#pdf-outline-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 12px;
+  cursor: pointer;
+  color: var(--vs-text);
+  font-size: 12px;
+}
+
+#pdf-outline-list li:hover {
+  background: var(--vs-sidebar-hover);
+  color: var(--vs-text-bright);
+}
+
+#pdf-outline-list li.active {
+  color: var(--vs-text-bright);
+  background: var(--vs-sidebar-active);
+  box-shadow: inset 2px 0 0 var(--vs-accent);
+}
+
+#pdf-outline-list .outline-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+#pdf-outline-list .outline-page {
+  font-size: 10px;
+  color: var(--vs-text-dim);
+  flex-shrink: 0;
+}
+
+#pdf-outline-list .outline-empty {
+  color: var(--vs-text-dim);
+  font-style: italic;
+  cursor: default;
+  padding: 8px 12px;
+}
+
+.pdf-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.pdf-nav-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#pdf-page-input {
+  width: 46px;
+  padding: 3px 4px;
+  border: 1px solid var(--vs-border-strong);
+  border-radius: 3px;
+  background: var(--vs-input-bg);
+  color: var(--vs-text-bright);
+  font-size: 12px;
+  text-align: center;
+  outline: none;
+}
+
+#pdf-page-input:focus {
+  border-color: var(--vs-focus);
+}
+
+#pdf-page-total {
+  font-size: 11px;
+  color: var(--vs-text-dim);
+}
+
+#pdf-zoom-value {
+  font-size: 11px;
+  color: var(--vs-text);
+  min-width: 44px;
+  text-align: center;
 }
 
 #pdf-container {
   flex: 1;
   overflow: auto;
-  background: #525659;
+  background: var(--vs-canvas-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -303,16 +467,21 @@ html, body {
 }
 
 #pdf-container canvas {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
   background: white;
 }
 
-/* ---------- LaTeX / Notions views ---------- */
+#pdf-container .pdf-loading,
+#pdf-container .pdf-error {
+  color: var(--vs-text-dim);
+  font-style: italic;
+  padding: 40px;
+}
 
-.tex-view {
-  flex: 1;
-  overflow-y: auto;
-  background: var(--zotero-white);
+/* ---------- Notions view ---------- */
+
+#reader-notions {
+  flex-direction: column;
 }
 
 #notions-content {
@@ -322,10 +491,10 @@ html, body {
 }
 
 .notion {
-  border: 1px solid var(--zotero-border);
+  border: 1px solid var(--vs-border);
   border-radius: 6px;
   margin-bottom: 14px;
-  background: var(--zotero-white);
+  background: var(--vs-bg-panel);
   overflow: hidden;
 }
 
@@ -334,16 +503,16 @@ html, body {
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: var(--zotero-bg);
-  border-bottom: 1px solid var(--zotero-border);
+  background: var(--vs-toolbar);
+  border-bottom: 1px solid var(--vs-border);
 }
 
 .notion-header .notion-env {
   display: inline-block;
   padding: 2px 8px;
   border-radius: 3px;
-  background: var(--zotero-accent);
-  color: white;
+  background: var(--vs-accent);
+  color: #ffffff;
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -352,33 +521,47 @@ html, body {
 .notion-header .notion-title {
   font-weight: bold;
   font-size: 13px;
+  color: var(--vs-text-bright);
 }
 
 .notion-header .notion-source {
   margin-left: auto;
   font-size: 10px;
-  color: var(--zotero-text-light);
+  color: var(--vs-text-dim);
 }
 
 .notion-body {
   padding: 12px;
   line-height: 1.6;
   overflow-x: auto;
+  color: var(--vs-katex-text);
+}
+
+.notion-body .katex {
+  color: var(--vs-katex-text);
 }
 
 .notion-body .katex-display {
   margin: 10px 0;
 }
 
+.notion-body code.latex-error {
+  background: #5a1d1d;
+  color: #ff9d9d;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
 .notion-source-code {
   display: none;
-  border-top: 1px dashed var(--zotero-border);
-  background: #f8f8f8;
+  border-top: 1px dashed var(--vs-border-strong);
+  background: var(--vs-bg-deep);
   padding: 10px 12px;
   font-family: Consolas, "Courier New", monospace;
   font-size: 11px;
   white-space: pre-wrap;
-  color: #444;
+  color: var(--vs-text);
 }
 
 .notions-showing-source .notion-source-code {
@@ -386,19 +569,19 @@ html, body {
 }
 
 .notions-empty {
-  color: var(--zotero-text-light);
+  color: var(--vs-text-dim);
   font-style: italic;
   text-align: center;
   padding: 40px 0;
 }
 
 #notions-content .error {
-  color: #c0392b;
+  color: #ff9d9d;
   text-align: center;
   padding: 30px;
 }
 
-/* ---------- Scrollbars ---------- */
+/* ---------- Scrollbars (VS Code style) ---------- */
 
 ::-webkit-scrollbar {
   width: 10px;
@@ -410,10 +593,10 @@ html, body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c4c4c4;
+  background: #4e4e4e;
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: #6b6b6b;
 }
