@@ -19,17 +19,17 @@ L'utilisateur sélectionne un dossier via « Ouvrir un dossier » (mémorisé d'
 | Fichier | Rôle |
 |---|---|
 | `settings.tex` | Préréglages LaTeX partagés : macros `\newcommand`, environnements `\newtheorem` / `\newenvironment`. Sert à reconnaître les « notions » et à injecter vos macros dans le rendu. |
-| `*.tex` | Cours LaTeX. Les notions sont détectées via `\begin{Nom}{Titre}{} ... \end{Nom}`. |
+| `*.tex` | Cours LaTeX. Les notions sont détectées via `\begin{Nom}{Titre}{} ... \end{Nom}`. Les `.tex` ne s'affichent pas dans la section Cours (réservée aux PDF) mais alimentent la section Notions. |
 | `*.pdf` | Cours en PDF, lisibles dans la section **Cours**. |
 
 Voir le dossier [`exemple/`](exemple/) pour un modèle fonctionnel.
 
-> Si un `.tex` et un `.pdf` portent le même nom de base, seul le PDF apparaît dans la liste des cours.
+> Ajoutez simplement le PDF compilé correspondant à un `.tex` pour le lire dans la section Cours.
 
 ## Interface
 
-- **Barre latérale gauche** (façon Zotero) : deux sections, **Cours** et **Notions**, conçues pour en ajouter d'autres plus tard.
-- **Cours** : liste des PDF (et des `.tex` sans PDF associé). Le lecteur PDF offre navigation page précédente/suivante, suivi de page courant et zoom.
+- **Thème sombre** façon VS Code / Zotero : barre d'icônes verticale à gauche (activity bar) pour basculer entre les sections, puis panneau latéral (liste du dossier) et zone de lecture.
+- **Cours** : réservée aux **PDF uniquement** (les fichiers `.tex` non compilés n'y apparaissent pas ; ils servent uniquement à l'extraction des notions). Lecteur PDF complet : sommaire/chapitres cliquable sur le côté (outline du PDF), navigation première/précédente/suivante/dernière page, saisie directe du numéro de page, zoom avant/arrière, ajustement à la largeur (par défaut), page courante suivie au défilement et surlignée dans le sommaire.
 - **Notions** : toutes les notions de tous les cours, regroupées par environnement, compilées en LaTeX (KaTeX) avec les macros de `settings.tex`. Barre de recherche, bouton **Copier le code LaTeX** (copie les notions filtrées) et bascule **Code source** pour voir le LaTeX brut de chaque notion.
 
 ## Architecture (pensée pour évoluer)
