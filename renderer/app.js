@@ -98,6 +98,31 @@
     return katexMacros;
   }
 
+  function renderLatexText(text, macros) {
+    if (!text) {
+      return '';
+    }
+    const inlineRe = /\$([^$\n]+)\$/g;
+    let html = '';
+    let lastIndex = 0;
+    let m;
+    while ((m = inlineRe.exec(text)) !== null) {
+      html += escapeHtml(text.slice(lastIndex, m.index));
+      try {
+        html += katex.renderToString(m[1], {
+          displayMode: false,
+          macros: Object.assign({}, macros),
+          throwOnError: false
+        });
+      } catch (err) {
+        html += `<code class="latex-error">${escapeHtml(m[0])}</code>`;
+      }
+      lastIndex = m.index + m[0].length;
+    }
+    html += escapeHtml(text.slice(lastIndex));
+    return html;
+  }
+
   function renderLatexBody(body, macros) {
     const container = document.createElement('div');
     container.className = 'notion-body';
@@ -345,12 +370,19 @@
 
   function flattenNotions(scan) {
     const notions = [];
+    const displayMap = {};
+    if (scan.settings && Array.isArray(scan.settings.environments)) {
+      for (const env of scan.settings.environments) {
+        displayMap[env.name] = env.display;
+      }
+    }
     const courses = Array.isArray(scan.courses) ? scan.courses : [];
     for (const course of courses) {
       const courseNotions = Array.isArray(course.notions) ? course.notions : [];
       courseNotions.forEach((notion) => {
         notions.push({
           ...notion,
+          environmentDisplay: displayMap[notion.environment] || notion.environment,
           course: course.name,
           coursePath: course.path,
           id: `${course.name}-${notion.index}`
@@ -534,6 +566,10 @@
       rec.el.style.height = `${Math.floor(rec.baseHeight * scale)}px`;
       if (rec.canvas && rec.renderedScale !== scale) {
         rec.canvas.remove();
+        const layer = rec.el.querySelector('.text-layer');
+        if (layer) {
+          layer.remove();
+        }
         rec.canvas = null;
       }
     }
@@ -583,6 +619,10 @@
     for (const rec of state.pdfPages) {
       if (rec.canvas && (rec.pageNum < first - 2 || rec.pageNum > last + 2)) {
         rec.canvas.remove();
+        const layer = rec.el.querySelector('.text-layer');
+        if (layer) {
+          layer.remove();
+        }
         rec.canvas = null;
       }
     }
@@ -606,11 +646,59 @@
       canvas.height = Math.floor(viewport.height);
       rec.el.appendChild(canvas);
       await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+      await buildTextLayer(page, viewport, rec.el);
       rec.canvas = canvas;
       rec.renderedScale = scale;
     } finally {
       rec.rendering = false;
     }
+  }
+
+  async function buildTextLayer(page, viewport, wrapper) {
+    const oldLayer = wrapper.querySelector('.text-layer');
+    if (oldLayer) {
+      oldLayer.remove();
+    }
+    let textContent;
+    try {
+      textContent = await page.getTextContent();
+    } catch (err) {
+           return;
+    }
+    if (!textContent || !Array.isArray(textContent.items) || textContent.items.length === 0) {
+      return;
+    }
+    const layer = document.createElement('div');
+    layer.className = 'text-layer';
+    layer.style.width = `${Math.floor(viewport.width)}px`;
+    layer.style.height = `${Math.floor(viewport.height)}px`;
+    const fragment = document.createDocumentFragment();
+    for (const item of textContent.items) {
+      if (!item.str) {
+        continue;
+      }
+      const span = document.createElement('span');
+      const tx = pdfjsLib.Util.transform(viewport.transform, item.transform);
+      const angle = Math.atan2(tx[1], tx[0]);
+      const fontHeight = Math.hypot(tx[2], tx[3]);
+      const left = tx[4];
+      const top = tx[5] - fontHeight;
+      span.style.left = `${left}px`;
+      span.style.top = `${top}px`;
+      span.style.fontSize = `${fontHeight}px`;
+      if (angle !== 0) {
+        span.style.transform = `rotate(${angle}rad)`;
+        span.style.transformOrigin = 'left top';
+      }
+      if (item.width > 0 && fontHeight > 0) {
+        const targetWidth = item.width * viewport.scale;
+        span.style.letterSpacing = `${targetWidth / item.str.length - fontHeight * 0.4}px`;
+      }
+      span.textContent = item.str;
+      fragment.appendChild(span);
+    }
+    layer.appendChild(fragment);
+    wrapper.appendChild(layer);
   }
 
   function updateZoomLabel(scale) {
@@ -666,10 +754,14 @@
     header.className = 'notion-header';
     const env = document.createElement('span');
     env.className = 'notion-env';
-    env.textContent = notion.environment;
+    env.textContent = notion.environmentDisplay || notion.environment;
     const title = document.createElement('span');
     title.className = 'notion-title';
-    title.textContent = notion.title;
+    const envDisplay = notion.environmentDisplay || notion.environment;
+    const fallbackTitle = notion.title && notion.title !== notion.environment
+      ? notion.title
+      : (envDisplay ? envDisplay.toLowerCase() : '');
+    title.innerHTML = renderLatexText(fallbackTitle || notion.title, macros);
     const source = document.createElement('span');
     source.className = 'notion-source';
     source.textContent = notion.course || '';

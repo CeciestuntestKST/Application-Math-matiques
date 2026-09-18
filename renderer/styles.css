@@ -480,6 +480,40 @@ html, body {
   height: 100%;
 }
 
+#pdf-container .text-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  line-height: 1;
+  text-size-adjust: none;
+  forced-color-adjust: none;
+  transform-origin: 0 0;
+  z-index: 2;
+  cursor: text;
+}
+
+#pdf-container .text-layer span {
+  position: absolute;
+  white-space: pre;
+  color: transparent;
+  transform-origin: 0 0;
+  font-family: sans-serif;
+}
+
+#pdf-container .text-layer span::selection {
+  background: rgba(42, 162, 201, 0.45);
+}
+
+#pdf-container .text-layer span:hover {
+  background: rgba(42, 162, 201, 0.15);
+  border-radius: 2px;
+}
+
+#pdf-container .page-wrap {
+  user-select: text;
+}
+
 #pdf-container .pdf-loading,
 #pdf-container .pdf-error {
   color: var(--vs-text-dim);
