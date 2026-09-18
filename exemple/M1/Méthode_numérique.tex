@@ -1,0 +1,1091 @@
+\documentclass[]{report}
+
+\usepackage{import}
+
+\import{../}{settings.tex}
+
+\title{Méthodes numériques pour EDO et EDP}
+
+\author{Cours de Maxime Laborde, transcrit par SADR TAHOURI Luca}
+\date{}
+
+\begin{document}
+
+    \maketitle
+    \tableofcontents
+
+    \chapter{Equations différentielles ordinaires}
+
+    \[y'(t)=f(t,y(t))\]
+    Quelques exemples:
+    \begin{itemize}
+        \item Physique: $m\times y''(t)=\sum \vect{F}(y,y')$, pour le pendule
+        \[y''=-cy\]
+        \item Mouvemeent de population: Equation logistique:
+        \[y'(t)=y(t)-y^2(t)\]
+        \item SIR:
+        \[\cho{S'(t)=-\alpha S I\\ I'(t)=\alpha SI-\mu I \\ R'(t)=\mu I}\]
+        \item En optimisation:
+        \[x'(t)=-\nabla f(x(t))\]
+    \end{itemize}
+
+    \section{Définitions}
+
+    On cherche une fonction $\funto{y}{I\subset \R}{\R}$ telle que
+    \[F(t,y(t),y'(t),\ldots,y^{(p)}(t))=0\text{ pour $p\ge 1$}\]
+    On dit que l'équation est d'ordre $p$.\\
+    Dans la suite, on s'intéresse à
+    \[y^{(p)}(t)=f(t,y(t),y'(t),\ldots,y^{(p-1)}(t))\]
+    Quitte à poser en vectoriel $z(t)=\left(\begin{matrix}y(t) \cr \vdots \cr y^{(p-1)}(t)\end{matrix}\right)$, alors on peut se ramener à
+    \[z'(t)=F(t,z(t))=\left(\begin{matrix}
+        y'(t)\cr \vdots \cr y^{(p-1)}(t)\cr f(t,y(t),\ldots,y^{(p-1)}(t))
+    \end{matrix}\right)\]
+
+    Problème de Cauchy: Pour $\funto{y}{I}{\R^n}$, $\funto{f}{D\subset I\times \R^n}{\R^n}$
+    \[(PC)\cho{y'(t)=f(t,y(t))\\ y(t_0)=y_0\in \R^n}\]
+
+    \begin{df}{}{}
+        On dit que $\funto{y}{I}{\R}$ est solution de $(PC)$ sur $I$ si:\\
+        \begin{enumerate}
+            \item $\forall t\in I,(t,y(t))\in D, t_0\in \mathring(I)$
+            \item $y\in \Cr^1(I,\R^n)$ et vérifie $(PC)$
+        \end{enumerate}
+    \end{df}
+
+    On ne considère que les $\funto{f}{I\times \R^n}{\R^n}$ continues
+
+    \begin{prop}{Formulation inégrale de (PC)}{}
+        Une fonction $\funto{y}{I}{\R^n}$ est solution de $(PC)$ \ssi:
+        \begin{enumerate}
+            \item $y\in \Cr^0$ et $\forall t\in I$, $(t,f(t))\in D$
+            \item $\forall t\in I,y$ satisfait
+            \[y(t)=y_0+\int_{t_0}^{t} f(s,y(s))\, ds\]
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        $\implies$\begin{align*}
+            \int_{t_0}^{t} y'(s)&=\int_{t_0}^{t}f(s,y(s))\, ds\\
+            y(t)-y(t_0)&=\int_{t_0}^{t} f(s,y(s))\, ds
+        \end{align*}
+        $\impliedby$ $y\in \Cr^0$ et $f\in \Cr^0$ donc $t\mapsto f(t,y(t))$ est $\Cr^0$ donc $t\mapsto \int_{t_0}^{t}\, ds$ est $\Cr^1$ donc $y\in \Cr^1$
+        \begin{align*}
+            y'(t)&=\left( y_0+\int_{t_0}^{t} f(s,y(s))\, ds\right)\\
+            &=f(t,y(t))\\
+            y(t_0)=y_0+\underset{=0}{\int_{t_0}^{t_0}f(s,y(s))\, ds}
+        \end{align*}
+    \end{proof}
+
+    \begin{df}{}{}
+        Soit $\funto{y}{I}{\R^n}, \funto{\tilde{y}}{\tilde{I}}{\R^n}$ 2 solutions de $(PC)$. On dit que:
+        \begin{itemize}
+            \item $\tilde{y}$ est un prolongement de $y$ si $I \subset \tilde{I}$ et que $\forall t\in I,\tilde{y}(t)=y(t)$.
+            \item $y$ est maximale si elle n'admet pas de prolongement.
+            \item $y$ est globale si $I=\R$
+        \end{itemize}
+    \end{df}
+
+    \begin{tm}{}{}
+        Toute solution se prolonge en une solution maximale
+    \end{tm}
+
+    \section{Existence de solutions}
+
+    \[\funto{f}{D\subset \R\times \R^n}{\R^n}\]
+
+    \begin{df}{}{}
+        On dit que $f$ est:
+        \begin{itemize}
+            \item Lipschitzienne en $y$, uniformément en $t$ dans $D$ si $\exists L>0$ telle que
+            \[\forall (t,y),(t,z)\in D, \norme{f(t,y)-f(t,z)}\le L\norme{y-z}\]
+            \item Localement Lipschitzienne en $y$ uniformément en $t$ dans $D$ si
+            \[\forall(t,y)\in D,\exists B_\delta((t,y),\delta)\subset D\]
+            telle que $f$ est lipschitzienne en $y$, uniformément en $t$ sur $B_\delta$
+        \end{itemize}
+    \end{df}
+
+    Critère: Si $\nabla_y f$ existe et est continue pour tout $(t,y)\in D$, alors $f$ est localement lipschitz en $y$, uniformément en $t$. Et si $\sup_{(t,y)\in D}\norme{\nabla_y f(t,y)}<+\infty$, alors $f$ est lipschitz en $y$, uniformément sur $D$
+
+    \begin{ex}{}{}
+        \[f(t,y)=ty, D=\R^2\]
+        \[\nabla_y f(t,y)=t \in \C^0\implies f\text{ est localement lipschitzienne}\]
+        \[\max_{\R^2}\norme{\nabla_y f(t,y)}=\left| t\right|\underset{t\to +\infty}{\longrightarrow} +\infty\]
+        Donc $f$ n'est pas globalement lipschitzienne
+    \end{ex}
+
+    \begin{tm}{Théorème de Cauchy-Lipschitz}{}
+        Soit $\funto{f}{D\subset \R\times \R^n}{\R^n}, D$ ouvert, tel que
+        \begin{enumerate}
+            \item $f\in \Cr^0(D)$
+            \item $f$ est localement lipschitzienne en $y$, uniformément sur $D$
+        \end{enumerate}
+        Alors $\forall (t_0,y_0)\in D$, alors $\exists z>0, I_0=]t_0-z,t_0+z[$ et $y\in \Cr^1(I_0)$ telle que $y$ est l'unique solution de $(PC)$
+    \end{tm}
+
+    \begin{proof}
+        Idée de la preuve: On cherche $y$ telle que
+        \[y(t)=\underset{F(y)(t)}{y_0+\int_{t_0}^{t}f(s,y(s))\, ds}, \forall t\]
+    \end{proof}
+
+    \begin{tm}{Théorème du point fixe de Banach}{}
+        Soit $(B,\norme{\cdot })$ un Banach, $\funto{F}{B}{B}$ est $\Cr^0$.\\
+        Si $\exists L\in ]0,1[$ tel que $\norme{F(x)-F(y)}\le L\norme{x-y}$ alors $\exists! \overline{x}\in B$ telle que $F(\overline{x})=\overline{x}$.\\
+        De plus, $x_{n+1}=F(x_n)$ alors $x_n\underset{n\to \infty}{\longrightarrow} \overline{x}$.\\
+    \end{tm}
+
+    \begin{proof}
+        Preuve du théorème de Cauchy-Lipschitz: On veut appliquer le théorème du point fixe à $B=\Cr^0(I_0)$ où $I_0=]t_0-z,t_0+z[$ avec $z>0$ à définir. On muni $B$ de $\norme{y}_B=\sup_{t\in I_0}\norme{y(t)}_\infty$ et $\fundfto{F}{B}{B}{y}{\left( t\mapsto y_0+\int_{t_0}^{t} f(s,y(s))\, ds\right)}$.\\
+        Soit $y,z\in B$
+        \begin{align*}
+            \norme{F(y)-F(z)}_B&=\sup_{t\in I_0}\norme{\int_{t_0}^{t}[f(s,y(s))-f(s,z(s))]\, ds}_\infty\\
+            &\le \sup_{t\in I_0}\int_{t_0}^{t} \norme{f(s,y(s))-f(s,z(s))}\, ds
+        \end{align*}
+        Comme $f$ est localement Lipschitz en $y$, uniformément en $t$: $\exists L_\tau>0,\forall t\in I_0$
+        \begin{align*}
+            \norme{f(s,y(s))-f(s,z(s))}\le L_\tau\norme{y(s)-z(s)}\\
+            \implies \norme{F(y)-F(z)}_B\le L_\tau \sup_{t\in I_0} \int_{t_0}^{t}\norme{y(s)-z(s)}_\infty \le L_\tau \tau\norme{y-z}_B
+        \end{align*}
+        On peut remarquer $L_\tau \tau\searrow 0$ quand $\tau \searrow 0$. $\exists \tau_0>0$ tel que $L_{\tau_0} \tau_0<1$\\
+        Sur $I_0=]t_0-z_0,t_0+z_0[,F$ est contractante $\implies \exists! y$ tel que $y=F(y)$ sur $I_0$ $\funto{y}{I_0}{\R^n}$ est solution de $(PC)$.
+    \end{proof}
+
+    Pour un théorème plus faible d'existence:
+
+    \begin{tm}{Théorème de Peano}{}
+        Soit $\funto{f}{D\subset \R\times \R^n}{\R^n}, D$ ouvert et $f$ continue sur $D$, alors $\forall (t_0,y_0)\in D$, il existe une solution maximale de $(PC)$
+    \end{tm}
+
+    \begin{re}{}{}
+        Pas forcément d'unicité. Par exemple:$\cho{y'(t)=y^{\frac{1}{3}}(t)\\y(0)=0}$.\\
+        Ici $f(t,y)=f(y)=y^{\frac{1}{3}}$ et $|f'(y)|=\left\| \frac{1}{3}\frac{1}{y^{\frac{2}{3}}}\right\|\underset{y\to 0}{\longrightarrow} +\infty$.\\
+        $f$ n'est pas localement Lipschitz donc on ne peut pas appliquer le théorème de Cauchy-Lipschitz
+    \end{re}
+
+    \begin{proof}
+        Idée de la preuve: On cherche $\funto{y}{[t_0,T]}{\R}$ tel que
+        \[y(t)=y_0+\int_{t_0}^{t} f(s,y(s))\, ds\]
+        On se donne une subdivision de $[t_0,T]$ de $t_0<\ldots<t_N=T$ $N+1$ points de $[t_0,T]$. On suppose qu'elle est uniforme, $h=\frac{T-t_0}{N}$, $t_i=ih+t_0$.\\
+        \[y'(t)=f(t,y(t))\]
+        \[\int_{t_0}^{t_1} y'(t)\, dt= \int_{t_0}^{t_1} f(t,y(t))\, dt\]
+        \begin{align*}
+            y(t_1)&=y(t_0)+\int_{t_0}^{t_1}f(t,y(t))\, dt\\
+            &\cong y_0+f(t_0,y(t_0))(t_1-t_0)\\
+            &\cong y_0+f(t_0,y_0)h
+        \end{align*}
+        On a $y_1=y_0+hf(t_0,y_0)$. On refait la même chose sur $[t_1,t_2], y(t_2)\cong y_1+hf(t_1,y_1)$.\\
+        On définit $y_{n+1}=y_n+hf(t_n,y_n)\text{ et }y(t_n)\cong y_n$.\\
+        On définit $y_h(t):=(t-t_{n+1})y_n+(t-t_n)y_{n+1}$ si $t\in [t_n,t_{n+1}]$\\
+        $y_h\to y\in \Cr^0$ et $y'(t)=f(t,y(t))$.
+    \end{proof}
+
+    \chapter{Méthodes numériques pour les EDO}
+
+    On considère le problème de Cauchy: $(PC)\cho{y'(t)=f(t,y(t)),t\in ]t_0,t_0+T]\\ y(t_0)=y_0}$. On note $z$ la solution de $(PC)$ (Pour $f\in C^1$).\\
+    On fixe $N\in \N$ et on définit une subdivision de $[t_0,t_0+T]$ par une suite $(t_n)_{n\in \llbracket 1,N \rrbracket}$ croissante. On note $h_n=t_{n+1}-t_n$ le pas de temps, $h_{\max}=\max_n h_n$
+
+    \begin{ex}{}{}
+        Subdivision uniforme:
+        \[t_n=nh+t_0\text{ où }h=\frac{T}{N}\]
+    \end{ex}
+
+    On veut construire une suite $(y_n)_{n\in \llbracket 0, N\rrbracket}$ telle que $y_n\cong z(t_n)$
+
+    Idée: Utiliser la fomulation intégrale: 
+    \[z(t_{n+1})=z(t_n)+\int_{t_n}^{t_{n+1}}f(s,z(s))\, ds\]
+
+    \section{Méthode explicite à un pas}
+
+    \subsection{Définitions et exemples}
+
+    \begin{df}{}{}
+        Soit $(t_n)$ une subdivision de $[t_0,t_0+T]$, des pas $(h_n)$. On appelle une méthode explicite à un pas, une méthode qui génère $y_n$ par réccurence:
+        \[\cho{y_{n+1}=y_n+h_n\phi(t_n,y_n,h_n)\\ y_0\in \R}\]
+        où $\funto{\phi}{[t_0,t_0+T]\times \R\times \R}{\R}$ est une fonction donnée qui dépend explicitement de $f$
+    \end{df}
+
+    \begin{ex}{}{}
+        \begin{itemize}
+            \item Euler explicite: On approche $\int f$ par la méthode ddes rectangle à gauche:
+            \[\int_{t_n}^{t_{n+1}}f(t,z(t))\, dt \cong (t_{n+1}-t_n)f(t_n,y_n)\cong h_n f(t_n,y_n)\]
+            D'où $y_{n+1}=y_n+h_n f(t_n,y_n)$ et $\phi(t,y,h)=f(t,y)$
+            \item Point milieu: On utilise la méthode d'Euler explicite:
+            \[\cho{\tilde{y}_n=y_n+\frac{h_n}{2}f(t_n,y_n)\\ y_{n+1}=y_n+h_n f(t_n+\frac{h_n}{2},\tilde{y})}\]
+            \[\phi(t,y,h)=f(t+\frac{h}{2},y+\frac{h}{2}f(t,y))\]
+            \item Méthode des Trapèzes: On pose $h=(\frac{1}{2}f(t_n,y_n)+\frac{1}{2}f(t_{n+1},y_{n+1}))$
+            \[\cho{\tilde{y}=y_n+h_n f(t_n,y_n)\\ y_{n+1}=y_n+h_n(\frac{1}{2}f(t_n,y_n)+\frac{1}{2}f(t_n+h_n,\tilde{y}))}\]
+            \[\phi(t,y,h)=\frac{1}{2}f(t,y)+\frac{1}{2}f(t+h,y+hf(t,y))\]
+        \end{itemize}
+    \end{ex}
+
+    \begin{df}{}{}
+        Soit $z\in C^1([t_0,t_0+T])$ solution exacte de $(PC)$ et $(y_n)_{0\le n\le N}$ solution approchée par $(MN)$, alors la méthode converge si $\max_{0\le n\le N}\left|z(t_n)-y_n\right|\underset{h\to 0}{\longrightarrow}0$.\\
+        De plus, la méthode est dite convergente à l'ordre $p\in \N^*$ si $p$ est la plus grande puissance possible telle que
+        \[\max |z(t_n)-y_n|\le C h_{\max}^p\]
+    \end{df}
+
+    \begin{tm}{}{}
+        Consistant (à l'ordre $p$) + stabilité $\implies$ convergence (à l'ordre $p$)
+    \end{tm}
+
+    \subsection{Consistance}
+
+    \begin{df}{}{}
+        On appelle erreur de consistance, $e_n$, relative à la solution exacte, $z$ et $(MN)$, la quantité:
+        \[e_n=\frac{z(t_{n+1})-z(t_n)-h_n\phi(t_n,z(t_n),h_n)}{h_n}\]
+        \begin{itemize}
+        \item On dit que le schéma est consistant si:
+        \[\max_{n}\left|e_n\right|\underset{h\to 0}{\longrightarrow}0\]
+        \item On dit que le schéma est consistant à l'ordre $p\ge 1$ si:
+        \[\max_{0\le n\le N}\left|e_n\right|\le C h_{\max}^p\]
+        \end{itemize}
+    \end{df}
+
+    \begin{ex}{}{}
+        Euler-explicite:
+        \[y_{n+1}= y_n +h_n f(t_n,y_n)\text{ d'où}\]
+        \[e_n=\frac{z(t_{n+1})-z(t_n)-h_n f(t_n,z(t_n))}{h_n}\]
+        $f\in C^1\implies z\in C^1$ donc on peut appliquer Taylor-Lagrange à l'ordre $2$ entre $t_n$ et $t_{n+1}$: $\exists \zeta_n\in ]t_n,t_{n+1}[$ tel que
+        \begin{align*}
+            z(t_n+h_n)&=z(t_n)h_nz'(t_n)+\frac{h_n^2}{2}z''(\zeta_n)\\
+            &=z(t_n)+h_n f(t_n,z(t_n))+\frac{h_n^2}{2}z''(\zeta_n)
+        \end{align*}
+        \begin{align*}
+            e_n&=\frac{z(t_{n+1})-z(t_n)-h_n f(t_n,z(t_n))}{h_n}\\
+            &=\frac{\frac{h_n^2}{2}z''(\zeta_n)}{h_n}\\
+            &=\frac{h_n}{2}z''(\zeta_n)
+        \end{align*}
+        \[\left|e_n\right|\le \frac{h_n}{2}\left|z''(\zeta_n)\right|\le \frac{h_n}{2}\max_{[t_n,t_{n+1}]}\left|z''\right|\le \norme{z''}_\infty \frac{h_n}{2}\]
+        $\implies \max_{0\le n\le N}\left|e_n\right|\le \frac{\norme{z''}_\infty}{2}h_n \implies $ Euler-explicite est consistante d'ordre 1.
+    \end{ex}
+
+    \begin{re}{}{}
+        $f\in C^0,\phi\in C^0$. La méthode est consistante \ssi $\phi(t,y,0)=f(t,y),\forall t,y$
+    \end{re}
+
+    \begin{proof}
+        A VOIR
+    \end{proof}
+
+    \subsection{Stabilité}
+
+    \begin{df}{}{}
+        On dit qu'un schéma $(MN)$ est stable si il existe $S>0$ pour laquelle:
+        \[\cho{y_{n+1}=y_n+h_n\phi(t_n,y_n,h_n)\\ y_0}\text{ et }\]
+        \[\cho{\tilde{y}_{n+1}=\tilde{y}_n+h_n(\phi(t_n,\tilde{y}_n,h_n)+\epsilon_n)\\ \tilde{y}_0}\]
+        \[\max_{0\le n\le N}\left|y_n-\tilde{y}_n\right|\le S\left(\left|y_0-\tilde{y}_0\right|+T\max_n\left|\epsilon_n\right|\right)\]
+    \end{df}
+
+    \begin{prop}{}{}
+        Soit $\funto{\phi}{[t_0,t_0+T]\times \R\times \R_+}{\R}$. Si $\phi$ est Lipschitzienne en $y$ indépendamment de $t$ et $h$ i.e.:
+        \[\exists K>0,\forall y,\tilde{y}\in \R, (t,h)\in [t_0,t_0+T]\times \R_+\text{ telle que }\phi(t,y,h)-\phi(t,\tilde{y},h)\le K\left|y-\tilde{y}\right|\]
+        Alors la méthode est stable avec $S=e^{KT}$
+    \end{prop}
+
+    \begin{ex}{}{}
+        Euler-Explicite: $\phi(t,y,h)=f(t,y)$\\
+        Démontrer $f$ Lipschitz en $y$ uniformément en $t$ revient à démontrer qu'il existe une unique solution (Condition de Cauchy Lipschitz)
+    \end{ex}
+
+    \begin{proof}
+        \begin{align*}
+            \left|y_{n+1}-\tilde{y}_{n+1}\right|&=\left|y_n+h_n\phi(t_n,y_n,h_n)-\tilde{y}_n-h_n\phi(t_n,\tilde{y}_n,h_n)-h_n\epsilon_n\right|\\
+            &\le \left|y_n-\tilde{y}_n\right|+h_n\left|\phi(t_n,y_n,h_n)-\phi(t_n,\tilde{y}_n,h_n)\right|+h_n\left|\epsilon_n\right|\\
+            &\le (1+K h_n)\left|y_n-\tilde{y}_n\right|+h_n\left|\epsilon_n\right|\\
+            &\le e^{Kh_n}\left|y_n-\tilde{y}_n\right|+h_n\left|\epsilon_n\right|\\
+            &\le e^{K(t_{n+1}-t_n)}\left|y_n-\tilde{y}_n\right|+h_n\left|\epsilon_n\right|
+        \end{align*}
+        \begin{align*}
+            \underset{M_{n+1}}{e^{-K(t_{n+1})}\left|y_{n+1}-\tilde{y}_{n+1}\right|}\le \underset{M_n}{e^{-Kt_n}\left|y_n-\tilde{y}_n\right|}+h_n \left|\epsilon_n\right|e^{-Kt_{n+1}}
+        \end{align*}
+        D'où
+        \[\forall n, \left|y_n-\tilde{y}_n\right|\le e^{K(t_N-t_0)}(\left|y_0-\tilde{y}_0\right|+T\max_{0\le k\le N}\left|\epsilon_k\right|)\]
+    \end{proof}
+
+    \subsection{Convergence}
+
+    \begin{tm}{}{}
+        Soit $\funto{z}{[t_0,t_0+T]}{\R}$ la solution de $(PC)$ et $(y_n)_{n\in \llbracket 0, N\rrbracket}$ les itérées de $(MN)$ pour $\phi$. Si le schéma est consistant (à l'ordre $p$) et stable, alors il converge (à l'ordre $p$)
+    \end{tm}
+
+    \begin{proof}
+        Par définition,
+        \[e_n=\frac{z(t_{n+1})-z(t_n)-h_n\phi(t_n,z(t_n),h_n)}{h_n}\iff z(t_{n+1})=z(t_n)+h_n(\phi(t_n,z(t_n),h_n)+e_n)\]
+        \[y_{n+1}=y_n+h_n\phi(t_n,y_n,h_n)\]
+        Comme le schéma est stable,
+        \[\max_{n\in \llbracket 0,N\rrbracket }\left| y_n-z(t_n) \right|\le S(\underset{=0}{\left| y_0-z(t_0)\right| }+T\max_{n\in \llbracket 0,N \rrbracket }\left| e_n\right| \le ST \max \left| e_n \right|\]
+        Si le schema est consistant, on a bien le max des 
+    \end{proof}
+
+    \section{Influence des erreurs d'arrondis (ou erreurs machine)}
+
+    En pratique, on a
+    \begin{align*}
+        \tilde{y}_{n+1}&=\tilde{y}_n+h\tilde{\phi}(t_n,\tilde{y}_n,h)+\sigma_n\\
+        &=\tilde{y}_n+h(\phi(t_n,\tilde{y}_n,h)+\rho_n)+\sigma_n
+    \end{align*}
+    $\rho_n,\sigma_n$ sont des erreurs numériques dûes à l'encodage des nombres ou encore au nombre d'opérations effectueés. $\tilde{y}_0=y_0+\epsilon_0$.\\
+    Les suite $(\sigma_n),(\rho_n)$ sont bornées. $\exists \sigma,\rho$ tels que $\sup_n |\sigma_n|\le \sigma,\sup_n|\rho_n|\le \rho$. Si le schéma est stable
+    \begin{align*}
+        \max_n |y_n-\tilde{y}_n|&\le S(|y_0-\tilde{y}_0|+T\max_n|\rho_n|+\sum_{i=1}^{N}|\sigma_i|)\\
+        &\le S(|\epsilon_0|+T\max_n|\rho_n|+\sum_{i=1}^{N}|\sigma_i|)\\
+        &\le S(|\epsilon_0+T_\rho+N_\sigma|)
+    \end{align*}
+    De plus, si le schéma est d'ordre $p$,
+    \begin{align*}
+        \max_n |z(t_n)-y_n|&\le SC h^p\\
+        \max_n |z(t_n)-\tilde{y}_n|&\le S(|\epsilon_0|+T_\rho+N_\sigma+Ch^p)\qquad \text{, en posant $N=\frac{T}{h}$}\\
+        \max_n |z(t_n)-\tilde{y}_n|\le \underset{=E(h)}{S(|\epsilon_0|+T_\rho+T(\frac{\sigma}{h}+Ch^p))}
+    \end{align*}
+
+    \section{Méthode de Bunge-Kutta}
+
+    \subsection{1er exemple: La méthode des trapèzes explicites (Méthode de Hun)}
+
+    \begin{align*}
+        z(t_{n+1})&=z(t_n)+\int_{t_n}^{t_{n+1}}f(t,z(t))\, dt\\
+        \int_{t_n}^{t_{n+1}}&\cong \frac{1}{2} f(t_n,z(t_n))+\frac{1}{2}f(t_{n+1},z(t_{n+1}))
+    \end{align*}
+    On utilise le schéma d'Euler explicite pour approcher $z(t_{n+1})$ puis on utilise cette valeur dans la méthode des trapèzes:
+    \[\cho{\tilde{y}_n=y_n+hf(t_n,y_n)\\ y_{n+1}=y_n+h(\frac{1}{2}f(t_n,y_n)+\frac{1}{2}f(t_{n+1},\tilde{y}_n))}\]
+    Ici, $\phi(t,y,h)=\frac{1}{2}f(t,y)+\frac{1}{2}f(t+h,y+h(t,y))$
+
+    \subsubsection*{Consistance}
+
+    Pour $f\in C^2 \implies z\in C^3$
+    \[e_n=\frac{z(t_{n+1})-z(t_n)-h\phi(t_n,z(t_n),h)}{h}\]
+    Développement de Taylor à l'ordre $3$,
+    \begin{align*}
+        z(t_{n+1})&=z(t_n)+hz'(t_n)+\frac{h^2}{2}z''(t_n)+O(h^3)\\
+        \frac{z(t_{n+1})-z(t_n)}{h}&=z'(t_n)+\frac{h}{2}z''(t_n)+O(h^2)\\
+        &=f(t_n,z(t_n))+\frac{h}{2}\frac{d}{dt}(f(t_n,z(t_n)))+O(h^2)
+    \end{align*}
+    Car $z$ est la solution exacte. On fait un Développement de Taylor de $f$ au point $(t_n,z(t_n))$
+    \[f(t_n+h,z(t_n)+hf(t_n,z(t_n)))=f(t_n,z(t_n))+h\frac{\partial f}{\partial t}(t_n,z(t_n))+ hf(t_n,z(t_n))\frac{\partial f}{\partial y}(t_n,z(t_n))+O(h^2)\]
+    On remarque que
+    \begin{align*}
+        \frac{d}{dt}(f(t_n,z(t_n)))&=\frac{\partial f}{\partial t}(t_n,z(t_n))+z'(t_n)\frac{\partial f}{\partial y}(t_n,z(t_n))\\
+        &=\frac{\partial}{\partial t}f(t_n,z(t_n))+f(t_n,z(t_n))\frac{\partial f}{\partial y}(t_n,z(t_n))\\
+        \phi(t_n,z(t_n),h)&=\frac{1}{2}f(t_n,z(t_n))+\frac{1}{2}(f(t_n,z(t_n))+h(\partial_t f(t_n,z(t_n))+f(t_n,z(t_n))\partial_y f(t_n,z(t_n))))+ O(h^2)\\
+        &=f(t_n,z(t_n))+\frac{h}{2}\frac{d}{dt}(f(t_n,z(t_n)))+O(H^2)
+    \end{align*}
+    Donc $e_n=O(h^2)$. La méthode est consistance d'ordre $2$.
+
+    \subsubsection*{Stabilité}
+
+    Comme $f\in C^2$, $f$ est $L$-lipschitzienne en $y$
+    \begin{align*}
+        \left|\phi(t,y,h)-\phi(t,z,h)\right|&=\left|\frac{1}{2} f(t,y)+\frac{1}{2}f(t+h,y+hf(t,y))-\frac{1}{2}f(t,z)-\frac{1}{2}f(t+h,z+hf(t,z))\right|\\
+        &\le \frac{1}{2}\left|f(t,y)-f(t,z)\right|+\frac{1}{2}\left|f(t+h,y+hf(t,y))-f(t+h,z+hf(t,z))\right|\\
+        &\le\frac{L}{2}\left|y-z\right|+\frac{1}{2}L\left|y+hf(t,y)-z-hf(t,z)\right|\\
+        &\le \frac{L}{2}\left|y-z\right|+\frac{L}{2}\left|y-z\right|+\frac{Lh}{2}\left|f(t,y)-f(t,z)\right|\\
+        &\le L\left|y-z\right|+\frac{L^2h}{2}\left|y-z\right|\\
+        &\le (L+\frac{L^2 T}{2})\left|y-z\right|
+    \end{align*}
+    Donc $\phi$ est lipschitzienne en $y$ uniformément en $t$ et $h\implies $ le schéma est stable.\\
+    Le schéma est stable et consistant d'ordre 2 donc il est convergent d'ordre $2$
+
+    \section{Généralisation}
+
+    Pour $q$ étapes, On va utiliser des points intermédiaires $(t_{n,i},y_{n,i})_{i\in \llbracket 1, q\rrbracket}$ pour calculer $y_{n+1}$\\
+    \[\cho{t_{n,1}=t_n+c_1 h=t_n \implies c_1=0 \\
+    t_{n,2}=t_n+c_2 h\qquad c_i\in [0,1]\\
+    \vdots\\
+    t_{n,q}}\]
+    $t_{n,i}$ est une suite croissante
+    \[\cho{y_{n,1}=y_n+0\\
+    y_{n,2}\cong y_n + \int_{t_n}^{t_{n,2}}f(t,y(t))\, dt\\
+    \vdots\\
+    y_{n,i}=y_n+\int_{t_n}^{t_{n,i}} f(t,y(t))}\]
+    $\forall i\in \llbracket 1,q\rrbracket$, on se donne une méthode de quadrature pour approcher l'intégrale:
+    \[\int_{t_n}^{t_{n,i}}f(t,y(t))\, dt \cong h\sum_{j=1}^{i-1}a_{ij}f(t_{n,j},y_{n,j})\]
+    $\forall i\in \llbracket 1,q \rrbracket$,
+    \begin{align*}
+        y_{n,i}&=y_n+h\sum_{j=1}^{i-1}a_{ij} f(t_{n,j},y_{n,j})\\
+        &\cong y_n +\int_{t_n}^{t_{n+1}}f(t,z(t))\, dt
+    \end{align*}
+    On se donne une méthode de quadrature pour calculer l'intégrale
+    \[y_{n+1}=y_n+h\sum_{i=1}^{q}b_i f(t_{n,i},y_{n,i})\]
+    Schéma de R-K:
+    \[\cho{t_{n,i}=t_n+c_n h \\y_{n,i}=y_n+h\sum_{j=1}^{i-1}a_{ij}p_{n,j}\\p_{n,j}=f(t_{n,j},y_{n,j})}\forall i\in \llbracket 1,q \rrbracket\]
+    \[\cho{t_{n+1}=t_n+h\\ y_{n+1}=y_n+h\sum_{i=1}^{q} b_i p_{n,i}}\]
+
+    \subsubsection*{Tableaux de Butcher}
+
+    (VOIR PHOTO TABLEAU)
+
+    \subsubsection*{Consistance des méthodes de R-K}
+
+    \begin{tm}{}{}
+        \begin{enumerate}
+            \item Si $\sum_{i=1}^{q}b_i=1$, le schéma est consistant
+            \item Si 1. et $\forall i, \sum_{j=1}^{i-1}a_{ij}=c_i$, le schéma est consistant d'ordre 1
+            \item Si 1. et 2. et $\sum_{j=1}^{q}b_j c_j=\frac{1}{2}$, le schéma est consistant d'ordre 2
+            \item Si 1. et 2. et 3. et $\sum_{i=1,j=1}^{q}b_i a_{ij}=\frac{1}{6}$ et $\sum_{i=1}^{q}b_j c_i^2=\frac{1}{3}$, le schéma est consistant d'ordre 3.
+        \end{enumerate}
+    \end{tm}
+
+    \begin{proof}
+        \begin{align*}
+            y_{n+1}=y_n+h\phi(t_n,y_n,h_n) \qquad \text{ où $\phi(t,y,h)=\sum_{i=1}^{q}b_n f(t+ c_i h,y_i)$ et $y_i=y+h\sum_{j=1}^{i-1}a_{iy}f(t+c_j h,y_j)$}
+        \end{align*}
+        Le schéma est consistant si $\phi(t,h,0)=f(t,y)$. En $h=0,y_i=y$ et donc
+        \[ \phi(t,y,0)=\left(\sum_{i=1}^{q}b_i \right) f(t,y)=f(t,y)\]
+    \end{proof}
+
+    \begin{tm}{}{}
+        Si $f\in C^0$ en $t,y$ et $L$-Lipschitz en $y$ uniformément en $t$, alors R-K est stable avec comme constante de stabilité $e^{KT}$ où
+        \[K=L\sum_{i=1}^{q} \left| b_i\right|\sum_{j=1}^{i-1}(\alpha L h)^j\text{ où $\alpha = \max |a_{ij}|$}\]
+    \end{tm}
+
+    \begin{ex}{RK4}{}
+        (VOIR PHOTO TABLEAU ET VOIR SUITE)
+    \end{ex}
+
+    \section{Problèmes raides}
+
+    On regarde les cas où la constante de Lipschitz $L$ est grande (ou la pente est raide) (VOIR POUR METTRE LA COURBE D'UNE FONCTION $\frac{1}{x^2}$)\\
+    Si $L>>1$, on a besoin de prendre $h_{max}<<1$, ce qui augmente le nombre d'étapes, ce qui ralentit l'algorithme.
+
+    \subsection{A-stabilité}
+
+    Cette notion est basée sur l'étude d'un système linéaire standard:
+    \[(SL)\qquad \cho{z'(t)=-Lz(t)\\z(0)=y}\quad \text{ avec $L>0$}\]
+    La solution exacte: $z(t)=y_0e^{-Lt}\underset{t\to +\infty}{\longrightarrow} 0$. Plus $L$ est grand, plus $z$ tend vers $0$ de façon raide.
+
+    \begin{df}{}{}
+        Un schéma est A-stable si ce schéma appliqué à $(SL)$ donne $y_n\toninfty 0$ pour tout $L>0$ et pour tout $h$
+    \end{df}
+
+    \begin{re}{}{}
+        Ici, on s'intéresse à $T\to +\infty$ à $h$ fixé.
+    \end{re}
+
+    \begin{ex}{}{}
+        Le schéma d'Euler Explicite n'est pas A-stable.
+        \[y_{n+1}=y_n+h(-L y_n)=(1-hL)y_n\implies y_n=(1-hL)^n y_0\]
+        Si $|1-hL|>1, y_n\toninfty +\infty$, on a besoin de $h<\frac{1}{L}$.
+    \end{ex}
+
+    Plus généralement, tous les schémas R-K explicites ne sont pas A-stable.
+
+    \subsection{Schéma implicites}
+
+    Les schémas dépendent de l'inconnue $y_{n+1}$,
+    \[\cho{y_{n+1}=y_n+h_n\phi (t_n,y_n,y_{n+1},h_n)\\ y_0\in \R}\]
+
+    \begin{ex}{Euler implicite}{}
+        \[y_{n+1}=y_n+h_n f(t_{n+1},y_{n+1})\]
+        Ce schéma est A-stable.
+        \[y_{n+1}=y_n+h(-Ly_{n+1})\implies (1+hL)y_{n+1}=y_n\implies y_n=\frac{1}{(1+hL)^n}y_0\toninfty 0\]
+    \end{ex}
+
+    \chapter{EDP et méthode des différences finies}
+
+    Avant, on a cherché à résoudre le (PC), trouver $I$ et $\funto{z}{I}{\R}$ tel que
+    \[\cho{z'(t)=f(t,z(t))\qquad \text{ sur $I$}\\z(0)=z_0\in I}\]
+    Pour les EDP, $I$ est une donnée du problème et la condition initiale est remplacée par des conditions aux bords de ce domaine.\\
+    On se restreint aux EDP d'ordre 2 et en particulier
+    \begin{itemize}
+        \item Equations elliptiques: $\funto{u}{\Omega}{\R},\cho{-\Delta u=f\text{ sur $\Omega$}\\u=g\text{ sur $\Omega$}}$
+        \item Equations paraboliques: $\cho{\partial_t u(t,x)-\Delta_x u(t,x)=f(t,x)\text{ sur $\Omega$}\\u(t,x)=g(t)\forall t \text{ sur $\partial \Omega$}\\ u(0,x)=u_0(x),\forall x\in \Omega}$
+    \end{itemize}
+
+    \section{Equations elliptiques}
+
+    Dans cette partie, $\Omega =]0,1[$ et on considère:
+    \[-a(x)u''(x)+b(x)u'(x)+c(x)u(x)=f\text{ sur $]0,1[$}\]
+    Avec les conditions de bords (CB) suivantes:
+    \begin{itemize}
+        \item Soit les conditions de Dirichlet: $u(0)=g_0$ et $u(1)=g$
+        \item Soit les conditions de Newmann: $-u'(0)=g_0$ et $u'(1)=g_1$
+        \item Soit les Conditions de Rohn: $u(0)-\alpha u'(0)=g_0$ et $u(1)+\beta u'(1)=g_1$
+    \end{itemize}
+    Dans la suite, on suppose :
+    $a(x)\ge a\ge 0$ et $c(x)\ge 0$
+    
+    \subsection{Cas d'Etude: Equation linéaire à coefficients constants}
+
+    On cherche $u\in C^2(\overline{\Omega})$ tel que
+    \[\cho{u''+bu'+cu=0\\ u(0)=0,u(1)=0}\]
+    On résoud l'EDO sans se soucier des CB: $\lambda^2+b\lambda+c=0\implies \Delta=b^2-4c$.
+
+    \subsection{Problèmes elliptiques: existence et unicité}
+
+    \[(E) \cho{-a(x)u''(x)+b(x)u'(x)+c(x)u(x)=f(x)\text{ sur $]0,1[$}\\\text{+CB}}\]
+
+    \begin{re}{}{}
+        Avec ces hypothèses, on est dans le cas $\Delta=b^2+4ac\ge 0$
+    \end{re}
+
+    \begin{df}{}{}
+        On dit que $u$ est solution de $(E)$ si $u\in C^2(]0,1[)\cap C^1([0,1])$ et satisfait $(E)$ partout.
+    \end{df}
+
+    \begin{tm}{}{}
+        Le problème $(E)$ admet une unique solution $C^2(]0,1[)\cap C^1([0,1])$. De plus, si $a,b,c,f\in C^k$, alors $u\in C^{k+2}$.
+    \end{tm}
+
+    L'unicité découle du principe du maximum.
+
+    \begin{tm}{}{}
+        Soit $u\in C^1([0,1])\cap C^2(]0,1[)$ satisfaisant.
+        \[\cho{-au''+bu'+cu=f\\ u(0)=g_0,u(1)=g_1}\]
+        Avec $a(x)\ge \overline{a}>0,c\ge 0$ alors si $f\ge 0, g_0,g_1\ge 0$ alors $u\ge 0$
+    \end{tm}
+
+    \begin{re}{}{}
+        Pour Neumann, on a besoin de rajouter:
+        \[\exists x_0\in ]0,1[\text{ tel que }c(x_0)>0\]
+    \end{re}
+
+    \begin{proof}
+        \begin{itemize}
+            \item 1ère étape: Montrer que $u$ atteint son minimum au bord $\forall x, u(x)\ge \min(u(0),u(1))$.\\
+            On introduit $v(x)=u(x)-\epsilon e^{\lambda x}$ avec $\epsilon>0$ et $\lambda>0$ à déterminer
+            \[u'=v'+\epsilon \lambda e^{\lambda x}\text{ et }u'' = v'' +\epsilon \lambda^2 e^{\lambda x}\]
+            \[\cho{-a(x)(v''+\epsilon \lambda^2 e^{\lambda x})+b(x)(v'+\epsilon \lambda e^{\lambda x}=f(x))\\ v(0)=g_0-\epsilon,v(1=g_1-\epsilon)}\]
+            \[\implies \cho{-av''+bv'=f+\epsilon\lambda e^{\lambda x}(a\lambda-b)\\ v(0)=g_0-\epsilon},v(1)=g_1-\epsilon\]
+            On fixe $\lambda $ tel que $\overline{a}\lambda>\norme{b}_{\infty}\implies \forall x, a(x)\lambda>b(x)$.\\
+            On a alors $f(x)+\epsilon \lambda e^{\lambda x}(a\lambda - b)>0,\forall x$.\\
+            Montrons que $v\ge \min (v(0),v(1))$. Par l'absurde, on suppose que $v$ atteint son minimum en $x_0\in ]0,1[$.\\
+            $\implies$ absurdité sur le signe des équations. donc $v(x)\ge \min (v(0),v(1))\implies u(x)\ge u(x)-\epsilon e^{\lambda x}\ge \min(u(0-\epsilon,u(1-\epsilon))),\epsilon \searrow 0$ donne le résultat
+            \item 2ème étape: $c\ge 0$, idée: On essaye de se ramener à $c=0$.\\
+            On suppose qu'il existe $x_0\in ]0,1[$ tel que $\min(u)=u(x_0)<0$. Par l'absurde:\\
+            Par continuité, $\exists [x_1 ,x_2 ]\subset [0,1]$ tel que $\cho{u(x)<0\text{ sur $]x_1,x_2[$}\\u(x_1)=u(x_2)=0}$ \\
+            Sur $[x_1,x_2]$, $u$ vérifie:
+            \[\cho{-}\]
+            (VOIR PHOTO)
+        \end{itemize}
+    \end{proof}
+
+    \subsection{Différences finies}
+
+    On peut approcher une dérivée par le taux d'accroissement.
+
+    \begin{df}{}{}
+        $r\subset \R,x\in r,h>0$ tel que $x+h,x\cdot h\in \Omega,\funto{u}{\Omega}{\R}$. On définit les opérateurs de différences finies:
+        \begin{itemize}
+            \item Vers l'avant (A droite) par $D_h^+ u(x)=\frac{u(x+h)-u(x)}{h}$
+            \item Vers l'arrière (A gauche) par $D_h^- u(x)=\frac{u(x)-u(x+h)}{h}$
+            \item Centré par $C_h^c u(x)=\frac{u(x+h)-u(x-h)}{2h}$
+            \item $D_h^2 u(x)=\frac{u(x+h)-2u(x)+u(x-h)}{h^2}$
+        \end{itemize}
+    \end{df}
+
+    \begin{prop}{}{}
+        Soit $\funto{u}{\overline{\Omega}}{\R},x\in \Omega$, $h$ assez petit,
+        \begin{itemize}
+            \item Si $u\in C^2,|u'(x)-D_h^{\pm} u(x)|\le Ch$
+            \item Si $u\in C^3, |u'(x)-D_h^c u(x)|\le Ch^2$
+        \end{itemize}
+    \end{prop}
+
+    \begin{proof}
+        Laisser à faire (Par les développements de Taylor)
+    \end{proof}
+
+    \subsection{Applications}
+    
+    On s'intéresse à
+    \[(E)\cho{-u''+cu=f\\u(0)=g_0,u(1)=g_1}\]
+    On va chercher une solution approchée sur une discrétisation de l'intervalle $I$ $x_0=0<x_1<\ldots<x_{N+1}=1$.\\
+    On suppose qu'il y a $N$ points à l'intérieur de l'intervalle.\\
+    En tout, on a $N+2$ points.
+    Pour simplifier, on suppose que les $(x_i)$ sont uniformément distribuées. $x_i=ih$ avec $h=\frac{1}{N+1}$
+
+    \begin{df}{}{}
+        Soit $h>0,(x_i)$ le maillage associé à $h$. On définit l'opérateur d'échantillonage associé au maillage $\funto{\Pi_h}{C^0(I)}{\R^{N+2}}$ qui renvoie les $(u(x_0),u(x_1),\ldots,u(x_{N+1}))$.\\
+        On cherche un vecteur $U_h=(u_0,\ldots,u_{N+1})$ tel que $u_i=\Pi_h(u)_i$ où $u$ est la vraie solution.
+    \end{df}
+
+    Sur les bords de l'intervalle, $u_0=g_0$ et $u_{N+1}=g_1$\\
+    A l'intérieur, on utilise $D_h^2 u $ pour approcher $u''$.\\
+    VOIR PHOTO
+    \subsubsection*{Principe du maximum discret}
+
+    \begin{df}{}{}
+        On dit que $A\in M_n(\R)$ est monotone si $\forall x\in \R^n,Ax\ge 0\implies x\ge 0$
+    \end{df}
+
+    \begin{tm}{}{}
+        $A_h$ est monotone
+    \end{tm}
+
+    \begin{proof}
+        VOIR PHOTO
+    \end{proof}
+
+    \begin{tm}{}{}
+        Si $A\in M_n(\R)$ est monotone:
+        \begin{enumerate}
+            \item $A$ est inversible
+            \item $A^{-1}$ est positive*
+            \item $\norme{A^{-1}}_\infty=\norme{A^{-1}E}_\infty$ avec $E=(1,\ldots,1)$
+        \end{enumerate}
+    \end{tm}
+
+    \begin{proof}
+        VOIR PHOTO
+    \end{proof}
+
+    \subsubsection*{Consistance de la méthode}
+
+    \begin{df}{}{}
+        On appelle erreur dde consistance (relative à la solution $u$) pour le schéma aux différences finies, le vecteur
+        \[E_h=A_h \Pi_h(u)-F_h\]
+        On dit que le schéma est consistant si $\norme{E_h(u)}_\infty\toninfty 0$.\\
+        De plus, le schéma est dit consistant d'ordre $p$ si il existe $h>0$ et $c>0$ tel que $\forall 0<h\le h_0, \norme{E_h(u)}_\infty\le Ch^p$
+    \end{df}
+
+    \begin{tm}{}{}
+        Soit $u\in C^4(I)$ et $E_h(u)$ l'erreur de consistance, alors
+        \[\norme{E_h(u)}_\infty\le \frac{h^2}{12}\norme{u^{(4)}}_\infty\]
+    \end{tm}
+
+    \begin{proof}
+        VOIR PHOTO
+    \end{proof}
+
+    \subsubsection*{Stabilité de la méthode}
+
+    \begin{df}{}{}
+        On dit que le schéma est stable s'il existe $S>0$ tel que:
+        \[\forall U_h,\tilde{U_h},\epsilon,\cho{U_h=F_h\\ A_h \tilde{U_h}=F_h+\epsilon}\implies \norme{U_h-\tilde{U_h}}_\infty\le S\norme{\epsilon}_\infty\]
+    \end{df}
+
+    \begin{re}{}{}
+        Si le schéma est stable, $A_h$ est inversible
+        \begin{align*}
+            \norme{U_h-U_h}_\infty\le S\norme{\epsilon}_\infty=S\norme{A_hU_h-A_h\tilde{U_h}}_\infty=S\norme{A_h(U_h-\tilde{U_h})}_\infty
+        \end{align*}
+    \end{re}
+
+    \begin{lm}{Critère de stabilité}{}
+        Le schéma est stable \ssi $A_h$ est inversible et $|||A_h^{-1}|||\le S$
+    \end{lm}
+
+    \begin{proof}
+        $\implies$ Stabilité $\implies A_h$ inversible\\
+        On obtient le résultat par définition.\\
+        $\impliedby$ Immédiat, donc on doit borner $|||A_h^{-1}|||_\infty$. On sait que $A_h^{-1}\ge 0$
+    \end{proof}
+
+    \begin{lm}{}{}
+        $|||A_h^{-1}|||_\infty\le \frac{9}{8}$
+    \end{lm}
+
+    \subsubsection*{Convergence}
+
+    \begin{tm}{}{}
+        Si le schéma est consistant d'ordre $p$, $\norme{E_h(u)}_\infty\le Ch^p$ et staable alors le schéma est convergent d'ordre $p$.
+        \[\norme{\Pi_h(u)-U_h}_\infty\le CSh^p\]
+    \end{tm}
+
+    \section{Equations paraboliques}
+
+    On s'interesse à un domaine temps$\times$espace.On note
+    \begin{align*}
+        \overline{Q_T}&=[0,T]\times[0,1]\\
+        Q_T&=]0,T[\times [0,1]
+    \end{align*}
+    On cherche une solution à
+    \[(P)\cho{\partial_t u(t,x)-Q(x)\partial_{xx}u(t,x)+b(x)\partial_x u(t,x)+c(x)u(t,x)=f(t,x)\\
+    u(0,x)=u_0(x)\\
+    u(t,0)=g_0\\
+    u(t,1)=g_1}\]
+    Pour simplifier, on va regarder l'équation de la chaleur:
+    \[\cho{\partial_t u(t,x)-\nu \partial_{xx}^2 u(t,x)=f(t,x)\\
+    u(0,\cdot)=u_0\\
+    \text{ CB=(Dirichlet,Newman,\ldots)}}\]
+
+    \subsection{Quelques résultats théoriques}
+
+    On note
+    \[\Cr^1_t \Cr^{2}_x(Q_T):=\{\funto{u}{\overline{Q_T}}{\R},u,\partial_t u,\partial_x u,\partial_{xx}^2 u\in \Cr^0(Q_T)\}\]
+    
+    \begin{tm}{}{}
+        Soit $f\in \Cr^0(Q_T)$ et $a\ge\overline{a}\ge 0,b,c>0\in\Cr^0,g_0,g_1\in \Cr^{0}([0,T])$, alors il existe une unique solution $u\in \Cr^1_t \Cr^{2}_x(Q_T)$
+    \end{tm}
+
+    Un des résultats importants: le principe du maximum
+
+    \begin{tm}{Principe du maximum}{}
+        Soit $u\in\Cr^1_t \Cr^{2}_x(Q_T)\cap \Cr^{0}(\overline{Q_T})$ solution de (P), alors $u$ vérifie:
+        \[\norme{u}_\infty\le\norme{u_0}_\infty+T\norme{f}_\infty\]
+        De plus, si $f\ge 0,g_0\ge 0,g_1\ge 0,u_0\ge 0\implies u\ge 0$ dans $\overline{Q_T}$
+    \end{tm}
+
+    \begin{lm}{}{}
+        Soit $f\ge 0$,
+        \[\min_{(t,x)\in \overline{Q_T}} u(t,x)\ge \min(u_0,g_0,g_1)=\min_{\partial Q_T}u\]
+    \end{lm}
+
+    \subsection{Discrétisation du problème}
+
+    (Voir photo schéma)
+
+    \[t_0=0<t_1<\ldots<t_N=T\]
+    $M+1$ points en temps, $t_n= nk $, $k=\frac{T}{N}$. $x_0=0<x_1<\ldots<x_{N+1}=1$.\\
+    $N$ points à l'intérieur du domaine + les 2 bords, $x_i=i\, dx,dx=\frac{1}{N+1}$.\\
+    et une subdivision (uniforme) en espace.\\
+    On prend $M$ points à l'intérieur du domaine $]0,1[$,$x_i=ih,h=\frac{1}{M+1}$.\\
+    On définit $\funto{\Pi^n_{h,k}}{\Cr([0,T]\times [0,1])}{\R^{M+2}}$ l'opérateur d'échantillonage de $u$ au temps $t_n$
+    \[\Pi^n_{h,k}=\left(\begin{matrix}
+        u(t_n,x_0)\\
+        \vdots\\
+        u(t_n,x_{n+1})
+    \end{matrix}\right)\]
+    Idée de la discrétisation:
+    \[\partial_t u(t_n,x_i)\cong\frac{u(t_{n+1},x_i)-u(t_n,x_i)}{k}\]
+    1er choix: Méthode explicite\\
+    (Voir photo graphe)
+    \[\frac{u(t_{n+1},x_i)-u(t_n,x_i)}{k}=\nu \partial_{xx}^2u(t_n,x_i)+f(t_n,x_i)\]
+    On note $U_i^n$ l'approximation de $u(t_n,x_i)$
+    \begin{itemize}
+        \item C.I.: $U_i^0=u_0(x_i)$
+        \item C.B.: $U_0^n=g_0,U_{M+1}^n=g_1,\forall n\in \llbracket 0,N\rrbracket$
+        \item $\forall i\in \llbracket 1,M\rrbracket,\frac{U_i^{n+1}-U_i^n}{k}-\nu\left(\frac{U_{i+1}^n-2U_i^n+U_{i-1}^n}{h^2}\right)=f_i^n,f_i^n=f(t_n,x_i)$.
+    \end{itemize}
+    Forme Matricielle: $U^n=\begin{matrix}
+        U_0^n\\
+        \vdots\\
+        U_{n+1}^n
+    \end{matrix}\in \R^{n+2}$
+    \[U^{n+1}=U^n-\frac{\nu k}{h^2}A^0 U^n+kF_{k,h},A^0=\left(\begin{matrix}
+        0&&\\
+        -1&2&-1\\
+        &\ddots&\\
+        &&\\
+        0&\cdots&
+    \end{matrix}\right),F_{h,k}^n=\left(\begin{matrix}
+        0\\
+        f(t_n,x_1)\\
+        \vdots\\
+        f(t_n,x_{N})\\
+        0
+    \end{matrix}\right)\]
+    (Voir photo pour matrice +vect)\\
+    2ème choix: Méthode implicite:\\
+    Formellement, "$u(t_{n+1},x_i)-u(t_n,x_i)\cong \nu \partial_{xx}^2u(t_{n+1},x_i)+f^n$"\\
+    Forme matricielle:
+    \[U^{n+1}+\frac{\nu k}{h^2}A^0 U^{n+1}=U^n+kF_{h,k}^n\implies \left(I+\frac{\nu k}{h^2}A^0 \right)U^{n+1}=U^n+kF_{h,k}^n\]
+    On veut montrer la convergence de l'algorithme (Pour la métode explicite)\\
+    (Voir photo)\\
+    
+    \begin{tm}{}{}
+        On suppose que la solution du problème parabolique, $u\in \Cr^2_t\Cr^4_x(\overline{Q})$. Alors le schéma explicite est consistant d'ordre 1 en temps et 2 en espace.
+        \[\max_n\norme{T_{h,k}^n(u)}_{\infty}\le c(k+h^2)\]
+    \end{tm}
+
+    \begin{proof}
+        VOIR PHOTO
+    \end{proof}
+
+    \chapter{Formulation faible des EDP elliptiques}
+
+    (Voir photo)
+
+    \section{Dérivées faibles et espaces de Sobolev}
+    \[\Omega=]a,b[\]
+    On note $\Cr_C^\infty(\Omega)=\Dr$ les fonctions $C^\infty$ à support compact dans $\Omega$
+
+    \begin{lm}{}{}
+        Soit $u\in L^p(\Omega)$
+        \begin{enumerate}
+            \item Si $\forall \varphi\in \Cr_C^\infty(\Omega),\int u\varphi=0$, alors $u=0$ p.p.
+            \item Si $\forall \varphi\in \Cr_C^\infty(\Omega)$, $\int u\varphi'=0$, alors $u=C$ p.p.
+        \end{enumerate}
+    \end{lm}
+
+    \subsection{Dérivées faibles}
+
+    On cherche à donner un sens à la dérivée d'une fonction $u\in L^1_{\text{loc}}(\Omega)$
+
+    \begin{re}{}{}
+        Si $u\in \Cr^1,\forall \varphi \in \Cr_C^{\infty}$
+        \[\int_{\Omega}u'\varphi\, dx=-\int_{\Omega}u\varphi'\]
+    \end{re}
+
+    \begin{df}{}{}
+        Soit $u\in L^1_{\text{loc}}(\Omega)$, on dit que $u$ admet une dérivée au sens faible si il existe une fonction $v\in L^1_{\text{loc}}(\Omega)$ telle que
+        \[\forall varphi\in \Cr_C^{\infty}(\Omega),\int_{\Omega}v \varphi=-\int_{\Omega} u\varphi'\]
+        Et on note $Du:=v$
+    \end{df}
+
+    \begin{re}{}{}
+        \begin{itemize}
+            \item Si $u\in \Cr^1,Du=u'$
+            \item Il y a unicité de la dérivée p.p.
+        \end{itemize}
+    \end{re}
+
+    \begin{df}{Espace de Sobolev}{}
+        Pour $p\ge 1$,
+        \[W^{1,p}(\Omega)=\{u\in L^p(\Omega),Du\in L^p\}\]
+        Si $p=2$, on note $H^1=W^{1,2}$
+    \end{df}
+
+    \begin{prop}{}{}
+        L'espace $H^1$ muni du scalaire
+        \[\sca{u,v}_{H'}=\int_{\Omega}uv+\int_{\Omega}Du Dv\]
+        est un Hilbert
+    \end{prop}
+
+    \begin{proof}
+        Laisser en exercice (surtout la complétude)
+    \end{proof}
+
+    \subsubsection*{Régularité en dimension 1}
+
+    \begin{tm}{}{}
+        Si $u\in W^{1,p}(\Omega),\Omega\subset \R$, alors $u$ admet un représentant dans $\overline{\Omega}$ et $\forall x,y\in \Omega,u(x)-u(y)=\int_y^x Du$.\\
+        De plus, 
+        \[\left|u(x)-u(y)\right|\le C\left|x-y\right|^{1-\frac{1}{p}}\]
+    \end{tm}
+
+    \begin{proof}
+        $\Omega=[a,b]$, on pose $\xi(x)=\int_a^x Du$, $\forall \varphi\in C_C^\infty(\Omega)$
+        \begin{align*}
+            \int_\Omega \xi \varphi'&=\int_\Omega\int_a^x Du(t)\varphi'(x)=\int_a^b Du(x)\int_x^b\varphi'(t)\, dt\, dx\\
+            &=-\int_a^b Du(x)\varphi(x)\\
+            &=\int_a^b u\varphi'
+        \end{align*}
+        D'où $u(x)=C+\xi(x)$ p.p., or $\xi $ est continue, et donc $u$ est continue. Puis utiliser Holder pour l'inégalité.
+    \end{proof}
+
+    \begin{tm}{Fonction évaluation}{}
+        $\forall x\in \overline{\Omega}$ l'application
+        \[\fundfto{e_x}{W^{1,p}(\Omega)}{\R}{u}{u(x)}\]
+        est linéaire continue
+    \end{tm}
+
+    \begin{df}{}{}
+        On appelle trace de $u$ l'opérateur
+        \[\funto{T}{H^1(\Omega)}{L^2(\Omega)}\]
+        et cet opérateur est linéaire continue
+    \end{df}
+
+    \begin{df}{}{}
+        On note $H_0^1(\Omega)$ l'espace des fonctions $H^1$ telle que $T(u)=0$ i.e. en dimension $1$, pour $\Omega=[a,b]$,
+        \[H_0^1\{u\in H^1,u(a)=0,u(b)=0\}\]
+    \end{df}
+
+    \begin{re}{}{}
+        Autre définition équivalente, pour $\Omega$ ouvert,
+        \[H_0^1(\Omega)=\overline{C_C^\infty(\Omega)}\]
+    \end{re}
+
+    \subsubsection*{Approximation}
+
+    \begin{tm}{}{}
+        \begin{itemize}
+            \item $C^1(\overline{\Omega})$ est dense dans $H^1(\Omega)$ si $\Omega$ est ouvert Lipschitz.
+            \item $C_C^\infty(\Omega)$ est dense dans $H_0^1(\Omega)$
+        \end{itemize}
+    \end{tm}
+
+    \subsubsection*{Compacité et inégalités (Brezis)}
+
+    \begin{tm}{Théorème de Bellich-Kondrachof}{}
+        $\Omega$ ouvert borné, $\partial \Omega$ $\Cr^1$ alors $H^1\hookrightarrow L^2(\Omega)$ est compact i.e.
+        \begin{enumerate}
+            \item $\exists C>0$ tel que $\forall u\in H^1,\norme{u}_{H^1}\le C\norme{u}_{L^2}$
+            \item Toutes suites bornées de $H^1$ admet une sous-suite qui converge dans $L^2(\Omega)$
+        \end{enumerate}
+    \end{tm}
+
+    \begin{prop}{Inégalité de Poincaré}{}
+        Soit $\Omega$ un ouvert borné alors il existe $C>0$ tel que $\forall u \in H_0^1(\Omega)$,
+        \[\norme{u}_{L^2}\le C\norme{Du}_{L^2}\]
+    \end{prop}
+
+    \begin{proof}
+        $\Omega=]a,b[$,
+        \begin{align*}
+            u(x)-\underset{=0}{u(a)}&=\int_a^x Du\\
+            \implies |u(x)|&\underset{\text{C.S.}}{\le} \int _a^x|Du|\\
+            &\le \sqrt{x-a}\norme{Du}_{L^2}\\
+            &\le \sqrt{b-a}\norme{Du}_{L^2}
+        \end{align*}
+    \end{proof}
+
+    \section{Formulation faible abstraite}
+
+    But: Résoudre $\cho{-u''+cu=f\quad\text{ sur $\Omega=]0,1[$}\\ u(0)=0,u(1)=0}$.\\
+    $\forall \varphi\in C_C^\infty(\Omega)$,
+    \[-\int u''\varphi+\int cu\varphi=\int f\varphi\iff \underset{a(u,\varphi)}{\int u'\varphi'+\int cu\varphi}=\underset{l(\varphi)}{\int f\varphi}\]
+    On cherche $uu\in H_0^1$ tel que $a(u,\varphi)=l(\varphi)$ pour tout $\varphi \in C_C^\infty(\Omega)$.\\
+    Par densité, le problème est équivalent à chercher $u\in H_0^1(\Omega)$ tel que
+    \[\forall v\in H_0^1(\Omega),a(u,v)=l(v)\]
+    Ce $u$ sera une solution faible de l'EDO.
+
+    \subsubsection*{Formulation faible abstraite}
+
+    Soit $H$ un Hilbert,
+    \[\funto{a}{H\times H}{\R}\qquad \funto{l}{H}{\R}\]
+    On cherche $u\in H$ tel que $\forall v\in H,a(u,v)=l(v)$
+
+    \begin{df}{}{}
+        Soit $\funto{l}{H}{\R}$ linéaire, $\funto{a}{H\times H}{\R}$ bilinéaire,
+        \begin{itemize}
+            \item On dit que $m$ est continue si $\exists c>0$,
+            \[\forall v\in H,|l(v)|\le C\norme{v}_H\]
+            \item $a$ est $C^0$ si $\exists C>0$ tel que
+            \[\forall u,v\in H,\left|a(u,v)\right|\le C\norme{u}_H\norme{v}_H\]
+            \item $a$ est coercive si $\exists \alpha >0$ tel que
+            \[\forall u\in H, a(u,u)\ge \alpha \norme{u}_H^2\]
+            \item $a$ symétrique si $\forall u,v\qquad a(u,v)=a(v,u)$
+        \end{itemize}
+    \end{df}
+
+    \subsubsection*{1er cas: $a(\cdot,\cdot)=\sca{\cdot,cdot}_H$}
+
+    \begin{tm}{Théorème de représentation de Riesz}{}
+        Soit $l$ une forme linéaire continue sur $H$,
+        \[\exists! u\in H,\forall v\in H,l(v)=\sca{u,v}\]
+    \end{tm}
+
+    \begin{proof}
+        $\text{ker} l$ est un hyperplan fermé $\implies \dim (\text{ker} l)^{\perp}=1\implies \exists e\in H\wt \{0\}$ tel que $(\text{ker}l)^{\perp}=\R e$.\\
+        On pose $u=\frac{e}{\norme{e}^2}l(e)$\\
+        $v\in H,v=v_1+\lambda e,\qquad l(v)=\lambda(e)$
+        \begin{align*}
+            \sca{u,v}&=\sca{\frac{l(e)}{\norme{e}^2}e,v}+\sca{\frac{l(e)}{\norme{e}^2}e,\lambda e}\\
+            &=\lambda \frac{\lambda l(e)}{\norme{e}^2}\norme{e}^2\\
+            &=\lambda l(e)=l(v)
+        \end{align*}
+    \end{proof}
+
+    \subsubsection*{2ème cas:}
+
+    \begin{tm}{Théorème de Lax-Milgram}{}
+        Soit $\funto{a}{H\times H}{\R}$ une forme bilinéaire continue et coercive et $\funto{l}{H}{\R}$ une forme linéaire continue, alors $\exists! u\in H$,
+        \[\forall v\in H, l(v)=a(u,v)\]
+        De plus, si $a$ est symétrique,
+        \[u=\text{argmin}\frac{1}{2} a(v,v)-l(v)\]
+    \end{tm}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item $\exists! \funto{A}{H}{H}$ tel que
+            \[a(u,v)=\sca{A(u),v},\forall v\in H\]
+            On considère $\fundfto{L}{H}{\R}{v}{a(u,v)}$ forme linéaire continue. D'après le théorème de Riesz, $\exists! \overline{u}$ tel que $L(v)=\sca{\overline{u},v}$. On pose $A(u)=\overline{u}$ bien définie par existence et unicité de $\overline{u}$.\\
+            Si $A$ $\Cr^0$ bijective, alors on a le résultat car d'après Riesz, $\exists! u$ tel que $l(v)=\sca{u,v}=a(A^{-1}(u),v),\forall v\in H$.\\
+            Montrons que $A$ est continue bijective:\\
+            $A$ linéaire par linéarité du produit scalaire et unicité du point dans Riesz.\\
+            Continuité:\begin{align*}
+                \norme{A(u)}^2&=\sca{A(u),A(u)}\\
+                &=a(u,A(u))\\
+                &\le C\norme{u}\norme{A(u)} \implies \norme{A(u)}^2\le C\norme{u}
+            \end{align*}
+            $A$ injective:
+            \begin{align*}
+                \sca{A(u),u}=a(u,u)\overset{\text{coercivité}}{\ge} \alpha \norme{u}^2&\implies \norme{A(u)}\norme{u}\ge \alpha \norme{u}^2\\
+                &\implies \norme{A(u)}\ge \alpha \norme{u}
+            \end{align*}
+            Donc $A(u)=0\implies u=0$\\
+            $A$ surjective: Soit $w\in H$, on cherche $v$ tel que $A(v)=w$. On définit $T(v)=v-\lambda (A(v)-w)$,$\lambda>0$.
+            Montrons que $T(v)$ est contractante:
+            \begin{align*}
+                \norme{T(v)-T(u)}^2&=\norme{u-v}^-2\lambda\sca{u-v,A(u)-A(v)} +\lambda^2\norme{A(u)-A(v)}^2\\
+                &\le \norme{u-v}^2-2\lambda \alpha \norme{u-v}^2+\lambda^2C^2\norme{u-v}^2\\
+                &\le (1-2\lambda \alpha +\lambda^2C^2)\norme{u-v}^2 
+            \end{align*}
+            Pour $\lambda$ assez petit,on obtient la bijectivité.
+        \end{enumerate}
+    \end{proof}
+
+    \begin{re}{}{}
+        D'après l'inégalité de Poincaré, $\norme{u}_{H_0^1}=\norme{u'}_{L^2}$ est une norme équivalente
+    \end{re}
+
+    Application: Résolution de 
+    \[\cho{-u''+cu=f\qquad ]0,1[\\ u(0)=0,u(1)=0}\]
+    Avec $c\in L^\infty([0,1]),f\in L^2(]0,1[),c(x)\ge c_0> 0$.
+
+    \begin{itemize}
+        \item 1ère étape: Trouver $H$.
+        Si conditions de bord \begin{itemize}
+            \item Dirichlet homogène : $H=H_0^1$
+            \item Neumann homogène : $H=H^1$
+        \end{itemize}
+        \item 2ème étape: Chercher la formulation faible. On suppose $u$ solution classique de l'EE, sooit $\varphi \in \Cr_C^\infty(]0,1[)$,
+        \[(-u''+cu)\varphi= f\varphi,\text{ on intègre : }-\int_0^1 u''\varphi +cu\varphi= \int_{0}^{1}f \varphi\]
+        On fait une IPP:
+        \begin{align*}
+            -\int u'' \varphi&=-\underset{=0}{[u'\varphi]_0^1}+\int_{0}^{1}u'\varphi'\\
+            \implies \int_{0}^{1} u'\varphi'+\int_{0}^{1} cu\varphi&=\int_{0}^{1}f\varphi
+        \end{align*}
+        Par densité, c'est vraie pour tout $v\in H^1_0$.\\
+        \[\underset{a(u,v)}{\int_{0}^{1}u'v'+\int_{0}^{1} cuv}=\underset{f(v)}{\int_{0}^{1} fv}\]
+        \item 3ème étape: Existence de solution faible. On utilise le théorème de Lax-Milgram. $a$ est bilinéaire par linéarité de l'intégrale et $a$ est continue: $\forall u,v\in H_0^1$,
+        \begin{align*}
+            |a(u,v)|&=|\int_{0}^{1} u'v'+\int_{0}^{1}cuv|\\
+            &\le \int_{0}^{1}|u'||v'|+\int_{0}^{1} c|u||v|\\
+            \overset{\text{C.S}}{\le } \left(\int_{0}^{1}|u'|^2\right)^{\frac{1}{2}}\left(\int_{0}^{1} |v'|^2\right)^{\frac{1}{2}}+\norme{c}_{\infty}\left(\int_{0}^{1}|u|^2\right)^{\frac{1}{2}}\left(\int_{0}^{1} |v|^2\right)^{\frac{1}{2}}
+        \end{align*}
+        $H_0^1$ est muni de la norme induit de $H'$
+        \[\norme{u}_{H^1}^2=\norme{u'}_{L^2}^2+\norme{u}_{L^2}^2\]
+        $a$ coercive: Soit $u\in H_0^1$,
+        \begin{align*}
+            a(u,u)&=\int_{0}^{1}|u'|^2 +\int_{0}^{1}cu^2\\
+            &\ge \int_{0}^{1}|u'|^2+c_0\int_{0}^{1}u^2\ge \min(1,c_0)\norme{u}_{H^1}^2
+        \end{align*}
+        $l$ est linéaire par linéarité de l'intégrale.\\
+        $l$ est continue:
+        \[l(v)=\int_{0}^{1}fv\overset{\text{C-S}}{\le} \left(\int f^2\right)^{\frac{1}{2}}\left(\int v^2\right)^{\frac{1}{2}}\le \norme{f}_{L^2}\norme{v}_{H^1}\]
+        D'après le théorème de Lax-Milgram, $\exists!$ solution $u\in H_0^1$ tel que $\forall v\in H_0^1$
+        \[\int u'v'+\int c uv=\int fv\]
+        \item 4ème étape: Si $f$ est $\Cr^0$, $c$ est $\Cr^0$, montrer que $u$ est solution forte si possible
+    \end{itemize}
+
+    \begin{re}{}{}
+        Dirichlet non-homogène:
+        \[\cho{-u''+cu=f\\ u(0)=\alpha, u(1)=\beta}\]
+    \end{re}
+
+    On introduit la fonction relevée qui releve les conditions de bords:
+    \[\cho{\overline{u}(x)=(1-x)\alpha +x\beta\\ \overline{u}(0)=\alpha, \overline{u}(1)=\beta}\]
+    Et on pose $u_0=u-\overline{u}$. $u_0$ satisfait:
+    \[(E_0)\qquad\cho{u_0''+cu_0=f-c\overline{u}\\ u_0(0)=0,u_0(1)=0}\]
+    On cherche $u_0\in H_0^1$ solution faible de $(E_0)$ puis on a: $u=u_0-\overline{u}$
+
+    \begin{re}{}{}
+        Même raisonnement pour
+        \[\cho{-\div (A\nabla u)+cu=f\text{ sur $\Omega$}\\ u(0)=0\text{ sur $\partial \Omega$}}\]
+        Car $A>0$
+    \end{re}
+
+    \chapter{Méthode des éléments finis (EF) pour les équations elliptiques}
+    On cherche une méthode pour approcher $u\in H$ Hilbert séparable tel que $\forall v\in H, a(u,v)=l(v)$
+
+    \section{Méthode de Galerkin}
+
+    Idée: Résoudre le problème exacte dans des espaces de dimension fini $H_n$.\\
+    On se donne une suite d'espaces $(H_n)_n$ telle que
+    \begin{itemize}
+        \item $\dim H_n=n$\\
+        \item $M_n\subset H_{n+1},\forall n$
+        \item $\bigcup_n H_n=H$
+    \end{itemize}
+
+    \begin{prop}{}{}
+        \begin{itemize}
+            \item Si $\funto{a}{H\times H}{\R}$ est bilinéaire, coercive, continue, alors $\funto{a}{H_n\times H_n}{\R}$ l'est aussi
+            \item Si $\funto{l}{H}{\R}$ est linéaire continue, alors $\funto{l}{H_n}{\R}$ l'est aussi
+        \end{itemize}
+    \end{prop}
+
+    \begin{cor}{}{}
+        Si $\funto{a}{H\times H}{\R}$ bilinéaire, continue, coercice et $\funto{l}{H}{\R}$ linéaire et continue, alors:
+        \[\forall n,\exists! u_n\in H_n\text{ tq }\forall v_n\in H_n,a(u_n,v_n)=l(v_n)\]
+    \end{cor}
+
+    \begin{proof}
+        Immédiat par Lax-Milgram
+    \end{proof}
+
+    \begin{lm}{Lemme de Céa}{}
+        Soit $H$ un Hilbert, $(H_n)_n$ une suite de sous-espaces fermés, $\funto{a}{H\times H}{\R}$ bilinéaire, $M$-continue et $\alpha$ coercive, $\funto{l}{H}{\R}$ linéaire, continue (Voir nicolas p.7).
+    \end{lm}
+\end{document}

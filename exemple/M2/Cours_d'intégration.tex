@@ -1,0 +1,107 @@
+\documentclass[]{report}
+
+\usepackage{import}
+
+\import{../}{settings.tex}
+
+\title{Cours d'intégration pour l'agrégation}
+
+\author{Cours de David GERARD-VARET, transcrit par SADR TAHOURI Luca}
+\date{}
+
+\begin{document}
+
+    \maketitle
+    \tableofcontents
+
+\chapter{Intégrale de Lebesgue}
+
+\section{Fonctions mesurables}
+
+\begin{df}{Fonctions mesurables}{}
+    $(X,\Ar),(Y,\Br)$ espaces mesurables. $\funto{f}{X}{Y}$ est mesurable si
+    \[\forall B\in \Br,f^{-1}(B)\in \Ar\]
+\end{df}
+
+\begin{prop}{}{}
+    Si $\Kr\subset \Br$ est telle que $\sigma(K)=\Br$, alors $\funto{f}{X}{Y}$ est mesurable si
+    \[\forall K\in \Kr,f^{-1}(K)\in A\]
+\end{prop}
+
+\begin{prop}{}{}
+    Soient $(X,d)$ et $(Y,d')$ 2 espaces métriques, $\funto{f}{X}{Y}$ continue. Alors $f$ est mesurable comme application de $(X,\Br(X))$ dans $(Y,\Br(Y))$
+\end{prop}
+
+\begin{lm}{}{}
+    La composée de fonctions mesurables est mesurable.
+\end{lm}
+
+\begin{lm}{}{}
+    \begin{align*}
+        \funto{f_1}{(X,\Ar)}{(Y_1,\Br_1)}\\
+        \funto{f_2}{(X,\Ar)}{(Y_2,\Br_2)}
+    \end{align*}
+    Alors
+    \[\funto{(f_1,f_2)}{(X,\Ar)}{(Y_1\times Y_2,\Br_1\otimes \Br_2)}\]
+    est mesurable si et seulement si $f_1$ et $f_2$ le sont.
+\end{lm}
+
+\begin{cor}{}{}
+    Si $\funto{f,g}{(X,\Ar)}{(\R,\Br(\R))}$ sont mesurables, alors
+    \[f+g,f\circ g, \min (f,g), max (f,g),\left|f\right|\]
+    sont mesurables
+\end{cor}
+
+\begin{prop}{}{}
+    $\funto{f_n}{(X,\Ar)}{(\overline{\R},\Br(\overline{\R}))},n\in \N$ suite de fonctions mesurables. Alors,
+    \[\inf_n f_n, \sup_n f_n, \liminf f_n, \limsup f_n\]
+    sont mesurables. En particulier, si $(f_n)_\nN$ est une suite de fonctions mesurables qui converge simplement vers $f$, alors $f$ est mesurable.
+\end{prop}
+
+\begin{df}{Fonctions simples}{}
+    Une fonctin $\funto{f}{(X,\Ar)}{\R}$ est dite simple si elle s'écrit
+    \[f=\sum_{i=1}^{n}\alpha_i \1_{A_i},n\in \N,\alpha_1,\ldots,\alpha_n\in \R,A_1,\ldots,A_n\in \Br(\R)\]
+    On prendra $A_i=f^{-1}(\{\alpha_i\})$
+\end{df}
+
+\begin{tm}{}{}
+    Si $\funto{f}{(X,\Ar)}{\left([0,+\infty],\Br([0,+\infty])\right)}$ mesurable, alors il existe une suite croissante $(f_{n+1}\ge f_n)$ de fonctions simples $\ge 0$ qui converge simplement vers $f$
+\end{tm}
+
+\section{Intégrale d'une fonction positive}
+
+\begin{df}{Intégrale d'une fonction simple positive}{}
+    Soit $(X,\Ar,\mu)$ un espace mesuré, $\funto{f}{X}{\R}$ fonction simple et
+    \[f=\sum \alpha_i \1_{A_i} \text{ sa décomposition canonique}\]
+    On définit l'intégrale de $f$:
+    \[\int f \, d\mu=\sum_{i=1}^{n} \alpha_i \mu(A_i)\]
+    avec comme convention $0\times +\infty = 0$.\\
+    On remarque qu'on peut avoir $\int f\, d\mu=+\infty$. ($f=1$)
+\end{df}
+
+\begin{prop}{}{}
+    \begin{itemize}
+        \item Linéarité: $\forall a,b\ge 0, \forall f,g \text{ fonctions simples positives}$
+        \[\int (af+bg)\, d\mu=a\int f\, d\mu + b\int g \, d\mu\]
+        \item Monotonie:
+        \[f\le g\implies \int f\, d\mu \le \int g \, d\mu\]
+    \end{itemize}
+\end{prop}
+
+\begin{df}{Intégrale d'une fonction positive}{}
+    Soit $\funto{f}{(X,\Ar,\mu)}{[0,+\infty]}$ mesurable. Soit $S_+(X)$ l'ensemble des fonctions simples positives sur $X$. On pose
+    \[\int_X f\, d\mu=\sup_{\substack{s\in S_+(X)\\ s\le f}}  \int_X s\, d\mu\]
+\end{df}
+
+\begin{re}{}{}
+    \begin{itemize}
+        \item $\int_X f\, d\mu \in [0,+\infty]$
+        \item Si $f$ est une fonction simple, la définition coïncide avec la précédente
+    \end{itemize}
+\end{re}
+
+\begin{prop}{Monotonie}{}
+    $\funto{f,g}{X}{[0,+\infty]}$ mesurables,
+    \[f\le g \implies \int_X f\, d\mu \le \int_X g \, d\mu\]
+\end{prop}
+\end{document}

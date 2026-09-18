@@ -1,0 +1,169 @@
+\documentclass[]{report}
+
+\usepackage{import}
+
+\import{../}{settings.tex}
+
+\title{Cours sur les séries pour l'agrégation}
+
+\author{Cours de Stephane VASSOULT, transcrit par SADR TAHOURI Luca}
+\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\chapter{Séries Numériques}
+
+\section{Généralités}
+
+\begin{df}{Série numérique, somme partielle, reste d'une série}{}
+    On appelle série numérique une suite dans $\K$ ($=\R$ ou $\C$) de la forme
+    \[\fundf{\N}{\K}{n}{S_n=\sum_{k=0}^{n}u_k}\]
+    Où $u$ est une autre suite numérique. On l'appelle série de terme général $u_n$ et $S_n$ la somme partielle de la série. Si la série converge vers $S$, on appelle somme de la série la limite. Dans ce cas, on désigne par
+    \[R_n=S-S_n=\sum_{k=n+1}^{+\infty}u_k\]
+    le reste de la série (C'est une suite qui tend vers $0$).
+\end{df}
+
+\begin{re}{}{}
+    \begin{itemize}
+        \item Les séries sont des suites particulières
+        \item Toute suite peut s'écrire comme une série.
+    \end{itemize}
+    Ce qui diffère: Les moyens d'études
+\end{re}
+
+\begin{prop}{Conditions de convergence des séries numériques}{}
+    Une série numérique (Dans $\R$ ou $\C$) est convergente si la suite des sommes partielles $(S_n)_\nN$ est une suite de Cauchy.
+\end{prop}
+
+\begin{cor}{}{}
+    Première conséquence: si la série converge, alors son terme général tend vers $0$
+\end{cor}
+
+\begin{df}{Série qui diverge grossièrement}{}
+    Si le terme général de la série ne tend pas vers $0$, on dit que la série diverge grossièrement.
+\end{df}
+
+\section{Séries à termes positifs}
+
+\begin{df}{Série à termes positifs}{}
+    Une série à termes positifs est une série $\sum u_n$ avec $u_n \ge 0$. Sa suite $(S_n)_\nN$ est croissante donc
+    \begin{itemize}
+        \item Si $(S_n)_\nN$ est majorée, elle converge
+        \item Sinon $S_n\toninfty +\infty$
+    \end{itemize}
+\end{df}
+
+\begin{prop}{Critère de comparaison des séries numériques}{}
+    Soient $\sum u_n$ et $\sum v_n$ deux séries à termes positifs. Si $u_n\le v_n$ à partir d'un certain rang, alors
+    \begin{itemize}
+        \item Si $\sum u_n$ diverge, $\sum v_n$ diverge
+        \item Si $\sum v_n$ converge, alors $\sum u_n$ converge
+    \end{itemize}
+    Séries avec lesquelles conparer:
+    \begin{itemize}
+        \item Séries Géométriques: $a\ge 0$
+              \[\sum a^n \cho{\text{ converge si }a<1\\ \text{ diverge si }a \ge 1}\]
+        \item Séries de Riemann:
+              \[\sum \frac{1}{n^{\alpha}}\cho{\text{ converge si }\alpha>1\\ \text{ diverge si }\alpha < 1}\]
+        \item Séries de Bertrand
+              \[\sum \frac{1}{n^\alpha (\ln (n))^\beta}\cho{\text{converge si }\alpha>1 \text{ ou }(\alpha=1 \text{ et } \beta >1)\\ \text{diverge si $a<1$, $a=1$ et $\beta \le 1$}}\]
+    \end{itemize}
+    VOIR PHOTO POUR COMPARAISON
+\end{prop}
+
+\begin{cor}{Déclinaison des critères de comparaison}{}
+    \begin{itemize}
+        \item Si $u_n \sim v_n$, alors $\sum u_n$ et $\sum v_n$ sont de même nature.
+        \item Si $u_n= o(v_n)$ ou $u_n=O(v_n)$ et $\sum v_n$ converge, alors $\sum u_n$ converge.
+        \item Critère de Cauchy (ou régle de Cauchy):
+              \[\sqrt[n]{u_n}\to l\implies \cho{\text{Si $l>1$, alors $\sum u_n$ diverge}\\ \text{Si $l<1$ alors $\sum u_n$ converge} \\ \text{Si $l=1$, pas de conclusion}}\]
+        \item Critère de d'Alembert (ou règle de d'Alembert): Si $u_n \neq 0$ APCR
+              \[\frac{u_{n+1}}{u_n}\toninfty l\implies \cho{\text{Si $l>1$, alors $\sum u_n$ diverge}\\ \text{Si $l<1$ alors $\sum u_n$ converge} \\ \text{Si $l=1$, pas de conclusion}}\]
+    \end{itemize}
+\end{cor}
+
+\section{Séries à terme de signe quelconque}
+
+A priori, $(u_n)_\nN$ est une suite réelle ou complexe quelconque.
+
+\begin{prop}{Absolue convergence}{}
+    $\sum |u_n|$ converge alors $\sum u_n $ converge
+\end{prop}
+
+Si on ne peut pas conclure, on peut utiliser d'autres outils:
+\begin{itemize}
+    \item Séries alternées
+    \item Transformation d'Abel
+    \item Développement asymptotique
+\end{itemize}
+
+\begin{dfprop}{Série alternée}{}
+    $\sum u_n$ est une série alternée si
+    \begin{itemize}
+        \item $\exists (a_n)_\nN$ une suite positive décroissante qui tend vers $0$ tq $u_n=(-1)^n a_n$. Dans ce cas la série de terme général $u_n$ est convergente.
+    \end{itemize}
+\end{dfprop}
+
+\begin{dfprop}{Transformation d'Abel}{}
+    $(u_n)_\nN$ et $(v_n)_\nN$ deux suites. On note $U_n=\sum_{k=0}^{n}$ et $V_n=\sum_{k=0}^{n} v_k$ alors pour tout $p,q$ entiers, $p\ge q$,
+    \[\sum_{n=q+1}^{p} u_n v_n=\sum_{n=q+1}^{p-1}(u_n-v_{n+1}) V_n +u_p V_p -u_{q+1} V_q\]
+    Application: Si $(V_n)$ est bornée et si $(u_n)_\nN$ est une suite positive décroissante, qui tend vers $0$, alors $\sum u_nv_n$ converge.
+\end{dfprop}
+
+\begin{dfprop}{Développement asymptotique}{}
+    Si $u_n=v_n+o (w_n)$ avec $\sum w_n$ une série absolument convergente, alors $\sum u_n$ et $\sum v_n$ sont de même nature.
+\end{dfprop}
+
+\subsection*{Sommes partielles, restes}
+
+Pour les séries à termes positifs:\\
+On suppose que $u_n\ge 0$ et $\sum u_n$ diverge\\
+\[u_n\sim v_n\implies  \sum_{k=0}^{n} v_k \sim \sum_{k=0}^{n} u_k\]
+\[u_n=o(v_n)\implies \sum_{k=0}^{n} u_k = o\left( \sum_{k=0}^{n} v_k\right)\]
+On suppose que $v_n\ge 0$ et $\sum v_n$ converge, alors\\
+\[u_n \sim v_n\implies \sum_{k=n+1}^{+\infty}\sim \sum_{k=n+1}^{+\infty} v_k\]
+\[u_n=o(v_n) \implies \sum_{k=n+1}^{+\infty}= o \left(\sum_{k=n+1}^{+\infty} v_k\right)\]
+VOIR PHOTOS
+
+\subsection*{Résultats sur les séries de Riemann et Bertrand}
+
+Si $\funto{f}{]0,+\infty[}{\R}$ est une fonction positive décroissante et localement integrable.
+\[f(k)\ge \int_{k}^{k+1} f(t)\, dt \ge f(k+1)\]
+\[\sum_{k=2}^{n}\int_{k-1}^{k} f(t)\, dt \ge \sum_{k=1}^{n} f(k) \ge \sum_{k=1}^{n} \int_{k}^{k+1} \int_{k}^{k+1} f(t)\, dt\]
+Donc la série $\sum f(k)$ et l'intégrale généralisée $\int_{1}^{+\infty}f$ sont de même nature. Ces inégalités fournissent aussi des équivalents
+
+\subsection*{Produit de Cauchy de deux séries numériques}
+
+\begin{df}{Produit de Cauchy de deux séries numériques}{}
+    Si $\sum u_n,\sum v_n$ sont deux séries numériques, on appelle produit de Cauchy des deux séries la séries $\sum w_n$ de terme géénral
+    \[w_n =\sum_{k=0}^{n} u_k v_{n-k}\]
+\end{df}
+
+\begin{tm}{Théorème de Mertens}{}
+    Si $\sum u_n$ converge et $\sum v_n$ sont absolument convergentes, alors $\sum w_n$ est convergente et
+    \[\sum_{n=0}^{+\infty} w_n=\left(\sum_{n=0}^{+\infty} u_n\right)\left(\sum_{n=0}^{+\infty} v_n\right)\]
+    En général, la convergence simple de $\sum u_n$ et $\sum v_n$ ne suffit pas à assurer la convergence de $\sum w_n$.\\
+    Conséquence: Le produit de Cauchy de deux séries absoluement convergente est une série absoluement convergente
+\end{tm}
+
+\begin{proof}{Théorème de Mertens}{}
+    On pose $U_n=\sum_{k=0}^{n} u_k \to U$ et $V_n=\sum_{k=0}^{n} v_k\to V$ et
+    \[W_n =\sum_{k=0}^{n} =\sum_{k=0}^{n} \sum_{i+j=k}U_i V_j\]
+    \begin{align*}
+        \sum_{i+j\le n} U_i V_j   & = \sum_{i+j\ge n} u_i \left( V_j- V_{j-1}\right)          \\
+                                  & =\sum_{i+j=n} u_i V_j                                     \\
+        \left| W_n - U_n V\right| & =\left|\sum_{i+j=n} u_i V_j - \sum_{i=0}^n u_i V\right|   \\
+                                  & =\left| \sum_{i=0}^{n} u_i \left( V_{i-1}-V\right)\right|
+    \end{align*}
+\end{proof}
+
+\begin{prop}{Rabe-Duhamel}{}
+    $u_n$ une suite et $\sum v_n$ absoluement convergent.
+    \[\frac{u_{n+1}}{u_n}=1-\frac{\alpha}{n} + o\left(\frac{1}{n}\right)\]
+    Alors si $\alpha>1,\sum u_n$ converge, si $\alpha<1$, alors $\sum u_n $ diverge.\\
+    Si $\frac{u_{n+1}}{u_n}=1-\frac{\alpha}{n}+o(v_n)$, alors $u_n \sim \frac{1}{n^\alpha}$
+\end{prop}
+\end{document}

@@ -1,0 +1,1070 @@
+\documentclass[]{report}
+
+\usepackage{import}
+
+\import{../}{settings.tex}
+
+\title{Fonctions holomorphes}
+\author{Cours de LETELLIER Emmanuel, écrit par SADR TAHOURI Luca}
+\date{}
+
+\begin{document}
+
+    \maketitle
+    \tableofcontents
+    
+\chapter{Fonctions holomorphes}
+
+\section{Fonctions Holomorphes}
+
+\subsection{Définitions}
+
+Soit U un ouvert de $\C$\\
+
+\begin{df} 
+    Soit $f:U \to \C$. On dit que f est $\C$-dérivable en $z_0$ si il existe $\alpha \in \C$ tel que
+\[\lim\limits_{h \to 0} \left(\frac{f(z_0+h)-f(z_0)}{h}=\alpha\right) (\iff \forall \epsilon >0, \exists\eta>0,|h|<\eta \implies|g(h)-\alpha|<\epsilon)\]
+\end{df}
+
+\begin{df} 
+    Si une fonction $f:U \to \mathbb{C}$ est holomorphe s'il est $\mathbb{C}$-dérivable en tout point de U. On note:
+$\begin{array}{ccccc}
+f' & : & E & \to & F \\
+ & & z & \mapsto & f'(z) \\
+\end{array}$ la fonction dérivée
+\end{df} 
+
+\begin{tm} 
+    Si $f:U \to \mathbb{C}$ est holomorphe, alors $f'$ est continue
+\end{tm}
+
+\begin{proof}
+    admis
+\end{proof}
+
+\begin{re}{}{}
+    $\lim\limits_{h \to 0} \left(\frac{f(z_0+h)-f(z_0)}{h}\right)=\alpha \iff f(z_0+h)=f(z_0)+\alpha h +(h)\epsilon (h)$ avec $\epsilon(h)\underset{h\to 0}{\longrightarrow} 0$. On voit alors que si $f$ est holomorphe, alors $f$ est continue.
+\end{re}
+
+\begin{prop}La fonction $\begin{array}{ccccc}
+f' & : & \mathbb{C} & \to & \mathbb{C} \\
+ & & z & \mapsto & \bar{z} \\
+\end{array}$ n'est $\mathbb{C}$-dérivable en aucun point
+\end{prop}
+
+\begin{proof} $\lim\limits_{h \to 0} \left(\frac{f(z_0+h)-f(z_0)}{h}\right)=\lim\limits_{h \to 0} \frac{\bar{h}}{h}$\\
+Or $\lim\limits_{h \to 0,h\in \mathbb{R}} \frac{\bar{h}}{h}=1,\lim\limits_{h \to 0,h\in \mathbb{C}} \frac{\bar{h}}{h}=-1 $, il n'y a donc pas de limite.
+\end{proof}
+
+\begin{re}On identifie $\begin{array}{ccccc}
+\iota & : & \mathbb{C} & \to & \mathbb{C} \\
+ & & a+ib & \mapsto & (a,b) \\
+\end{array}$. Dans ce cas, l'ouvert U de $\mathbb{C}$ correspond à un ouvert $\widetilde{U}$ de $\mathbb{R}^2$ et on note $\begin{array}{ccccc}\widetilde{f} & : & \widetilde{U} & \to & \mathbb{R}^2\end{array}$ la fonction qui correspond à $\begin{array}{ccccc}f & : & U & \to & \mathbb{C}\end{array}$. La condition $f(z_0+h)=f(z_0)+\alpha h+ |h|\epsilon(h)$ avec $z_0=x_0+iy_0$, $h=s+it$ et $\alpha = a+ib$ devient:\\
+$\widetilde{f}(x_0+s,y_0+t)=\widetilde{f}(x_0,y_0)+\begin{pmatrix}
+a & -b \\
+b & a 
+\end{pmatrix}\begin{pmatrix}
+s \\
+t
+\end{pmatrix}+|(s,t)|\widetilde{\epsilon}(s,t)$. Donc si f est $\mathbb{C}$-dérivable en $z_0$ alors $\widetilde{f}$ est différentiable en $(x_0,y_0)$:\\
+$\begin{array}{ccccc}
+d\widetilde{f} & : & \mathbb{R}^2 & \to & \mathbb{R}^2 \\
+ & & \begin{pmatrix}
+u \\
+v
+\end{pmatrix} & \mapsto & \begin{pmatrix}
+a & -b \\
+b & a 
+\end{pmatrix}\begin{pmatrix}
+u \\
+v
+\end{pmatrix} \\
+\end{array}$. Réciproquement si $\widetilde{f}$ est $\mathbb{R}$-différentiable en $(x_0,y_0)$ et que sa différentielle $\begin{array}{ccccc}d_{(x_0,y_0)}\widetilde{f} & : & \mathbb{R}^2 & \to & \mathbb{R}^2\end{array}$ est $\mathbb{C}$-linéaire, alors $f$ est $\mathbb{C}$-dérivable en $z_0=x_0+iy_0$. En effet, si $d\widetilde{f}$ est $\mathbb{C}$-linéaire, sa matrice dans la base canonique est de la forme $\begin{pmatrix}
+a & -b\\
+b & a
+\end{pmatrix}$
+\end{re}
+
+\begin{re}[Calcul] $\begin{array}{ccccc}
+\widetilde{\varphi} & : & \R^2 & \to & \R^2 \\
+ & & \begin{pmatrix}
+x \\
+y
+\end{pmatrix} & \mapsto & \begin{pmatrix}
+a & b \\
+c & d 
+\end{pmatrix}\begin{pmatrix}
+x \\
+y 
+\end{pmatrix} \\
+\end{array}$, $\begin{array}{ccccc}
+\varphi & : & \C & \to & \C \\
+ & & x+iy & \mapsto & ax+by+i(cx+dy) \\
+\end{array}$\\
+\begin{align*}
+\varphi(i(x+iy)) & =\varphi(-y+ix)\\ 
+&=i(ax+by)-(cx+dy) \\
+&=(bx-ay)+i(dx-cy) \\
+& \iff \begin{cases} ax+by=-cy+dx & \forall x,y\\ cx+dy=ay-bx \end{cases} \\
+& \implies \begin{cases} \text{Si } x=0 \text{ et } y=1  & \implies b=-c \\ \text{Si } x=1 \text{ et } y=0  & \implies a=d  \end{cases}
+\end{align*}
+\end{re}
+
+\begin{prop}[Proposition (Équations de Cauchy-Riemann)]
+    Soit $\begin{array}{ccccc}f & : & U & \to & \C\end{array}$ et $\begin{array}{ccccc}
+\widetilde{f} & : & \widetilde{U} & \to & \R^2 \\
+ & & (x,y) & \mapsto & (P(x,y),Q(x,y)) \\ 
+\end{array}$ \\
+Alors $f$ est $\C$-dérivable en $z_0=x_0+iy_0 \in U$ si et seulement si P et Q sont $\R$-différentiable en $(x_0,y_0)$ et $\begin{cases} \frac{\delta P}{\delta x}(x_0,y_0)=\frac{\delta Q}{\delta y}(x_0,y_0)\\ \frac{\delta P}{\delta y}(x_0,y_0)=-\frac{\delta Q}{\delta x}(x_0,y_0) \end{cases}$
+\end{prop}
+
+\begin{proof}
+    Si $\widetilde{f}$ est différentiable en $z_0=(x_0,y_0)$. La matrice jacobienne de $\widetilde{f}$ en $(x_0,y_0)$\\
+    \[\begin{pmatrix}
+\frac{\delta P}{\delta x}(x_0,y_0) & \frac{\delta P}{\delta y}(x_0,y_0) \\
+\frac{\delta Q}{\delta x}(x_0,y_0) & \frac{\delta Q}{\delta y}(x_0,y_0)
+    \end{pmatrix}\]\\
+\end{proof}
+
+\begin{re}
+    Pour vérifier que $\begin{array}{ccccc}
+f : & U & \to & \C \\
+  & x+iy & \mapsto & P (x, y) + iQ (x, y)  
+\end{array}$ avec $\begin{array}{ccccc}P,Q  : & \widetilde{U} & \to & \R\end{array}$ est dérivable en $z_0=x_0+iy_0$, on vérifie les équations de Cauchy Riemann.
+\end{re}
+
+\begin{ex}
+    $\fundfto{f}{\C}{\C}{x+iy}{x-iy}$. On a $P(x,y)=x$, $Q(x,y)=-y$\\
+On a donc $\begin{cases} \frac{\delta P}{\delta y}(x,y)=\frac{\delta Q}{\delta x}(x,y)=0\\ \frac{\delta P}{\delta x}=1 \neq -1 = \frac{\delta Q}{\delta y} \end{cases}$ donc f n'est pas différentiable.
+\end{ex}
+
+\subsection{Quelques propriétés}
+
+Soit U un ouvert de $\C$
+
+\begin{df}
+    $\mathcal{H}(U)=\{$fonctions holomorphes de $U \to \C \}$ est une algèbre unitaire.
+\end{df}
+
+\begin{prop}
+    $\mathcal{H}(U)$ est un $\C$-espace vectoriel et on a les propriétés suivantes:\\
+    \begin{itemize}
+        \item $(f+g)'=f'+g'$ et $(\lambda f)'=\lambda f'$
+        \item Si $f,g \in \mathcal{H}(U)$ alors $fg\in \mathcal{H}(U)$ et $(fg)'=f'g+fg'$
+        \item Si $f\in \mathcal{H}(U)$ et $f$ ne s'annule pas, alors $\frac{1}{f} \in \mathcal{H}(U)$
+        \item Si $\begin{array}{ccccc} f : & U & \to & V \end{array}$ et $\begin{array}{ccccc} g : & V & \to & \C \end{array}$ holomorphes, alors $\begin{array}{ccccc} g \circ f : & U & \to & \C \end{array}$ est holomorphe et $(g \circ f)'=f'\times(g' \circ f)$
+    \end{itemize}
+\end{prop}
+
+\begin{ex}
+    Fonctions polynomiales $\mfun{z}{\sum_{i=1}^{k} a_i z^i}$ est holomorphe sur $\C$. La fonction $\begin{array}{ccccc}z & \mapsto  \frac{1}{z}\end{array}$ est holomorphe sur $\C^*$. Plus généralement, une fraction $\frac{P(z)}{Q(z)}$ avec $P,Q\in \C[X]$ est holomorphe en dehors des zéros de Q.
+\end{ex}
+
+\begin{prop}
+    Soit $U\subseteq \C$ un ouvert connexe. $f\in \mathcal{H}(U)$ est constante si et seulement si $f'=0$.
+\end{prop}
+
+\begin{proof}
+    $\implies$ Immédiate \\
+    $\impliedby$ supp($f'$)$=0$. Soient $\funto{P,Q}{\widetilde{U}}{\R}$ les parties réelles et imaginaires telles que $f(x+iy)=P(x,y)+iQ(x,y)$. Montrons que P et Q sont constantes. Comme f est holomorphe, P et Q sont différentiables et $f'(z_0)=\frac{\delta P}{\delta x}(x_0,y_0)-i\frac{\delta P}{\delta y}(x_0,y_0)$.\\
+    Comme $f'$ est continue, les dérivées $\frac{\delta P}{\delta x}$, $\frac{\delta P}{\delta y}$, $\frac{\delta Q}{\delta x}$ et $\frac{\delta Q}{\delta y}$ sont continues.\\ 
+    Donc P et Q sont de classe $C^1$. Or, d'après le théorème des accroissements finis, $\forall(a,b),(a',b')\in U, \exists(c,d)\text{ sur }\left. \right]A,A'\left[ \right.$ tel que\\
+    $P(a,b)-P(a',b')=\frac{\delta P}{\delta x}(c,d)(a'-a)+\frac{\delta P}{\delta y}(c,d)(b'-b)$.
+    Comme $f'=0$, on a $\frac{\delta P}{\delta x}=\frac{\delta P}{\delta y}=0$ donc $P(a,b)=P(a',b')$ donc $P(a,b)=P(a',b')$ donc P constante (de même pour Q)
+\end{proof}
+
+\section{Séries entières}
+
+Soit $(a_n)_{n\in\N}$ suite de nombres complexes et $\sum_{n\ge0}a_nz^n$ la série formelle associée.
+
+\begin{df}
+    Le rayon de convergence de $\sum_{n\ge0}a_n z^n$ est $R=\sup \{r\ge0,|a_n|r^n $ bornée$\}$
+\end{df}
+
+\begin{tm}
+    Soit R rayon de convergence de $\sum_{n\ge0}a_n z^n$:
+    \begin{enumerate}
+        \item $\forall z \in \C $ tel que $|z|<R$, la série $\sum_{n\ge0}a_nz^n$ est absolument convergente
+        \item $\forall z\in\C$ tel que $|z|>R$, la série $\sum_{n\ge0}a_nz^n$ diverge
+    \end{enumerate}
+\end{tm}
+
+\begin{prop}[Proposition (Règle de d'Alembert)]
+    $\sup (a_n \ne) 0$ pour $n \gg0$. Si $|\frac{a_{n+1}}{a_n}| \underset{n\to +\infty}{\longrightarrow}l \in \R^+\cup\{+\infty\}$ alors le rayon de convergence est $R=\frac{1}{l}$ (avec les conventions $R=0$ si $l=+\infty$, $R=+\infty$ si $l=0$)
+\end{prop}
+
+\begin{prop}[Proposition (Règle de Cauchy)]
+    Si $\lim\limits_{n \rightarrow +\infty}|a_n|^{\frac{1}{n}}=l \in [0,+\infty]$. Alors le rayon de convergence de $\sum_{n\ge0}a_nz^n$ est $R=\frac{1}{l}$. Elle se généralise de la manière suivante :\\
+    limite supérieur et limite inférieur : Soit $(U_n)_{n\in\N}$ suite à valeurs dans $\R$ ou $\bar{\R}=[-\infty,+\infty]$, $v_n=\sup \{U_k,k\ge n\}$ et $w_n=\inf \{U_k, k\ge n\}$. On a $(v_n) \searrow$ et $(w_n) \nearrow$. Elles admettent une limite dans $\bar{\R}$
+\end{prop}
+
+\begin{prop}
+    Supposons que $\sum_{n\ge0}a_nz^n$ a un rayon de convergence $R>0$ et considérons la fonction $f(z)=\sum_{n\ge0}a_nz^n$ pour $|z|<R$, alors :
+    \begin{enumerate}
+        \item Le rayon de convergence de la série dérivée $\sum_{n\ge1}na_nz^{n-1}$ est R
+        \item La fonction $f$ est holomorphe sur $D(0,R)=\{z\in\C, |z|<R\}$ et pour $z \in D(0,R)$, on a $f'(z)=\sum_{n\ge1}na_nz^{n-1}$
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    \begin{enumerate}
+        \item Soit $R'$ rayon de convergence de $\sum_{n\ge1}na_nz^{n-1}$. Supposons $R<R'$, donc $\exists z_0$ tq $R<|z_0|<R'$. La série $\sum_{n\ge1}na_nz_0^{n-1}$ est absolument convergente et $|na_nz^{n}|\le n|a_nz_0^{n-1}|\times |z_0|$ d'où la convergence absolue de $\sum_{n\ge0}a_nz_0^{n}$ ce qui contredit $|z|>R'$.\\
+        Supposons que $R'<R$. $\exists l\in\R $ tel que $R'<l<R$ et $z_0\in\C$, $R'<|z_0|<l<R$, comme $l<R$, la suite $a_nl^n$ bornée, donc $\exists M$ tel que $\forall n \in \N,|a_n|l^n \le M$ d'où $n|a_nz_0^n|=|a_n|l^n(\frac{|z_0|}{l})^n\le nMO^n$ avec $O=\frac{|z|}{l}<1$. Le terme $nMO^n$ est celui d'une série convergente, donc $\sum_{n\ge1}n|a_n|z_0^{n}$ est convergente d'où $\sum_{n\ge1}n|a_n|z_0^{n-1}$ convergente.
+        \item Soit $z\in D(0,R)$. Montrons que f est $\C$-dérivable en z calculons $f'(z)$. On choisit $r$ tel que $|z|<r<R$. Pour $h\in\C$ tq $|z|+|h|<r$, on a $\frac{f(z+h)-f(z)}{h}-\sum na_nz^{n-1}=\frac{\sum a_n (z+h)^n-\sum a_nz^n}{h}-\sum na_nz^{n-1}=\sum_{n\ge1}a_n(\frac{(z+h)^n-z^n}{h}-nz^{n-1})=\sum_{n\ge2}a_nv_n(h)$. Pour n fixé, $v_n(h) \underset{h\to 0}{\longrightarrow} 0 $(Laisser en exercice). On veut montrer que $\lim\limits_{h \rightarrow 0} \sum a_nv_n(h)=0$. Or $v_n(h)=(z+h)^{n-1}+(z+h)^{n-2}+\ldots+z^{n-1}-nz^{n-1}$. On utilise la formule $x^n-y^n=(x-y)(x^{n-1}+\ldots+y^{n-1})$. On a donc pour h tel que $|z|+|h|<r$, $a_nv_n(h)\le zn|a_n|r^{n-1}$ terme d'une série convergente. Donc $\sum|a_nv_n(h)|$ converge normalement
+    \end{enumerate}
+\end{proof}
+
+\begin{re}
+    $f'(z)=\sum_{n\ge1}na_nz^{n-1}$\\
+    $f''(z)=\sum_{n\ge2}n(n-1)a_nz^{n-2}$\\
+    \vdots \\
+    $a_n=\frac{f^{(n)}(0)}{n!}$ pour tout n. On note :\\
+    $\sum_{n\ge0}\frac{f^{(n)}(0)}{n!}z^n$ série de Taylor de $f$ en 0.
+\end{re}
+
+\begin{cor}
+    Si $\begin{array}{ccccc} f : & D(0,R) & \to  \C\end{array}$ est somme de $\sum a_n z^n$, alors cette série est la série de Taylor de $f$ en 0.
+\end{cor}
+
+\section{Fonctions analytiques}
+
+\begin{df}
+    U ouvert de $\C$ et $\begin{array}{ccccc} f : & U & \to  \C\end{array}$. On dit que $f$ est analytique si pour $z_0 \in U$, il existe $D(z_0,r)\subseteq U$ et une série entière de rayon de convergence $R\ge r$ tel que $\forall z \in D(z_0,r),f(z)=\sum_{n\ge 0}a_n(z-z_0)^n$
+\end{df}
+
+\begin{prop}
+    Soit $\begin{array}{ccccc} f : & U & \to  \C\end{array}$ une fonction analytique, alors f est holomorphe et admet des dérivées complexes de tout ordre qui sont aussi des fonctions holomorphes.
+\end{prop}
+
+\begin{re}
+    Les coefficients $a_n$ dépendent de $z_0$, et $a_n=\frac{f^{(n)}(z_0)}{n!}$
+\end{re}
+
+\begin{proof}[Démonstration de la proposition]
+    Si $\begin{array}{ccccc} f : & U & \to  \C\end{array}$ est analytique et $z_0\in U,\forall z \in D(z_0,r),f(z)=\sum a_n(z-z_0)^n$. Pour $h\in D(0,r),g(h)=\sum_{n\ge 0}a_nh^n$ est holomorphe et $a_n=\frac{g^{(n)(0)}}{n!}$\\
+    $D(z_0,r){\longrightarrow} D(0,r)$ par $z\mapsto z-z_0$ et $\begin{cases}
+        D(z_0,r)\underset{f}{\longrightarrow}\C\\
+        D(0,r)\underset{g}{\longrightarrow}\C
+    \end{cases}$ Donc f est holomorphe et $\frac{f^{(n)}(z_0)}{n!}=a_n=\frac{g^{(n)}(z)}{n!}$
+\end{proof}
+
+\begin{prop}
+    Soient $\sum a_nz^n$ série entière de rayon de convergence $R>0$ et $\begin{array}{ccccc}
+f : & D(0,R) & \to & \C \\
+  & z & \mapsto & \sum_{n\ge0}a_nz^n  
+\end{array}$ alors f est analytique $\iff \forall z_0 \in D(0,R)$, 
+$\exists z>0$ tel que $D(z_0,r) \subseteq D(0,R)$ et \\$f(z)=\sum_{n\ge0}\frac{f^{(n)}(0)}{n!}(z-z_0)^n$
+\end{prop}
+
+\begin{proof}
+    Soit $z_0\in D(0,R)$\\
+    \begin{align*}f^{(p)}(z_0)&=\sum_{n=p}^{+\infty}n(n-1)\ldots(n-p+1)a_nz_0^{n-p}\\
+    f^{(p)}(z_0)&=\sum_{q=0}^{+\infty}\frac{(p+q)!}{q!}a_{p+q}z_0^q\text{ avec le changement de variable $n-p=q$}\\
+    |f^{(p)}(z_0)|&\leq \sum_{q=0}^{+\infty}\frac{(p+q)!}{q!}|a_{p+q}||z_0^q|
+    \end{align*}
+\end{proof}
+
+\begin{ra}
+    Soit $I$ dénombrable et $(U_i)_{i\in I} \subset R^+$. On dit que $\sum U_i$ est sommable si $\{\sum_{i\in F}U_i |F_{fini}\subseteq I\}$ est borné.
+\end{ra}
+
+\begin{prop}
+    $I=\bigsqcup_{n\in \N}I_n$, alors $(U_i)_{i\in I}$ est sommable \ssi $\forall n\in\N, (U_i)_{i\in I_n}$ est sommable et $\sum_n(\sum_{i\in I_n}U_i)=\sum_{i\in I }U_i:=\sup\{\sum_{i\in F}U_i|F_{fini}\subseteq I\}$
+\end{prop}
+
+\begin{ex}
+    $I=\N^2,(U_i)_{i\in I}$, qu'en est-t'il de $\sum U_i $ ?\\
+    \begin{enumerate} 
+        \item 
+            \[\text{$(U_i)_{i\in I}$ sommable $\iff$}\cho{\forall n \sum_{m=0}^{+\infty}U_{(n,m)} \text{ convergente}\\
+            \sum_{n\ge0}(\sum_{m\ge0} U_{(n,m)}) \text{ converge}}\]
+        \item $I_n'=\{(p,q)\in I \text{ tels que } p+q=n\}$\\
+            $I=\bigsqcup_{n\ge0}I_n',(U_i)_{i\in I} $ sommable$\iff\forall n,\sum_{(p,q)\in I_n'}$ converge et $\sum_{n\ge0}\sum_{p+q=n}U_{(p,q)}$ converge
+    \end{enumerate}
+\end{ex}
+
+\begin{proof}[Suite de la démonstration]
+    Soit $r<R-|z_0|$, $\sum_{p,q=0}^{+\infty}\frac{(p+q)!}{p!q!}|a_{p+q}||z_0^q|r^p=^?\sum_{p+q=n}\frac{n!}{p!q!}|z_0^q|r^p=(|z_0|+r)^n$\\
+    Comme $r<R-|z_0|$. $\sum a_n(z_0+r)^n$ pour $z_0\in D(0,R)$ absolument convergente donc convergente.\\
+    Donc la série de gauche converge et \\
+    $\sum_{p=0}^{\infty}\frac{1}{p!}|f^{(p)}(z_0)|r^p\le\sum_{q=0}^{\infty}\sum_{p=0}^{\infty}\frac{(p+q)!}{p!q!}|a_{p+q}||z_0^q|r^p$\\
+    $\sum_{p=0}^{\infty}\frac{1}{p!}|f^{(p)}(z_0)|r^p\le \sum_{q=0}^{+\infty}\frac{(p+q)!}{q!}|a_{p+q}||z_0^q|$\\
+    Donc la série de Taylor de $f$ en $z_0$ est convergente sur $D(z_0,R-|z_0|)$ $(r=|z-z_0|)$\\
+    Question : $f(z)=\sum_{p\ge0}f^{(p)}(z_0)(z-z_0)^p,\forall z\in D(z_0,R-|z_0|)\iff \forall h \in D(0,R-|z_0|),f(z_0+h)=\sum_{p\ge 0}\frac{f^{(p)}(z_0)}{p!}f^p$. Soit $|h|<R-|z_0|$. On a vu que $S(h)=\sum_{p,q}\frac{(p+q)!}{p!q!}a_{p+q}z_0^qh^p$ est alors absolument convergente.\\
+    \begin{align*} 
+S(h) & = \sum_{p}\frac{1}{p!}(\sum_{q}a_{p+q}\frac{(p+q)!}{q!}z_0^q)h^p\\
+& =\sum_{p} \frac{1}{p!}f^{(p)}(z_0)h^p 
+\end{align*}\\
+     \begin{align*}
+S(h) & = \sum_{n\ge0}a_n\sum_{p+q=n}\frac{n!}{p!q!}z_0^qh^p \\
+& = \sum_n a_n (z_0+h)^n \\
+&=f(z_0+h) & \text{d'où l'égalité}
+\end{align*} 
+\end{proof}
+
+\chapter{Exponentielle et logarithme complexe}
+
+\section{Fonction exponentielle}
+
+\begin{df}
+    Une fonction entière est une fonction holomorphe sur $\C$
+\end{df}
+
+\begin{prop}
+    La série entière $\sum_{n=0}^{+\infty}\frac{z^n}{n!}$ définit une fonction entière $\begin{array}{ccccc}
+\exp : & \C & \to & \C \\
+  & z & \mapsto & \exp (z)=e^z   
+\end{array}$\\
+\begin{enumerate}
+    \item On a $e^0=1$ et $\exp'=\exp$
+    \item $\forall z, \omega \in \C, e^{\bar{z}}=\bar{e^z} $ et  $e^{z+\omega}=e^ze^\omega$ et donc $\begin{array}{ccccc}
+\exp : & \C & \to & \C^*
+\end{array}$
+    \item La restriction de $\exp$ à $\R$ est l'exponentielle réelle qui est un difféomorphisme $\begin{array}{ccccc}
+\R & \to &  \R_+^*
+\end{array}$ et on a $|e^z|=1$ \ssi $z\in i\R$
+\end{enumerate}
+\end{prop}
+
+\begin{proof}
+    \begin{enumerate}
+        \item Posons $a_n=\frac{1}{n!}$. Comme $\frac{a_{n+1}}{a_n} \longrightarrow 0$ donc d'après d'Alembert, $\sum_{n\ge0}\frac{z^n}{n!}$ converge pour tout $z\in\C$. Il est clair que $\exp(0)$.\\
+        $\exp'$ est donnée par la série dérivée qui est aussi $\sum\frac{z^n}{n!}$ et donc $\exp'=\exp$.
+        \item $S_N(z)=\sum_{n=0}^N\frac{z^n}{n!}$\\
+        $S_N(z)=\sum_{n=0}^N\frac{z^n}{n!}$ comme $z \mapsto \bar{z}$ est continue, on a $\overline{\lim\limits_{N\to+\infty}S_n(z)}=\lim\limits_{N\to \infty}S_N(\overline{z})$ donc $\overline{e^z}=e^{\bar{z}}$.\\
+        Montrons que $e^{z+\omega}=e^ze^\omega$ :\\
+        Pour $a,b\in \C,g(z)=e^ze^{a+b-z}$, $g'(z)=e^ze^{a+b-z}-e^ze^{a+b-z}=0$ donc g constante, \\$g(z)=g(0)=e^{a+b}$ donc $e^ze^{a+b}e^{-z}=e^{a+b}$\\
+        Si $z=a,e^ae^b=e^{a+b}$ donc $e^a\neq0, \forall a\in\C, e^{a+ib}=e^ae^{ib}$\\
+        Si $|e^{a+ib}|=1$ alors $e^a|e^{ib}|=1\implies a=0$\\
+        $|e^{ib}|^2=e^{ib}\overline{e^{ib}}=e^{ib}e^{-ib}=1$ donc $|e^{ib}|=1$ donc $z\in i\R\implies |z|=1$
+    \end{enumerate}
+\end{proof}
+
+\begin{re}
+    $\exp$ est l'unique application entière $\begin{array}{ccccc}
+f : & \C & \to & \C 
+\end{array}$ qui vérifie :$\begin{cases}
+    f(0)=1\\
+    f'=f
+\end{cases}$\\
+En effet, si $\begin{array}{ccccc}
+g : & \C & \to & \C \\
+  & z & \mapsto & f(z)e^{-z}  
+\end{array}$ alors $g'=0$ car ($g'=f'(z)e^{-z}-f(z)e^{-z}=0$) donc g constante, donc $g(z)=g(0)=f(0)e^{-0}=1,\forall z \in \C$, donc $f(z)=e^z$
+\end{re}
+
+Nous voulons montrer que $\begin{array}{ccccc}
+\exp : & \C & \to & \C^*
+\end{array}$ est surjective
+
+\begin{prop}[Proposition (Inversion locale holomorphe)]
+    Soit $\begin{array}{ccccc}
+f : & U & \to & \C
+\end{array}
+$ holomorphe et $z_0\in U$ tels que $f'(z_0)\neq 0$. Alors $f$ est biholomorphisme au voisinage de $z_0$, c'est à dire qu'il existe un voisinage $V\subseteq U$ de $z_0$\tq $f(V)$ soit ouvert et $\begin{array}{ccccc}
+V & \to & f(V)
+\end{array}$ bijective d'inverse $\begin{array}{ccccc}
+f^{-1} : & f(V) & \to & V
+\end{array}$ est holomorphe.
+\end{prop}
+
+\begin{proof}
+    Soit $\begin{array}{ccccc}
+\widetilde{f} : & \widetilde{U} & \to & \R^2
+\end{array}$ fonction correspondante à $f, f'(z_0)=a+ib\neq 0$.\\
+La matrice jacobienne de $\widetilde{f}$ en $(a,b)$ est $\begin{pmatrix}
+a & -b \\
+b & a
+\end{pmatrix}$ qui est inversible donc d'après le théorème d'inversion locale, $\exists \widetilde{V}$ ouvert de $\R^2$ et $\widetilde{W}$ ouvert de $\widetilde{U}$ \tq $(a,b)\in \widetilde{W}\underset{\widetilde{f}}{\longrightarrow} \widetilde{V}$ et la différentielle de $\widetilde{f}$ en $(a,b)$ est un isomorphisme comme elle est $\C$-linéaire, son inverse aussi.
+\end{proof}
+
+\begin{tm}
+    $\begin{array}{ccccc}
+\exp : & (\C,+) & \to & (\C^*,\times)
+\end{array}$ est un morphisme de groupe surjectif. Il existe un unique réel positif, noté $\pi$ \tq $\ker(\exp)=2\pi i \Z$.\\
+Tout nombre complexe non nul a une décomposition polaire $z=re^{i\theta}$ avec $|z|=r$\\
+\begin{itemize}
+    \item$e^{i\theta}=\cos(\theta)+i\sin(\theta)$
+    \item $e^{i(\theta+\theta')}=e^{i\theta}e^{i\theta'}$
+\end{itemize}
+\end{tm}
+
+\begin{proof}
+    On a déjà vu que $\exp$ est un morphisme de groupes et que c'est une application ouverte.\\
+    Surjectivité : $\Im(\exp):=H$ est un sous groupe ouvert de $\C^*$ et \[\C^*=H\bigsqcup(\bigcup_{\substack{U \text{ ouvert}\\U \subset A}}aH)\] \\
+Chaque classe $aH$ est aussi un ouvert de $\C^*$ (car $\begin{array}{ccccc}
+& \C^* & \to & \C^* \\
+& z & \mapsto & az  
+\end{array}$ est un homéomorphisme). Comme $\C^*$ est connexe, on a que $V=\varnothing $($\iff \C^*=H$) et donc $\exp$ est surjective. Noyau de $\exp$ : On a vu que $\ker(\exp)\subseteq i \R$. Il s'agit de trouver le noyau de $\begin{array}{ccccc}
+h : & (\R,+) & \to & (\S^1,*) \\
+  & t & \mapsto & e^{it}  
+\end{array}$ $h$ est continu donc $\ker h$ est un sous groupe fermé de $\R$. (Rappel : Les sous groupes additifs de $\R$ sont les $\alpha \Z , \alpha\in\R^+$ et les sous groupes denses dans $\R$) Donc $\ker(h)=\R$ ou $\ker h=\alpha\Z$ pour $\alpha\in\R^+$. Comme h est surjective, $\ker h \neq\R$ donc $\ker h = \alpha \Z, \alpha\in \R^+$, $\ker h \neq 0$ ($e^{it}=ie^{4it}=1$) donc $\alpha>0$, et on définie $\pi$ pour $\alpha=2\pi$.
+\end{proof}
+
+\begin{cor}
+    Si $\begin{array}{ccccc}
+f : & U & \to & \C
+\end{array}$ est une application holomorphe dont la dérivée ne s'annule jamais, alors $f$ est une application ouverte.
+\end{cor}
+
+\begin{proof}
+    Il faut montrer que $U'$ ouvert $\implies f(U')$ ouvert.\\
+    Soit $U'$ ouvert de $U$ et $y\in f(U')$ qu'on écrit $y=f(x),x\in U'$ comme $f'(x)\neq0$, il existe un voisinage $W$ de x ($W \subseteq U'$) tel que $\begin{array}{ccccc}
+& W & \to & f(W)
+\end{array}$. Il existe y et f(W) ouvert dans $\C$ qui est contenu dans $f(U')$ et qui contient y donc $f(U')$ ouvert de $\C$
+\end{proof}
+
+\section{Logarithme}
+
+$\begin{array}{ccccc}
+\exp : & \R & \to & \R^*
+\end{array}$ est une bijection croissante, son inverse est le logarithme néperien noté :\\
+$\begin{array}{ccccc}
+\ln : & \R^*_+ & \to & \R
+\end{array}$. Dans le cas complexe, $\begin{array}{ccccc}
+\exp : & \C & \to & \C^*
+\end{array}$ n'est pas injective. Si $z\in \C^*,z=e^w=e^{a+ib}=e^ae^{ib},a=\log |z|$
+
+\begin{df}
+    $U\subseteq\C^*$ ouvert.\\
+    Une application $\begin{array}{ccccc}
+f : & U & \to & \C
+\end{array}$ est une détermination du logarithme lorsque :\begin{enumerate}
+    \item f est continue
+    \item $\forall z\in U,e^{f(z)}=z$
+\end{enumerate}
+\end{df}
+
+\begin{prop}
+    Il n'existe pas de détermination du logarithme sur $\C^*$ tout entier.
+\end{prop}
+
+\begin{proof}
+    Si on en avait une, cela voudrait dire qu'on a une détermination continue.\\ Soit $\begin{array}{ccccc}
+\theta : & \C^* & \to & \R \\
+  & z & \mapsto & \theta(z)  
+\end{array}$ et $\begin{array}{ccccc}
+f : & \C^* & \to & \C \\
+  & z & \mapsto & \log(z)+i\theta(z)  
+\end{array}$\\
+En particulier si $z=e^{it}$, on aurait $e^{it}=e^{i\theta(e^{it})}$.
+On pose $\begin{array}{ccccc}
+\delta : & \R & \to & \R \\
+  & t & \mapsto & t-\theta(e^{it})  
+\end{array}$. Dans ce cas $\Im(\delta)\subseteq2\pi\Z$, comme $\delta$ est continue et $2\pi\Z$ discret, donc $\delta$ est constante. $\forall t, t-\theta(e^{it})=a\iff \theta(e^{it})=t-a$ (or $\theta(e^{it})$ est périodique mais $t-a$ ne l'est pas)
+\end{proof}. 
+
+\begin{prop}
+    Soient $U\subseteq \C^*$ ouvert connexe et $\begin{array}{ccccc}
+f_0 : & U & \to & \C \\ 
+\end{array}$ une détermination du logarithme. Les autres déterminations du logarithme sur $U$ sont données par $f_n=f_0+2in\pi,n\in\Z$
+\end{prop}
+
+\begin{proof}
+    Exercice
+\end{proof}
+
+\begin{prop}
+    Soient $U\subseteq\C$ ouvert connexe. \begin{enumerate}
+        \item Si $\begin{array}{ccccc}
+f : & U & \to & \C
+\end{array}$ est une détermination du $\log$ sur U, alors f est holomorphe \\et on a $f'(z)=\frac{1}{z},\forall z\in U$.
+    \item Si U connexe. Soit $\begin{array}{ccccc}
+g : & U & \to & \C
+\end{array}$ holomorphe tel que $g'(z)=\frac{1}{z}$ pour tout $z\in U$. Alors il existe une constante $\alpha\in\C$ tel que $\begin{array}{ccccc}
+& U & \to & \C \\
+& z & \mapsto & g(z)-\alpha  
+\end{array}$ soit une détermination du log
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    Voir p.13
+\end{proof}
+
+\begin{df}
+    Soit $\begin{array}{ccccc}
+f : & U & \to & \C
+\end{array}$ une fonction continue. Une primitive $F$ de $f$ sur $U$ est une fonction holomorphe $\begin{array}{ccccc}
+F : & U & \to & \C
+\end{array}$ telle que $F'=f$
+\end{df}
+
+\begin{re}
+    La fonction $\begin{array}{ccccc}
+& \C^* & \to & \C^* \\
+& z & \mapsto & \frac{1}{z}
+\end{array}$ n'admet pas de primitive
+\end{re}
+
+\section*{Détermination principale du logarithme}
+
+    $\begin{array}{ccccc}
+\exp : & \C & \to & \C^* \\
+\end{array}$ est un morphisme de groupes surjectif de noyau $2i\pi\Z$. Sa restriction $\begin{array}{ccccc}
+\exp : & \left\{ \omega\in\C,-\pi\le\Im(\omega)<\pi\right\} & \to & \C^*\\
+\end{array}$? L'image de la droite $\left\{\omega\in\C,\Im(\omega=-\pi)\right\}$ est la demi-droite $\R^*\subseteq \C$.\\
+$\begin{array}{ccccc}
+\exp : & \left\{ \omega\in\C,-\pi<\Im(\omega)<\pi\right\} & \to & \C^*\backslash\R^*_- \\
+\end{array}$ est holomorphe bijective dont la dérivée est partout non nulle. Elle réalise donc un biholomorphisme entre deux ouverts.\\
+L'application réciproque : $\begin{array}{ccccc}
+\log_p : & \C\backslash\R^+ & \to & \left\{\omega\in\C,-\pi<\Im(z)<\pi\right\} \\
+\end{array}$ s'appelle la détermination principale du logarithme.
+
+\begin{lm}
+    $\log_p$ est développable en série entière sur le disque ouvert $D(1,1)$ centré en 1 et de rayon 1.$$\log_p(z)=\sum_{n=0}^{+\infty}(-1)^n\frac{(z-1)^{n+1}}{n+1}$$
+\end{lm}
+
+\begin{proof}
+    Voir p.15
+\end{proof}
+
+\section{Fonctions trigonométriques et hyperboliques}
+
+Pour $z\in\C$, \begin{align*}
+    \sin(z)=\frac{e^{iz}-e^{-iz}}{2i} && \cos(z)=\frac{e^{iz}+e^{-iz}}{2}\\
+    \sinh(z)=\frac{e^{z}-e^{-z}}{2} && \cosh(z)=\frac{e^{z}+e^{-z}}{2}
+\end{align*}
+
+\chapter{Intégration complexe}
+
+\section{Arcs paramétrés}
+
+\subsection{Définitions}
+
+On appelle arc paramétré, ou simplement arc, une application continue $\begin{array}{ccccc}
+\gamma : & [t_0,t_1] & \to & \C \\ 
+\end{array}$, $(t_0,t_1)\in\R$.\\
+L'origine de $\gamma$ est le point $z_0=\gamma(t_0)$ et l'extremité $z_1=\gamma(t_1)$.\\
+Si $z_0=z_1$, on dit que $\gamma$ est un lacet.\\
+Le support de $\gamma$ est $\left\{\gamma(t),t\in[t_0,t_1]\right\}=\Im(\gamma)$ et on le notera supp$(\gamma)$.
+
+\subsection{Exemples}
+
+\begin{enumerate}
+    \item Soient $a,b\in\C$, le segment $[a,b]$ est le support de l'arc $\begin{array}{ccccc}
+\gamma : & [0,1] & \to & \C \\
+  & t & \mapsto & (1-t)a+tb  
+\end{array}$.\\
+Il partage le même support avec $\begin{array}{ccccc}
+\gamma' : & [0,1] & \to & \C \\
+  & t & \mapsto & ta+(1-t)b
+\end{array}$
+    \item Ligne polygonale : On peut aligner plusieurs segments vu précédemment de cette manière $$\gamma(t)=\left\{\begin{array}{ll}
+ (1-t)z_0+tz_1 & \text{ si } 0 \le t \le 1\\
+ (2-t)z_1+tz_2 & \text{ si } 1 \le t \le 2\\
+ (3-t)z_2+tz_3 & \text{ si } 2 \le t \le 3
+ \end{array}\right.$$
+    \item Le cercle $x^2+y^2=R^2$ :\\
+    C'est le support de $\begin{array}{ccccc}
+\gamma : & [0,2\pi] & \to & \C \\
+  & t & \mapsto & Re^{it}  
+\end{array}$ ou $\begin{array}{ccccc}
+\gamma : & [0,2\pi] & \to & \C \\
+  & t & \mapsto & Re^{-it}
+\end{array}$
+\end{enumerate}
+
+\subsection{Opération sur les arcs}
+
+\begin{df}
+    Etant donné un arc $\begin{array}{ccccc}
+\gamma : & [t_0,t_1] & \to & \C
+\end{array}$. \\L'arc opposé $-\gamma$ est défini par $\begin{array}{ccccc}
+-\gamma : & [t_0,t_1] & \to & \C \\
+  & t & \mapsto & \gamma(t_0+t_1-t)
+\end{array}$(qui commence à $t_1$ et qui finit à $t_0$)\\
+Deux arcs $\gamma$ et $\gamma'$ définis sur $[t_0,t_1]$ et $[t_0',t_1']$ sont consécutifs si $\left\{\begin{array}{cc}
+t_1=t_0'\\
+\gamma(t_1)=\gamma'(t_0')
+\end{array}\right.$\\
+Dans ce cas, on peut définir $\begin{array}{ccccc}
+\gamma+\gamma' : & [t_0,t_1] & \to & \C \\
+& t & \mapsto & \left\{\begin{array}{cc}
+\gamma(t)     & \text{ si } t_0 \le t \le t_1 \\
+\gamma'(t)     & \text{ si } t_0' \le t \le t_1'
+\end{array}\right.  
+\end{array}$
+\end{df}
+
+\subsection{Chemins et circuits}
+
+Un chemin est un arc $\gamma$ qui peut s'écrire sous la forme $\gamma=\gamma_1+\dots+\gamma_n$ où chaque $\gamma_i$ est continûment dérivable (de classe $C^1$).\\
+Un circuit est un lacet qui est un chemin.
+
+\subsection{Longueur}
+
+    Etant donné un arc $\begin{array}{ccccc}
+\gamma : & [t_0,t_1] & \to & \C
+\end{array}$. A toute subdivision $t_0=x_0<\dots<x_n=t_1$, on peut associer la ligne polygonale de sommets $z_k=\gamma(x_k)$\\
+La longueur de la ligne polygonale est $|z_1-z_0|+|z_2-z_1|+\dots|z_{k-1}-z_k|$.\\
+La longueur de $\gamma$ est la borne supérieure de toutes les longueurs de ses lignes polygonales. On la note $L(\gamma)$.\\
+On dit que $\gamma$ est rectifiable si $L(\gamma)<+\infty$.
+
+\begin{prop}
+    Si $\gamma$ est un chemin défini sur $[t_0,t_1]$, alors $\gamma$ est rectifiable et $$L(\gamma)=\int_{t_0}^{t_1} |\gamma'(t)| \,dt$$
+\end{prop}
+
+\section{Intégrale le long d'un chemin}
+
+\subsection{Définitions}
+
+Soit $\begin{array}{ccccc}
+\gamma : & [t_0,t_1] & \to & \C
+\end{array}$ un chemin et $\begin{array}{ccccc}
+F : & \text{supp}(\gamma) & \to & \C
+\end{array}$ une fonction continue. On définie alors $$\int_{\gamma} F(z) \,dz=\int_{t_0}^{t_1} F(\gamma(t))\gamma'(t) \,dt$$
+
+\subsection{Exemples}
+
+\begin{enumerate}
+    \item Si $\gamma(t)=t,\forall t\in [t_0,t_1]$, alors $$\int_{\gamma} F(z) \,dz=\int_{t_0}^{t_1} F(t) \,dt$$
+    \item Si $\gamma(t)=Re^{it},\forall t\in[0,2\pi]$, alors $$\int_{\gamma}\frac{dz}{z}=\int_{0}^{2\pi} \frac{Rie^{it}}{Re^{it}} \,dt=i\int_{0}^{2\pi} dx=2\pi i$$
+\end{enumerate}
+
+\subsection{Propriétés}
+
+\begin{itemize}
+    \item $\int_{\gamma} (F_1(z) +F_2(z))\,dz=\int_{\gamma} F_1(z) \,dz+\int_{\gamma} F_2(z) \,dz$
+    \item $\int_{\gamma} \lambda F(z) \,dz=\lambda\int_{\gamma} F(z) \,dz$
+    \item $\int_{\gamma_1+\gamma_2} F(z) \,dz=\int_{\gamma_1} F(z) \,dz+\int_{\gamma_2} F(z) \,dz$
+    \item $\int_{-\gamma} F(z) \,dz=-\int_{\gamma} F(z) \,dz$
+\end{itemize}
+
+\begin{lm}
+    $$\left|\int_{\gamma} F(z) \,dz\right|\le L(\gamma)\underset{z\in\text{supp}(\gamma)}{\sup}(|F(z)|)$$
+\end{lm}
+
+\begin{proof}
+    Voir p.18
+\end{proof}
+
+\subsection{Changement de paramétrage}
+
+Soit $\begin{array}{ccccc}
+\gamma : & [t_0,t_1] & \to & \C
+\end{array}$ un chemin, et soit $\begin{array}{ccccc}
+\varphi : & [u_0,u_1] & \to & [t_0,t_1]
+\end{array}$ surjective de classe $C^1$ telle que $\varphi(y_0)=t_0$ et $\varphi(u_1)=t_1$. \\
+Alors $\delta:=\gamma\circ\varphi$ est un chemin, et on dit que $\delta$ est un reparamétrage de $\gamma$.\\
+On a : $$\int_\gamma F(z)dz=\int_\delta F(z)dz$$
+C'est une conséquence de la formule de changement de variable.
+\begin{align*}
+\int_{t_0}^{t_1} f(t) \,dt = & \int_{u_0}^{u_1} f(\varphi(u))\varphi'(u)\,du\\
+\int_\gamma F(z)\,dz= & \int_{t_0}^{t_1} F(\gamma(t))\gamma'(t)\,dt \\
+\int_{\delta} F(z) \,dz=& \int_{u_0}^{u_1} F(\delta(u))\delta'(u)\,du\\
+=& \int_{u_0}^{u_1} F(\gamma\circ\varphi(u))\varphi'(u)(\gamma'\circ\varphi)(u)\,du
+\end{align*}
+Appliquer le changement de variable à $f(t)=F(\gamma(t))\gamma'(t)$
+
+\begin{align*}
+     \int_{\delta} F(z)\,dz & = \int_{u_0}^{u_1} f(\varphi(u))\varphi'(u)\,du\\
+    & =\int_{t_0}^{t_1}f(t)\,dt=\int_\gamma F(z)\,dz
+\end{align*}
+
+\section{Expression intégrale de fonctions analytiques}
+
+\subsection{Passage à la limite}
+
+\begin{lm}
+    On considère un chemin $\gamma$ et une suite $(F_n)_{n\in\N}$ de fonctions complexes "continues sur le support de $\gamma$" et $(F_n)$ converge uniformément vers $F$, alors $$\int_\gamma F(z)\,dz=\lim_{n\to+\infty}\int_\gamma F_n(z)\,dz$$
+\end{lm}
+
+\begin{proof}
+    Voir p.19
+\end{proof}
+
+\subsection{Une formule intégrale}
+
+\begin{prop}
+    Étant donné un chemin $\gamma$ et une fonction complexe $\varphi$ continue sur supp$(\gamma)$, on définit : $$\begin{array}{ccccc}
+F : & \C\backslash\text{supp}(\gamma) & \to & \C \\
+  & z & \mapsto & \int_\gamma \frac{\varphi(u)}{u-z} \,du
+\end{array}$$
+\begin{center}
+    C'est une fonction analytique, et de plus\\
+    $$F^{(n)}(z)=n!\int_\gamma\frac{\varphi(u)}{u-z}\,du$$
+\end{center}
+\end{prop}
+
+\begin{proof}
+    Voir p.20
+\end{proof}
+
+\chapter{Primitives des fonctions complexes}
+
+On n'admet plus le théorème : $\begin{array}{ccccc}
+f : & U & \to & \C
+\end{array}\text{ holomorphe} \implies \begin{array}{ccccc}
+f' : & U & \to & \C
+\end{array} \text{ continue}$
+
+\section{Primitives}
+
+Soit U un ouvert de $\C$ et $\begin{array}{ccccc}
+f : & U & \to & \C
+\end{array}$ holomorphe. Rappelons qu'une primitive de f sur U est une fonction holomorphe telle que sa dérivée est f.
+
+\begin{ex}
+    \begin{enumerate}
+        \item Le polynôme $P(z)=a_nz^n+\dots+a_1z+a_0$ admet sur $\C$ des primitives de la forme : $\frac{a_n}{n+1}z^{n+1}+\frac{a_{n-1}}{n}z^n+\dots+a_0z+C,C\in\C$
+        \item Sur $\Omega=\C\backslash\R^-$ la détermination principale du logarithme est une primitive de $\frac{1}{z}$.
+    \end{enumerate}
+\end{ex}
+
+\begin{prop}
+    Soit $R$ le rayon de convergence de $\sum a_nz^n$. Soit $$\begin{array}{ccccc}
+f : & D(0,R) & \to & \C \\
+  & z & \mapsto &  \displaystyle{\sum_0^{+\infty}a_nz^n} \end{array}$$
+Alors $$\begin{array}{ccccc}
+F : & D(0,R) & \to & \C \\
+  & z & \mapsto & \displaystyle{\sum_0^{+\infty}\frac{a_n}{n+1}z^{n+1}}  
+\end{array}\text{ est une primitive de f}$$
+\end{prop}
+
+\begin{proof}
+    Voir p.21
+\end{proof}
+
+\begin{cor}
+    Toute fonction analytique admet localement des primitives.
+\end{cor}
+
+\section*{Primitives et intégration}
+
+\begin{prop}
+    Soient $\begin{array}{ccccc}
+f : & U & \to & \C
+\end{array}$ continue et $\begin{array}{ccccc}
+F : & U & \to & \C
+\end{array}$ une primitive de $f$. Etant donné un chemin $\gamma$ tracé dans $U$ d'origine $z_0$ et d'extrémité $z_1$.$$\int_\gamma f(z)\,dz=F(z_1)-F(z_0)$$
+\end{prop}
+
+\begin{proof}
+    Voir p.22
+\end{proof}
+
+\begin{cor}
+    Si la fonction $\begin{array}{ccccc}
+f : & U & \to & \C
+\end{array}$ continue admet une primitive sur $U$, on a pour tout circuit fermé $\gamma$ dans $U$, $$\int_\gamma f(z)\,dz=0$$
+\end{cor}
+
+\begin{ex}
+    $\begin{array}{ccccc}
+& \C^* & \to & \C \\
+& z & \mapsto & \frac{1}{z}  
+\end{array}$ continue. On a vu qu'en posant $\gamma(t)=e^{it},t\in[0,2\pi]$, on a $$\int_\gamma\frac{dz}{z}=2\pi i$$
+Donc $\frac{1}{z}$ n'a pas de primitive sur $\C^*$.
+\end{ex}
+
+\section{Primitives sur un ouvert étoilé}
+
+\subsection{Ensemble étoilé}
+
+\begin{df}
+$E\subseteq\C,E\neq\emptyset$. On appelle centre de $E$ tout point $e_0\in E$ qui vérifie la condition :$$\forall z\in E, [z,z_0]\subseteq E$$
+On dit alors que $E$ est étoilé par rapport à $z_0$. Un ensemble est étoilé s'il a au moins un centre
+\end{df}
+
+\begin{ex}
+    Un ensemble est convexe si chacun de ses points est un centre.
+\end{ex}
+
+\subsection{Primitives sur un ouvert étoilé}
+
+Soit $\Omega$ un ouvert étoilé et $z_0$ un centre de $\Omega$. Soit $\begin{array}{ccccc}
+f : & \Omega & \to & \C
+\end{array}$
+
+\begin{lm}
+    Deux primitives de $f$ sur $\Omega$ diffèrent d'une constante.
+\end{lm}
+
+\begin{re}
+    On avait montré en première partie du cours cet énoncé (ouvert connexe) en admettant que la dérivée d'une fonction holomorphe est continue (ce qu'on ne suppose plus dans cette deuxième partie)
+\end{re}
+
+\begin{proof}
+    Voir p.23
+\end{proof}
+
+\begin{prop}
+    Pour que $f$ admette des primitives sur $\Omega$, il suffit qu'on ait $\displaystyle{\int_\theta f(z)\,dz=0}$ pour tout circuit triangulaire $\theta$ tracé dans $\Omega$.
+\end{prop}
+
+\begin{re}
+    La réciproque a déjà été vu : Si $f$ admet une primitive, alors $\displaystyle{\int_\theta f(z)\,dz=0}$ pour tout circuit $\theta$ dans $\Omega$.
+\end{re}
+
+\begin{proof}
+    Voir p.24
+\end{proof}
+
+\begin{cor}
+    Si $\begin{array}{ccccc}
+f : & \Delta & \to & \C
+\end{array}$ est continue avec $\Delta$ un ouvert de $\C$ et si $\displaystyle{\int_\theta}f(z)\,dz=0$ pour tout circuit triangulaire $\theta$ tracé dans $\Delta$, alors $f$ admet localement des primitives.
+\end{cor}
+
+\subsection{Primitives sur un ouvert connexe (domaine)}
+
+\begin{ra}
+    Un ouvert connexe de $\C$ est connexe par arcs
+\end{ra}
+
+\begin{ex}
+    $\C^*$ est un ouvert connexe mais ce n'est pas un ouvert étoilé.
+\end{ex}
+
+\begin{lm}
+    Si $\begin{array}{ccccc}
+f : & \Delta & \to & \C
+\end{array}$ est continue, alors deux primitives de f diffèrent d'une constante
+\end{lm}
+
+\begin{proof}
+    Même preuve que précédemment.
+\end{proof}
+
+\begin{prop}
+    Soit $\begin{array}{ccccc}
+f : & \underset{Domaine}{D} & \to & \C
+\end{array}$ continue, alors $f$ admet des primitives sur $D$ \ssi $\displaystyle{\int_\lambda f(z)\,dz=0}$ pour tout circuit $\lambda$ tracé dans $D$.
+\end{prop}
+
+\begin{proof}
+    Voir p.25
+\end{proof}
+
+\subsection{Notion d'indice}
+
+\begin{df}
+    Etant donné un circuit $\lambda$ et un point $a\notin \text{supp}(\lambda)$.\\
+    On appelle indice de $\lambda$ par rapport à $a$ : $$\text{Ind}(\lambda,a)=\frac{1}{2\pi i}\int_\lambda\frac{dz}{z-a}$$
+\end{df}
+
+\begin{prop}
+Soit $\lambda$ un lacet, $a\notin\text{supp}(\lambda)$ et $\Omega=\C\backslash\text{supp}(\lambda)$
+    \begin{enumerate}
+        \item Ind$(\lambda,a)$ est constant quand a décrit un domaine inclus dans $\Omega$
+        \item $\text{Ind}(\lambda,a)$ est constant sur tout chemin dont le support ne rencontre pas supp$(\lambda)$
+        \item $\displaystyle{\lim_{|a|\to+\infty}\text{Ind}(\lambda,a)=0}$
+        \item Ind$(\lambda,a)\in\Z$
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    Voir p.26
+\end{proof}
+
+\subsection*{Applications aux domaines étoilés}
+
+Soit $\Delta$ domaine étoilé par rapport à $z_0$
+
+\begin{prop}
+    Si $\Delta$ est étoilé, tout contour triangulaire $\theta$ tracé dans $\Delta$, l'intérieur de $\theta$ est inclus dans $\Delta$.
+\end{prop}
+
+\chapter{Analycité des fonctions holomorphes}
+
+\section{Théorème de Goursat}
+
+\begin{tm}[Théorème (Goursat)]
+    Toute fonction holomorphe sur un ouvert étoilé $\Omega$ y admet des primitives.\\
+    On a vu qu'admettre des primitives sur un ouvert étoilé est équivalent à vérifier $\displaystyle{\int_\lambda f(z)\,dz=0}$ pour tout circuit triangulaire fermé $\lambda$ tracé dans $\Omega$
+\end{tm}
+
+\begin{proof}
+    Voirp.27
+\end{proof}
+
+\section{Application : Théorème de d'Alembert}
+
+\begin{tm}[Théorème (d'Alembert)]
+    Tout polynôme à coefficients complexes de degré > 0 a au moins une racine.
+\end{tm}
+
+\begin{proof}
+    Voir p.29
+\end{proof}
+
+\section{Formule intégrale de Cauchy pour un disque}
+
+Soit D un disque ouvert de centre $z_0$ et de rayon $R$ et soit $\begin{array}{ccccc}
+F : & D & \to & \C
+\end{array}$ une fonction holomorphe. Pour tout $0<r<R$, on considère : $\gamma_r(t)=z_0+re^{it}\,(0\le t\le 2\pi)$
+
+\begin{tm}[Théorème de Cauchy]
+    $\forall a$ tel que $|a-z_0|<r$, $\displaystyle{F(a)=\frac{1}{2\pi i}\int_{\gamma_r} \frac{F(z)}{z-a}\,dz}$
+\end{tm}
+
+\begin{proof}
+    Voir p.30
+\end{proof}
+
+\section{Analycité des fonctions holomorphes}
+
+\subsection{Théorème}
+
+\begin{tm}
+    Toute fonction holomorphe sur un ouvert $\Omega$ est analytique sur $\Omega$
+\end{tm}
+
+\begin{proof}
+    Voir p.31
+\end{proof}
+
+\begin{re}
+    $$F^{(n)}(z)=\frac{n!}{2 \pi i}\int_\gamma \frac{F(u)}{(u-z)^{n+1}}\,du\,,\forall z\in D(a,r)$$
+\end{re}
+
+\begin{tm}
+    Si $\begin{array}{ccccc}
+F : & D & \to & \C
+\end{array}$ est holomorphe sur un disque ouvert $D$, sa série de Taylor au centre de D converge absolument en tout point de D
+\end{tm}
+
+\subsection{Propriétés des coefficients}
+
+Soit $\Omega$ ouvert et $\begin{array}{ccccc}
+F : & \Omega & \to & \C
+\end{array}$ holomorphe. Soit $a\in \Omega$ et $r>0$ tel que $\overline{D(a,r)}\subseteq \Omega$. Soit $\gamma(t)=a+re^{it},(0\le t\le 2\pi)$.\\
+Si $\displaystyle{\sum_{n=0}^{+\infty}a_n(z-a)^n}$ est la série de Taylor de $F$ en $a$, $a_n= \frac{F^{(n)}(a)}{n!}$
+$$\text{D'après la remarque } \displaystyle{a_n=\frac{1}{2\pi i}\int_\gamma\frac{F(u)}{(u-a)^{n+1}}\,du}.$$
+$$\text{Donc } \displaystyle{a_n=\frac{1}{2\pi i}\int_{0}^{2\pi}\frac{F(a+re^{it})ir}{r^{n+1}e^{(n+1)it}}}$$.
+$$a_nr^n=\frac{1}{2\pi}\int_0^{2\pi}F(a+re^{it})e^{-nit}\,dt$$
+$a_nr^n$ s'interprète comme un coefficient de Fourrier pour $\begin{array}{ccccc}
+& \R & \to & \C \\
+& t & \mapsto & D(a+re^{it})  
+\end{array}$
+
+\begin{ra}
+    Si $f$ est $2\pi$-périodique, intégrale sur $[0,2\pi]$, les coefficients de Fourrier exponentiels de $f$ sont les nombres complexes : $\displaystyle{c_n(f)=\frac{1}{2\pi}\int_0^{2\pi}f(t)e^{-int}\,dt},n\in \Z$\\
+    Les coefficients de Fourrier trigonométriques sont :\\
+    $$a_0(f)=\frac{1}{2\pi}\int_0^{2\pi}f(t)\,dt,a_n(f)=\frac{1}{\pi}\int_0^{2\pi}f(t)\cos(nt)\,dt$$
+    $$b_n(f)=\frac{1}{\pi}\int_0^{2\pi}f(t)\sin(nt)\,dt,(n\ge1)$$
+    $$c_n=\frac12(a_n-ib_n)\text{ et }c_{-n}=\frac12(a_n+ib_n)$$
+\end{ra}
+
+\subsection*{Séries de Fourrier}
+
+$\displaystyle{\sum_{n\in\Z}c_n(f)e^{int}=a_0(f)+\sum_{n\ge 1}(a_n(f)\cos(nt)+b_n(f)\sin(nt))}$
+
+\begin{prop}[Inégalité de Cauchy] 
+Posons $\displaystyle{M(r):=\sup_{|z-a|=r}|F(z)|}$.
+    $$|a_n|\le \frac{M(r)}{r^n}$$
+\end{prop}
+
+\begin{proof}
+    En utilisant les propriétés précédentes
+\end{proof}
+
+\section{Quelques applications}
+
+\begin{tm}[Théorème de Liouville]
+    Toute fonction entière bornée est constante
+\end{tm}
+
+\begin{proof}
+    Voir p.33
+\end{proof}
+
+\begin{cor}
+    Tout polynôme à coefficients complexes de degré supérieur à 0 a au moins un zéro complexe.
+\end{cor}
+
+\begin{proof}
+    Voir p.33
+\end{proof}
+
+\begin{tm}[Théorème de Morera]
+    Si $\funto{f}{\Omega}{\C}$ est continue et vérifie "$\int_\theta f(z)\,dz=0$ pour tout circuit triangulaire tracé dans $\Omega$". Alors $f$ est holomorphe sur $\Omega$.
+\end{tm}
+
+\begin{proof}
+    Voir p.34
+\end{proof}
+
+\chapter{Zéros des fonctions holomorphes}
+
+\section{Étude au voisinage d'un zéro}
+
+\subsection{Factorisation}
+
+Soit $\funto{F}{\underset{ouvert}{\Omega}}{\C}$ holomorphe. On appelle zéro de $F$ un élément $z_0\in\Omega$ telle que $F(z_0)=0$
+
+
+\begin{lm}
+    Soit $z_0\in\Omega$ zéro de $F$. Les conditions suivantes sont équivalentes :\\
+    \begin{itemize}
+        \item $F(z)=0$ pour tout $z$ dans un voisinnage de $z_0$
+        \item $\forall k\ge 0,F^{(k)}(z_0)=0$
+    \end{itemize}
+\end{lm}
+
+\begin{proof}
+    Voir p.35
+\end{proof}
+
+\begin{df}
+    On appelle zéro isolé de $F$ tout zéro $z_0$ de $F$ qui ne vérifie pas les conditions du lemme.
+\end{df}
+
+\begin{prop}
+    Si $z_0$ est un zéro isolé de $F$, il existe un unique entier positif $p$ tel que $F(z)=(z-z_0)^pF_1(z)$ où $\funto{F_1}{\Omega}{\C}$ holomorphe et $F_1(z_0)\neq 0$
+\end{prop}
+
+\begin{proof}
+    Voir p.35
+\end{proof}
+
+\subsection{Ordre de multiplicité}
+
+L'entier $p$ introduit dans la proposition précédente s'appelle l'ordre de multiplicité de $z_0$ ou simplement ordre de $z_0$. Dans la preuve précédente, il est caractérisé par les conditions :\\
+$$F^{(k)}=0\text{ pour tout }k<p \text{ et }F^{(p)}(z_0)\neq 0$$
+     Si p=1, le zéro est dit simple\\
+$\left.\begin{array}{ll}
+ \text{Si }p=2\text{ le zéro est dit double}\\  
+ \text{Si }p=3\text{ le zéro est dit triple}\\
+ \vdots\end{array}\right\} \text{ le zéro est dit multiple}$
+
+\begin{nt}[Convention]
+    Si $F(z_0)\neq 0$ on dira que $z_0$ est un zéro d'ordre $0$
+\end{nt}
+
+\begin{lm}
+    Soient $f$ et $g$ deux fonctions holomorphes en $z_0$. Si $é_0$ est un zéro d'ordre $k$ pour $f$ et d'ordre $l$ pour $g$, alors $z_0$ est un zéro d'ordre $k+l$ pour $fg$.
+\end{lm}
+
+\begin{proof}
+    $\left.\begin{array}{ll}
+        f(z)=(z-z_0)^kF_1(z)\\
+        g(z)=(z-z_0)^lG_1(z)
+    \end{array}\right\}$ doù $(fg)(z)=(z-z_0)^{k+l}F_1(z)G_1(z)$
+\end{proof}
+
+\section{Distribution des zéros d'une fonction holomorphe}
+
+\subsection{Principe des zéros isolés}
+
+\begin{lm}
+    Si $z_0$ est un zéro isolé de $\funto{F}{\underset{ouvert}{\Omega}}{\C}$ holomorphe, il existe un voisinage de $z_0$ sur lequel $F$ n'a pas d'autre zéro que ce point.
+\end{lm}
+
+\begin{proof}
+    $F(z)=(z-z_0)^pF_1(z)$ avec $F_1(z_0)\neq 0$, $F_1$ étant continue et non nulle.\\
+    $\exists r>0,|z-z_0|<r\implies F_1(z)\neq 0$. $z_0$ est alors le seul zéro de $F$ dans $D(z_0,r)=0$
+\end{proof}
+
+\subsection{Principe de prolongement}
+
+\begin{lm}
+    Soit $F$ holomorphe sur un domaine $\Delta\subseteq\C$. Si $F$ est nulle en tout point d'un disque ouvert inclus dans $\Delta$, $F$ est nulle sur $\Delta$
+\end{lm}
+
+\begin{prop}[Conséquence du Lemme]
+    Si $\funto{F,G}{\Delta}{\C}$ holomorphe coïncident sur un disque ouvert contenu dans $\Delta$, on a $F=G$ sur tout $\Delta$
+\end{prop}
+
+\end{document}

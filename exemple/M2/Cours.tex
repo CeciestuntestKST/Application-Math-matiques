@@ -1,0 +1,471 @@
+\documentclass[]{report}
+
+\usepackage{import}
+
+\import{../}{settings.tex}
+
+\title{Méthodes numériques pour EDO et EDP}
+
+\author{Cours de Maxime Laborde, transcrit par SADR TAHOURI Luca}
+\date{}
+
+\begin{document}
+
+\chapter{$\R$ et suites de $\R$}
+
+Livres: 3 collections:\\
+Ramis - Deschamps - Odoux\\
+Lelong-Ferrand - Aurnaudiès\\
+Arnaudiès - Fraysse\\
+
+(leçon 223. Suites réelles et complexes, convergence, valeurs d'adhérence, exemples et applications)
+
+$\R$ est un corps commutatif de caractéristique $0$, totalement ordonné.
+
+\begin{df}{Relation d'ordre, ordre total}{}
+    Soit $E$ un ensemble, on note "$\ge$" une relation d'ordre, i.e. telle que:
+    \begin{itemize}
+        \item $\forall x\in E, x\ge x$
+        \item $\forall x,y\in E,x\ge y$ et $y\ge x \implies x=y$
+        \item $\forall x,y,z\in E,x\ge y$ et $y\ge z\implies x\ge z$
+    \end{itemize}
+    La relation d'ordre est dite "d'ordre total" lorsque de plus
+    \[\forall x,y, x\ge y\text{ ou }y\ge x\]
+\end{df}
+
+\begin{df}{Corps totalement ordonné}{}
+    Un corps $(K,+,\cdot)$ est dit totalement ordonné lorsqu'il est muni d'une relation d'ordre total $\ge$ et que de plus
+    \[x\ge 0\text{ et }y\ge 0\implies \cho{x+y\ge 0\\ x\cdot y \ge 0}\]
+\end{df}
+
+\begin{df}{Intervalle dans un ensemble totalement ordonné}{}
+    Dans un ensemble totalement ordonné, on note
+    \[ \left[a,b\right]=\left\{ x\in E, a\le x\le b\right\}\]
+    \[ [a,b[=\{x\in E, a\le x <b\}\]
+    \[ [a,+\infty[=\{x\in E, a\le x\}\]
+\end{df}
+
+Attention: Dans $\R$, on verra que si $A\subset \R$ tel que: $x\in A$ et $y\le x\implies y\in A$, alors $A$ est un intervalle de la forme $]-\infty,c[$.\\
+Mais dans $\Q$, il existe des parties $A$ qui vérifies la propriété, mais qui ne sont pas des intervalles de $\Q$
+
+\begin{nt}{Partie majorée, minorée, bornée}{}
+    Lorsque $E$ est un ensemble totalement ordonné, $A\subset E$ est dite $\cho{ \text{majorée si $\exists x\in E, \forall y \in A, y\le x$}\\ \text{minorée si $\exists x\in E, \forall y\in A, y\ge x$}\\ \text{bornée si majorée et minorée}}$.\\
+    On dit que, pour $A\subset E, x$ est le plus grand élément de $A$ ou maximum de $A$ si $x\in A$ et $\forall y\in A, y\le x$
+\end{nt}
+
+Attention: Toutes les parties de $A$ n'ont pas forcément de maximum, même les parties bornées. Exemple: $[0,1[$
+
+\begin{nt}{}{}
+    On dit que $x$ est la borne supérieure de $A$ lorsque $x$ est le minimum des majorants de $A$
+\end{nt}
+
+\begin{prop}{}{}
+    Dans $\R$, toutes les parties non-vides majorées admettent une borne supérieure.\\
+    Attention: Dans $\Q$, la partie $\{x\in \Q,x\le \sqrt{2}\}$ n'a pas de borne supérieure (Dans $\Q$)
+\end{prop}
+
+\begin{prop}{Caractérisation pratique d'une borne supérieure dans $\R$}{}
+    Pour montrer que $x= \sup A (x\in \R, A\subset \R)$, on montre que
+\begin{enumerate}
+    \item $\forall y\in A, y\le x$
+    \item $\forall \epsilon> 0, \exists y\in A, y\ge x-\epsilon$
+\end{enumerate}
+\end{prop}
+
+\begin{nt}{}{}
+    Lorsque $A$ n'est pas majorée, on utilise la notation $\sup A= +\infty$
+\end{nt}
+
+\begin{df}{Suite convergente}{}
+    Soit $(x_n)_\nN$ une suite de $\R$, on dit qu'elle est majorée (respectivement minorée, respectivement bornée) lorsque $\{x_n,\nN\}$ est majorée (respectivement minorée, respectivement bornée).\\
+    On dit que $x_n\ to l$, $l\in \R$ lorsque 
+    \[\forall \epsilon >0,\exists N_0,\forall n\ge N_0,\left|x_n-l\right|\le \epsilon\]
+    Lorsque un tel $l$ existe (limite), on dit que la suite est convergente. Par définition, une suite divergente est une suite qui n'est pas convergente\\
+    On dit que $x_n\toninfty +\infty$ lorsque
+    \[\forall A\ge 0n \exists N_0, \forall n\ge N_0, x_n \ge A\]
+\end{df}
+
+\begin{re}{}{}
+    Si $\forall n\in \N, x_n \le y_n$ et $x_n\toninfty l , y_n \toninfty l'$ alors $l\le l'$.
+    Attention: Faux pour les inégalités strictes: $u_n = \frac{1}{n}$ et $v_n=0$, $v_n <u_n$ mais $\lim u_n= \lim v_n$
+\end{re}
+
+\begin{tm}{Théorème de Césaro}{}
+    Si $u_n \toninfty l \in \R$ alors $v_n=\frac{u_1+\ldots +u_n}{n}\toninfty l$
+\end{tm}
+
+\begin{prop}{}{}
+    Les suites réelles croissantes majorées convergent (dans $\R$).\\
+    A l'inverse, les suites réelles croissantes non-majorées tendent vers +$\infty$.\\
+    Attention: Cette propriété n'est pas vérifiée dans $\Q$, par densité de $\Q$ dans $\R$ (Prendre une suite croissante de $Q$ qui tend vers un rationnel)
+\end{prop}
+
+\begin{dfprop}{Limites supérieure et inférieure}{}
+    Soit $(x_n)_\nN$ une suite bornée de $\R$. \\
+    On pose $y_n=\sup \left( x_n, x_{n+1} ,\ldots\right)= \sup \left( x_p,p\ge n\right)$ est décroissante et minorée. Cette suite admet donc une limite, qu'on appelle la limite supérieure\\
+    On pose $z_n=\inf \left( x_n, x_{n+1} ,\ldots\right)= \inf \left( x_p,p\ge n\right)$ est croissante et majorée. Cette suite admet donc une limite, qu'on appelle la limite inférieure
+\end{dfprop}
+
+\begin{df}{Suites adjacentes}{}
+    On dit que deux suites réelles $(a_n)$ et $(b_n)$ sont adjacentes lorsque $a_n \nearrow, b_n \searrow, a_n \le b_n$ et $\lim_{n\to \infty}$ et $\lim_{n\to \infty} b_n-a_n=0$
+\end{df}
+
+\begin{prop}{}{}
+    Des suites adjacentes (réelles) convergent toutes deux vers la même limite $l\in \R$
+\end{prop}
+
+\begin{prop}{}{}
+    Foit $(F_n)$ une suite de segments emboités (intervalles fermés bornés) de $\R$ telle que $\lim_n \longrightarrow_{n\to \infty} 0$, alors $\bigcap_\nN F_n = \{ l\}$
+\end{prop}
+
+\begin{df}{Suite de Cauchy}{}
+    Si $(x_n)$ est une suite réelle, on dit qu'elle est de Cauchy lorsque $\forall \epsilon>0, \exists N_0\in \N, \forall n\ge N_0, p\in \N$,
+    \[\left|x_{n+p}-x_n \right|\le \epsilon\]
+\end{df}
+
+\begin{prop}{}{}
+    Toute suite de Cauchy est bornée, toute suite convergente est de Cauchy.
+\end{prop}
+
+\begin{prop}{}{}
+    Les suites réelles de Cauchy convergent (Dans $\R$) ($\R$ est complet)
+\end{prop}
+
+\begin{df}{}{}
+    Soit $(x_n)_\nN$ une suite réelle, et $l\in \R$. On dit que $l$ est valeur d'adhérence (v.a.) de $(x_n)$, lorsque
+    \[\forall \epsilon > 0, \forall N_0\in \N,\exists n\ge N_0 \left|x_n-l\right|\le \epsilon\]
+    Attention: Il n'y a pas unicité des valeurs d'adhérence
+\end{df}
+
+\begin{prop}{}{}
+    Soit $(x_n)_\nN$ suite réelle, $(x_n)_\nN$ admet $l\in \R$ comme valeur d'adhérence $ \iff$ $\exists$ une sous suite de $(x_n)_\nN$ qui converge vers $l$. i.e. une suite $(x_{\sigma(n)})_\nN$ avec $\funto{\sigma}{\N}{\N}$ strictement croissante.
+\end{prop}
+
+\begin{tm}{Théorème de Bolzano-Weierstrass}{}
+    Toute suite bornée de $\R$ admet une valeur d'adhérence.\\
+    Attention: Faux dans $\Q$, il suffit de prendre une suite de $\Q$ est vers $\sqrt{2}$ dans $\R$
+\end{tm}
+
+\chapter{Fonctions de $\R$ dans $\R$}
+
+228. Continuité, dérivabilité des fonctions réelles d'une variable  réelle. Exemples et applications.\\
+229. Fonctions monotones, Fonctions convexes. Exemples et applications.
+
+Soit $I$ un intervalle, $\funto{f}{I}{\R}$
+
+\begin{df}{}{}
+    $a\in \overline{I},l\in \R$, on dit que $\lim_{x\to a} f(x)=l$ lorsque,
+    \[\forall \epsilon>0, \exists \eta >0, \left\|x-a\right\|\le \eta \implies \left| f(x)-l\right|\le \epsilon\]
+    Si $I=[x_0,+\infty[$.\\
+    On dit que $\lim_{x\to +\infty} f(x)= l$ lorsque
+    \[\forall \epsilon>0,\exists B>0, x\ge B\implies \left|f(x)-l\right|\le \epsilon\]
+    Pour $x_0\in \mathring{I}$, on dit que
+    \[\lim_{\substack{x\to x_0 \\ x<x_0}} f(x)= l\qquad \text{ "$f$ admet $l$" comme limite à gauche en $x_0$}\]
+    De même pour la limite à droite
+\end{df}
+
+\begin{df}
+    On dit que $f$ est continue en $x_0\in I$ lorsque
+    \[\forall \epsilon>0, \exists \eta >0, \left|x-x_0\right|\le \eta \implies \left|f(x) -f(x_0)\right|\le \epsilon\]
+    Pour une fonction en admettant en $x_0$ une limite à gauche et à droite, $f$ est continue en $x_0$ si et seulement si les deux limites sont égales.
+\end{df}
+
+\begin{df}{}{}
+    Si $I \subset \R$ intervalle, $\funto{f}{I}{\R}$. On dit que $f$ est continue sur $I$ si et seulement si $f$ est continue en chaque point de $I$.\\
+    Si $\funto{f}{I}{f(I)}$ où $f(I)$ est un intervalle est une bijection continue, on dit que $f$ est un homéomorphisme lorsque $f^{-1}$ est continue.
+\end{df}
+
+\begin{df}{}{}
+    Soit $I\subset \R$ un intervalle, $\funto{f}{I}{\R}$.\\
+    On dit que $f$ est continue par morceaux sur $I$ lorsque 
+    \begin{itemize}
+        \item Il existe un ensemble de points $(x_j)_j$ de $I$ (ordonnée) tel que pour tout segment $S\subset I, (x_j)_j\cap S$ est finie
+        \item De plus $f$ est continue en $]x_j,x_j+1[$
+        \item $\lim_{x\to x_j^+} f(x)$ et $\lim_{x\to x_j^-} f(x)$ existent dans $\R$
+    \end{itemize}
+\end{df}
+
+A voir théorèmes d'opérations pour les limites
+
+\begin{ra}{}{}
+    Si $\funto{f}{I}{\R}$ et $\funto{g}{I}{\R}$, $I,J$ intervalles, $x_0\in I$ tel que $f(x_0)\in J$.\\
+    Si $f$ est continue en $x_0$ et $g$ continue en $f(x_0)$, alors $g\circ f$ continue en $x_0$.
+\end{ra}
+
+\begin{prop}{}{}
+    Soit $I$ segment de $\R$, $\funto{f}{I}{\R}$ continue, alors $f$ est bornée et atteint ses bornes sur $I$
+\end{prop}
+
+\begin{proof}
+    Si $f$ n'est pas bornée, alors $\exists(x_n) \subset I$ tel que $\left| f(x_n)\right|\ge n$.\\
+    $\exists \funto{\sigma}{\N}{\N} \nearrow$ strictement tel que $x_{\sigma(n)}\to l$. Donc, comme $f$ est continue, $\left| f(x_{\sigma(n)})\right| \to \left| f(l)\right|$. Soit $M=\sup_{x\in I} f(x)$.
+    \[\forall x\in \N^*,\exists x_n\in I, f(x_n)\ge M-\frac{1}{n}\]
+    $\exists \funto{\sigma}{\N}{\N} \nearrow $ strictement telle que $x_{\sigma(n)}\to l \in I$
+\end{proof}
+
+\begin{prop}{}{}
+    Soit $I$ un intervalle de $\R$, $f$ continue de $I$ dans $\R$.
+    \begin{itemize}
+        \item Si $x,y\in I$ tels que $f(x)<f(y)$, alors $\forall m\in ]f(x),f(y)[\exists z\in ]x,y[$ tel que $f(z)=m$
+        \item $f(I)$ est un intervalle
+    \end{itemize}
+\end{prop}
+
+\begin{proof}{}{}
+    Soit $l:= \inf \{ t\in [x,y], f(t)\ge m\}$. On va montrer que $f(l)=m$
+    \begin{itemize}
+        \item Si $f(l)>m$, alors $\exists \eta >0$, $f(l-\eta)>m$ impossible par définition.
+        \item Si $f(l)<m$, alors $\exists \eta >0$, $f(l+\eta)<m$ impossible par définition.
+    \end{itemize}
+\end{proof}
+
+\begin{tm}{Régularité des fonctions monotones}{}
+    Soit $\funto{f}{I}{\R},I\subset \R$ intervalle, $f$ monotone. Alors pour tout $x_0\in I,\lim_{x\to x_0^+} f(x)$ existe et $\lim_{x\to x_0^-} f(x)$ aussi.
+    \begin{itemize}
+        \item Si $f$ croissante, $\lim_{x\to x_0^-} f(x)\le f(x_0) \le \lim_{x\to x_0^+} f(x)$
+        \item Si $f$ décroissante $\lim_{x\to x_0^-} f(x) \ge f(x_0) \ge \lim_{x\to x_0^+} f(x)$
+    \end{itemize}
+    Les points de continuité de $f$ sont ceux pour lesquels les inégalités précédentes sont des égalités.\\
+    Les points de discontinuités de $f$ sont (au plus) dénombrables.\\
+    Les fonctions $f$ monotones qui sont continues sont celles dont l'image de $I$ par $f$ est un intervalle.\\
+    Si $\funto{f}{I}{\R}$ est une fonction strictement monotone et continue, alors $f$ est bijective de $I$ sur l'intervalle $f(I)$. De plus, $f^{-1}$ de $f(I)$ dans $I$ est continue ($f$ est un homéomorphisme de $I$ sur $f(I)$).\\
+    Si $\funto{f}{I}{\R}$ est injective et continue, alors elle est strictement monotone.
+\end{tm}
+
+\begin{prop}{Classification des intervalles de $\R$ à homéomorphisme près}{}
+    \begin{itemize}
+        \item Des parties de $\R$ qui ne sont pas des intervalles ne peuvent pas être homéomorphes à un intervalle de $\R$, car les intervalles de $\R$ sont les connexes et une fonction continue envoie un connexe sur un connexe.
+        \item Les segments de $\R$ sont homéomorphes entre eux et homéomorphes à aucun autre intervalle de $\R$ car l'image d'un compact par une fonction continue est compact (ces homéomorphismes sont affines)
+        \item Tous les intervalles ouverts sont homéomorphes en utilisant: les fonctions affines, $x\mapsto \frac{1}{x}$ et $x\mapsto \arctan(x)$
+        \item Tous les intervalles semi-ouverts sont homéomorphes.
+    \end{itemize}
+\end{prop}
+
+\begin{df}{fonction dérivable, dérivée à droite et dérivée à gauche}{}
+    $\funto{f}{I\subset \R}{ \R}$. On dit que $f$ est dérivable en $x_0\in I$ de dérivée $f'(x_0)$ lorsque
+    \[\lim_{x\to x_0}\frac{f(x)-f(x_0)}{x-x_0}=f'(x_0)\qquad \text{La dérivée est unique}\]
+    Si $x_0\in \mathring{I}$, $f$ est dérivable à droite en $x_0$ de dérivée $f_d'(x_0)$ lorsque
+    \[\lim_{x\to x_0^+}\frac{f(x)-f(x_0)}{x-x_0}=f'(x_0)\qquad \text{La dérivée à droite est unique}\]
+    De même pour la dérivée à gauche $f_g'(x_0)$.
+\end{df}
+
+Soit $\funto{f}{I}{\R}$ dérivable et bijective de $I$ sur $f(I)$ intervalle. Pour $y_0\in f(I)$,
+\[\frac{f^{-1}(y)-f^{-1}(y_0)}{y-y_0}=\frac{1}{\frac{f(f^{-1}(y))-f(f^{-1}(y_0))}{y-y_0}}\]
+
+\begin{prop}{}{}
+    Si $\funto{f}{I}{\R}$ est croissante et dérivable, alors
+    \[\forall x\in I,f'(x)\ge 0\]
+    De même pour la décroissance.\\
+    Si $\funto{f}{I}{\R}$ admet un max en $x_0\in \mathring{I}$ et $f$ dérivable, alors
+    \[f'(x_0)=0\]
+\end{prop}
+
+\begin{tm}{Théorème de Rolle}{}
+    Soit $\funto{f}{[a,b]}{\R}$, $b>a$ tel que $f$ est continue sur $[a,b]$ et dérivable sur $]a,b[$ et $f(a)=f(b)$, alors
+    \[\exists c\in ]a,b[,f'(c)=0\]
+\end{tm}
+
+\begin{proof}
+    Si $f$ est constante sur $[a,b]$, alors $f'(c)=0,\forall c\in [a,b]$.\\
+    Si $f$ n'est pas constante, il existe $x_0\in ]a,b[$ tel que $f(x_0)\neq f(a)$.\\
+    Si $f(x_0)>f(a)$, alors on considère le premier point $y_0$ de $[a,b]$ où $f$ atteint son max, on a $y_0\neq a,b$, on a alors $f'(y_0)=0$
+\end{proof}
+
+\begin{tm}{Théorème des accroissements finis (TAF)}{}
+    Soit $\funto{f}{[a,b]}{\R},b>a$, continue sur $[a,b]$, dérivable sur $]a,b[$, alors $\exists c\in ]a,b[$ tel que 
+    \[f'(c)=\frac{f(b)-f(a)}{b-a}\]
+\end{tm}
+
+\begin{proof}
+    Soit $\funto{f}{[a,b]}{\R},b>a$, continue sur $[a,b]$, dérivable sur $]a,b[$. On pose
+    \[g(x)=f(x) - \frac{f(b)-f(a)}{b-a}(x-a)\implies \forall c\in ]a,b[, g'(c)=f'(c)-\frac{f(b)-f(a)}{b-a}\]
+    Si $f(a)=f(b)$, c'est le théorème de Rolle qui conclut.\\
+    Si $f(a)\neq f(b)$, alors $g(a)= g(b) = f(a)$. On applique le théorème de Rolle à g et on a donc qu'il existe $c\in ]a,b[$ tq $g'(c)=0=f'(c)-\frac{f(b)-f(a)}{b-a}$ ce qui implique
+    \[f'(c)=\frac{f(b)-f(a)}{b-a}\]
+\end{proof}
+
+\subsection*{Conséquence du TAF}
+
+\begin{prop}{}{}
+    Si $f$ est dérivable sur $I$ intervalle de $\R$, et $f'\ge 0$ sur $I$ (resp. $\le 0$), alors $f$ est croissante (resp. décroissante) sur $I$ 
+\end{prop}
+
+\begin{proof}
+    $a,b\in I,\exists c\in ]a,b[, f'(c)=\frac{f(b)-f(a)}{b-a}$.\\
+    Tableau de variation $\implies f(b)\ge f(a)$
+\end{proof}
+
+\begin{prop}{}{}
+    Soit $\funto{f}{[a,b]}{\R}, b>a$, dérivable sur $]a,b]$ et continue sur $[a,b]$. On suppose que $\lim_{x\to a^+}f'(x)$ existe. Alors $f$ est dérivable en $a$ (à droite) et
+    \[f'_{(d)}(a)=\lim_{x\to a^+} f'(x)\]
+\end{prop}
+
+\begin{proof}
+    pour $h>0$, $\frac{f(a+h)-f(a)}{h}=f'(c)$ par le TAF pour $c\in ]a,a+h[$.\\
+    Lorsque $h\to 0^+, c\to a^+$ et donc $f'(c)\to \lim_{x\to a^+} f'(x)$ donc la dérivée à droite existe.
+\end{proof}
+
+\begin{prop}{}{}
+    Si $\funto{f}{I}{\R}$ continue, alors
+    \[\funto{F}{x}{\int_{0}^{x} f(t)\, dt}\]
+    est dérivable et $F'(x)=f(x)$
+\end{prop}
+
+\begin{proof}
+    \begin{align*}
+        \dfrac{\int_{0}^{x+h} f(t)\, dt -\int_{0}^{x} f(t)\, dt}{h}&=\frac{1}{h} \int_{x}^{x+h}f(t)\, dt\\
+        \left|\dfrac{F(x+h)-F(x)}{h}-f(x)\right|&= \left|\frac{1}{h} \int_{x}^{x+h} f(t)\, dt-\frac{1}{h} \int_{x}^{x+h} f(x)\, dt\right|\\
+        &= \frac{1}{|h|}\int_{[x,x+h]} f(t)-f(x)\, dt\\
+        &\le \sup_{t\in [x,x+h]} \left| f(t)-f(x)\right|\longrightarrow_{h\to 0}0\text{ par continuité de $f$}
+    \end{align*}
+\end{proof}
+
+\begin{prop}{}{}
+    Soit $\funto{f}{I}{\R},f\in C^1(I)$,
+    \[\forall a,b\in I, \int_{a}^{b} f'(t)\, dt= f(b)-f(a)\]
+\end{prop}
+
+\begin{proof}
+    En dérivant par rapport à $b$ les deux fonctions
+    \begin{align*}
+        (b\mapsto \int_{a}^{b} f'(t)\, dt)(x)&= f'(x)\\
+        (b\mapsto f(b)-f(a))(x)&=f'(x)
+    \end{align*}
+    Donc la fonction
+    \[\funto{G}{b}{\int_{a}^{b} f(t)\, dt -(f(b)-f(a))}\]
+    est de dérivée nulle donc $G$ est croissante et décroissante donc constante. Comme $G(a)=0,G=0$
+\end{proof}
+
+\begin{df}{Fonction $C^1$ et $C^1$ par morceau}{}
+    Soit $I\subset \R$ intervalle. On dit que $f\in C^1(I)$ lorsque $f$ est dérivable sur $I$ et $f'$ est $C^0$ sur $I$.\\
+    On dit que $f$ est de classe $C^1_{pm}$ ($C^1$ par morceaux) sur $I$ lorsque sur chaque segment de $I$, $f$ admet au plus un nombre fini de points $(x_i)$ de $S=[a,b]$, $x_0=a<x_1<\ldots< x_k <x_{k+1}=b,\forall i\in \llbracket 0,k\rrbracket$, $f_{|]x_i,x_{i+1}[}$ est $C^1$ et pour tout $i\in\llbracket 1,k\rrbracket,f'$ admettent des limites à droites et à gauche
+\end{df}
+
+\begin{df}{Fonction convexe}{}
+    Soit $\funto{f}{I}{\R}$, $I$ intervalle. On dit que $f$ est convexe si
+    \[\forall x,y\in I,\forall \lambda\in [0,1], \lambda f(x)+(1-\lambda) f(y)\le f(\lambda x+(1-\lambda) y)\]
+    On dit que $f$ est strictement convexe si
+    \[\forall x,y\in I,\forall \lambda\in [0,1], \lambda f(x)+(1-\lambda) f(y)< f(\lambda x+(1-\lambda) y)\]
+\end{df}
+
+\begin{prop}{}{}
+    Soit $\funto{f}{\R}{\R}$ convexe, alors
+    \begin{enumerate}
+        \item \[\forall a<b<c, \frac{f(b)-f(a)}{b-a}\le \frac{f(c)-f(a)}{c-a}\le \frac{f(c)-f(b)}{c-b}\]
+        \item $f$ est continue sur $\R$
+        \item $f$ est dérivable à droite et à gauche en tout point de $\R$ et de plus,
+        \[\forall a<c,f_g'(a)\le f_d'(a)\le \frac{f(c)-f(a)}{c-a}\le f_g'(c)\]
+        \item $f$ est dérivable sauf sur un ensemble au plus dénombrable
+    \end{enumerate}
+\end{prop}
+
+\begin{prop}{}{}
+    Si $f$ dérivable, $f$ convexe $\iff $ $f'$ croissante
+\end{prop}
+
+\begin{df}{}{}
+    Soit $E$ un $\R$-espace vectoriel. On dit que $A\subset E$ est convexe lorsque
+    \[\forall x,y\in A, \lambda [0,1], (1-\lambda)x+\lambda y\in A\]
+    On peut vérifier que $\funto{f}{\R}{\R}$ est convexe si et seulement si
+    \[\text{Epi}(f)=\{(x,y)\in \R^2,y\ge f(x)\}\text{ est convexe}\]
+\end{df}R
+
+\begin{prop}{}{}
+    Soit $\funto{f}{\R}{\R}$ strictement convexe. Alors
+    \[f(x_1)=\min_{x\in \R}=f(x_2)\implies x_1=x_2\]
+\end{prop}
+
+\begin{proof}
+    \[f\left(\frac{x_1+x_2}{2}\right)<\frac{f(x_1)+f(x_2)}{2}\]
+    sauf si $x_1=x_2$
+\end{proof}
+
+\subsection*{Inégalités de convexité}
+\begin{enumerate}
+\item La fonction $\fundfto{f}{\R}{\R}{x}{x^p}$ est convexe pour $p \ge 1$. On a donc $\forall x,y>0$
+\[\left(\frac{x+y}{2}\right)^p\le \frac{x^p+y^p}{2}\]
+\[\implies \left(x+y\right)^p\le 2^{p-1} \left(x^p+y^p\right)\]
+\item pour $g$ convexe,
+\[ g\left(\frac{x_1+\ldots+x_n}{n}\right)\le \frac{g(x_1)+\ldots+g(x_n)}{n}\]
+\end{enumerate}
+
+\chapter{Formules de Taylor, développements limités et développements asymptotiques}
+(Leçon 224)
+
+Pour $f,g$ définies au voisinage de $x_0\in \R$, on dit que
+\[f= o_{x\to x_0} (g)\text{ lorsque }\]
+\[\forall \epsilon>0,\exists \eta>0, \left|x-x_0\right|\le \eta \implies \left|f(x)\right| \le \epsilon \left|g(x)\right|\]
+On dit que
+\[f= O_{x\to x_0} (g)\text{ lorsque }\]
+\[\exists M>0,\exists \eta>0, \left|x-x_0\right|\le \eta \implies \left|f(x)\right| \le M \left|g(x)\right|\]
+On dit que
+\[f \sim_{x\to x_0} g\text{ lorsque }\]
+\[\forall \epsilon>0,\exists \eta>0, \left|x-x_0\right|\le \eta \implies \left|f(x)-g(x)\right| \le \epsilon \left|g(x)\right|\]
+
+\begin{prop}{Caractérisation utile lorsque $g$ ne s'annulle pas au voisinage de $x_0$}{}
+    \[f= o_{x\to x_0} (g) \iff \frac{f}{g}\longrightarrow_{x\to x_0}0\]
+    \[f= O_{x\to x_0} (g)\iff \left|\frac{f}{g}\right|\text{ est borné au voisinage de $x_0$} \]
+    \[f \sim_{x\to x_0} g \iff \frac{f}{g}\longrightarrow_{x\to x_0}1\]
+\end{prop}
+
+\begin{prop}{Formules sur les $o$}{}
+    Dans les développements limités, on utilisera les formules suivantes quand $x\to 0$
+    \[o(x^p)+o(x^q)=o(x^{\min(p,q)})\]
+    \[x^p \times o(x^q)=o(x^{p+q})\]
+    \[o(x^p o(x^q))=o(x^{p+q})\]
+    \[\left( o(x^p)\right)^q= o(x^{pq})\]
+\end{prop}
+
+\begin{df}{}{}
+    Soit $\funto{f}{I}{\R}$ et $x_0\in \overline{I}$, $I$ intervalle de $\R$.\\
+    On dit que $f$ admet un développement limité en $x_0$ à l'ordre $p\in \N$ lorsque
+    \[f(x)=a_0+a_1(x-x_0)+\ldots+ a_p (x-x_0)^p +o\left((x-x_0)^p\right),a_0,\ldots,a_p\in \R^{p+1}\]
+\end{df}
+
+\begin{re}{}{}
+    Il y a unicité d'un Développement limité (d'ordre donné)
+\end{re}
+
+\subsection*{Formules de Taylor}
+
+\begin{df}{Formules de Taylor-Young,Taylor Lagrange,}{}
+    Taylor-Young:\\
+    Soit $\funto{f}{I}{\R}$ $n$ fois dérivable sur $I$ et $f^{(n-1)}$ dérivable en $t\in \mathring{I}$, on a alors
+    \[f(t+h)=f(t)+\ldots+\frac{k^n}{n!}f^{(n)}(t)+ o(|h|^n)\]
+    Taylor-Lagrange:\\
+    Soit $\funto{f}{[a,b]}{\R}$ de classe $C^n$ sur $[a,b]$ et telle que $f^{(n)}$ est dérivable sur $]a,b[$.
+    \[\exists c\in ]a,b[, f(b)=f(a)+(b-a)\frac{f'(a)}{1!}+\ldots+ (b-a)^n\frac{f^{(n)}(a)}{n!}+ (b-a)^{n+1}\frac{f^{(n+1)}(c)}{(n+1)!}\]
+    Taylor-Laplace(Formule de Taylor avec reste integral):\\
+    Soit $\funto{f}{[a,b]}{\R}$ de classe $C^{n+1}$ sur $[a,b]$, alors
+    \[f(b)=f(a)+(b-a)\frac{f'(a)}{1!}+\ldots+ (b-a)^n \frac{f^{(n)}(a)}{n!}+\cho{\int_a^b (b-t)^n \frac{f^{(n+1)}(t)}{n!}\, dt\\ (b-a)^{n+1} \int_{0}^{1}(1-\theta)^n\frac{f^{(n+1)} \left((1-\theta)a+\theta b\right)}{n!} \, d\theta}\]
+    Attention: Si $\funto{f}{[a,b]}{\R^n},n\neq 1$, la formule de Taylor-Lagrange est remplacée par une inégalité.
+\end{df}
+
+\begin{prop}{}{}
+    \begin{enumerate}
+        \item Soit $\funto{f}{I}{\R}, f\in C^2$, $I$ intervalle de $\R,x_0\in \mathring{I}$, tel que $f$ admet un maximum local en ce point. Alors
+        \[f'(x_0)\text{ et }f''(x_0)\le 0\] 
+        \item Soit $\funto{f}{I}{\R},f\in C^2(I)$, $I$ intervalle de $\R$. Si $x_0\in \mathring{I}$ est tel que $f'(x_0)=0$ et $f''(x_0)<0$, alors $x_0$ est un maximum local de $f$.
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    \begin{enumerate}
+        \item On sait déjà que $f'(x_0)=0$, puis on applique la formule de Taylor Young.
+        \item Comme $f''$ est continue, on a $f''(y)<0$ pour $|y-x_0|\le \eta$
+    \end{enumerate}
+\end{proof}
+
+\begin{re}{}{}
+    Pour un exo du type: Montrer que $\fun{x}{\frac{\sin x-x}{ x^3}}$ est $C^\infty$ sur $\R$. On peut dire que 
+    \begin{align*}
+        \sin x &= \sin 0 +x\cos 0 - x^2\frac{\sin 0}{2!}+x^3 \int_0^1 (1-\theta)^2 \frac{\left(-\cos (\theta x)\right)}{2!}\, d\theta\\
+        &= x-\frac{x^3}{2}\int_{0}^{1}(1-\theta)^2 \cos (\theta x)\, d\theta
+    \end{align*}
+\end{re}
+
+\begin{prop}{}{}
+    $f,g$ de classe $C^2$ sur $[a,b]$. $g$ admet un unique maximum global $x_0\in ]a,b[$ ($g'(x_0)=0,g''(x_0)\le 0$) tel que $g''(x_0)<0$. Alors \\
+    \[\int_{a}^{b} f(x) e^{\lambda g(x)}\, dx  \sim_{\lambda \to +\infty} \sqrt{\frac{2\pi}{\lambda \left|g''(x_0)\right|}} f(x_0) e^{\lambda g(x_0)}\]
+\end{prop}
+\end{document}

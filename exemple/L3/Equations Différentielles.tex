@@ -1,0 +1,641 @@
+\documentclass[]{report}
+
+\usepackage{import}
+
+\import{../}{settings.tex}
+
+\title{Équations Différentielles}
+\author{Cours de David Gérard-Varet, écrit par SADR TAHOURI Luca}
+\date{}
+
+\begin{document}
+
+    \maketitle
+    \tableofcontents
+
+\chapter{Introduction aux équations différentielles}
+
+\section{Équations différentielles du premier ordre}
+
+\subsection{Équations scalaires}
+
+\begin{df}
+    Une équation différentielle scalaire du premier ordre est une équation du type :$$y'(t)=f(t,y(t)) \quad (E)$$
+    \begin{itemize}
+        \item L'inconnue est une fonction $y=y(t)$ à valeurs dans $\R$.
+        \item $\funto{f}{I\times U}{\R}$ avec $f=f(t,z)$, $I$ un intervalle de $\R$ et $U$ un ouvert de $\R$
+    \end{itemize}
+\end{df}
+
+\begin{df}[Définition (Solution de l'équation différentielle)]
+    Soit $J\subset I$ un intervalle. Une solution de $(E)$ sur $J$ est une fonction $\funto{y}{J}{U}$ dérivable qui satisfait $(E)$ pour tout $t$ dans $J$
+\end{df}
+
+\begin{re}
+    \begin{itemize}
+        \item "Différentielle", l'équation fait intervenir une ou des dérivées de $y$.
+        \item "Premier ordre", ne fait intervenir uniquement la dérivée première
+        \item "Scalaire" : Les solutions $y$ sont à valeurs réelles
+        \item La variable est notée $t$ (Dans beaucoup de modèles, elle fait référence à un temps)
+        \item On suppose toujours $f$ continue sur $I\times U\implies$ Toute solution de $(E)$ sera de classe $C^1$
+    \end{itemize}
+\end{re}
+
+\begin{ex}
+    \begin{itemize}
+        \item $y'(t)=0$, les solutions sont les $y(t)=C,C\in\R$
+        \item 
+        On s'intéresse à l'évolution d'une population au cours du temps et on pose $y(t)$ la population au temps $t$.\\
+        Pour tout temps $t$, pour toute durée $\delta$, $$y(t+\delta)-y(t)=\text{nombre de naissances entre $t$ et $t+\delta$}-\text{nombre de décès entre $t$ et $t+\delta$}$$
+        Loi de Malthus : $$\text{nombre de naissances entre $t$ et $t+\delta$}=a \delta y(t),a\in\R$$
+        $$\text{nombre de décès entre $t$ et $t+\delta$}=b\delta y(t)$$
+        $$\text{ et donc } y(t+\delta)-y(t)=\tau\delta y(t),\text{ avec }\tau=a-b$$
+        Si l'échelle de temps considérée est grande devant $\delta$, on fait tendre $\delta$ vers $0$ :
+        $$\frac{y(t+\delta)-y(t)}{\delta}=\tau y(t)$$
+        Les solutions sont de la forme : $y(t)=Ce^{\tau t},t\in\R,C\in\R$
+    \end{itemize}
+\end{ex}
+
+\begin{re}
+    On peut faire dépendre le taux de natalité $\tau$ du temps $\tau=\tau(t)\to y'(t)=\tau(t) y(t)$\\
+    Loi de Verhulst (ou équation logistique) :\\
+    Hypothèse :\begin{itemize}
+        \item Le taux de natalité décroît de manière affine avec $y(t)$
+        \item Le taux de mortalité croît de manière affine avec $y(t)$
+    \end{itemize}
+    Modèle : $y'(t)=\tau\left(1-\frac{y(t)}{k}\right)y(t)$.\\
+    Solutions : $y(t)=\frac{k}{1+ce^{-\tau t}},c\in\R$
+\end{re}
+
+\begin{ex}
+    $y'(t)=y(t)^2$ du type $$f(t,z)=z^2\quad (E)$$
+    $f$ est définie sur $\R\times \R$. Soit $y$ une solution positive sur un intervalle $J$ qui contient $t=0$. On a alors $$\forall t\in J,\frac{y'(t)}{y(t)^2}=1$$
+    $\frac{d}{dt}\frac{1}{y(t)}=-1$. On intègre entre $0$ et $t$ : $\frac{1}{y(t)}-\frac{1}{y(0)}=-t\longrightarrow y(t)=\frac{1}{\frac{1}{y(0)}-t}$ et nécessairement $J\subset ]-\infty,\frac{1}{y_0}[$
+\end{ex}
+
+\begin{re}
+    Les 3 premiers exemples montrent que $(E)$ a en général une infinité de solutions. Pour avoir unicité, il faut imposer "une condition initiale", du type $y(t_0)=y_0$
+\end{re}
+
+\begin{re}
+    Le dernier exemple montre qu'on peut avoir des solutions qui ne sont pas définies sur $I$ (pas définies globalement).
+\end{re}
+
+\subsection{Équations vectorielles}
+
+De manière générale, une équation différentielle du premier ordre est une équation de la forme :$$Y'(t)=F(t,Y(t))\quad (E')$$
+\begin{itemize}
+    \item L'inconnue $Y$ est à valeurs dans $\R^d (d\ge1)$
+    \item $F=F(t,z)$ avec $\funto{F}{I\times U}{\R^d}$, $I$ un intervalle de $\R$ et $U$ un ouvert de $\R^d$
+\end{itemize}
+
+\begin{df}
+    $J\subset I$ intervalle. Une solution de $(E')$ sur $J$ est une fonction $\funto{Y}{J}{U}$ dérivable qui satisfait $(E')$ pour tout $t\in J$
+\end{df}
+
+\begin{re}
+    En notant $Y(t)=(y_0(t),\dots,y_{d-1}(t))$ et pour $z=(z_0,\dots,z_{d-1})$ et $F(t,z)=(f_0(t,z_0,\dots,z_{d-1}),\dots,f_{d-1}(t,z_0,\dots,z_{d-1}))$\\
+    $(E')$ s'écrit $\cho{y_0'(t)=f_0(t,y_0(t),\dots,y_{d-1}(t))\\\qquad\vdots\\y_{d-1}'(t)=f_{d-1}(t,y_0(t),\dots y_{d-1}(t))}$\\
+    Quand $d\ge 2$, on appelle $(E')$ un système différentiel.
+\end{re}
+
+\begin{ex}
+    Système de Lotka-Volterra (Modèle proies-prédateurs) :\\
+    $x(t)$ : population de proies à l'instant $t$\\
+    $y(t)$ : population de prédateurs à l'instant $t$\\
+    $A,B,C,D$ des paramètres positifs\\
+    $$\cho{x'(t)=(A-By(t))x(t)\\
+    y'(t)=(-C+Dx(t))y(t)}$$
+    On peut montrer que pour $x(0)>0,y(0)>0$, les solutions de ce système différentiel sont périodiques. C'est bien du type $(E')$ avec $d=2$. On pose $Y(t)=\begin{pmatrix}
+        x(t)\\y(t)
+    \end{pmatrix}$\\
+    \begin{align*}
+    F(t,Z)&=F(t,z_0,z_1)&\text{ avec } Z=(z_0,z_1)\\
+    &=((A-Bz_1)z_0,(-C+Dz_0)z_1)&\\
+    &&\text{On obtient } F(t,Y(t))=Y'(t)
+    \end{align*}
+\end{ex}
+
+\begin{prop}[Propriété (Forme intégrée de l'équation différentielle)]
+    $\funto{Y}{J}{U}$ est une solution de $(E')$ sur $J$ \ssi, pour $t_0\in I$,\\
+    $$\cho{Y \text{ est continue sur }J\\
+    \displaystyle{Y(t)=Y(t_0)+\int_{t_0}^tF(s,Y(s))\,ds}}$$
+\end{prop}
+
+\begin{proof}
+    \begin{itemize}
+        \item Soit $Y$ une solution de $(E')$ sur $J$. Elle est $C^0$ sur $J$ car dérivable. En intégrant, $Y'(t)=F(t,Y(t))$ entre $t$ et $t_0$, on trouve la forme intégrée.
+        \item Réciproquement, si $Y$ est $C^0$ sur $J$ satisfait la forme intégrée, l'application $\mfun{s}{F(s,Y(s))}$ est $C^0$, et le membre de droite est une fonction $C^1$ de $t$ (primitive d'une fonction $C^0$).\\
+        Donc $Y$ est $C^1$ et en dérivant les deux membres de l'égalité, on trouve $(E')$.
+    \end{itemize}
+\end{proof}
+
+\begin{df}[Définition (Équation différentielle autonome)]
+    On appelle équation différentielle autonome une équation de la forme $Y'(t)=\tilde{F}(Y(t))$ où $\funto{\tilde{F}}{U}{\R^d}$ est continue et $U$ est un ouvert de $\R^d$
+\end{df}
+
+\begin{re}
+    Cas particulier de $E'$, $F(t,z)=\tilde{F}(z)$
+\end{re}
+
+\section{Équations différentielles d'ordre n}
+
+Une équation différentielle scalaire d'ordre $n$ est une équation de la forme :
+$$y^{(n)}(t)=f(t,y(t),\dots,y^{(n-1)}(t))\quad (E_n)$$
+$$\text{où }\fundfto{f}{I\times U_0\times\dots\times U_{n-1}}{\R}{(t,z_0,\dots,z_{n-1})}{f(t,z_0,\dots,z_{n-1})},I\text{ est un intervalle ouvert de }\R \text{, et les } U_i\text{ sont des ouverts de }\R$$
+
+\begin{df}
+    Soit $J\subset I$ intervalle.\\
+    $\funto{y}{I}{\R}$ est une solution de $(E_n)$ sur $J$ si elle est dérivable $n$ fois sur $J$, si $y^{(i)}$ est à valeurs dans $U_i$ pour tout $0\le i\le n-1$ et si elle satisfait $(E_n)$ pour tout $t$ dans $J$.
+\end{df}
+
+\begin{df}[Généralisation à une équation vectorielle]
+    $Y^{(n)}(t)=F(t,Y(t),\dots,Y^{(n-1)}(t))$ avec $\funto{F}{I\times U_0\times \dots\times U_{n-1}}{\R^d}$, $U_i$ des ouverts de $\R^d$ et $Y$ à valeurs dans $\R^d$
+\end{df}
+
+\begin{ex}
+    \begin{itemize}
+        \item Équation du ressort :
+        $x(t)$ : position de l’extrémité  du ressort au temps $t$. $$mx''(t)+kx(t)=0$$ 
+        Avec $m$ la masse de l’extrémité et $k$ la constante du ressort. C'est une équation scalaire d'ordre 2.
+        \item Équation du pendule :
+        $\theta(t)$ : Angle que fait la corde avec la droit verticale au temps $t$.$$l\theta''(t)+g\sin(\theta(t))=0$$
+        C'est une équation scalaire d'ordre 2
+        \item Soi de la gravitation :
+        $O$ point fixe de l'espace, et un point mobile repéré par sa position $X(t)$ de masse $M$ au temps $t$.$$X''(t)=-\frac{MG\vect{OX(t)}}{\norme{\vect{OX(t)}}^3}$$
+    \end{itemize}
+\end{ex}
+
+\subsection*{Réduction des équations différentielles d'ordre n au 1er ordre}
+
+L'équation $Y^{(n)}(t)=F(t,Y(t),\dots,Y^{(n-1)}(t))\quad (E_n')\quad$ se réécrit :
+$$\begin{pmatrix}
+    Y\\
+    Y'\\
+    \vdots\\
+    Y^{(n-2)}\\
+    Y^{(n-1)}
+\end{pmatrix}'(t)=
+\begin{pmatrix}
+Y'\\
+Y''\\
+\vdots\\
+Y^{(n-1)}\\
+F(t,Y(t),\dots,Y^{(n-1)}(t))
+\end{pmatrix}(t)$$
+$$\text{En posant }\mathcal{Y}(t)=\begin{pmatrix}
+    Y(t)\\
+    \vdots\\
+    Y^{(n-1)}(t)
+\end{pmatrix}\text{, }\mathcal{Z}(t)=\begin{pmatrix}
+    z_0\\
+    \vdots\\
+    z_{n-1}
+\end{pmatrix} \text{ et }\mathcal{F}(t,\mathcal{Z})=\begin{pmatrix}
+    z_1\\
+    z_2\\
+    \vdots\\
+    z_{n-1}\\
+    F(t,z_0,\dots,z_{n-1})
+\end{pmatrix}$$
+Alors $(E_n')$ peut se réécrire $\mathcal{Y}'(t)=\mathcal{F}(t,\mathcal{Y(t)})$ équation différentielle du 1er ordre avec $\mathcal{Y}$ à valeurs dans $\R^{d\times n}$
+
+\begin{prop}
+    \begin{enumerate}
+        \item Si $Y$ est solution de $Y^{(n)}(t)=F(t,Y(t),\dots,Y^{(n-1)}(t))$ alors $\mathcal{Y}(t)=\begin{pmatrix}
+            Y(t)\\
+            \vdots\\
+            Y^{(n-1)}(t)
+        \end{pmatrix}$ satisfait $\Yr'(t)=\Fr(t,\Yr(t))$ où $\Fr$ est définit par $\mathcal{F}(t,\mathcal{Z})=\begin{pmatrix}
+    z_1\\
+    z_2\\
+    \vdots\\
+    z_{n-1}\\
+    F(t,z_0,\dots,z_{n-1})
+\end{pmatrix}$
+        \item Réciproquement, si $\Yr$ est une solution de $\Yr'(t)=\Fr(t,\Yr(t))$, alors la première composante $Y(t):=\Yr_0(t)$ est solution de $(E_n')$
+    \end{enumerate}
+\end{prop}
+
+\chapter{Équations différentielles linéaires}
+
+\section{Définitions}
+
+\begin{df}[Définition (1er ordre)]
+    Une équation différentielle $Y'(t)=F(t,Y(t))$ est linéaire si :
+    $$F(t,Z)=A(t)Z+B(t),t\in I,Z\in\R^d$$
+    $$\text{Avec }\funto{A}{I}{M_d(\R)},\funto{B}{I}{\R^d}\text{ continue}$$
+    $$\text{On a donc }Y'(t)=A(t)Y(t)+B(t)\qquad (E)$$
+\end{df}
+
+\begin{ex}
+    $\cho{x'(t)=\cos(t)x(t)+3y(t)\\
+    y'(t)=\sin(t)y(t)-tx(t)+\sqrt{t}}$   est de la forme $(E)$ avec $Y(t)=\begin{pmatrix}
+        x(t)\\
+        y(t)
+    \end{pmatrix}A(t)+B(t)$, avec $A(t)=\begin{pmatrix}
+        \cos(t)&-3\\
+        -t&\sin(t)
+    \end{pmatrix}$ et $B(t)=\begin{pmatrix}
+        0\\
+        \sqrt{t}
+    \end{pmatrix}$ 
+\end{ex}
+
+\begin{re}
+    Si $B(t)=0,\forall t$ on dit que l'équation est homogène $Y'(t)=A(t)Y(t)\qquad (E_0)$
+\end{re}
+
+\begin{df}[Définition (Equation différentielle d'ordre n scalaire linéaire)]
+    Une équation différentielle scalaire $y^{(n)}(t)=f(t,y(t),\dots,y^{(n-1)}(t))$ est linéaire si : $$f(t,z_0,\dots,z_{n-1})=a_0(t)z_0+\dots+a_{n-1}(t)z_{n-1}(t)+b(t),\forall t\in I,z_0,\dots,z_{n-1}\in\R,\funto{a_i}{I}{\R},\funto{b}{I}{\R} \text{ avec les }a_i,b C^0$$
+    $$\text{Dans ce cas, on pose }y^{(n)}(t)=a_0(t)y(t)+\dots+a_{n-1}(t)y^{(n-1)}(t)+b(t)\qquad (E^n)$$
+\end{df}
+
+\begin{re}
+    On dit que l'équation est homogène si $b=0$ :
+    \[y^{(n)}(t)=a_0(t)y(t)+\dots+a_{n-1}(t)y^{(n-1)}(t)\qquad (E_0^n)\]
+\end{re}
+
+\begin{re}
+    Plus généralement, une équation différentielle linéaire d'ordre $n$ est :
+    \[Y^{(n)}(t)=A_0(t)Y(T)+\ldots+A_{n-1}(t)Y^{(n-1)}(t)+B(t)\]
+\end{re}
+
+\begin{prop}
+    \begin{itemize}
+        \item L'ensemble des solutions d'une équation différentielle linéaire homogène $(E_0)$ est un $\R$-\ev. De même pour $(E_0^n)$.
+        \item L'ensemble des solutions d'une équation différentielle linéaire $(E)$ est un espace affine. Les solutions de $(E)$ sont exactement les $Y_p+Y_0$ où $Y_p$ est une solution particulière $Y_0$ est une solution de l'équation homogène $(E_0)$. De même pour $(E^n)$, $y=y_p+y_0$
+    \end{itemize}
+\end{prop}
+
+\begin{proof}
+    \[Y_p'(t)=A(t)Y_p(t)+B(t)\]
+    \begin{center}
+        $Y$ est solution de $E\iff Y'(t)=A(t)Y(t)+B(t)$
+    \end{center}
+    \[\iff (Y-Y_p)'(t)=A(t)(Y-Y_p)(t)\]
+    \[\iff Y-Y_p\text{ est solution de }(E_0)\]
+\end{proof}
+
+\section{Équations différentielles scalaires du premier ordre}
+
+\[y'(t)=a(t)y(t)+b(t),\text{ avec }(y,a,b)\in\R^3\]
+
+\begin{tm}[Théorème (Résolution de l'équation homogène)]
+    Les solutions de $y'(t)=a(t)y(t)$ sont de la forme :
+    \[y(t)=Ce^{\int_{t_0}^t a(s)\,ds},t_0\in I,\text{ avec }C\in\R\]
+    \begin{center}
+        L'ensemble des solutions est un \ev de dimension 1.
+    \end{center}
+\end{tm}
+
+\begin{proof}
+    Soit $y$ une fonction, on pose 
+    \[\widetilde{y}(t)=e^{-\int_{t_0}^t a(s)\,ds}y(t)\]
+    \begin{align*}
+        \widetilde{y}'(t)&=e^{-\int_{t_0}^t a(s)\,ds}(-a(t)y(t))+e^{-\int_{t_0}^t a(s)\,ds}y'(t)\\
+        &= 0\\
+        \implies& \widetilde{y}(t)=C,C\in\R \\
+        \implies& y(t)=C e^{-\int_{t_0}^t a(s)\,ds}
+    \end{align*}
+    Réciproquement, on montre que toute fonction de cette forme est solution
+\end{proof}
+
+\begin{tm}[Résolution d'une équation avec terme source]
+    Soit $t_0\in I, y_0\in \R$. Le problème de Cauchy est:
+    \[\cho{y'(t)=a(t)y(t)+b(t)\\ y(t_0)=y_0}\]
+    Le problème de Cauchy a une unique solution donnée par 
+    \[y(t)=y_0 e^{\int_{t_0}^t a(s)\,ds}+\int_{t_0}^t e^{\int_{s}^t a(\tau)\,d\tau}b(s)\,ds\]
+\end{tm}
+
+\begin{proof}[Esquisse de démonstration]
+    Soit $y$ une solution de $y'(t)=a(t)y(t)+b(t)$. On pose 
+    \[\widetilde{y}(s)=e^{-\int_{t_0}^s a(\tau)\,d\tau}y(s)\]
+    \[\text{On a }\widetilde{y}'(s)=e^{-\int_{t_0}^s a(\tau)\,d\tau}b(s)\]
+    \begin{center}
+        On intègre entre $t_0$ et $t$.
+    \end{center}
+    \[\widetilde{y}(t)=\widetilde{y}(t_0)+\int_{t_0}^t e^{-\int_{t_0}^s a(\tau)\,d\tau}b(s)\,ds\]
+    Or $\widetilde{y}(t_0)=y(t_0)=y_0$ pour une solution du problème de Cauchy. Donc
+    \begin{align*}
+        e^{-\int_{t_0}^t a(\tau)\,d\tau}y(t)&=y_0+\int_{t_0}^t e^{-\int_{t_0}^s a(\tau)\,d\tau}b(s)\,ds\\
+        \implies y(t)&=e^{\int_{t_0}^t a(\tau)\,d\tau}y_0+\int_{t_0}^t \underset{=e^{\int_s^t a(\tau)\,d\tau}}{\underbrace{e^{\int_{t_0}^ta(\tau)\,d\tau} e^{-\int_{t_0}^s a(\tau)\,d\tau}}} b(s)\,ds
+    \end{align*}
+    Réciproquement, on vérifie que cette formule donne une solution.
+\end{proof}
+
+\begin{lm}[Lemme de Gronwall]
+    Soit $I$ un intervalle et $\funto{y}{I}{\R^+}$, $\funto{a}{I}{\R^+}$ 2 fonctions continuers positives.Soit $(t_0,y_0)\in I\times \R^+$. On suppose 
+    \[y(t)\le y_0+ \left|\int_{t_0}^t a(s)y(s)\,ds\right|,\forall t\in I\]
+    \[\text{Alors }y(t)\le y_0 e^{\left|\int_{t_0}^t a(s)\,ds \right|},\forall t\in I\]
+\end{lm}
+
+\begin{proof}[Intuition]
+    $\forall t\ge t_0$, l'hypothèse est 
+    \[y(t)\le y_0+\int_{t_0}^t a(s) y(s)\, ds\]
+    Qui ressemble à une version intégrée de 
+    \[y'(t)\le a(t)y(t)\iff \frac{d}{dt}(e^{-\int_{t_0}^t a(s)\,ds}y(t))\le 0\]
+    Ce qui explique l'origine du terme en exponentielle dans l'inégalité finale
+\end{proof}
+
+\begin{proof}
+    $\forall t\ge t_0$, on pose 
+    \[\varphi (t)=y_0+\int_{t_0}^t a(s) y(s)\,ds\]
+    \[\varphi'(t)=a(t)y(t)\le a(t)\varphi(t)\]
+    Par hypothèse, $\forall t\ge t_0$ :
+    \begin{align*}
+        \iff \frac{d}{dt}\left(e^{-\int_{t_0}^t a(s)\,ds}\varphi(t) \right)&=e^{-\int_{t_0}^t a(s)\,ds}(\varphi'(t)-a(t)\varphi(t))\\
+        &\le 0
+    \end{align*}
+    En intégrant les deux membres de l'inégalité de $t_0$ à $t$ :
+    \[e^{-\int_{t_0}^ta(s)\,ds}\varphi(t)-\varphi(t_0)\le 0\]
+    Or $\varphi(t_0)=y_0$, donc $\varphi(t)\le y_0 e^{\int_{t_0}^t a(s)\,ds}$. Par hypothèse, $y\le \varphi$ :
+    \[y(t)\le y_0 e^{\int_{t_0}^t a(s)\,ds}, \forall t\ge t_0\]
+    \begin{center}
+        Raisonnement analogue avec $t\le t_0$
+    \end{center}
+\end{proof}
+
+\section{Théorème de Chauchy-Lipschitz linéaire}
+
+On considère un intervalle $I$ de $\R$, $t_0\in I$
+\[Y'(t)=A(t)Y(t)+B(t)\]
+\[\left.\begin{array}{ll}
+    \funto{A}{I}{M_d(\R)}\\
+    \funto{B}{I}{\R^d}
+\end{array}\right\} \text{continues}\]
+L'inconnue est $Y$ à valeurs dans $\R^d$
+
+\begin{tm}
+    Pour tout $Y_0\in\R^d$, il existe une unique solution $\funto{Y}{I}{\R^d}$ du problème de Cauchy :
+    \[\cho{Y'(t)=A(t)Y(t)+B(t)\\
+    Y(t_0)=Y_0}\]
+\end{tm}
+
+\begin{re}
+    Cette solution est définie sur tout $I$ : "Solution globale"
+\end{re}
+
+\begin{proof}
+    On se limite au cas où $I=[a,b]$ est un segment. On utilise la forme intégrée de l'équation différentielle. $Y$ est une solution du problème de Cauchy \ssi $\forall t \in I$,
+    \[Y(t)=Y_0+\int_{t_0}^t(A(s)Y(s)+B(s))\,ds \text{ avec $\funto{Y}{I}{\R^d}$ continue}\]
+    On introduit 
+    \[\funto{\Fr}{(C^0(I,\R^d),\lVert\cdot \rVert_{\infty})}{(C^0(I,\R^d),\lVert \cdot \rVert_{\infty})}\]
+    Qui est définit par 
+    \[\Fr (\widetilde{Y})(t)=Y_0+\int_{t_0}^t(A(s)\widetilde{Y}(s)+B(s))\,ds,\forall t\in I\]
+    On vérifie que $\Fr$ est bien définit. On a $Y$ solution du problème de Cauchy \ssi $Y=\Fr(Y)$. C'est un problème de point fixe. Pour le résoudre, on va utiliser une variante du théorème de Banach.
+\end{proof}
+
+\begin{lm}
+    Soit $\funto{f}{E}{E}$, avec $E$ Banach et telle qu'une itérée de $f$ est contractante :
+    \[\exists n\in \N^*,\exists k\in[0,1[,\lVert f^{n}(x)-f^{n}(y) \rVert\le k\lVert x-y \rVert\]
+    Alors $f$ admet un unique point fixe
+\end{lm}
+
+\begin{re}
+    S'étend à $(X,d)$ espace métrique complet. L'hypothèse devient
+    \[d(f^{n}(x),f^{n}(y))\le k d(x,y)\]
+\end{re}
+
+\begin{proof}[Démonstration du lemme]
+    \begin{itemize}
+        \item Si $n=1$, on utilise le théorème du point fixe de Banach usuel.
+        \item Si $n>1$ : Par le théorème usuel, $f^{n}$ admet un unique point fixe $\overline{x}$ tel que $f^{n}(\overline{x})=\overline{x}$. Mais alors $f^{n}(f(\overline{x}))=f^{n+1}(\overline{x})f(f^n(\overline{x}))=f(\overline{x})$.\\
+        \item Donc $f(\overline{x})$ est point fixe de $f^n$. Par unicité, $f(\overline{x})=\overline{x}$ donc $\overline{x}$ est point fixe de $f$ et c'est le seul point fixe car un point fixe de $f$ est un point fixe de $f^n$ donc unique.
+    \end{itemize}
+\end{proof}
+
+Il nous reste à montrer que $\Fr$ est contractante
+
+\begin{re}
+    On a fixe une norme $\lVert\cdot \rVert$ sur $\R^d$. On introduit la norme $\vvvert\cdot\vvvert$, la norme triple associée à $\lVert\cdot\rVert$ qui est définie par :
+    \[\forall M\in M_d(\R),\vvvert M \vvvert=\sup_{z\neq 0} \frac{\lVert M z\rVert}{\lVert z \rVert}\]
+\end{re}
+
+\begin{proof}[Suite de la démonstration]
+    \[\forall z\in \R^d,\lVert Mz\rVert\le\vvvert M\vvvert \lVert z \rVert\]
+    On va montrer que $\forall n,\forall Y_1,Y_2\in C(I,\R^d)$
+    \[\lVert\Fr^n(Y_1)(t)-\Fr^n(Y_2)(t)\rVert\le \frac{(M|t-t_0|)^n}{n!}\lVert Y_1-Y_2\rVert_{\infty} \qquad (\star)\]
+    $\forall t\in I$ avec $M=\sup \vvvert A(t) \vvvert <+\infty$ car $I$ est un segment et $A$ est $C^0$.\\
+    En particulier, on aura
+    \[\lVert \Fr^n(Y_1)-\Fr^n(Y_2)\rVert_\infty\le \frac{M^n(b-a)^n}{n!}\lVert Y_1-Y_2\rVert_\infty\]
+    Comme $\displaystyle{\frac{M^n(b-a)^n}{n!}\xrightarrow[n\to+\infty]{}0}$, pour $n$ assez grand, on a $\frac{M^n(b-a)^n}{n!}<1$.
+    \begin{center}
+        Donc $\Fr^n$ est contractante
+    \end{center}
+    Preuve de $(\star)$ par réccurence sur $n$ :\\
+    \begin{itemize}
+        \item $n=0$: $\Fr^n=\Fr^0=\text{Id}$ donc $\forall t,\lVert Y_1(t)-Y_2(t)\rVert\le \lVert Y_1-Y_2\rVert_\infty$
+        \item $n\to n+1$ : $\forall t\ge t_0$ (le cas $t\le t_0$ est analogue)
+        \begin{align*}\lVert \Fr^{n+1}(Y_n)(t) -\Fr^{n+1}(Y_2)(t) \rVert&=\lVert \Fr(\Fr^n(Y_1))(t)-\Fr(\Fr^n(Y_2))(t) \rVert\\
+            &=\lVert \int_{t_0}^t A(s)(\Fr^n(Y_1)(s)-\Fr^n(Y_2)(s))\,ds \rVert\\
+            &\le \int_{t_0}^t \lVert A(s)(\Fr^n(Y_1)(s)-\Fr^n(Y_2)(s)) \rVert \,ds\\
+            &\le \int_{t_0}^t \vvvert A(s)\vvvert \lVert(\Fr^n(Y_1)(s)-\Fr^n(Y_2)(s)) \rVert \,ds\\
+            &\le M \int_{t_0}^t \frac{(M(s-t_0))^n}{n!}\lVert Y_1-Y_2\rVert_\infty\,ds\\
+            &=M^{n+1} \frac{(t-t_0)^{n+1}}{(n+1)!}\lVert Y_1-Y_2 \rVert_\infty
+        \end{align*}
+    \end{itemize}
+\end{proof}
+
+\begin{cor}
+    L'ensemble des solutions de $(E_0)$ est un \ev de dimension $n$. Plus précisément, $d$ solutions $Y_1,\ldots,Y_d$ de $(E_0)$ forment une base \ssi $\forall t_0\in I, (Y_1(t_0),\ldots,Y_d(t_0))$ forme une base de $\R^d$ \ssi $\exists t_0\in I,(Y_1(t_0),\ldots,Y_d(t_0))$ forme une base de $\R^d$
+\end{cor}
+
+\begin{proof}
+    Soit $\mathcal{E}_0$ l'espace vetoriel des solutions de $(E_0)$. On considère, pour $t_0$ fixé quelconque dans $I$, $\fundfto{\phi}{\R^d}{\mathcal{E}_0}{Y_0}{Y}$, $Y$ l'unique solution de $(E_0)$ de donnée $Y(t_0)=Y_0$
+    \begin{itemize}
+        \item $\phi$ est bien définie par le théorème de Cauchy-Lipschitz.
+        \item $\phi$ est linéaire. Si $Y$ est la solution de donnée $Y_0$, $\widetilde{Y}$ est la solution de donnée $\widetilde{Y_0}$.\\
+        Alors pour tout $\lambda\in \R, Y+\lambda \widetilde{Y}$ est solution de $(E_0)$ de donnée $Y_0+\lambda \widetilde{Y_0}$. Ce qui veut dire que 
+        \[\phi(Y_0+\lambda \widetilde{Y_0})=Y+\lambda \widetilde{Y_0}=\phi(Y_0)+\lambda \phi(\widetilde{Y_0})\]
+        \item Injectivité de $\phi$: Si $Y:=\phi(Y_0)=0$, alors $Y_0=Y(t_0)=0$
+        \item Surjectivité de $\phi$ : Soit $Y\in \mathcal{E}_0$. En posant $Y_0=Y(t_0)$, on a bien $\phi(Y_0)=Y_0$, donc $\phi$ est un isomorphisme et le résultat suit. 
+    \end{itemize} 
+\end{proof}
+
+\begin{ra}
+    Toutes équadiff scalaire d'ordre $n$ peut se réecrire comme un système différentiel d'ordre 1.
+    \[y^{(n)}(t)=a_0(t)y(t)+\ldots+a_{n-1}(t)y(t)+b(t)\]
+    \[\underset{Y'}{\begin{pmatrix}
+        y\\
+        y'\\
+        \vdots\\
+        y^{(n-1)}
+    \end{pmatrix}}(t)=\underset{A}{\begin{pmatrix}
+        0&1&0&\cdots&0\\
+        0&0&1&0&\vdots \\
+        \vdots&\vdots&\vdots&\ddots&0 \\
+        0&\cdots&\cdots&0&1 \\
+        a_0&a_1&\cdots&\cdots&a_{n-1} \\
+    \end{pmatrix}}(t)\underset{Y}{\begin{pmatrix}
+        y\\
+        y'\\
+        \vdots\\
+        y^{(n-1)}
+    \end{pmatrix}}(t)+\underset{B(t)}{\begin{pmatrix}
+        0\\
+        0\\
+        \vdots\\
+        b
+    \end{pmatrix}}(t)\]
+\end{ra}
+
+\begin{cor}
+    $\forall t_0\in I,\forall Y_0\in \R^n$.\\
+    Il existe une unique solution $\funto{y}{I}{\R}$ de $(E^n)$ telle que $Y^{(i)}=Y_{0,i},\forall 0\le i\le n-1$
+\end{cor}
+
+\begin{cor}
+    L'espace vectoriel des solutions de l'équation homogène $(E_0^n)$ est de dimension $n$
+\end{cor}
+
+\begin{re}
+    On peut remplacer partout $\R$ par $\C$.
+\end{re}
+
+\section{Équations homogènes à coefficients constants}
+
+\[Y'(t)=AY(t),A\in M_d(\R)\text {(ou $M_d(\C)$) fixé ($A$ indépendant de $t$)}\]
+
+\subsection{Exponentielle de matrice}
+
+\begin{df}[Définition/Propriété]
+    Soit $A\in M_d(\R)$. La série $\sum_{n\ge 0} \frac{A^n}{n!}$ est absolument convergente donc convergente. Sa somme est appelée exponentielle de $A$.
+    \[e^A=\sum_{n=0}^{+\infty}\frac{A^n}{n!}\]
+\end{df}
+
+\begin{ra}
+    Si $\lVert \cdot \rVert$ sur $\R^d$, on peut définir 
+    \[\vvvert A\vvvert=\sup_{\substack{x\in\R^d\\x\neq0}} \frac{\lVert Ax \rVert}{\lVert x \rVert}\]
+    Elle vérifie $\vvvert AB \vvvert\le \vvvert A \vvvert \vvvert B \vvvert$
+\end{ra}
+
+\begin{proof}[Démonstration de la convergence de l'exponentielle]
+    \[\sum_{k=0}^n\frac{\vvvert A^k \vvvert}{k!}\le \sum_{k=0}^n\frac{\vvvert A\vvvert^k }{k!} \le \sum_{k=0}^{+\infty}\frac{\vvvert A\vvvert^k }{k!}=e^{\vvvert A\vvvert}\]
+    Donc $\sum_{n\ge0}\frac{\vvvert A^n\vvvert}{n!}$ converge, ce qui montre l'absolue convergence.
+\end{proof}
+
+\begin{ex}
+    \begin{enumerate}
+        \item $A=\begin{pmatrix}
+            0&-a\\
+            a&0
+        \end{pmatrix}$
+        \[A^2=\begin{pmatrix}
+            0&-a\\
+            a&0
+        \end{pmatrix}\begin{pmatrix}
+            0&-a\\
+            a&0
+        \end{pmatrix}=-a^2\begin{pmatrix}
+            1&0\\
+            0&1
+        \end{pmatrix}\]
+        \[\implies A^{2n}=(-1)^na^{2n}\begin{pmatrix}
+            1&0\\
+            0&1
+        \end{pmatrix}\]
+        \[\implies A^{2n+1}=A^{2n}A=(-1)^n a^{2n}A\]
+        \begin{align*}
+            e^A&=\sum_{k=0}^{+\infty}\frac{A^k}{k!}\\
+            &=\sum_{n=0}^{+\infty}\frac{A^{2n}}{(2n)!}+\frac{A^{2n+1}}{(2n+1)!}\\
+            &=\begin{pmatrix}
+                \sum_{n\ge 0} \frac{(-1)^na^{2n}}{(2n)!}& \sum_{n\ge 0} \frac{(-1)^{n+1}a^{2n+1}}{(2n+1)!}\\
+                \sum_{n\ge 0} \frac{(-1)^{n+1}a^{2n+1}}{(2n+1)!}& \sum_{n\ge 0} \frac{(-1)^na^{2n}}{(2n)!}
+            \end{pmatrix}\\
+            &=\begin{pmatrix}
+                \cos (a)& -\sin (a)\\
+                \sin (a)& \cos (a)
+            \end{pmatrix}
+        \end{align*}
+        \item $A=P^{-1}BP$, $P$ inversible
+        \[A^k=P^{-1}BPP^{-1}BP\cdots P^{-1}BP=P^{-1}B^kP\]
+        \[e^A=P^{-1}e^BP\]
+        \item $A=\begin{pmatrix}
+            \boxed{A_1}&0&\cdots&0\\
+            0&\boxed{A_2}&\ddots&\vdots\\
+            \vdots&\ddots&\ddots&0\\
+            0&\cdots&0&\boxed{A_n}
+        \end{pmatrix}$
+        \[e^A=\begin{pmatrix}
+            \boxed{e^{A_1}}&0&\cdots&0\\
+            0&\boxed{e^{A_2}}&\ddots&\vdots\\
+            \vdots&\ddots&\ddots&0\\
+            0&\cdots&0&\boxed{e^{A_n}}
+        \end{pmatrix}\]
+
+        \item $N$ nilpotent, $\exists n\in \N^*,N^{n}=0$
+        \item \[e^N=\sum_{k=0}^{n+1}\frac{N^k}{k!}\]
+        
+    \end{enumerate}
+\end{ex}
+
+\begin{prop}
+    $\det (e^A)=e^{\text{tr} (A)}$
+\end{prop}
+
+\begin{prop}
+    Si $A$ et $B$ commutent ($AB=BA$) alors
+    \[e^{A+B}=e^A e^B\]
+\end{prop}
+
+\subsection{Résolution des équations différentielles du premier ordre}
+
+\begin{prop}
+    Soit $A\in M_d(\R)$. La fonction $\fundfto{\phi}{\R}{M_f(\R)}{t}{e^{tA}}$ est $C^{\infty}$ et 
+    \[\phi'(t)=Ae^{tA}=e^{tA}A,\forall t\in \R\]
+\end{prop}
+
+\begin{proof}
+    \[\phi(t)=e^{tA}=\sum_{k=0}^{+\infty}\frac{(tA)^{k}}{k!}=\sum_{k=0}^{+\infty}\frac{t^k A^k}{k!}\]
+    C'est une série entière de rayon de convergence $\infty$ et elle est $C^\infty$ sur $\R$ et on peut dériver terme à terme.
+    \[\phi'(t)=\sum_{k=1}^{+\infty}\frac{k t^{k-1}A^k}{k!}=\sum_{k=1}^{+\infty}\text{ et par le changement de variable }k'=k-1\]
+    \begin{align*}
+        \phi'(t)&=\sum_{k'=0}^{+\infty}\frac{t^{k'}}{k'!}A^{k'+1}=A\left(\sum_{k'=0}^{+\infty}\frac{t^{k'}}{k'!}A^{k'}\right)\\
+        &=\left(\sum_{k'=0}^{+\infty}\frac{t^{k'}}{k'!}A^{k'}\right)A\\
+        &=Ae^{At}=e^{At}A
+    \end{align*}
+\end{proof}
+
+\begin{cor}
+    La solution du problème de Cauchy $Y'(t)=AY(t),Y(t_0)=Y_0$ est donnée par 
+    \[Y(t)=e^{(t-t_0)A}Y_0\]
+\end{cor}
+
+\begin{proof}[Démonstration de $AB=BA\implies e^{A+B}=e^A e^B$]
+    On regarde le problème de Cauchy 
+    \[Y'(t)=AY(t),Y(t_0)=Y_0\]
+    \[\text{La solution est }Y(t)=e^{(A+B)t}Y_0\]
+    Montrons que $\widetilde{Y}(t)=e^{At}e^{Bt}Y_0$ est aussi une solution. Or
+    \[\widetilde{Y}(0)=Id\times Id\times Y_0=Y_0\qquad \widetilde{Y}'(t)=Ae^{At}e^{Bt}Y_0+e^{At}Be^{Bt}Y_0\]
+    Comme $A$ commute avec $B$, $A$ commute avec $(tB)^k$, donc $A$ commute avec $e^{tB}$ et inversement$B$ commute avec $e^{tA}$
+    \[\implies \widetilde{Y}'(t)=(A+B)e^{tA}e^{tB}Y_0=(A+B)\widetilde{Y}(t)\]
+    Donc $Y(t)=\widetilde{Y}(t),\forall t$ donc $Y(t)=\widetilde{Y}(t)$ donc $e^{A+B}Y_0=e^A e^B Y_0$. Comme $Y_0$ est quelconque :
+    \[e^{A+B}=e^A e^B\] 
+\end{proof}
+
+\subsection{Équations homogènes d'ordre n}
+
+Voir suite p.16
+
+\section{Équations inhomogènes}
+
+\subsection{Cas du second membre polynôme$\times$exponentielle}
+
+\subsection{Méthode de variation de la constante}
+
+\subsection*{Équations différentielles du premier ordre}
+
+\subsection*{Cas des équations différentielles scalaires d'ordre n}
+
+\chapter{Équations différentielles non-linéaires: Théorie générale}
+
+\section{Théorème de Cauchy-Lipschitz}
+
+\section{Solutions maximales}
+
+\section{Critère d'existence d'une solution globale}
+
+\section{Dépendance continue par rapport aux conditions initiales}
+
+\end{document}

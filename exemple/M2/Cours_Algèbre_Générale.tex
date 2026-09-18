@@ -1,0 +1,195 @@
+\documentclass[]{report}
+
+\usepackage{import}
+
+\import{../}{settings.tex}
+
+\title{Cours d'intégration pour l'agrégation}
+
+\author{Cours de David GERARD-VARET, transcrit par SADR TAHOURI Luca}
+\date{}
+
+\begin{document}
+
+    \maketitle
+    \tableofcontents
+
+\chapter{Généralités sur les groupes}
+
+\section{Définitions,premières propriétés,exemples}
+
+\begin{df}{Groupe}{}
+    Soit $G$ un ensemble et $*$ une lois de composition interne.\\
+    $G$ est un groupe si:
+    \begin{enumerate}[label=\roman*]
+        \item 
+    \end{enumerate}
+\end{df}
+
+\begin{re}{}{}
+    Le neutre $e_G$ est unique ($e*e'=e=e'$).\\
+    On peut toujours "simplifier" par un élément dans un groupe
+\end{re}
+
+\begin{df}{Groupe commutatif}{}
+    Si la loi de $(G,*)$ est commutative, on dit que $G$ est abélien:
+    \[\forall x,y \in G,x*y=y*x\]
+    On réserve la notation "$+$" aux groupes abéliens.
+\end{df}
+
+\begin{df}{Ordre d'un groupe}{}
+    L'ordre d'un groupe est son cardinal
+\end{df}
+
+\begin{df}{}{}
+    Soit $X$ un ensemble. Une permutation de $X$ est une bijection de $X$ dans $X$.
+    \[\Sr_X=\{\text{permutations de $X$}\}\text{ est un groupe pour $\circ$}\]
+\end{df}
+
+\begin{df}{}{}
+    Soit $G$ un groupe, une partie $H$ de $G$ est un sous-groupe de $G$ si et seulement si muni de la restriction de la loi sur $G$, $H$ a une structure de groupe
+\end{df}
+
+\begin{prop}{}{}
+    $G$ groupe, $H\subset G$. $H$ est un sous-groupe si:
+    \begin{itemize}
+        \item $H\neq \emptyset$
+        \item $\forall x,y \in H,x y^{-1}\in H$
+    \end{itemize}
+\end{prop}
+
+\begin{prop}{}{}
+    L'intersection de 2 sous-groupes est un sous-groupe.
+\end{prop}
+
+\begin{df}{Sous-groupe engendré}{}
+    Soit $G$ un groupe, $S\subset G$ une partie quelconque. Le sous groupe engendré par $S$, noté $<S>$ est l'intersection de tous les sous groupes de $G$ contenant $S$.\\
+    C'est le plus petit sous-groupe de $G$ contenant $S$
+\end{df}
+
+\begin{prop}{}{}
+    \[<S>=\{ s_1^{\alpha_1}\ldots s_n^{\alpha_n},n\in \N,\alpha_i \in \Z,s_i\in S\}\]
+\end{prop}
+
+\begin{ex}{Groupe diédral $D_n$}{}
+    $n\in \N,n\ge 2$. $D_n$ est le groupe des isométries du plan qui laissent invariant un polygone régulier à $n$ cotés.
+\end{ex}
+
+\begin{df}{Ordre d'un élément d'un groupe}{}
+    $G$ un groupe, $g\in G$, l'ordre de $g$ est le cardinal de $<g>$
+\end{df}
+
+\begin{prop}{}{}
+    Soit $G$ un groupe, $g\in G$. Alors, $\forall k\in \N, g^k=e\iff $ ordre de $g$ divise $k$.\\
+    Si $g$ est l'ordre de $g$, alors $g^k$ est d'ordre.
+    \[\frac{d}{\pgcd(d,k)}\]
+\end{prop}
+
+\section{Classes à gauche, à droite, théorème de Lagrange}
+
+\begin{prop}{}{}
+    $\forall g\in G$
+    \[\fundf{H}{gH}{x}{gx}\text{ est une bijection}\]
+\end{prop}
+
+\begin{cor}{}{}
+    Comme $G=\sqcup_{\overline{g}\in G/H} gH$, 
+    \[\left|G\right|=\sum_{\overline{g}\in G/H} \left|H\right|= \left|G/H\right||H|\]
+\end{cor}
+
+\begin{tm}{Théorème de Lagrange}{}
+    Si $G$ est fini, $H$ est un sous-groupe de $G$, alors $|H|$ divise $G$
+\end{tm}
+
+\begin{cor}{}{}
+    Si $|G|=n$, alors $\forall g\in G, g^n=e$
+\end{cor}
+
+\begin{df}{}{}
+    $[G:H]$ est l'indice de $H$ dans $G$, et est définit par $|G/H|=|H\wt G|$.\\
+    Si $G$ est fini, $[G:H]=\frac{|G|}{|H|}$
+\end{df}
+
+\begin{df}{}{}
+    Le produit direct de deux groupes $G,G'$ est le produit cartésien $G\times G'$ muni des produits composante par composante. $\forall (x,y,x',y')\in G^2\times G'^2$,
+    \[(x,x')*(y,y')=(x*y,x'*y')\]
+    On peut le faire avec un nombre fini quelconque de groupes
+\end{df}
+
+\section{Morphismes, isomorphismes}
+
+\begin{df}{Morphisme de groupes}{}
+    A VOIR
+\end{df}
+
+\begin{re}{}{}
+    $\funto{\varphi}{G}{G'}$ morphisme, alors $\varphi(e_G)=e_{G'}$
+\end{re}
+
+\begin{df}{Image directe, image réciproque d'un sous-groupe, Isomorphisme, Automorphisme}{}
+    A VOIR
+\end{df}
+
+\begin{prop}{}{}
+    Aut$(G)$ l'ensemble des automorphismes, d'un groupe $G$ est un groupe pour $\circ$.
+\end{prop}
+
+\begin{df}{Noyau d'un morphisme de groupes}{}
+    A VOIR
+\end{df}
+
+\begin{prop}{}{}
+    $\varphi$ est injective $\iff \ker \varphi=\{e\}$.
+\end{prop}
+
+\section{Sous-groupes distingués, groupe quotient}
+
+$G$ un groupe et $H$ un sous-groupe de $G$. On aimerait mettre sur $G/H$ (ou $H\wt G$) une structure de groupe par $g_1 H*g_2 H=g_1 g_2 H$ (*).\\
+C'est demander que la surjection canonique soit un morphisme de groupes et ce n'est pas toujours possible !\\
+Condition nécessaire, que (*) ne dépende pas du choix des représentants dans les classes:
+\[\forall g_1,g_2\in G,\forall h_1,h_2\in H, g_1 g_2=g_1 h_1 g_2 h_2 H\]
+c'est à dire
+\[g_2 H=h_1g_2 H\]
+En particulier, $h_1 g_2\in g_2 H$. C'est vrai $\forall h_1\in H$, donc $Hg_2\subset g_2 H$. Comme c'est vrai pour tout $g_2\in G$, et que les classes à gauche, à droite forment une partition de $G$, on a
+\[\forall g\in G ,gH=Hg\]
+On peut vérifier que cette condition est suffisante.
+
+\begin{df}{Groupe distingué}{}
+    Soit $G$ un groupe, $H$ un sous-groupe de $G$, on dit que $H$ est distingué (ou normal) dans $G$ noté $H\triangleleft G$ si $\forall g\in G, gHg^{-1}=H$.
+\end{df}
+
+\begin{prop}{}{}
+    $G$ un groupe, $H$ un sous-groupe de $G$.
+    \begin{enumerate}
+        \item Si $H\triangleleft G$, alors $G/H$ a une (unique) structure de groupe tel que la surjection canonique est un morphisme de groupes.
+        \item Réciproquement, si $G/H$ a une structure de groupes tq la surjection canonique est un morphisme, alors $H\triangleleft G$
+    \end{enumerate}
+\end{prop}
+
+\begin{re}{}{}
+    Dans un groupe abélien, tous les sous-groupes sont distingués.
+\end{re}
+
+\begin{ex}{}{}
+    $\Z/n\Z$ est un groupe
+\end{ex}
+
+\begin{prop}{}{}
+    $\funto{\varphi}{G}{G'}$ un morphisme de groupe, alors $\ker \varphi \triangleleft G$
+\end{prop}
+
+\begin{proof}
+    Soit $x\in \ker (\varphi)$, soit $g\in G$, alors
+    \begin{align*}
+        \varphi (g x g^{-1})&=\varphi(g)\varphi(x)\varphi(g)^{-1}\\
+        &=\varphi (g) e_{G'} \varphi(g)^{-1}\\
+        &=e_{G'}
+    \end{align*}
+\end{proof}
+
+\begin{prop}{}{}
+    Si $H\triangleleft G$, alors $H$ est le noyau d'un morphisme de $G$ vers un groupe.
+    \[H=\ker (\pi)\]
+    ou $\pi$ est la surjection canonique
+\end{prop}
+\end{document}

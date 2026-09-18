@@ -1,0 +1,697 @@
+\documentclass[]{report}
+
+\usepackage{import}
+
+\import{../}{settings.tex}
+
+\title{Intégration et Série de Fourrier}
+\author{Cours de Vassout Stéphane, écrit par SADR TAHOURI Luca}
+\date{}
+
+\begin{document}
+
+    \maketitle
+    \tableofcontents
+
+\chapter{Théorie de la mesure}
+
+\section{Tribus}
+
+\begin{df}
+    Soit $E$ un ensemble. Une tribu (ou $\sigma$-algèbre) sur E est une famille $\Ar$ de parties de $E$ ($\Ar\subset \Par(E)$) telle que : \begin{enumerate}
+        \item $E\in A$
+        \item Si $A\in \Ar,A^c=E\backslash A\in \Ar$
+        \item Si $A\in \Ar,B\in \Ar$, alors $A\cup B\in \Ar$ stabilité par union finie
+        \item Si $(A_n)_{n\in\N}$ est une famille dénombrable d'éléments de $\Ar$ alors $\displaystyle{\bigcup_{n\in\N}A_n \in \Ar}$
+    \end{enumerate}
+\end{df}
+
+\begin{re}
+    \begin{itemize}
+        \item 4.$\implies$ 3.
+        \item 1.+2.+3. $\implies$ $\Ar$ est une algèbre (de Boole)
+        \item 1. et 2. $\implies \emptyset\in\Ar$
+        \item $\emptyset\in\Ar$ et 2.$\implies E\in \Ar$
+        \item 2.+3.$\implies \Ar$ est stable par intersection finie
+    \end{itemize}
+\end{re}
+
+\begin{ex}[Exemples de tribus]
+\begin{enumerate}
+    \item Les tribus finies : $(E,\Par(E))$, $(\N,\Par(\N))$
+    \item La tribu grossière : $(E,\{\emptyset,E\})$
+    \item Exemple non trivial : \\
+    $m\ge1$, $(\N,\Ar_m)$ avec $\forall A\in \Par(\N)$, $A\in\Ar_m \iff(\forall k\ge m,k\in A\iff m\in A)$\\
+    $\Ar_m$ est une tribu sur $\N$
+\end{enumerate} 
+\end{ex}
+
+\begin{prop}
+    L'intersection d'une famille quelconque de tribus est encore une tribu.
+\end{prop}
+
+\begin{proof}
+    Voir p.2
+\end{proof}
+
+\begin{df}[Définition (Tribu engendré)]
+Si $\Cr\subset\Par(E)$, on appelle tribu engendrée par $\Cr$ et on note $\sigma(\Cr)$ la tribu $\displaystyle{\sigma(\Cr)=\bigcap_{\substack{\tau\text{ tribu sur }E\\\Cr\subset\tau}}\tau}$
+\end{df}
+
+\begin{ex}
+    $(\N,A_i)=\sigma(\{0\})$
+\end{ex}
+
+\begin{df}[Définition (Tribu borélienne)]
+    Tribu borélienne sur $\R$. On regarde la tribu engendrée par $\Omega$, avec $\Omega=\left\{ \text{ouverts de }\R\right\}$. On note $\BR=\sigma(\Omega)$. 
+\end{df}
+
+\begin{prop}
+    $\BR$ est aussi la tribu engendrée par : \begin{itemize}
+        \item Les fermés de $\R$
+        \item $\acc{ ]-\infty,a],a\in\R }$
+        \item $\acc{ [a,b],a<b,(a,b)\in\R^2 }$
+        \item $\acc{ ]-\infty,a],a\in\Q }$
+        \item $\acc{ ]a,b[,a<b,(a,b)\in\Q^2 }$
+        \item \dots
+    \end{itemize}
+    Plus généralement, on peut définir :\\
+    $\Br(\R^d)$, $\Br(E,d)$ si $(E,d)$ est un espace métrique ou $\Br(E,\Omega)$ si $(E,\Omega)$ est un espace topologique
+\end{prop}
+
+\begin{df}[Définition (Tribu produit)]
+    Si $(E_1,A_1)$ et $(E_2,A_2)$ sont deux ensembles munis chacun d'une tribu. On appelle tribu produit de $\Ar_1$ et $\Ar_2$ la tribu définie sur $E_1\times E_2$ par $\Ar_1\otimes\Ar_2=\sigma(\acc{A_1\times A_2,A_1\in\Ar_1,A_2\in\Ar_2})$
+\end{df}
+
+\begin{ex}
+    On verra que $\Br(\R^2)=\BR\otimes\BR$
+\end{ex}
+
+\section{Mesures}
+
+\begin{df}
+    Un ensemble E, muni d'une tribu $\Ar$ est appelé ensemble mesurable. On dit que $A\in\Par(E)$ est mesurable dans $(E,\Ar)$ si $A\in \Ar$
+\end{df}
+
+\begin{df}
+    Une mesure sur l'espace mesurable $(E,\Ar)$ est une application $\funto{\mu}{\Ar}{[0,+\infty]}$ et qui vérifie les propriétés suivantes :\\
+    \begin{enumerate}
+        \item $\mu(\emptyset)=0$
+        \item $\sigma$-additivité : Si $(A_m)_{m\in\N}\in \Ar^\N$ est une famille dénombrable d'éléments de $\Ar$ disjoints, alors $\mu(\bigcup A_n)=\sum\mu(A_n)$.
+    \end{enumerate}
+    Si $\left\{ \begin{array}{ll}
+        \exists n,\text{ tel que }\mu(A_n)=+\infty\text{, alors }\sum\mu A_n=+\infty\\
+        \sum A_n \text{ est divergente, alors }\sum\mu(A_n)=S
+    \end{array}\right.$\\
+    Si $\sum\mu(A_n)$ converge vers $S\in\R$, alors $\sum\mu (A_n)=S$
+\end{df}
+
+\begin{re}
+    Si les $A_n$ sont vides à partir d'un certain rang, on obtient l'additivité finie de la mesure.
+\end{re}
+
+\begin{ex}
+    \begin{enumerate}
+        \item Sur $\RBR$, si on fixe $x\in\R$, on peut définir la mesure de Dirac en $x$, $\delta_x(A)=\cho{1\text{ si }x\in A\\0\text{ si }x\in A}$. Alors on a : 
+        \begin{itemize}
+            \item $\delta_x(\emptyset)=0$
+            \item Si $(A_n)_{n\in\N}$ est une famille d'éléments disjoints de $\BR$, on a $$\delta_x\left(\bigcup_{n\in\N}A_n\right)=\cho{1\text{ si }x\in\cup_{n\in\N}A_n\iff \exists!p\in\N,x\in A_n\iff\sum_{n\in\N}\delta_x(A_n)=1\\
+            0\text{ si }x\notin\cup_{n\in\N}A_n\iff \forall p\in\N,x\notin A_n\iff\sum_{n\in\N}\delta_x(A_n)=0}$$
+        \end{itemize}
+        Donc dans tous les cas $\delta_x(\cup_{n\in\N}A_n)=\sum_{n\in\N}\delta_x(A_n)$
+        \item $(\N,\Par(\N))$ mesure de comptage. $\fundfto{\nu}{\Par(\N)}{[0,+\infty]}{A}{\cho{|A|\text{ si }A\text{ est fini}\\+\infty\text{ si }A\text{ est infini}}}$
+        \begin{itemize}
+            \item $\nu(\emptyset)=0$
+            \item Si $(A_n)_{n\in\N}$ est une famille de parties disjointes de $\N$, $\displaystyle{\nu\left(\bigcup_{n\in\N}A_n\right)}=?$ : \begin{itemize}
+                \item Si $\exists n$ tel que $A_n$ est infinie, alors $\displaystyle{\bigcup_{n\in\N}A_n}$ est infinie aussi et $\displaystyle{\nu\left( \bigcup_{\nN} \right)=+\infty=\sum_{\nN}\nu(A_n)}$
+                \item Si $\forall\nN,A_n$ est finie et $\bigcup A_n$ est finie, alors $\displaystyle{|\bigcup_{\nN}A_n|=\sum_{\nN}|A_n|}$ donc $\displaystyle{\nu\left( \bigcup_{\nN} \right)=\sum_{\nN}\nu(A_n)}$
+                \item Si $\forall\nN,A_n$ est finie et $\displaystyle{\bigcup_{\nN}A_n}$ est infinie alors $\displaystyle{\nu(\bigcup_{\nN}A_n)=+\infty}$ car, en effet, dans le cas inverse, les $(A_n)_{\nN}$ convergeraient et donc que $(A_n)=\emptyset$ \apcr
+            \end{itemize}
+        \end{itemize}
+    \end{enumerate}
+\end{ex}
+
+\begin{prop}
+    On considère $(E,\Ar,\mu)$ un ensemble mesurable muni d'une mesure.
+    \begin{enumerate}
+        \item Croissance : Si $A,B\in\Ar$, et $A\subset B$ alors $\mu(A)\le\mu(B)$. De plus, si $\mu(A)<+\infty$, alors $\mu(B\backslash A)=\mu(B)-\mu(A)$
+        \item Crible : Si $(A,B)\in\Ar^2$, $\mu(A\cup B)=\mu(A)+\mu(B)-\mu(A\cap B)$
+        \item Continuité croissante : Si $(A_n)_{\nN}$ est une famille croissante de parties mesurables $\displaystyle{\mu(\bigcup_{\nN}A_n)=\lim_{n\to+\infty}\mu(A_n)}$
+        \item Continuité décroissante : Si $(B_n)_{\nN}$ est une famille décroissante de parties mesurables $\displaystyle{\mu(\bigcap_{\nN}B_n)=\lim_{n\to+\infty}\mu(B_n)}$
+        \item Sous-additivité : Soit $(A_n)_{\nN}$ une suite de parties mesurables, alors $\displaystyle{\mu\left(\bigcup_{\nN}A_n\right)\le\sum_{\nN}\mu(A_n)}$
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    Voir p.5
+\end{proof}
+
+\begin{re}
+    L'hypothèse $\mu(B_0)<+\infty$ dans la continuité décroissante est essentielle
+\end{re}
+
+\begin{ex}[Contre-exemple]
+    $(\N,\text{ mesure de comptage})$. On prend $B_n=\{m\in\N,m\ge n\}$ et on a $\mu(B_0)=+\infty$, $\displaystyle{\bigcap_{\nN}=\emptyset}$ donc $\displaystyle{\mu(\bigcap_{\nN}B_n)=0}$ alors que $\displaystyle{\mu(B_n)=+\infty\xrightarrow[n\to+\infty]{}+\infty}$
+\end{ex}
+
+\begin{df}[Vocabulaire des mesures]
+    Soit $(E,\Ar)$ un ensemble mesurable, $\mu$ une mesure.\\
+    On dit que :
+    \begin{enumerate}
+        \item $\mu$ est finie si $\mu(E)<+\infty$
+        \item $\mu$ est de probabilité si $\mu(E)=1$
+        \item $\mu$ est $\sigma$-finie si $\displaystyle{E=\bigcup_{\nN}E_n}$, avec $E_n$ est une suite croissante de parties mesurables tel que $\mu(E_n)<+\infty$
+        \item $x\in E$ est un atome pour $\mu$ si $\mu(\{x\})>0$
+        \item On dit que $\mu$ est diffuse si $\mu$ n'a pas d'atome sur $E$.
+    \end{enumerate}
+\end{df}
+
+\begin{prop}[Propriété (Opérations sur les mesures)]
+    Soit $(E,\Ar,\mu)$ un ensemble mesuré.
+    \begin{itemize}
+        \item Restriction : $B\in\Ar$, on peut définir une nouvelle mesure sur $(E,\Ar)$ en posant $\mu_B(A)=\mu(A\cap B)$ si $A\in\Ar$
+        \item Si $\lambda\in \R_+^*,\,\lambda\mu$ est toujours une mesure sur $(E,\Ar)$
+        \item Si $\nu$ est une autre mesure sur $(E,\Ar),\,\mu+\nu$ est encore une mesure sur $(E,\Ar)$
+    \end{itemize}
+\end{prop}
+
+\section{Fonctions mesurables}
+
+\begin{df}
+    Soit $(E,\Ar)$ et $(F,\Br)$ deux ensembles mesurables. On dit qu'une application $\funto{f}{E}{F}$ est mesurable si $$\forall B\in\Br,f^{-1}(B)\in\Ar$$
+\end{df}
+
+\begin{ex}
+    Si $\Ar$ et $\Br$ sont les tribus boréliennes sur les espaces $E$ et $F$, on dit qu'une fonction mesurable est borélienne.
+\end{ex}
+
+\begin{prop}
+    La composition de deux applications mesurables est encore mesurable. $$\begin{array}{cc}
+    \funto{f}{(E,\Ar)}{(F,\Br)} \\
+    \funto{g}{(F,\Br)}{(G,\Cr)}
+    \end{array}\implies \funto{g\circ f}{(E,\Ar)}{(G,\Cr)} \text{ est mesurable}$$
+\end{prop}
+
+\begin{proof}
+    Si $C\in\Cr$,$$(g\circ f)^{-1}(C)=\underbrace{f^{-1}(\underbrace{g^{-1}(C)}_{\in\Br})}_{\in\Ar}$$
+\end{proof}
+
+\begin{prop}
+    Si $\funto{f}{(E,\Br(E))}{(F,\Br(F))}$, alors si $f$ est continue, alors $f$ est mesurable (avec $E,F$ des espaces topologiques)
+\end{prop}
+
+\begin{prop}
+    Pour que $\funto{f}{(E,\Ar)}{(F,\Br)}$ soit mesurable, il suffit qu'il existe une sous famille $C$ de $\Br$ telle que : \begin{enumerate}
+        \item $\sigma(C)=\Br$
+        \item $\forall c\in C,f^{-1}(C)\in\Ar$
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    On pose $\Gr=\acc{B\in\Br,f^{-1}(B)\in\Ar}$. On a $C\subset\Gr\subset\Br$, puisque $\sigma(C)=\Br$, il suffit de montrer que $\Gr$ est une tribu.
+\end{proof}
+
+\begin{ex}
+    \begin{itemize}
+        \item Si on choisit pour $(F,\Br)=\RBR$, $\funto{f}{(E,\Ar)}{\RBR}$ est mesurable, il suffit de montrer que $\forall t\in\R,f^{-1}(]-\infty,t[)\in\Ar$
+        \item Si $(E,\Ar)$ est muni d'une mesure de probabilité, une fonction mesurable est une variable aléatoire
+        \end{itemize}
+\end{ex}
+
+\begin{prop}
+    Soit $(E,\Ar)$ un espace mesurable. $A\subset E$, alors $\funto{\1_A}{(E,\Ar)}{\RBR}$ est mesurable \ssi $A\in\Ar$ ($\iff$A est mesurable).
+\end{prop}
+
+\begin{proof}
+    $\1_A^{-1}(]-\infty,t[)=\cho{\emptyset\text{ si }t<0\\
+    A^c\text{ si }t\in[0,1[\\
+    E\text{ si }t\ge 1}$ donc $\1_A$ est mesurable$\iff A^c\in\Ar\iff A\in \Ar$
+\end{proof}
+
+\begin{prop}
+    Soient $\funto{f_1}{(E,\Ar)}{(F_1,\Br_1)}$ et $\funto{f_2}{(E,\Ar)}{(F_2,\Br_2)}$.\\
+    Si $f_1,f_2$ sont mesurables, alors $\fundfto{f}{(E,\Ar)}{(F_1\times F_2,\Br_1\otimes\Br_2)}{x}{(f_1(x),f_2(x))}$ est aussi mesurable
+\end{prop}
+
+\begin{proof}
+    Voir p.8
+\end{proof}
+
+\begin{prop}[Propriétés (Opérations sur les fonctions mesurables)]
+    Soient $\funto{f,g}{((E,\Ar))}{\RBR}$.\\
+    Si $f$ et $g$ sont mesurables, alors :\\
+    $\left.\begin{array}{ll} f+g\\
+    fg\\
+    \inf(f,g);\sup(f,g)\\
+    f^+=\sup(f,0)\\
+    f^-=\sup(-f,0)\\
+    |f|\end{array} \right\}$ sont des fonctions mesurables
+\end{prop}
+
+\begin{proof}
+    Voir p.9
+\end{proof}
+
+\begin{df}
+    On note $\overline{\R}=\R\cup\{\pm\infty\}$ et $\overline{\R^+}=[0,+\infty]$ avec les conventions $a+\infty=\infty;a\times(+\infty)=\cho{0\text{ si }a=0\\
+    +\infty\text{ sinon}}$
+    $\Br(\overline{\R})$ est la tribu engendrée par $\{[-\infty,t],t\in\R\}$
+\end{df}
+
+\begin{df}
+    Soit $(a_n)_{\nN}$ une suite de $\overline{\R}$. On pose $\sup(a_n)=\cho{+\infty\text{ si }+\infty\text{ apparaît dans la suite}\\
+    +\infty\text{ si } a_n \text{ est non majorée}\\
+    \sup (a_n)\text{si la suite }a_n\text{ est majorée}}$\\
+    On définit de la même manière $\inf(a_n)$ pour $(a_n)_{\nN}\in\overline{\R}^\N$. \\
+    On note $\displaystyle{\lims(a_n)=\lim_{n\to+\infty}\sup_{k\ge n}(a_k)}$ et $\displaystyle{\liminf(a_n)=\lim_{n\to+\infty}\inf_{k\ge n}(a_k)}$
+\end{df}
+
+\begin{prop}
+    Soit $(f_n)_{\nN}$ une suite de fonctions mesurables avec $\funto{f_n}{(E,\Ar)}{\RBRb}$, alors $\sup(f_n)$, $\inf(f_n)$, $\limsup(f_n)$ et $\liminf(f_n)$ sont encore mesurables et si $f_n$ converge simplement vers une fonction $f$, alors $\displaystyle{f=\lim_{\nN}}$ est mesurable. En général, l'ensemble $\{x\in E,f_n(x)\text{ converge}\}$ est mesurable.
+\end{prop}
+
+\begin{proof}
+    Voir p.10
+\end{proof}
+
+\section{Classe monotone}
+
+\begin{df}
+    Soit $E$ un ensemble $\Mr\subset \Par(E)$ est une classe monotone si :
+    \begin{enumerate}
+        \item $E\in\Mr$
+        \item Si $A,B\in\Mr$, alors $A\subset B\implies B\backslash A\in\Mr$
+        \item Si $(A_n)_{\nN}$ est une famille croissante d'éléments de $\Mr$ alors $\displaystyle{\bigcup_{\nN}A_n\in\Mr}$
+    \end{enumerate}
+\end{df}
+
+\begin{prop}
+    Toute tribu est une classe monotone ($\Ar$ tribu $\implies \Ar$ classe monotone)
+\end{prop}
+
+\begin{df}
+    Soit $C\in\Par(E)$. On note $\Mr(C)$ la classe monotone engendrée par la partie $C$ et $\displaystyle{\Mr(C)=\bigcap_{\substack{C\subset M\\ M\text{ classe monotone}}}M}$
+\end{df}
+
+\begin{tm}[Théorème (de classe monotone)]
+    Soit $E$ un ensemble et $C\in\Par(E)$.\\
+    Si $C$ est stable par intersection finie, alors $\Mr(C)=\sigma(C)$
+\end{tm}
+
+\begin{proof}
+    Voir p.11
+\end{proof}
+
+\begin{tm}[Théorème d'unicité de la mesure]
+    Soit $(E,\Ar)$ un espace mesurable et $\lambda,\mu$ deux mesures sur $(E,\Ar)$. On suppose qu'il existe $C\in\Par(E)$ telle que :
+    \begin{itemize}
+        \item $C$ est stable par intersection finie
+        \item $\sigma(C)=\Ar$
+        \item $\forall A\in C,\mu(A)=\lambda(A)$
+    \end{itemize}
+    Alors :
+    \begin{enumerate}
+        \item Si $\mu(E)=\lambda(E)<+\infty$ alors $\lambda=\mu$ sur $(E,\Ar)$
+        \item S'il existe une famille croissante $E_n\in C$ telle que $\mu(E_n)=\lambda(E_n)<+\infty$ et $\bigcup E_n=E$ alors $\mu=\lambda$ sur $(E,\Ar)$
+    \end{enumerate}
+\end{tm}
+
+\begin{proof}
+    Voir p.12
+\end{proof}
+
+\section{Mesure de Lebesgue sur $\R$}
+
+\begin{tm}[Définition/Théorème]
+    Il existe une unique mesure $\lambda$ sur $\RBR$ telle que $\forall(a,b)\in\R^2,a<b,\lambda([a,b])=b-a$. On l'appelle mesure de Lebesgue.
+\end{tm}
+
+\begin{proof}
+    Voir p.13
+\end{proof}
+
+\subsection*{Existence de la mesure de Lebesgue (Hors programme)}
+Voir p.13
+
+\chapter{Intégration}
+
+\section{Intégration de fonctions positives}
+
+Soient $(E,\Ar)$ un espace mesurable et $\funto{f}{(E,\Ar)}{\RBR}$ une fonction mesurable.
+
+\begin{df}
+    On dit qu'une fonction mesurable $\funto{f}{(E,\Ar)}{\RBR}$ est étagée si elle prend un nombre fini de valeurs.\\
+    Si $f$ est étagée positive et $\alpha_1,\dots,\alpha_n$ sont les valeurs prises par $f$, on peut écrire $f$ sous la forme canonique : $$f=\sum_{i=1}^n\alpha_i \1_{A_i} \text{ avec }A_i=f^{-1}(\{\alpha_i\})\text{ mesurable} $$
+\end{df}
+
+\begin{df}
+    On appelle intégrale d'une fonction étagée positive par rapport à la mesure $\mu$ sur $(E,\Ar)$ la quantité $$\int f\,d\mu=\sum_{i=1}^n\alpha_i \mu (A_i)$$
+\end{df}
+
+\begin{re}
+    $$\text{Si }f=\sum_{i=1}^m\beta_i\1_{B_i}\text{ avec les }B_i\text{ mesurables}$$
+    $$\text{Alors }\sum_{i=1}^m\beta_i\mu(B_i)=\sum_{i=1}^n\alpha_i\mu(A_i)$$
+\end{re}
+
+\begin{prop}[Propriété (Linéarité et croissance de l'intégrale)]
+    Soient $f,g$ deux fonctions étagées positives, alors :
+    \begin{enumerate}
+        \item $\forall(a,b)\in(\R^*_+)^2$, $af+bg$ est étagée positive et $\int(af+bg)d\mu=a\int fd\mu+b\int gd\mu$
+        \item Si $f\le g$, alors $\int f\,d\mu\le\int g\,d\mu$
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    Voir p.15
+\end{proof}
+
+\begin{df}
+    Soit $\funto{f}{(E,\Ar)}{([0,+\infty],\Br([0,+\infty]))}$ une fonction mesurable. On définit l'intégrale de $f$ par rapport à la mesure $\mu$ sur $(E,\Ar)$ par 
+    $$\int f\,d\mu=\sup_{\substack{h\le f\\h\in\mathcal{E}^+}}\int h\,d\mu\text{ où }\mathcal{E}^+\text{ est l'ensemble des fonctions étagées positives}$$
+\end{df}
+
+\begin{nt}
+    $\int f\,d\mu,\int f(x)\,d\mu(x),\int f(x)\,\mu(dx),\int_E f\,d\mu,\int_{x\in E} f\,d\mu,\mu(f)$
+\end{nt}
+
+\begin{re}
+    Si $f$ est étagée positive alors $\int f\,d\mu$ est bien l'intégrale définie précédemment :$$\sup_{\substack{h\in\mathcal{E^+}\\h\le f}}\int h\,d\mu=\max_{\substack{h\in\mathcal{E^+}\\h\le f}}\int h\,d\mu=\int f\,d\mu$$
+\end{re}
+
+\begin{prop}[Propriété (Croissance,Séparation)]
+    Si $f,g$ sont mesurables positives :
+    \begin{enumerate}
+        \item Si $f\le g$ alors $\int f\,d\mu\le\int g\,d\mu$
+        \item Si $\mu(\acc{x\in E,f(x)>0})=0$, alors $\int f\,d\mu=0$
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    Voir p.16
+\end{proof}
+
+\begin{tm}[Théorème de Convergence Monotone (TCM)]
+        Soit $(f_n)_{n\in\N}$ une suite croissante de fonctions mesurables positives. On note $f=\lim f_n$ (Fonctions à valeurs dans $[0,+\infty]$), alors 
+        \[\int f d\mu=\lim_{n\to+\infty}\int f_n\,d\mu\]
+\end{tm}
+
+\begin{proof}
+    Voir p.17
+\end{proof}
+
+\begin{prop}
+    Soit $f$ mesurable positive. Il existe une suite croissante de fonctions étagées positives telle que $\displaystyle{f_n\underset{n\to+\infty}{\longrightarrow}f}$
+\end{prop}
+
+\begin{proof}
+    Voir p.17
+\end{proof}
+
+\begin{prop}[Propriété (Linéarité)]
+    Soient $\funto{f,g}{(E,\Ar,\mu)}{\overline{\R_+}}$ deux fonctions mesurables positives. Soient $(a,b)\in\R_+$.\\
+    Alors $af+bg$ est mesurable positive et $\int(af+bg)\,d\mu=a\int f\,d\mu+b\int g\,d\mu$
+\end{prop}
+
+\begin{proof}
+    Voir p.18
+\end{proof}
+
+\begin{prop}[Propriété (TCM pour les séries)]
+    Soit $f_n$ une suite de fonctions mesurables positives, alors : 
+    \[\int(\sum_{k=0}^{+\infty}f_k)\,d\mu=\sum_{k=0}^{+\infty}\int f_k\,d\mu\]
+\end{prop}
+
+\begin{proof}
+    Voir p.18
+\end{proof}
+
+\begin{df}
+    Soit $P$ une propriété dépendant de $x\in E$ telle que $\forall x\in E,P(x) $ est vraie ou $P(x)$ est fausse. $(E,\Ar)$ muni d'une mesure $\mu$, on dit que $P$ est vraie $\mu$-presque partout si $\exists B \in \Ar$ telle que :
+    \begin{itemize}
+        \item $\left\{x\in E,P(x)\text{ est fausse }\right\}\subset B$
+        \item $\mu(B)=0$
+    \end{itemize}
+\end{df}
+
+\begin{df}[Propriété (Mesures à densité)]
+    Soit $\funto{f}{(E,\Ar,\mu)}{[0,+\infty]}$ mesurable positive on définit $\fundfto{\nu}{\Ar}{[0,+\infty]}{A}{\int(\1_A f)\,d\mu=\int_A f\,d\mu}$
+\end{df}
+
+\begin{prop}
+    $\nu$ est une mesure sur $(E,\Ar)$ et $\forall g$ mesurable positive sur $(E,\Ar)$, on a que : $\int g\,d\nu=\int gf\,d\mu$, on note parfois $\nu=f\mu$
+\end{prop}
+
+\begin{proof}
+    Voir p.19
+\end{proof}
+
+\begin{ex}
+    Voir p.20
+\end{ex}
+
+\begin{prop}[Propriété (Inégalité de Markov et conséquences)]
+    $(E,\Ar,\mu)$ un espace mesuré et $f,g$ des fonctions mesurables positives.
+    \begin{enumerate}
+        \item $\forall a>0,\mu\left( \acc{x\in E, f(x)\ge a} \right)<\frac{1}{a}\int f\,d\mu$
+        \item $\int f\,d\mu<+\infty$ alors $f<+\infty$ $\mu$-presque partout
+        \item $\int f\,d\mu=0\iff f=0,\mu$-pp
+        \item $f=g,\mu$-pp alors $\int f\,d\mu=\int g\,d\mu$
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    Voir p.21
+\end{proof}
+
+\begin{re}
+    La mesure de Dirac sur $\RBR$ n'est pas une mesure de Lebesgue $\int f\,\delta x=\int f\1_{\{x\}}\delta x$ : Supposons qu'il existe $g\ge 0$ mesurable telle que pour tout $f\ge 0$ mesurable $\int fgd\lambda=\int f\delta x=f(x)$. \\
+    $\int fg\,d\lambda=\int fg\,\1_xd\lambda$, donc $\int g\1_{\R\wt\{x\}}d\lambda=\1_{\R\wt\{x\}}(x)$ alors $g\1_{\R\wt\{x\}}$ est nulle $\lambda$-pp donc $g$ est nulle $\lambda$-pp et pour toute fonction $f\ge0$ mesurable $fg$ est nulle $\lambda$-pp $\int fg \,d\lambda=0$
+\end{re}
+
+\begin{tm}[Lemme de Fatou]
+    Soit $(f_n)_\nN$ une suite de fonctions mesurables positives, alors $\int \limi(f_n)\,d\mu\le\limi(\int f_n\,d\mu)$ avec $\limi=\liminf$
+\end{tm}
+
+\begin{proof}
+    Voir p.22
+\end{proof}
+
+\begin{tm}[Théorème (Égalité de l'intégrale de Lebesgue et de l'intégrale de Riemann pour les fonctions Riemann intégrables sur un segment)]
+    Soit $f$ une fonction positive et intégrable au sens de Riemann sur $[a,b]$, alors on a : 
+    \[\int_a^b f(x)\,dx=\int_{[a,b]}f\,d\lambda\]
+\end{tm}
+
+\begin{ex}[Contre-exemple]
+    $\int\1_{\Q\cap[0,1]}\,d\lambda=0$ mais $\1_{\Q\cap[0,1]}$ n'est pas Riemann intégrable
+\end{ex}
+
+\begin{proof}
+    Voir p.23
+\end{proof}
+
+\begin{re}
+    On peut étendre cette égalité aux intégrales sur des intervalles de longueur infinie pour les fonctions positives. Si $f$ est intégrable au sens de Riemann sur tout segment inclus dans $[0,+\infty]$ et est positive, on a : $$\int_0^{+\infty}f(x)\,dx=\int f\,\1_{[0,+\infty]}\,d\lambda$$
+    On pose $f_n=\1_{[0,n]}f$. En effet, $(f_n)_\nN$ est une suite croissante de fonctions mesurables positives, on applique donc le TCM pour conclure.
+\end{re}
+
+\section{Fonctions intégrables}
+
+$(E,\Ar,\mu)$ est un espace mesuré
+
+\begin{df}
+    Soit $\funto{f}{E}{\R}$ mesurable. On dit que $f$ est intégrable (par rapport à $\mu$) si $\int |f|\,d\mu<+\infty$. 
+    De manière équivalente, si on note $f^+=\max(f,0)$ et $f^-=max(-f,0)$, alors on sait que $f=f^+-f^-$ et $|f|=f^++f^-$. On dit que $f$ est intégrable si $\cho{\int f^+\,d\mu<+\infty\\
+    \int f^-\,d\mu<+\infty}$.\\
+    Dans ce cas, on pose $\int f\,d\mu=\int f^+\,d\mu-\int f^-\,d\mu$. On note $L^1(E,\Ar,\mu)$ l'ensemble des fonctions intégrables sur $E$.
+\end{df}
+
+\begin{prop}[Propriété (Sur l'intégrale)]
+    \begin{enumerate}
+        \item Inégalité triangulaire : Soit $f\in \LEA$, alors $|\int f\,d\mu|\le\int|f|\,d\mu$
+        \item $\LEA$ est un espace vectoriel et $\funto{\int}{\LEA}{\R}$ est une forme linéaire
+        \item Positivité : Si $(f,g)\in(\LEA)^2$, alors $f\le g\implies\int f\,d\mu\le\int g\,d\mu$
+        \item Si $(f,g)\in\LEA$ et $f=g$ $\pp{\mu}$ alors $\int f\,d\mu=\int g\,d\mu$
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    Voir p.25
+\end{proof}
+
+\begin{df}
+    Soit $\funto{f}{(E,\Ar,\mu)}{(\C,\Br(\C))}$ une fonction mesurable. On dit que $f$ est intégrable si $\int|f|d\mu<+\infty$. On note $L_\C^1(E,\Ar,\mu)$ les fonctions intégrables à valeurs complexes . On pose alors $$\int f\,d\mu=\int \Re(f)\,d\mu+i\int\Im(f)\,d\mu$$
+\end{df}
+
+\begin{prop}[Propriété (Intégrales des fonctions à valeurs complexes)]
+    \begin{enumerate}
+        \item Inégalité triangulaire : Soit $f\in\LCEA$, alors $|\int f\,d\mu|\le\int |f|\,d\mu$
+        \item $\LCEA$ est un $\C$-espace vectoriel et $\funto{\int}{\LCEA}{\C}$ est une forme linéaire sur $\C$
+        \item Si $f=g\: \pp{\mu}$ alors $\int f\,d\mu=\int g\,d\mu$
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    Voir p.26
+\end{proof}
+
+\begin{tm}[Théorème de Convergence Dominée (TCD)]
+    Soit $(f_n)_\nN$ une suite de fonctions dans $\LEA$. On suppose que :\\
+    \begin{enumerate}
+        \item $\displaystyle{f_n(x)\underset{n\to+\infty}{\longrightarrow}}f(x)\;\pp{\mu}$
+        \item Il existe $g\in\LEA$ positive telle que $\pp{\mu}$, $|f_n(x)|\le g(x)$
+    \end{enumerate}
+    Alors $f\in \LEA$ et $\displaystyle{\int |f-f_n|\,d\mu\underset{n\to+\infty}{\longrightarrow}0}$ ($\displaystyle{\implies \int f\,d\mu=\lim_{n\to+\infty}}\int f_n\,d\mu$)
+\end{tm}
+
+\begin{re}
+    On peut ennoncer le même théorème dans $\LCEA$
+\end{re}
+
+\begin{proof}
+    Voir p.27
+\end{proof}
+
+\begin{ex}[Contre-Exemple au théorème de convergence dominée]
+    On enlève l'hypothèse de domination : \\
+    $f_n=n\1_{[0,\frac{1}{n}]}$, on a $f_n\to0\;\pp{\mu}$ mais $\int f_n \,d\lambda=1\nrightarrow0=\int 0\,d\lambda$
+\end{ex}
+
+\section{Intégrales dépendant d'un paramètre}
+
+Soit $\EAmu$ un espace mesuré et $(U,d)$ un espace métrique. Soit $\funto{f}{U\times E}{\R}$ (ou $\C$) 
+
+\begin{tm}
+    On suppose :
+    \begin{enumerate}
+        \item $\forall u\in U, \mfun{x}{f(u,x)}$ est mesurable
+        \item $\pp{\mu}$ (en $x$) la fonction $\mfun{u}{f(u,x)}$ est $C^0$ en $U$.
+        \item Il existe une fonction $g$ positive, $g\in\LEA$ telle que $\forall u\in U,\; \pp{\mu}$ en $x$, $|f(u,x)|\le g(x)$.\\
+        Alors : La fonction $\mfun{u}{F(u)=\int f(u,x)\,d\mu(x)}$ est bien définie et continue sur $U$.
+    \end{enumerate}
+\end{tm}
+
+\begin{proof}
+    Voir p.28
+\end{proof}
+
+\begin{tm}[Théorème de dérivation sous le signe intégral]
+    On choisit $U=\cho{\text{Un intervalle dans }\R\\\text{Une boule ouverte sur }\C}$\\
+    Soit $\funto{f}{U\times E}{\R\text{ (ou }\C\text{)}}$ telle que :\\
+    \begin{enumerate}
+        \item $\forall u \in U, \mfun{x}{f(u,x)}$ est mesurable et intégrable
+        \item $\pp{\mu}$ en $x$, $\mfun{u}{f(u,x)}$ est dérivable en $u_0$, de dérivée notée $\frac{\partial f}{\partial u}(u_0,x)$
+        \item $\exists g\in \LEA,g\ge0$ telle que $\pp{\mu},|f(u,x)-f(u_0,x)|<g(x)|u-u_0|$
+    \end{enumerate}
+    Alors la fonction $\funto{F}{U}{\R\text{ (ou }\C)}$ définie par $F(u)=\int f(u,x)\,d\mu(x)$ est dérivable au point $u_0$, de dérivée $F'(u_0)=\int\frac{\partial f}{\partial u}(u_0,x)d\mu(x)$
+\end{tm}
+
+\begin{proof}
+    Voir p.29
+\end{proof}
+
+\begin{tm}
+    \begin{enumerate}
+        \item $\forall u \in U, \mfun{x}{f(u,x)}$ est intégrable
+        \item $\pp{\mu}$, $\mfun{u}{f(u,x)}$ est dérivable sur $U$.
+        \item Il existe $g\ge0$ telle que $g\in\LEA$ et $\pp{\mu}$ en $x$, $\left|\frac{\partial f}{\partial u} (u,x)\right|\le g(x)$. Alors $F(u)=\int f(u,x)\,d\mu(x)$ est dérivable sur $U$ de dérivée $F'(u)=\int \frac{\partial f}{\partial u}(u,x)\,d\mu(x)$
+    \end{enumerate}
+\end{tm}
+
+\begin{proof}
+    Voir p.29
+\end{proof}
+
+\begin{ex}
+    \begin{enumerate}
+        \item Transormée de Fourrier : Soit $f\in L^1(\R,\Br(\R),\lambda)$. On définit $\hat{f}$ par $\hat{f}(u)=\int e^{iux}f(x)\,d\lambda(x)$. $\hat{f}$ s'appelle transformée de Fourrier de $f$. Par le théorème de continuité, on sait que $\fundf{\R}{\C}{u}{\hat{f}(u)}$ est continue. De plus, si $xf(x)\in L^1(\R,\BR,\lambda)$, alors $\hat{f}$ est dérivable de dérivée
+        \begin{align*}
+        (\hat{f})'(u)&=\int ixe^{iux}f(x)\,d\lambda(x)&\\
+        &=\int e^{iux}(ixf(x))\,d\lambda(x)&\\
+        &=\hat{g}(u)&\text{ avec $g(x)=ixf(x)$}
+        \end{align*}
+    \end{enumerate}
+\end{ex}
+
+\subsection*{Produit de convolution}
+
+Soient $\varphi\in \LRBR$ et $h$ continue et bornée sur $\R$. On définit : $$h\ast\varphi(u)=\int h(u-x)\varphi(x)\,d\lambda(x)$$.
+$f(u,x)=h(u-x)\varphi(x)$ est :\begin{itemize}
+    \item Mesurable en $x$ pour tout $u\in\R$
+    \item Continue en $u$ pour tout $x\in \R$
+    \item Dominée par $M(\varphi(x))$ si $|h|\le M$.
+\end{itemize}
+Alors $h\ast \varphi$ est continue sur $\R$
+
+\begin{ex}
+    On choisit $h$ continue à support compact. Si $h$ est de plus $C^1$ ( et à support compact), alors $h\ast\varphi$ est dérivable sur $\R$, de dérivée $h'\ast\varphi$.
+\end{ex}
+
+\chapter{Mesure produit}
+
+\section{Espaces produits, tribus produits}
+
+\begin{df}[Définition (Tribu Produit)]
+    $\EA$ et $\FB$ deux espaces mesurables. On munit $E\times F$ de la tribu $\Ar\times \Br$ qui est la tribu engendrée par $A\times\in \Ar\times \Br$
+    \[\Ar\otimes\Br=\sigma(\{A\times B,A\in\Ar,B\in\Br\})\]
+    On peut étendre cette définition à $n$ espaces mesurables $(E_1,\Ar_1),\ldots,(E_n,\Ar_n)$
+    \[\Ar_1\otimes\ldots\otimes\Ar_n=\sigma(\{A_1\times \ldots A_n,A_i\in\Ar_i\})\]
+    \[(\Ar_1\otimes\Ar_2)\otimes\Ar_3=\Ar_1\otimes(\Ar_2\otimes\Ar_3)\]
+\end{df}
+
+\begin{prop}
+    $\Br(\R^2)=\BR\otimes\BR$
+\end{prop}
+
+\begin{proof}
+    Voir p.31
+\end{proof}
+
+\begin{re}
+    \begin{enumerate}
+        \item On peut itérer :
+        \[\Br(\R^d)=\underset{d\text{ fois}}{\underbrace{\BR\otimes\cdots\otimes\BR}}\]
+        \item Cela reste vrai si $E,F$ sont des espaces métriques séparables :
+        \[\Br(E\times F)=\Br(E)\otimes\Br(F)\]
+        Un espace est dit séparable s'il existe un sous espace dénombrable dense
+    \end{enumerate}
+\end{re}
+
+\begin{prop}
+    Soient $\EA$, $\FB$ deux espaces mesurables. \\
+    Soit $C\subset E\times F,C_x=\{y\in F,(x,y)\in C\}\subset F$ et $C^y=\{x\in E,(x,y)\in C\}\subset E$.\\
+    De même si $\funto{f}{E\times F}{G}$ est une fonction, on note :
+    \[\fundfto{f_x}{F}{G}{y}{f(x,y)}\text{ et }\fundfto{f_y}{E}{G}{x}{f(x,y)}\]
+\end{prop}
+
+\begin{prop}
+    \begin{enumerate}
+        \item Soit $C\subset \Ar\otimes \Br$ alors :
+        \[\forall x\in E, \forall y\in F,C_x\in\Br\text{ et }C^y\in\Ar\]
+        \item $\funto{f}{E\times F}{G}$ mesurable au sens de $\Ar\otimes \Br$ alors $\forall x\in E$, $f_x$ est $\Br$-mesurable et $f^y$ est $\Ar$-mesurable.
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    Voir p.32
+\end{proof}
+
+\section{Construction de la mesure produit}
+
+\begin{tm}
+    Soit $\EAmu$ et $\FBnu$ deux espaces mesurés avec des mesures $\mu$ et $\nu$ $\sigma$-finies alors :
+    \begin{enumerate}
+        \item Il existe une unique mesure $m$ sur $(E\times F,\Ar\otimes\Br)$ telle que
+        \[\cho{\forall A\in\Ar\\ \forall B\in\Br}, m(A\times B)=\mu(A)\nu(B),\text{ on note }m=\mu\otimes\nu\text{avec la convention $0\times\infty=0$}\]
+        \item Si $C\in\Ar\otimes\Br$, alors 
+        \[\mu\otimes\nu (C)=\int\nu(C_x)\,d\mu(x)=\int\mu(C^y)\,d\nu(y)\]
+    \end{enumerate}
+\end{tm}
+
+\begin{proof}
+    Voir p.33
+\end{proof}
+
+\begin{re}
+    
+\end{re}
+\end{document}

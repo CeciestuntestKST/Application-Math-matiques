@@ -1,0 +1,1407 @@
+\documentclass[]{report}
+
+\usepackage{import}
+
+\import{../}{settings.tex}
+
+\title{Algèbre}
+\author{Cours de Xavier BLANC, écrit par SADR TAHOURI Luca}
+\date{}
+
+\begin{document}
+
+    \maketitle
+    \tableofcontents
+
+    \chapter{Anneaux de polynômes}
+
+    Soit $A$ un anneau commutatif unitaire muni des lois $+$ et $\times$.\\
+    $A^\times$, ensemble des inversibles de A.
+
+    \section{Définitions et premières propriétés}
+
+    \begin{df}{}{}
+    Soit A un anneau unitaire commutatif, on appelle polynôme à une indéterminée à coefficients dans A toute suite $(a_n)_{n\in\N}$ d'éléments de A \tq $\exists N\in\N,\forall n\ge N, a_n=0$
+    \end{df}
+
+    \begin{not}{}{}
+    On note $A[X]$ l'ensemble des polynômes à coefficients dans A. \\
+    Si $P,Q\in A[X], P=(a_n)_{n\in\N},Q=(b_n)_{n\in\N}$ alors :
+    \[P+\lambda Q=(a_n+\lambda b_n)_{n\in\C}\in A[X]\]
+    $$PQ=(c_n)_{n\in\N}$$ 
+    Avec $c_n=\sum_{k=0}^na_kb_{n-k}\text{ or }(c_n)_{n\in\N}$ est nulle \apcr donc $PQ\in A[X]$
+    \end{not}
+
+    \begin{prop}{}{}
+        $A[X]$ muni des lois d'addition et de multiplication ci-dessus est un anneau commutatif unitaire :
+        $$0_{A[X]}=(0,0,0,\dots)\text{ et }1_{A[X]}=(1,0,0,\dots)$$
+    \end{prop}
+
+    \begin{proof}
+        Exercice
+    \end{proof}
+
+    \begin{not}{}{}
+        $$X^k=(0,0,\dots,0,1,0,\dots) \text{ à la position $k+1$}$$
+        $$\text{et } X^0=(A,0,0,\dots) \text{ est noté 1}$$
+        $$P=(A_n)_{n\in\N}\text{ sera donc noté }P=\sum_{n\in\N}a_nX^n$$
+    \end{not}
+
+    \begin{prop}{}{}
+        $X^nX^p=X^{n+p}$
+    \end{prop}
+
+    \begin{df}{}{}
+        \begin{itemize}
+            \item Soit $P\in A[X]$, on appelle degré l'entier noté $\deg(P)=\max\{ m\in\N|a_m\neq0\}$
+            \item On dira que $P$ est unitaire si $\deg(P)=1$
+            \item Par convention : Si $P=0, \deg(P)=-\infty$
+        \end{itemize}
+    \end{df}
+
+    \begin{prop}{}{}
+        Soient $P,Q\in A[X]^2$, avec $A$ intègre.\\
+        Alors $\deg(PQ)=\deg(P)+\deg(Q)$ et $A[X]$ est intègre.
+    \end{prop}
+
+    \begin{proof}
+        Si $P=0$ ou $Q=0$, alors $\deg (PQ)=-\infty$ et $\deg(P)+\deg (Q)=-\infty$\\
+        Si $P\neq 0$ et $Q\neq 0$,
+        \[P=\sum_{k=0}^n a_k X^k,a_n\neq 0\qquad Q=\sum_{k=0}^m b_k X^k,b_m\neq 0\]
+        \[n=\deg P\qquad m=\deg Q\]
+        \[PQ=a_n b_n X+\cdots, a_n b_n\neq 0\]
+        On sait que $A$ est intègre. Est ce que $A[X]$ est intègre ? Si $PQ=0$ alors $\deg PQ=-\infty$. Or si $P\neq 0$ et $Q\neq 0$,$\deg P\ge 0,\deg G\ge 0$. Donc $\deg PQ=\deg P +\deg Q \ge$.\\
+        Contradiction donc $P=0$ et $Q=0$
+    \end{proof}
+
+    \begin{re}{}{}
+        Si $A$ n'est pas intègre, alors $\deg(PQ)\le\deg(P)+\deg(Q)$
+    \end{re}
+
+    \begin{prop}{}{}
+        Les inversibles de $A[X]$ sont les polynômes $P=a$, avec $a\in A^\times$
+    \end{prop}
+
+    \begin{proof}
+        $P$ inversible, $\exists Q\in A[X],PQ=1_{A[X]}\implies \deg P+\deg Q=0$.\\
+        Donc $\deg P\le 0$. $P $ ne peut pas être nul, donc $\deg P=0$. Donc $P=a\in A$. De même, $Q=b\in A$.\\
+        Donc $ab=1_{A}$, donc $a\in A^\times$\\
+        Réciproquement, si $P=a\in A^{\times}$, $Q=a^{-1}$ vérifie $PQ=1$
+    \end{proof}
+
+    \section{Division euclidienne}
+
+    \begin{df}{}{}
+        $(P,Q)\in A[X]$. On dit que $P|Q$ ($P$ divise $Q$) si $$\exists R\in A[X],Q=PR\text{ (Pour $Q\neq0$)$$
+    \end{df}
+
+    \begin{prop}{}{}
+        \begin{itemize}
+            \item Si $P|Q$ et $Q|R$, alors $P|R$
+            \item Si $P|Q$ et $P|R$, alors $P|(Q+R)$
+            \item Si $P|Q$ et $R|S$ alors $PR|QS$
+            \item Si $P|Q$ alors $\deg P \le \deg Q$
+            \item $P|Q, \forall n\in\N P^n|Q^n$
+            \item Si $P|Q$ et $Q|P$, alors $\exists a\in A^\times,P=aQ$
+        \end{itemize}
+    \end{prop}
+
+    \begin{proof}
+        Exercice
+    \end{proof}
+
+    \begin{tm}{Théorème (Division euclidienne)}{}
+        Soient $(P,S)\in A[X]^2$, avec $\deg(P)\ge\deg(S)$, coefficient dominant de $S$ inversible. Alors $$\exists(Q,R\in A[X]^2,P=QS+R\text{ avec $\deg(R)<\deg(S)$}$$
+    \end{tm}
+
+    \begin{proof}
+        $\deg P\ge \deg S$. $S$ non nul donc $P$ non nul.\\
+        Existence : récurrence sur $n=\deg P$.
+        \begin{itemize}
+            \item Si $n=0,P=a\in A$
+            \[\deg S \le 0, S=b\in A^{\times}\]
+            \[Q=ab^{-1}, R=0,P=QS+R,\deg R=-\infty<\deg S=0 \]
+            \item On suppose la propriété vrai pour $\deg P=n$
+            \[Q=a_{n+1}X^{n+1}+a_n X^n+\cdots +a_0,a_{n+1}\neq 0\]
+            \[S=b_m X^m+b_{m-1}X^{m-1}+\cdots+b_0,b_m\in A^{\times}\]
+            \[R_1=P-a_{n+1}b_mX^{n-1+m}S,\deg R_1\le n+1\]
+            Donc le coefficient de degré $n+1$ est $a_{n+1}-a_{n+1}b_m^{-1}b_m=0$ donc $\deg R_1\le n$\\
+            Si $\deg R_1\ge m$, alors on applique l'hypothèse de réccurence : $R_1=QS+R_2,\deg (R_2)<m$.
+            \[P=QS+R_2+a_{n+1} b_m^{-1} X^{n+1-m}S\]
+            \[P=(Q+a_{m+1}b_m^{-1}X^{n+1-m})S+R_2,\deg R_2<\deg S\]
+            Si maintenant $\deg R_1<m$
+            \[P=\underset{Q}{\underbrace{a_{n+1}b_m^{-1}X^{n+1-m}}}S+ R_1, \deg R_1< \deg S\]
+        \end{itemize}
+        Unicité : On suppose que $P=Q_1 S+ R_1=Q_2 S +R_2$, $\deg R_1<\deg S$ et $\deg R_2<\deg S$
+        \[(Q_1-Q_2)S=R_2-R_1\implies \deg (Q_1-Q_2)+\deg S=\deg (R_1-R_2), \deg (R_1-R_2)<\deg S\]
+        Donc $\deg(Q_1-Q_2)=-\infty$ donc $\deg (R_1-R_2)=-\infty\implies Q_1=Q_2,R_1=R_2$
+    \end{proof}
+
+    \begin{not}{}{}
+        Dans le théorème précédent, $Q$ est le quotient, $R$ est le reste de la division euclidienne de $P$ par $S$.
+    \end{not}
+
+    \begin{re}{}{}
+        Si $A=K$ est un corps, alors l'hypothèse que les coefficients dominants de $S$ est inversible est superflue (mais il faut que $S\neq 0$)
+    \end{re}
+
+    \begin{prop}{}{}
+        Soit $K$ un corps. Alors l'anneau $K[X]$ est principal.
+    \end{prop}
+
+    \begin{proof}
+        Soit $I$ un idéal de $K[X]$, on veut démontrer que $\exists P\in K[X],I=PK[X]=(P)$.
+        \begin{itemize}
+            \item Si $I=\{0\},I=0 K[X]$
+            \item Si $I\neq \{0\},\left\{\deg P,P\in I,P\neq 0 \right\},D\subset \N,D\neq 0$.\\
+            \[ d=\min D.\exists P\in I,d=\deg P\]
+            \[S\in I,\deg P\le \deg S,S\neq 0,d=\deg P\]
+            Donc il exist'e peux polynômes $Q$ et $R$, $S=QP+R,\deg R< \deg P=d$
+            \[R=S-QP\in I\]
+            Donc $R\in I,\deg R<\min D$, d'où $R=0$. Donc $I=PK[X]$
+        \end{itemize}
+    \end{proof}
+
+    \begin{re}{}{}
+        En fait, pour tout idéal $I\neq\{0\}$ de $K[X],\exists!P\in K[X]$,$P$ unitaire, \tq $I=P K[X]$
+    \end{re}
+
+    \begin{ex}{}{}
+        Avec $A=\Z$, on a $(2,X)=I$ n'est pas principal car $(2,X)=\{P=a_0+a_1+a_2X+\dots+a_nX^n,a_0\in 2\Z\}$
+    \end{ex}
+
+    \section{PGCD et PPCM}
+
+    \begin{df}{}{}
+        Soit $P\in A[X]$ un polynôme non nul.\\
+        On dit que $P$ est irréductible s'il n'est pas inversible, et si \\$\forall(Q,R)\in A[X]^2,P=QR\implies Q$ ou $R$ inversible
+    \end{df}
+
+    \begin{df}{}{}
+        Soit $P\in A[X]$. $P$ est réductible s'il n'est pas inversible et pas irréductible.
+    \end{df}
+
+    \begin{ex}{}{}
+        $P=3\in \Q[X]$. Alors $P$ est inversible donc n'est pas irréductible. Par contre $P=3\in \Z[X]$ non inversible donc non irréductible.
+    \end{ex}
+
+    \begin{ex}{}{}
+        $X^2+1\in\R[X]$ irréductible mais $X^2+1\in\C[X]$ est réductible.
+    \end{ex}
+
+    \begin{df}{}{}
+        Soient $P_1,\dots,P_n$ des éléments de $K[X]$. Alors $$I=(P_1)+\dots+(P_n)=\{\sum_{k=1}^nA_jP_j,A_j\in K[X]\}$$ est un idéal de $K[X]$. Donc $\exists!P\in K[X]$ unitaire \tq $I=(P), P\text{ unitaire}$. Dans ce cas $P=PGCD(P_1,P_2,\dots,P_n)$
+    \end{df}
+
+    \begin{df}{}{}
+        Soient $P_1,\dots,P_n$ éléments de $K[X]$. $(P_1)\cap\dots\cap(P_n)=I$ idéal de $K[X]$\\
+        $\exists! Q \in K[X]$ unitaire \tq $(Q)=I$ et alors $Q=PPCM(P_1,\dots,P_n)$
+    \end{df}
+
+    \begin{prop}{}{}
+        Soient $(P,Q)\in K[X]$, on a :\begin{itemize}
+            \item $PGCD(P,Q)$ divise $P$ et $Q$
+            \item $\exists(U,V)\in K[X]^2,PGCD(P,Q)=PU+QV$
+            \item Si $D|P$ et $D|Q$, alors $D|PGCD(P,Q)$
+        \end{itemize}
+    \end{prop}
+
+    \begin{proof}
+        $(P)+(Q)=I=\text{pgcd}(P,Q)K[X]$
+        \begin{itemize}
+            \item $P\in I$, donc $P=\pgcd (P,Q) R$, pour un certain $R\in K[X]$. De même pour $Q$
+            \item $\pgcd (P,Q)\in I$, donc $\pgcd (P,Q)=PU+QV$.
+            \item $D|P$ et $D|Q$, donc $P=DA$ et $Q=DB$
+            \begin{align*}
+                \pgcd(P,Q)&=PU+QV\\
+                &=DAU+DBV\\
+                &=D(AU+BV)
+            \end{align*}
+            Donc $D$ divise $\pgcd (P,Q)$
+        \end{itemize}
+    \end{proof}
+
+    \begin{df}{}{}
+        Soient $(P,Q)\in K[X]^2$. On dit que $P$ et $Q$ sont premiers entre eux si $PGCD(P,Q)=1$
+    \end{df}
+
+    \begin{prop}{}{}
+        Soient $P\neq Q$ deux éléments de $K[X]$ qui sont unitaires et irréductibles, alors $P$ et $Q$ sont premiers entre eux.
+    \end{prop}
+
+    \begin{proof}
+        Si $\pgcd(P,Q)=D\neq 1$. Alors $\deg \ge 1$. $D$ divise $P$ et $Q$. Donc $P=aD,a\in K,a\neq 0$ et $Q=bD,b\in K,b\neq 0$.\\
+        Donc $\deg P=\deg Q=\deg D$. Et le coefficient dominant de $P$ est $a=1$ donc $a=b=1$ donc $P=Q$, contradiction.
+    \end{proof}
+
+    \begin{prop}{Algorithme d'Euclide (Calcul du PGCD)}{}
+        Soient $(A,B)\in K[X]$ avec $K$ un corps. Supposons que $\deg B< \deg A$ :
+        $$A=BQ_1+R_1, \deg R_1<\deg B$$
+        $$B=R_1Q_2+R_2, \deg R_2<\deg R_1$$
+        $$R_1=R_2Q_3+R_3, \deg R_3<\deg R_2$$
+        $$\vdots$$
+        $$R_{k-2}=R_{k-1}Q_k+R_k$$
+        Jusqu'à ce que $R_{k-1}=0$. Alors $R_k=A\wedge B$. La suite $(\deg(R_n))$ sont \tq $\exists k\in\N$, \tq $R_{k+1}=0$. On peut montrer facilement que $R_k|A$ et $R_k|B,\forall k$. Si $D|A$ et $D|B$, alors $D|R_b,\forall k$.
+    \end{prop}
+
+    \begin{re}{}{}
+        $A\wedge B=AU+BV$. Calcul de U et V :$$A\wedge B=R_{k-2}-B=R_{k-1}Q_k, B=R_{k-1}=B=R_{k-3}-B=R_{k-2}Q_{k-1}$$
+        $$B=R_{k-2}-B=R_{k-3}-B=R_{k-2}Q_{k-1}|Q_k$$
+        $$\vdots$$
+        $$=(\dots)A+(\dots)B$$
+    \end{re}
+
+    \begin{tm}{Théorème (Bézout)}{}
+        Soit $K$ un corps, $(P,Q)\in K[X]$. $$P\wedge Q=1\iff \exists(U,V)\in K[X], PU+QV=1$$
+    \end{tm}
+
+    \begin{proof}
+        $\implies P\wedge Q=1$
+        \[(P)+(Q)=(P\wedge Q)=\K [X]\]
+        \[\text{ donc }1\in (P)+(Q)\]
+        $\impliedby$ Si $PU+QV=1$, alors $1\in (P)+(Q)$ donc $(P,Q)=1$
+    \end{proof}
+
+    \begin{lm}{Lemme (De Gauss)}{}
+        Soient $A,B,C$ 3 polynômes non nuls de $K[X]$ avec $A\wedge B=1$ alors $ A|BC \implies A|C$
+    \end{lm}
+
+    \begin{proof}
+        \[A|BC\implies BC=AP,P\in \K[X]\]
+        \[B\wedge A=1\implies AU+BV=1\]
+        \[BU C=APV\iff (1-AU)C=APV\]
+        \[C=A(CU+PV)\text{ donc }A|C\]
+    \end{proof}
+
+    \begin{lm}{Lemme d'Euclide}{}
+        Soient $A,B,C\in K[X]\backslash\{0\}$, $A$ irréductible alors $A|BC \implies A|B$ ou $A|C$
+    \end{lm}
+
+    \begin{proof}
+        $A$ est irréductible donc si $A\nmid B$, alors $A\wedge B=1$, puis avec le lemme de Gauss, $A|C$
+    \end{proof}
+
+    \section{Décomposition en facteur premier}
+
+    \begin{tm}{}{}
+        Soit $K$ un corps, soit $P\in K[X],P\neq 0$. Alors $P=\alpha P_1^{\alpha_1}\dots P_n^{\alpha_n}$ alors $\alpha$ coefficient dominant de $P$, $P_i$ irréductibles unitaires (différents 2 à 2) et $\alpha_i\in\N^*$. Cette décomposition est unique à permutation près des $P_i$.
+    \end{tm}
+
+    \begin{proof}
+        $P\neq 0$ donc son coefficient dominant $\alpha$ est non nul donc $ \alpha^{-1}P$ est unitaire.\\
+        Dans la suite, on suppose $P$ unitaire. Soit $d=\deg P$.
+        \begin{itemize}
+            \item Si $d=0$, $P=1$, donc $\alpha=1,n=0$
+            \item Si la décomposition existe $\forall P$ tel que $\deg P\le d$, on suppose $\deg P=d+1$.\\
+            Soit $P$ est irréductible et $n=1,P_1=P,\alpha_1=1,\alpha=1$.\\
+            Soit $P$ est réductible et $P=QR,\deg Q\ge 1,\deg R\ge 1$.\\
+            On a donc $\deg P=\deg Q+\deg R$, on a $\deg Q\le d, \deg R\le d.$\\
+            On décompose $Q$ et $R$ et on obtient la décomposition de $P$, on a montré l'existence.\\
+        \end{itemize}
+        Unicité : Si $P=\alpha P_1^{\alpha_1}\cdots P_n^{\alpha_n}=\beta Q_1^{\beta_1}\cdots Q_n^{\beta_n}$.\\
+        Comme les $P_i$ et les $Q_i$ sont unitaires, $\alpha=\beta=\text{coefficient dominant de P}$
+        \[P_1^{\alpha_1}\cdots P_n^{\alpha_n}=Q_1^{\beta_1}\cdots Q_m^{\beta_m}\]
+        \[\forall i, P_i|Q_1^{\beta_1}\cdots Q_m^{\beta_m}\]
+        Comme $P_i$ irréductible, $\exists j,P_i|Q_j^{\beta_g}$ donc $P_i|Q_j$. Donc on peut construire:
+        \[\fundfto{\varphi}{\{1,\ldots,n\}}{\{1,\ldots,m\}}{i}{j}\text{ telle que }P_i|Q_{\varphi(i)}\]
+        De même, on construit
+        \[\fundfto{\psi}{\{1,\ldots,m\}}{\{1,\ldots,n\}}{j}{i}\text{ telle que }Q_j|P_{\psi(j)}\implies Q_j=P_{\varphi(j)}\]
+        On a $\phi \circ \varphi=2d$. Donc $\llbracket 1,n \rrbracket$ et $\llbracket 1,m \rrbracket$ sont en bijection, d'où $n=m$.\\
+        Quitte à réordonner les $Q_j,P_i=Q_i$.
+        \[P_1^{\alpha_1}\cdots P_n^{\alpha_n}=P_1^{\beta_1}\cdots P_n^{\alpha_n}\text{ d'où }\forall i, \alpha_i=\beta_i\]
+    \end{proof}
+
+    \begin{prop}{}{}
+        Soit $P\in K[X],P=\alpha P_1^{\alpha_1}\dots P_n^{\alpha_n}$. Soit $Q\in K[X]$. 
+        \[Q|P \iff Q=\beta P_1^{\beta_1}\dots P_n^{\beta_n} \text{ avec }\beta_i\le \alpha_i\]
+    \end{prop}
+
+    \begin{proof}
+        Si $Q=\beta P_1^{\beta_1}\ldots P_n^{\beta_n}\iff P=\frac{\alpha}{\beta}Q P_1^{\alpha_1-\beta_1}\ldots P_n^{\alpha_n-\beta_m}$ donc $Q|P$.\\
+        Réciproquement, si $Q|P$, alors $P=QR$,
+        \[Q=\beta Q_1^{\beta_1}\cdots Q_m^{\beta_m}\]
+        Par unicité de la décomposition,
+        \[Q=\beta P_1^{\beta_1}\cdots P_n^{\beta_n}\text{ (éventuellement, $\beta_i=0$)}\]
+        donc $P_1^{\beta_1}|P$ donc $P_1^{\beta_1}|P_1^{\alpha_1}$ donc $\beta_1\le \alpha_1$
+    \end{proof}
+
+    \section{Fonction polynomiale}
+
+    \begin{df}{}{}
+        Soit $A$ anneau commutatif unitaire. $\forall P\in A[X]$, on appelle fonction polynomiale associée à $P=\sum a_jX^j$ l'application : $$\begin{array}{ccccc}
+    f_P : & A & \to & A \\
+      & x & \mapsto & \sum_0^\infty a_jx^j
+    \end{array}$$
+    \end{df}
+
+    \begin{prop}{}{}
+        Soit $K$ corps, l'application $\begin{array}{ccccc}
+    & P & \mapsto & f_P
+    \end{array}$ de $K[X]$ dans l'ensemble des applications de $K$ dans $K$ est un morphisme d'anneaux et son image est appelé l'ensemble des fonctions polynomiales sur $K$.
+    \end{prop}
+
+    \begin{proof}
+        Soient $P,Q\in \K[X],\lambda \in \K$. Soit $x\in\K$
+        \[P=\sum_{0}^n a_i X^i=\sum_0^{N=\max(n,m)}a_i X^i,a_i=0\text{ si }i\ge n+1\]
+        \[Q=\sum_0^m b_i X^i=\sum_0^N b_i Xî,b_i=0\text{ si }i\ge m+1\]
+        On définit :
+        \[f_{P+\lambda Q}(x)=\sum_0^N a_i X^i+ \lambda \sum_0^N b_i X^i\]
+        Donc $f_{P+\lambda Q}=f_P+\lambda f_Q$. De même, $f_{PQ}=f_P f_Q$ et $f_1=1$
+    \end{proof}
+
+    \begin{df}{}{}
+        Soit $P\in K[X],a\in K$. On dit que $a$ est racine de $P$ si $f_P(a)=0$
+    \end{df}
+
+    \begin{prop}{}{}
+        Soit $P\in K[X]$, 
+        \[a \text{ racine de }P \iff X-a|P\]
+    \end{prop}
+
+    \begin{proof}
+        $\impliedby$ Si $X-a|P$ alors $P=(X-a)Q$, $f_P(a)=(a-a)Q(a)=0$\\
+        $\implies$ Si $a$ racine de $P$, alors $P=(X-a)Q+R,\deg R<1$, $R$ est constante $R=a\in \K$.
+        \[P=(X-a)Q+\alpha\]
+        \[f_P(x)=(x-a)f_Q(x)+\alpha\]
+        Or $f_P(a)=0\implies \alpha=0$ donc $X-a|P$
+    \end{proof}
+
+    \begin{df}{}{}
+        $P\in K[X],a\in K$ racine de $P$ on dit que $a$ est de multiplicité $k\in \N^*$ si 
+        $$(X-a)^k|P\text{ et }(X-a)^{k+1}\not| P$$
+        $$P=(X-a)^kQ\text{ avec }(X-a)\wedge Q=1$$
+    \end{df}
+
+    \begin{df}{}{}
+        Soit $P=\sum_0^na_iX^i\in K[X]$. On appelle polynôme dérivé de P $$P'=\sum_0^{n-1}(i+1)a_{i+1}X^i=\sum_1^nia_iX^{i-1}$$ Et on définit par récurrence les dérivées successives de P :  $P^{(k+1)}=(P^{(k)})'$
+    \end{df}
+
+    \begin{re}{}{}
+        On peut montrer que $$(PQ)'=P'Q+PQ'$$
+        $$(P+\lambda Q)'=P'+\lambda Q'$$
+    \end{re}
+
+    \begin{prop}{}{}
+        Soit $P\in K[X],a\in K (K=\R \text{ ou }\C)$, alors les propriétés sont équivalentes : \begin{enumerate}
+            \item $a$ est racine de multiplicité $k$ de $P$
+            \item $P=(X-a)^kQ$ avec $f_Q(a)\neq 0$
+            \item $P(a)=P'(a)=\dots=P^{(k-1)}(a)=0$ et $P^{k}(a)\neq 0$
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        $1)\implies 2)$ : a est de multiplicité $k$,
+        \[(X-a)^k|P\text{ donc }P=(X-a)^k Q\]
+        \[Q\wedge (X-a)=1\text{, donc}\exists U,V, QU+(X-a)V=1\]
+        \[f_Q+f_V+f_{X-a}f_V=1\]
+        \[f_Q(a)f_V(a)=1\text{, donc }f_{X-a(a)=0}\]
+        \begin{center}
+            donc $f_0(a)\neq0$
+        \end{center}
+        $2)\implies 3)$ : $P=(X-a)^kQ$ donc $f_P(a)=0$
+        \[P'=k(X-a)^{k-1}Q+(X-a)^k Q'\quad P'(a)=0\]
+        \[P''=k(k-1)(X-a)^{k-2}Q+(X-a)^{k-1}(\ldots)\quad P''(a)=0\]
+        \[\vdots\]
+        \[P^{(k)}=k!Q+(X-a)(\ldots)P^{(k)}(a)=k!Q(a)\neq0\quad P^{(k-1)}(a)=0\]
+        $3)\implies 1)$ : $\deg P'=\deg P - 1$ sauf si $P$ est constante, donc $\deg(P^{(k)})=\deg(P)-k$.\\
+        Ici, $P^{(k)}\neq 0$ donc $\deg P\ge k$. $P=(X-a)^k Q+R,\deg R<k$\\
+        \[P^{(k-1)}\underset{a\text{ est racine}}{\underbrace{((X-a)^k Q)^{(k-1)}}}+\underset{\text{Constante}}{\underbrace{R^{(k-1)}}}\]
+        \[P^{(k-1)}(a)=0\quad R^{(k-1)}=0\]
+        On recommence $R^{(k-1)}=0\ldots R=0$ donc $(X-a)^k|P$. $a $ est donc racine de multiplicité $k $ de $P$
+    \end{proof}
+
+    \begin{tm}{}{}
+        $K$ corps, $P\in K[X],a_1,\dots,a_n$ racine de P de multiplicité respective $\alpha_1,\dots,\alpha_n(\alpha_i\in\N^*)$, alors $\exists Q \in K[X]$ \tq $P=(X-a_1)^{\alpha_1}\dots(X-a_n)^{\alpha_n}Q$ et $\forall i,a_i$ n'est pas racine de Q. Donc $\deg(P)\ge\alpha_1+\dots+\alpha_n$
+    \end{tm}
+
+    \begin{proof}
+        $a_1$ racine de multiplicité $\alpha_1$, donc
+        \[P=(X-a_1)^{\alpha_1}Q_1,Q_1\wedge(X-a_1)=1\]
+        De plus, $\cho{(X-a_2)^{\alpha_2}|P\\(X-a_1)\wedge(X-a_2)=1}\implies (X-a_2)^{\alpha_2}|Q_1$ donc
+        \[P=(X-a_1)^{\alpha_1}(X-a_2)^{\alpha_2}Q_2\text{ avec $a_1$ et $a_2$ non racine de $Q_2$}\]
+        \[\vdots\]
+        \[P=(X-a_1)^{\alpha_1}\ldots(X-a_n)^{\alpha_n}Q\text{ où }\forall i\text{, $a_i$ non racine de $Q$}\]
+    \end{proof}
+
+    \begin{re}{}{}
+        Si $\deg(P)=n, P$ admet au plus $n$ racines.
+    \end{re}
+
+    \begin{cor}{}{}
+        Soit $K$ un corps infini, alors le morphisme d'anneaux $\begin{array}{ccccc}
+    & K[X] & \to & K^K \\
+    & P & \mapsto & f_P
+    \end{array}$ est injectif
+    \end{cor}
+
+    \begin{proof}
+        Soit $P\in\K[X],P\neq0$. $n=\deg(P)$. Soient $\alpha_1,\ldots,\alpha_{n+1}$ des éléments de $\K$ tels que $i\neq j\implies \alpha_i\neq \alpha_j$.\\
+        Si $f_P(\alpha_i)=0$ alors $X-\alpha_i|P,\forall i$. Donc les $X-\alpha_i$ et $X-\alpha_j$ premiers entre eux.
+        \[\produit{i=1}{n+1}(X-\alpha_i)|P\text{ donc }\deg(P)\ge n+1\]
+    \end{proof}
+
+    \begin{re}{}{}
+        C'est faux si $K$ est finie $\displaystyle{P=\prod_{\alpha\in K}(X-\alpha)}$ polynôme non nul (il est unitaire) mais $f_P=0$
+    \end{re}
+
+    \section{Irréductibles de $\R[X]$ et $\C[X]$}
+
+    \begin{tm}{Théorème de D'Alembert}{}
+        Soit $P \in \C[X],\deg(P)\ge1$. Alors $P$ admet une racine dans $\C$.
+    \end{tm}
+
+    \begin{proof}
+        $n=\deg P,P=a_n X^n+a_{n-1} X^{n-1}+\ldots+a_0,a_n\neq 0$
+        \[P(z)=P(z)=a_n z^n(1+\frac{a_{n-1}}{a_n z}+\ldots+\frac{a_0}{a_n z^n})\quad (z\neq 0)\]
+        Donc $|P(z)|=|a_n||z|^n(1+o(1))\to+\infty$. En particulier, $\exists R>0,\forall z\in\C,|z|>R,|P(z)|>|P(0)|$. $D_R=\{z\in\C,|z|\le R\}$ compact de $\C$.\\
+        $I=\int(\{|P(z)|,z\in D_r\})$ atteint en $z=z_0$.
+        \[|P(z_0)|=I\text{ et }\forall z\in D_R^C,|P(z)|>|P(0)|\ge I\text{ car }0\in D_R\]
+        Donc $|P(z_0)|=I=\inf \{|P(z)|,z\in\C\}$. On suppose que $|P(z_0)|\neq0$
+        \[P(z_0+z)=\sum_{j=0}^{n} b_j z^j,\text{ avec }b_n=a_n\neq0,b_0\neq0\]
+        \[|P(z_0+z)|=|b_0|\left| 1+\frac{b_k}{b_0}z^k+\ldots+\frac{b_n}{b_0} z^n \right|\]
+        Soit $\omega\in\R,\omega^k=-\frac{b_0}{b_k}$
+        \begin{align*}
+            |P(z_0+t\omega)|&=\left| b_0 \right|\left|1+\frac{b_k}{b_0}\omega^k t^k +o(t^k)\right|\\
+            &=|b_0|\left|1-t^k+o(t^k)\right|
+        \end{align*}
+        Donc, pour $t$ assez proche de $0$, $|P(z_0+t\omega)|<|b_0|$. Impossible car $|b_0|=|P(z_0)|=\inf\{|P(z)|,z\in\C\}$
+    \end{proof}
+
+    \begin{cor}{}{}
+        Si $P\in\C[X]$, alors $P$ est scindé, c'est à dire que $\displaystyle{P=a_n\prod_{j=1}^n(X-\alpha_j)},\alpha_j\in\C$
+    \end{cor}
+
+    \begin{proof}
+        $P\in\C[X]$, $\alpha_i$ racine de $P$. $(X-\alpha_i)|P$, donc $P=(X-\alpha_i)Q$. Si $\deg Q=0$, on a fini. Sinon on recommence avec $Q$.
+    \end{proof}
+
+    \begin{prop}{}{}
+        Les polynômes irréductibles de $\R[X]$ sont les polynômes de degré 1 et ceux de degré 2 qui n'ont pas de raciné réelle (dont le discriminant inférieur à 0).
+    \end{prop}
+
+    \begin{proof}
+        Si $\deg(P)=1$, alors $P=X-\alpha,\alpha\in\R$ irréductible. Si $\deg (P)=2$, sans racine réelle, alors $P=aX^2+bX+c$.\\
+        $b^2-4ac<0$, alors $P=(X-\alpha)(X-\overline{\alpha}),\alpha\in\C,\alpha\notin\R$.\\
+        Si $P=QR$, avec $Q,R\in\R[X]$ non constant alors $\deg Q+\deg R=2$, donc $Q$ admet une racine réelle. Donc $P$ aussi, contradition.\\
+        Réciproque : $P\in\R[X]$ quelconque, $\deg P\ge 1,P\in\C[X]$. Donc $\alpha$ racine de $P\implies \overline{\alpha}$ racine de $P$. Comme $P$ est scindé, on a donc
+        \[P=a_n\produit{j=1}{n}(X-\alpha_j)(X-\overline{\alpha_j})\produit{k=1}{m}(X-\beta_k),\alpha_j\in\C,\text{Im}(\alpha_j)\neq0,\beta_k\in\R\]
+        \[(X-\alpha_j)(X-\overline{\alpha_j})=X^2-2\text{Re}(\alpha_j)+(\alpha_j)^2\]
+        Discriminant $\Delta=4\text{Re}(\alpha_j)^2-4|\alpha_j|^2=-4\text{Im}(\alpha_j)^2<0$. Donc $P$ s'écrit comme produit de polynômes de degré 1 et de polynômes de degré 2 sans racine réelle.
+    \end{proof}
+
+    \section{Critère d'irréductibilité}
+
+    \begin{df}{}{}
+        Soit $A$ un anneau commutatif intègre. On définit $K=A\times(A\backslash\{0\})/\sim$ avec $(a,b)\sim(c,d)\iff ad=bc$ le corps des fractions de A. La classe d'équivalence de $(a,b)$ est noté $\frac{a}{b}$.
+    \end{df}
+
+    \begin{prop}{}{}
+        On munit $K$ des lois d'addition et de multiplication : $\frac{a}{b}+\frac{c}{d}=\frac{ad+bc}{bd};\frac{a}{b}\times\frac{c}{d}=\frac{ac}{bd}$. \begin{enumerate}
+            \item $(K,+,\times)$ est un corps avec $0_K=\frac{0}{1_K}$ et $1_K=\frac{1_A}{1_A}$
+            \item $\begin{array}{ccccc}
+    \iota : & A & \to & K \\
+    & a & \mapsto & \frac{a}{1_A}
+    \end{array}$ est un morphisme d'anneaux injectif.
+            \item On note $K=\text{Frac}(A)$
+        \end{enumerate}
+    \end{prop}
+
+    \begin{ra}{}{}
+        Si $I$ est un idéal de $A$, alors $A/I$ est un anneau et l'application $\begin{array}{ccccc}
+    \varphi : & A & \to & A/I \\
+      & a & \mapsto & \overline{a}
+    \end{array}$ est un morphisme d'anneaux appelé morphisme canonique
+    \end{ra}
+
+    \begin{df}{}{}
+        Soit $A$ un anneau principal : \begin{enumerate}
+            \item $\forall P\in A[X]$, on définit le contenu de $P$, noté $c(P)$, comme le $PGCD$ des coefficients de P. (Il est définit à la multiplication près par $a\in A^\times$)
+            \item On étend cette définition à $P\in\text{Frac}(A)[X]$ par $c(aP)=ac(P),\forall a\in\text{Frac}(A)$
+            \item On dit que $P$ est primitif si $c(P)\in A[X]$. Par convention, $c(0)=0$
+        \end{enumerate}
+    \end{df}
+
+    \begin{prop}{}{}
+        Soit $A$ un anneau principal, alors $\forall(P,Q)\in \text{Frac}(A)[X],c(PQ)=c(P)c(Q)$
+    \end{prop}
+
+    \begin{proof}
+        Supposons d'abord $P$ et $Q$ primitifs $p\in A$, irréductible. On veut prouver qu'un coefficient au moins de $PQ$ n'est pas divisible par $p$.\\
+        Autrement dit, que $\overline{PQ}\neq\overline{p}$ dans $A/pA[X]$ donc un corps.\\
+        Or $\overline{PQ}=\overline{P}\overline{Q}$ et $A/pA$ est un corps, donc $A/pA[X]$ est intègre.\\
+        Donc $\overline{PQ}=\overline{0}\implies \overline{P}=\overline{0}$ ou $\overline{Q}=\overline{0}$ impossible car $c(P)=c(Q)=1$\\
+        Si $P$ ou $Q$ n'est pas primitif :
+        \begin{enumerate}
+            \item Si $P=0$ ou $Q=0$, trivial
+            \item Si $P\neq0$, $Q\neq0$, alors $x(P)^{-1}P$,$ c(Q)^{-1}Q$ polynômes primitifs donc
+            \[c(P)^{-1}Pc(Q)^{-1}Q\text{ est primitif}\]
+            \[c(c(P)^{-1}Pc(Q)^{-1}Q)=1\]
+            \[c(PQ)=c(P)c(Q)\]
+        \end{enumerate}
+    \end{proof}
+
+    \begin{lm}{}{}
+        Soit $A$ un anneau principal. $P\in A[X]$ primitif. Soient $(Q,R)\in\text{Frac}(A)[X]^2,P=QR$, \\
+        alors $\exists(\tilde{Q},\tilde{R})\in A[X]^2$, primitifs et $(a,b)\in(A^\times)^2$ \tq $P=\tilde{Q}\tilde{R}$, et $\tilde{Q}=aQ,\tilde{R}=bR$
+    \end{lm}
+
+    \begin{proof}
+        $P$ primitif, $c(P)=c(QR)=1$ (ou $\in A^\times$) donc $c(Q)\in A^\times$ et $c(R)\in A^\times$.\\
+        \[\widetilde{Q}=c(Q)^{-1}Q,\widetilde{R}=c(R)^{-1}R\quad \text{ $\widetilde{Q}$ et $\widetilde{R}$ primitifs}\]
+        \[\widetilde{Q}\widetilde{R}=c(Q)^{-1}c(R)^{-1}QR=\underset{\in A^\times}{\underbrace{c(Q)^{-1}c(R)^{-1}}}P\]
+    \end{proof}
+
+    \begin{tm}{}{}
+        Soit $A$ anneau principal et $p\in A$ irréductible. \\
+        Soit $\begin{array}{ccccc}
+    \varphi : & A & \to & A/pA
+    \end{array}$ le morphisme canonique.\\
+    On l'étend en un morphisme : $\begin{array}{ccccc}
+    & A[X] & \to & A/pA[X]
+    \end{array}$. \\
+    Soit $P\in A[X], \deg(\varphi(P))=\deg(P)$ et $\varphi(P)$ est irréductible sur $A/pA[X]$, alors $P$ est irréductible sur Frac$(A)[X]$ et si $P$ est primitif, il est irréductible sur $A[X]$.
+    \end{tm}
+
+    \begin{proof}
+        Soit
+        \[P=\sum_{i=0}^{n}a_i X^i,a_n\neq0\]
+        $\deg(\varphi(P))=\deg P\iff\varphi(a_n)\neq0\iff p\not| a_n$ donc $p\not|c(P)$. $\widetilde{p}=c(P)^{-1}P$ primitif dans $A[X]$.\\
+        $\deg(\varphi(\widetilde{P}))=\deg(\widetilde{P})$, donc on s'est ramené au cas où $P$ est primitif. A partir de là, on suppose $P$ primitif. Si $P=QR,Q,R\in\text{Frac}(A)[X]$, par le lemme précédent : $\exists \widetilde{Q},\widetilde{R}\in A[X]$, primitifs tels que $P=\widetilde{Q}\widetilde{R}$.
+        \[\varphi(P)=\varphi(\widetilde{Q})\varphi(\widetilde{R})\]
+        \[\deg (\varphi(P))=\deg(\varphi(\widetilde{Q}))+\deg (\varphi(\widetilde{R}))\]
+        \[\deg P=\deg \widetilde{R}+\deg \widetilde{Q}\]
+        \[\deg(\varphi(\widetilde{Q}))\le \deg(\widetilde{Q}),\deg(\varphi(\widetilde{R}))\le\deg(\widetilde{R})\]
+        Donc $\deg(\varphi (\widetilde{Q}))=\deg(\widetilde{Q})\ge 1$ et $\deg(\varphi(\widetilde{R}))=\deg\widetilde{R}\ge 1$\\
+        Contradiction : $\varphi(P)$ irréductible dans $A/pA[X]$
+    \end{proof}
+
+    \begin{tm}{Théorème (Critère de Eisenstein)}{}
+        Soit $A$ un anneau principal, $K=$Frac$(A)$.\\
+        $Q\in A[X]$ : $\displaystyle{Q=\sum_{i=1}^n}a_iX^i,a_n\neq0$. \\
+        On suppose qu'il existe $p\in A$ irréductible \tq $p|a_i,\forall i\in \{0,\dots,n-1\}$, $ p\not|a_n$, $p^2\not|a_0$. \\
+        Alors $Q$ est irréductible dans Frac$(A)[X]$ et $Q$ primitif $\implies Q$ irréductible dans $A[X]$
+    \end{tm}
+
+    \begin{proof}
+        $\widetilde{Q}=c(Q)^{-1}Q$ est primitif dans $A[X]$. $p\not| c(Q)$, donc $\widetilde{Q}$ vérifie les mêmes hypothèses que $Q$. Si $\widetilde{Q}=RS,R,S\in A[X]$. Par le lemme, on se ramène au cas où $R$ et $S$ sont primitifs.
+        \[\varphi(\widetilde{Q})=\varphi(a_n)X^n=\varphi(R)\varphi(S)\]
+        \[\varphi(R)=\beta X^m \varphi(S)=\gamma X^l\]
+        $0\le m+l \le n$. Si $m\neq0$ et $l\neq0$, alors $\varphi(R(0))=0$ et $\varphi(S(0))=0$ donc $p|R(0)$ et $p|S(0)$. Donc $p^2|R(0)S(0)=a_0$ contradiction. Donc $R$ ou $S$ est constant. Donc $Q$ est irréductible dans $A[X]$
+    \end{proof}
+
+    \begin{re}{}{}
+        $Q$ irréductible sur $A[X]$ et $Q$ primitif $\iff Q$ irréductible sur Frac$(A)[X]$
+    \end{re}
+
+    \begin{re}{}{}
+        Tout ce qui précède a été fait pour $A$ principal. En effet, c'est valable (en particulier les critères d'irréductibilité). Si A est un anneau factoriel, c'est à dire que pour tout $a\in A$, a admet une unique décomposition sous la forme $a=up_1^{\alpha_1}\dots p_n^{\alpha_n}$ avec $u\in A^\times$, $p_i$ irréductibles et $\alpha_i\in\N^*$. (Qui est unique à permutation près et à multiplication par un inversible près)
+    \end{re}
+
+    \chapter{Corps}
+
+    \section{Rappels}
+
+    Dans tout le chapitre, $K$ est un corps commutatif.
+
+    \begin{tm}{}{}
+        Soit $P\in K[X],\deg(P)=n\ge1$. \\
+        L'anneau $K[X]/(P)$ est un espace vectoriel sur $K$ muni du produit externe $\lambda \overline{Q}=\overline{\lambda Q}$.\\
+        De plus, la famille $ \mathcal{F}=\{\overline{1},\overline{X},\dots,\overline{X^{n-1}}\}$ est une base de $K[X]/(P)$. On pose $E=K[X]/(P)$
+    \end{tm}
+
+    \begin{proof}
+        La multiplication $\lambda \overline{Q}=\overline{\lambda Q}$ est bien définie : Si $R\in\K[X],\overline{R}=\overline{Q}$, on doit avoir $\lambda \overline{R}=\overline{\lambda R}=\overline{\lambda Q}$
+        \begin{align*}
+            \overline{R}=\overline{Q}&\iff R=Q+AP,A\in K[X]\\
+            &\iff \lambda R=\lambda Q+\lambda AP\\
+            &\iff \overline{\lambda R}=\overline{\lambda Q}
+        \end{align*}
+        On peut vérifier que $E$ est un \ev (exercice).\\
+        $\Fr$ est-elle libre ?
+        \[\alpha_i\in K,\sum_{j=0}^{n-1}\alpha_j \overline{X}^j=\overline{0}\text{ ce qui signifie que }\]
+        \[\sum_{j=0}^{n-1}\alpha_j X^j=PA,A\in K[X]\]
+        Si $A\neq 0$, alors $n-1=\deg P\deg A\ge n+0$. Contradiction, donc $A=0$, donc $\alpha_j=0,\forall j$\\
+        $\Fr$ est-elle génératrice ? Soit $\overline{S}\in E$. Division de $S$ par $P$
+        \[S=PQ+R,\deg R<n=\deg P\]
+        \[\overline{S}=\overline{R}, R=\sum_{j=0}^{n-1}\alpha_j X^j\]
+    \end{proof}
+
+    \begin{ex}{}{}
+        $P=X^2+X+1\in \R[X]$. $P$ est irréductible dans $\R[X]$. $\R[X]/(P)=E$ est un espace vectoriel sur $\R$, de dimension 2, dont une base est $\mathcal{F}=\{\overline{1},\overline{X}\}$.\\
+        Par exemple, $X^5+X=(X^3-X^2+1)(X^2+X+1)=1$ et $\overline{X^5+X}=\overline{-1}$ donc $(\overline{X^5+X})(\overline{X^2+X}=\overline{1}=\overline{X^7+X^6+X^3+X^2}$
+    \end{ex}
+
+    \begin{tm}{}{}
+        Soit $P \in K[X]$. $$\text{L'anneau }K[X]/(P)\text{ est un corps }\iff P\text{ est irréductible}$$
+    \end{tm}
+
+    \begin{proof}
+        $\implies$ Supposons que $K[X]/(P)$ est un corps. Si $P$ n'est pas irréductible, alors $P=QR$, avec $\deg Q \ge 1$ et $\deg R \ge 1$. Donc $\deg Q\ge 1$ et $\deg R\ge 1$. Donc $\deg Q\le n-1$.\\
+        Par ailleurs, $\overline{Q}\overline{R}=\overline{QR}=\overline{0}$ donc $\overline{Q}$ et $\overline{R}$ ne sont pass inversibles dans $K[X]/(P)$, contradiction.\\
+        $\impliedby$ Soit $P$ irréductible, soit $\overline{A}\in K[X]/(P),\overline{A}\neq\overline{0},A=PQ+R,\deg R<\deg P=n$.\\
+        Par division euclidienne, $\overline{A}=\overline{R}$, on s'est ramené à $\deg \overline{A}\le n-1$, et $A\neq0$. \\
+        Comme $P$ est irréductible, $A$ et $P$ sont premiers entre eux. Donc par Bézout, $\exists(U,V)\in K[X]^2,AU+PV=1$, donc $\overline{AU}+\overline{PV}=\overline{1}$
+        \[\overline{AU}=\overline{1}\text{ donc $A$ est inversible, donc $K[X]/(P)$ est un corps.}\]
+    \end{proof}
+
+    \begin{ex}{}{}
+        $X^2+1$ est irréductible sur $\R$ donc $E=R[X]/(X^2+1)$ est un corps. C'est aussi un $\R$-espace vectoriel de dimension 2. Une base est donnée par $\mathcal{F}=\{\overline{1},\overline{X}\}$.\\
+        $E=\{a\overline{1}+b\overline{X},(a,b)\in\R^2\}$ ($\overline{X^2}=\overline{X^2+1-1}=\overline{-1}=-\overline{1}$)\\
+        On appelle $i=\overline{X}$, on a alors $i^2=-1$ et $E=\{a+ib,(a,b)\in\R^2\}$. $E$ est isomorphe à $\C$.\\
+        $(a\overline{1}+b\overline{X})(c\overline{1}+b\overline{X})=(ac-bd)\overline{1}+(ad+bc)\overline{X}$
+    \end{ex}
+
+    \begin{ex}{}{}
+        $\mathbb{F}_3=\Z/3\Z$ est un corps car 3 est premier. $P=X^2+1$ est irréductible sur $\mathbb{F}_3$ car $P(\overline{0})=\overline{1},P(\overline{1})=\overline{2},P(\overline{2})=\overline{2}$. Donc $\mathbb{F}_3[X]/(X^2+1)$ est un corps. C'est un ev sur $\mathbb{F}_3$, de dimension 2, donc une base est $\{\overline{1},\overline{X}\}$. $\mathbb{F}_3[X]/(X^2+1)=\{a\overline{1}+b\overline{X},(a,b)\in \mathbb{F}_3\}$, il y a donc 9 choix possibles (3 pour a, 3 pour b).\\
+        L'application$\begin{array}{ccccc}
+    & \mathbb{F}_3^2 & \to & \mathbb{F}_3[X]/(P) \\
+      & (a,b) & \mapsto & a\overline{1}+b\overline{X}
+    \end{array}$ est injective donc $|\mathbb{F}_3[X]/(P)|=9$
+    \end{ex}
+
+    \section{Extension de corps}
+
+    \begin{df}{}{}
+        Soit $K$ un corps, $L$ un corps \tq $K\subset L$. Alors $L$ s'appelle une extension de $K$ et $K$ est un sous-corps de $L$.
+    \end{df}
+
+    \begin{df}{}{}
+        Soit $L$ une extension de $K$, alors $L$ est un espace vectoriel sur $K$. Si $\dim_K (L)$ est finie, on dit que l'extension de corps est de dimension finie et on note $\dim_K (L)=[L:K]$ le degré de cette extension.
+    \end{df}
+
+    \begin{ex}{}{}
+        $\C$ est une extension de $\R$, de degré 2.
+    \end{ex}
+
+    \begin{tm}{Théorème (de la base téléscopique)}{}
+        Soit $K\subset L\subset M$ des extensions de corps. $M$ est un espace vectoriel sur $K$ et si $(e_i)_{i\in I}$ est une base de $L$ sur $K$, et $(f_j)_{j\in J}$ une base de $M$ sur $L$, alors $(e_i,f_j)_{(i,j)\in I\times J}$ est une base de $M$ sur $K$. En particulier, si les extensions sont de dimension finie, alors $[M:K]=[M:L][L:K]$.
+    \end{tm}
+
+    \begin{proof}
+        $(e_i,f_j)_{(i,j)\in I\times J}$ est-elle libre ? (sur $K$).\\
+        Supposons $\sum_{i\in I}\sum_{j\in J}e_i f_j=0$. Comme $(f_j)_{j\in J}$ Voir
+    \end{proof}
+
+    \begin{df}{}{}
+        Soit $K\subset L$ une extension de corps et $\alpha \in L\backslash K$, $K[\alpha]=\{P(\alpha),P\in K[\alpha]\}$ est le plus petit sous anneau de $L$ qui contient $L$ et $\alpha$.
+    \end{df}
+
+    \begin{df}{}{}
+        $K\subset L$ extension de corps, $\alpha\in L\backslash K$.\\
+        $K(\alpha)=\{\frac{P(\alpha)}{Q(\alpha)},(P,Q)\in K[X]^2,Q(\alpha)\neq0\}$ est le plus petit sous corps qui contient $K$ et $\alpha$.\\
+        Il est en général faux que $K[\alpha]=K[X]$ et que $K(\alpha)=K(X)$
+    \end{df}
+
+    \begin{ex}{}{}
+        $$K=\Q,L=\R,\alpha=\sqrt2$$
+    \end{ex}
+
+    \section{Éléments algébriques}
+
+    \begin{df}{}{}
+        Soit $K\in L$ une extension de corps. Soit $\alpha\in L$. On dit que $\alpha$ est algébrique sur $K$ s'il existe $P\in K[X],P(\alpha)=0$.\\
+        On dit que $x$ est transcendant sur $K$ si il n'est pas algébrique sur K
+    \end{df}
+
+    \begin{re}{}{}
+        \begin{enumerate}
+            \item Si $\alpha$ est algébrique, $I=\{P\in K[X],P(X)=0\}$ est un idéal de $K[X]$. Donc$\exists!P\in K[X]$ unitaire \tq $I=(P)$. $P$ est appelé polynôme minimale de $\alpha$.
+            \item Le polynôme minimal de $\alpha$ est toujours irréductible.\\
+            Car si $P=QR$, alors $P(\alpha)=Q(\alpha)R(\alpha)$, donc $R(\alpha)=0$ ou $Q(\alpha)=0$ autrement dit $P|R$ ou $P|Q$.\\
+            Pour $\alpha\in L$, on définit $\begin{array}{ccccc}
+    \epsilon_\alpha : & K[X] & \to & L \\
+      & P & \mapsto & P(\alpha)
+    \end{array}$ qui est un morphisme
+        \end{enumerate}
+    \end{re}
+
+    \begin{prop}{}{}
+        Soit $K\subset L$ une extension de corps de degré fini et $\alpha\in L$. Alors $\alpha$ est algébrique sur $K$. Et si $P$ est le polynôme minimal de $\alpha$ sur $K$, alors $\deg P\le[L:K]$
+    \end{prop}
+
+    \begin{proof}
+        Voir p.23
+    \end{proof}
+
+    \begin{tm}{}{}
+        Soit $K\subset L$ une extension de corps.
+        \[M=\{\alpha\in L,\alpha\text{ algébrique sur }K\}\]
+        Alors $M$ est un corps appelé fermeture algébrique de $K$ dans $L$.
+    \end{tm}
+
+    \begin{proof}
+        Voir p.24
+    \end{proof}
+
+    \begin{ex}{}{}
+        $\sqrt2$ algébrique sur $\Q$, $\sqrt3$ algébrique sur $\Q$ (polynômes minimaux sur $X^2-2$ et $X^2-3$) donc $\sqrt6$ et $\sqrt2+\sqrt3$ sont algébrique sur $\Q$.\\
+        Pour $\sqrt6$, de polynôme minimal $X^2-6$.\\
+        Mais quel est le polynôme minimal de $\sqrt2+\sqrt3$ ? On a $(\sqrt2+\sqrt3)^2=5+2\sqrt6$, on pose $\alpha=\sqrt2+\sqrt3$.\\
+        $$\alpha^2-5=2\sqrt6$$
+        $$(\alpha^2-5)^2=24\text{ donc }P=(X^2-5)^2-24\text{ annule }\alpha,$$
+        \begin{align*}
+            P & = (X^2-5)^2-24\\
+            & =(X^2-5-2\sqrt6)(X^2-5+2\sqrt6)\\
+            & =(X-\sqrt2-\sqrt3)(X+\sqrt2+\sqrt3)(X-\sqrt2+\sqrt3)(X+\sqrt2-\sqrt3)
+        \end{align*} P est-il irréductible sur $\Q$ ? S'il ne l'est pas, $P=QR,\deg(R)+\deg(Q)=4$. \\
+        Si $\deg(R)=1$ ou $\deg(Q)=1$, alors $P$ a une racine dans $\Q$. Ce qui n'est pas possible donc $\deg R=\deg Q=2$. Si on calcule :
+        $$(X+\beta\sqrt2+\gamma\sqrt3)(X+\delta\sqrt2+\epsilon\sqrt3)=Q\text{ avec }\beta,\gamma,\delta,\epsilon\in\{\pm1\}$$
+        $$Q=X^2+((\beta+\delta)\sqrt2+(\gamma+\epsilon)\sqrt3)X+(\beta\sqrt2+\gamma\sqrt3)(\delta\sqrt2+\epsilon\sqrt3)$$
+        Si on veut que le polynôme appartienne à $\Q$, il faut que $\beta+\delta=0$ et $\gamma+\epsilon=0$ et dans ce cas
+        $$(\beta\sqrt2+\gamma\sqrt3)(-\beta\sqrt2-\gamma\sqrt3)=-(\beta\sqrt2+\gamma\sqrt3)^2=-2-3-2\beta\gamma\sqrt6\notin\Q$$
+        $P$ est donc irréductible sur $\Q$. C'est le polynôme minimale de $\sqrt2+\sqrt3$
+    \end{ex}
+
+    \begin{prop}{}{}
+        Soit $K\subset L$ une extension de corps. Soient $\alpha_1,\dots,\alpha_n$ des éléments de $L$ qui sont algébriques sur $K$. Soit $K(\alpha_1,\dots,\alpha_n)$ le plus petit corps de $L$ qui contient $K$ et les $\alpha_i$. \\
+        Alors $[K(\alpha_1,\dots,\alpha_n):K]<+\infty$
+    \end{prop}
+
+    \begin{proof}
+        Voir p.25
+    \end{proof}
+
+    \begin{re}{}{}
+        $$K[\alpha_1,\dots,\alpha_n]=\{P(\alpha_1,\dots,\alpha_n),P\in K[X_1,\dots,X_n]\}$$
+        $$P\in K[X_1,\dots,\alpha_n]\iff P=\sum_{i_1=0}^{\alpha_1}\dots\sum_{i_n=0}^{\alpha_n}X_1^{i_1}\dots X_n^{i_n}$$
+        $$K(\alpha_1,\dots,\alpha_n)=\left\{\frac{P(\alpha_1,\dots,\alpha_n)}{Q(\alpha_1,\dots,\alpha_n)},(P,Q)\in K[\alpha_1,\dots,\alpha_n]^2,Q\neq 0\right\}$
+    \end{re}
+
+    \begin{ra}{}{}
+        Soit $K_0$ un corps : $\alpha_0$ algébrique sur $K_0\iff [K_0(\alpha_i):K_0]<+\infty$
+    \end{ra}
+
+    \begin{df}{}{}
+        Soit $K$ un corps. On dit que $K$ est algébriquement clos si tout polynôme $P\in K[X]$ \tq $\deg P\ge1$ admet une racine dans $K$.
+    \end{df}
+
+    \begin{ex}{}{}
+        \begin{itemize}
+            \item $\C$ est algébriquement clos (Par le théorème de d'Alembert)
+            \item $\R$ ne l'est pas ($X^2+1$ n'a pas de racine dans $\R$)
+            \item $\Q$ de même.
+            \item Si $K$ est un corps fini, il n'est pas algébriquement clos.
+            $$P(X)=1+\prod_{\alpha\in K}(X-\alpha),P(\alpha)=1\neq 0, \forall \alpha \in K$$
+        \end{itemize}
+    \end{ex}
+
+    \begin{lm}{}{}
+        Si $K$ est algébriquement clos, alors les irréductibles sont les polynômes de degré 1.
+    \end{lm}
+
+    \begin{proof}
+        Voir p.26
+    \end{proof}
+
+    \begin{cor}{}{}
+        Si $K$ est algébriquement clos, alors tout polynôme $P\in K[X]$ est scindé. Autrement dit $$P=\beta\prod_{i=1}^n(X-\alpha_i),\beta\in K,\alpha_i\in K,n=\deg P$$
+    \end{cor}
+
+    \begin{df}{}{}
+        Soit $K$ un corps. On appelle clôture algébrique de $K$ une extension $K\subset L$ telle que $L$ est algébriquement clos. Tout $\alpha\in L$ est algébrique sur $K$.
+    \end{df}
+
+    \begin{ex}{}{}
+        $\C$ est une clôture algébrique sur $\R$. $\C$ n'est pas une clôture algébrique de $\Q$, car $\exists x \in \C$, tel que $x$ n'est pas algébrique sur $\Q$. ($x=\pi$ ou $x=e$)
+    \end{ex}
+
+    \begin{prop}{}{}
+        Soit $K\subset M$ une extension de corps, avec $M$ algébriquement clos. Soit L la fermeture de $K$ dans $M$. Alors $L$ est algébriquement clos et est une clôture algébrique de $K$.
+    \end{prop}
+
+    \begin{proof}
+        Voir p.27
+    \end{proof}
+
+    \begin{ex}{}{}
+        $\Q\subset\C$ algébriquement clos : Mais $\C$ n'est pas la clôture algébrique de $\Q$. On note $\overline{\Q}=$ fermeture algébrique de $\Q$ dans $\C$, $\Q\subset\overline{Q}\subset\C$
+    \end{ex}
+
+    \section{Corps de rupture}
+
+    \begin{df}{}{}
+        Soit $K$ un corps, soit $P\in K[X]$, $P$ irréductible. Un corps de rupture de $P$ est une extension algébrique $L$ de $K$ dans laquelle $P$ admet une racine $\alpha$, et telle que $L=K[\alpha]$.
+    \end{df}
+
+    \begin{re}{}{}
+        \begin{itemize}
+            \item Si $P$ a une racine dans $K$, alors $K$ est un corps de rupture pour $P$
+            \item $K=\R$, $P(X)=X^2+1$, $\C$ est un corps de rupture de $P$.
+        \end{itemize}
+    \end{re}
+
+    \begin{tm}{}{}
+        Tout polynôme irréductible $P\in K[X]$ admet un corps de rupture isomorphe à $K[X]/(P)$.
+    \end{tm}
+
+    \begin{proof}
+        Voir p.28
+    \end{proof}
+
+    \begin{re}{}{}
+        Si $L$ est un corps de rupture de $P$; $P$ n'est pas forcément scindé sur $L$
+    \end{re}
+
+    \begin{ex}{}{}
+        $$P=X^3-2\in\Q[X]$$
+        $P$ est irréductible sur $\Q$ car $P=(X-2^{\frac{1}{3}})(X-j2^{\frac{1}{3}})(X-j^22^{\frac{1}{3}})$ où $j=e^{2i\frac{\pi}{3}}$.\\
+        $\Q[2^\frac{1}{3}]$ est un corps de rupture de $P$. Mais $P=(X-2^{\frac{1}{3}})(X^2+2^\frac{1}{3}X+2^\frac{2}{3})$ est irréductible dans $\Q[2^\frac{1}{3}]$
+    \end{ex}
+
+    \section{Corps de décomposition}
+
+    \begin{df}{}{}
+        Soit $P\in K[X]$. Un corps de décomposition est une extension $L$ de $K$ telle que $P$ est scindé sur $L$ et $L=K(\alpha_1,\dots,\alpha_n)$ où les $\alpha_i$ sont les racines de $P$.\\
+        Ce corps est unique à décomposition près.
+    \end{df}
+
+    \begin{proof}
+        Voir p.29
+    \end{proof}
+
+    \begin{ex}{}{}
+        \begin{itemize}
+            \item $K=\Q,P=X^3-2$ alors $L=\Q(j,2^\frac{1}{3})$
+            \item $K=\Q,P=X^4-2$ alors $L=\Q(i,2^\frac{1}{4})$
+        \end{itemize}
+    \end{ex}
+
+    \section{Corps Finis}
+
+    \begin{ra}{}{}
+        $\Z/p\Z$ corps $\iff$ p premiers, on le note $\mathbb{F}_p$.\\
+        On a vu que $\mathbb{F}_3/(X^2+1)$ est un corps à 9 éléments.\\
+        $$\begin{array}{ccccc}
+    \kappa : & \Z & \to & A \\
+      & n & \mapsto & n1_A=\underset{\text{n fois}}{\underbrace{1_A+\dots+1_A}}
+    \end{array}$$ $\kappa$ est un morphisme d'anneaux. $\ker(\kappa)$ est un ideal de $\Z$. Donc $\ker(\kappa)=p\Z,p\in\N$. p s'appelle caractéristique de A. On note $\text{car}(A)=p$
+    \end{ra}
+
+    \begin{lm}{}{}
+        Si $K$ est un corps, car$(K)$ est soit 0, soit un nombre premier
+    \end{lm}
+
+    \begin{proof}
+        Voir p.30
+    \end{proof}
+
+    \begin{re}{}{}
+        Ce lemme reste vraie si $K$ est un anneau intègre.
+    \end{re}
+
+    \begin{df}{}{}
+        Soit $K$ un corps. On appelle sous-corps premier de $K$ le plus petit sous corps de $K$.
+    \end{df}
+
+    \begin{re}{}{}
+        \begin{enumerate}
+            \item Si $K$ est un corps de caractéristique $p\neq0$, alors $\forall x\in K,px=(p1_K)x=0_K$
+            \item Si car$(K)=0$, alors $\Im(K)\cong\Z$, donc $K$ est infini. Dans ce cas, $K$ contient (à isomorphisme près) $\Z$, donc le corps des fractions de $\Z$, $Q\subset K$.
+            \item La réciproque est fausse. Il existe des corps infinie de caractéristique non nulle.\\
+            $\mathbb{F}_p$ est de caractéristique p. Donc $\mathbb{F}_p(X)$ aussi.
+            \item Si $K$ est un corps fini. On pose $q=|K|$ et $p=$car$(K)$. Alors $\Im(K)$ est un sous-corps de $K$ et $K$ est un espace vectoriel sur $\Im(K)$ de dimension finie $n\in \N$.\\
+            Alors $|K|=p^n$ et $q=(\text{car}(K))^n$
+        \end{enumerate}
+    \end{re}
+
+    \begin{prop}{}{}
+        Soit $K$ un corps de caractéristique $p>0$. Alors l'application $\begin{array}{ccccc}
+    F : & K & \to & K \\
+      & x & \mapsto & x^p
+    \end{array}$ est un endomorphisme de corps, appelé morphisme de Frobenius De plus : \begin{itemize}
+        \item Si $K$ est fini, $F$ est un automorphisme.
+        \item Si $K=\mathbb{F}_p$, $p$ premier, alors $F$ est l'identité.
+    \end{itemize}
+    \end{prop}
+
+    \begin{proof}
+        Voir p.31
+    \end{proof}
+
+    \begin{tm}{}{}
+        Soit $p \in \N$ premier et $n\in\N^*$, $q=p^n$.\\
+        Le corps de décomposition de $X^q-X$ sur $\mathbb{F}_p$ est un corps à q éléments noté $\mathbb{F}_p$. Tout corps à q éléments est isomorphe à $\mathbb{F}_q$.
+    \end{tm}
+
+    \begin{proof}
+        Voir p.32
+    \end{proof}
+
+    \begin{lm}{Lemme (Indicatrice d'Euler)}{}
+        $\varphi(n)=| \left\{ x\in\N,1\le x\le n,\text{pgcd}(x,n)=1 \right\} |$. On a $$\forall n \in \N^*,n=\sum_{d|n}\varphi(d)$$
+    \end{lm}
+
+    \begin{proof}
+        Voir p.33
+    \end{proof}
+
+    \begin{tm}{}{}
+        Soit $q=p^n$, $p$ premier et $n\in\N^*$. Le groupe multiplicatif $\mathbb{F}_q^*$ est cyclique d'ordre $q-1$ et est donc isomorphe à $\Z/(q-1)\Z$
+    \end{tm}
+
+    \begin{proof}
+        Voir p.33
+    \end{proof}
+
+    \begin{tm}{Théorème de Kummer}{}
+        Soit $p\in\N$ un nombre premier, alors $$\forall k\in\llbracket 1,p-1\rrbracket,p|\begin{pmatrix}
+            p\\
+            k
+        \end{pmatrix}$$
+    \end{tm}
+
+    \begin{proof}
+        Soit $p\in\N$ premier,
+        \[\begin{pmatrix}
+            p\\
+            i
+        \end{pmatrix}=\frac{p!}{i!(p-i)!}=\frac{p}{i}\frac{(p-1)!}{(i-1)!(p-i)!}=\frac{p}{i}\begin{pmatrix}
+            p-1\\
+            i-1
+        \end{pmatrix}\]
+        \[\text{donc }p\begin{pmatrix}
+            p-1\\
+            i-1
+        \end{pmatrix}=i\begin{pmatrix}
+        p\\
+        i
+        \end{pmatrix}\text{et }p\wedge i=1\]
+        \[\text{donc }p|\begin{pmatrix}
+            p\\
+            i
+        \end{pmatrix}\]
+    \end{proof}
+
+    \begin{re}{}{}
+        Faux si $p$ n'est pas premier
+    \end{re}
+
+    \begin{re}{}{}
+        En général, on ne sait pas déterminer de générateur de $\mathbb{F}_q^*$
+    \end{re}
+
+    \begin{re}{}{}
+        Tout sous-groupe de $\mathbb{F}_q^*$ est cyclique
+    \end{re}
+
+    \begin{ex}{}{}
+        Construction de $\mathbb{F}_4$. On part de $\mathbb{F}_2=\Z/2\Z$
+        \[X^4-X\in\mathbb{F}_2[X]\]
+        \[X^4-X=X^4+X=X(X+1)(X^2+X+1)\text{ et } P (X)=X^2+X+1\]
+        \[P \text{ est irréductible sur }\mathbb{F}_2\]
+        Est ce que $\mathbb{F}_4 \cong\mathbb{F}_2[X]/ (P)$ ?\\
+        $\Fa_2[X]/(P)$ est un espace vectoriel de dimension $\deg(P)=2$ sur $\Fa_2$, c'est donc le corps à 4 éléments.\\
+        Plus exactement : $\Fa_4=\{a+\alpha b,(a,b)\in\Fa_2^2\}$ où $\alpha=\cl_{\Fa_2[X]/(P)}(X)$\\
+        On sait que $\alpha$ est racine de $P$ donc $\alpha^2+\alpha+1=0\implies \alpha^2=-\alpha-1\implies\alpha^2=\alpha+1$\\
+        Table de multiplication de $\Fa_4$ :\\
+        \begin{center}
+            \begin{tabular}{c|c c c c}
+                     &$0$&$1$& $\alpha$&$1+\alpha$\\
+            \hline
+            $0$&$0$&$0$&$0$&$0$\\
+            $1$&$0$&$1$&$\alpha$&$1+\alpha$\\
+            \cline{4-5}
+            $\alpha$&$0$&$\alpha$&\multicolumn{1}{|c}{$1+\alpha$}&\multicolumn{1}{c|}{$1$}\\
+            $1+\alpha$&$0$&$1+\alpha$&\multicolumn{1}{|c}{$1$}&\multicolumn{1}{c|}{$\alpha$}\\
+            \cline{4-5}
+            \end{tabular}
+        \end{center}
+        \begin{center}
+            car $\alpha+\alpha^2=2\alpha+1=1$ et $(1+\alpha)^2=1^2+\alpha^2=1+1+\alpha=\alpha$
+        \end{center}
+    \end{ex}
+
+    \begin{ex}{}
+    Construire un corps à 8 éléments : \\
+    $X^8-X=X(X+1)\underset{\text{irréductible}}{(X^3+X+1)}\underset{\text{irréductible}}{(X^3+X^2+1)}$. On prend $P=(X^3+X+1)$ ou $X^3+X^2+1$\\
+    $\Fa_8\cong\Fa_2[X]/(P)\quad(=\{a+\alpha b+\alpha^2c,(a,b,c)\in\Fa_2^3\})$\\
+    A finir en étudiant la factorisation de $X^8-X$ dans $\Fa_p[X]$
+    \end{ex}
+
+    \begin{lm}{}{}
+        Soit $p$ premier, $q=p^n$, $n\in\N^*$ et $\Fa_q\subset K$ extention de corps finis :\\
+        \begin{enumerate}
+            \item $\forall x\in K, x\in Fa_q\iff x^q=x$
+            \item $\forall x\in K[X],P\in\Fa_q[X]\iff P(X^q)=P(X)^q$
+        \end{enumerate}
+    \end{lm}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item $\implies$ Si $x\in\Fa_q^*,x^{q-1}=1$ donc $x^q=x$ et si $x=0,0^q=0$.\\
+            Donc $\forall x\in\Fa_q,x^q=x$\\
+            $\impliedby$ $X^q-X$ a au plus $q$ racines. Donc $\Fa_q=\{\text{racines de }X^q-X\}$
+            \item $\fundfto{f}{K}{K}{x}{x^q}$ est un morphisme de corps.\\
+            $f=F^n$ avec $F=$endormorphisme de Frobenius.
+            \[P\in K[X],P=\sum_{k=0}^d a_k X^k,a_b\in K\]
+            \[(P(X)^q)=\sum_{k=0}^d a_k^q (X^k)^q=\sum_{k=0}^d a_k^q X^{qk}\]
+            \[P\in \Fa_q[X] \iff \forall k, a_k^q=a_k\iff P(X)^q=P(X^q)\]
+        \end{enumerate}
+    \end{proof}
+
+    \begin{lm}{}{}
+        Soit $p$ premier, $q=p^n,n\in\N^*,\Fa\subset K$ extension de corps finis.\\
+        $P\in \Fa_q[X]$ irréductible. $\alpha\in K$ racine de $P\implies\exists n\in\N^*,\alpha^{q^n}=\alpha$ et le plus petit n vérifiant cela est $n=\deg(P)$. De plus, $\displaystyle{P=\prod_{i=0}^{n-1}(X-\alpha^{q^i})}$
+    \end{lm}
+
+    \begin{proof}
+        $K^*$ groupe multiplicatif cyclique d'ordre $|K|-1$ et $|K|=q^m,m\in\N^*$ donc $\alpha\in K$ vérifie $a^{q^m-1}=1$. $\alpha^{q^m}=\alpha$ donc $n$ existe. Soit $r$ le plus petit entier vérifiant $a^{q^r}=\alpha$. Soit $d=\deg P$\\
+        $P(\alpha)=0$ mais (par le lemme précédent) $P(\alpha^q)=P(\alpha)^q=0$. Elles sont distinctes si $\exists 0\le i < j \le r-1,\alpha^{q^i}=\alpha^{p^j}$. Alors $\frac{\alpha^{q^i}}{\alpha^{p^j}}=1$.\\
+        Donc $(\alpha^{q^{j-i}})^{q^i}=1$ donc $\alpha^{q^{j-i}},0<j-i<r$, absurde.\\        Donc \[Q=\prod_{i=1}^{r-1}(X-\alpha^{q^i})|P\]
+        \begin{align*}Q(X)^q=\produit{i=0}{r-1}(X- \alpha^i)^q &=\produit{0}{r-1}(X^q-\alpha^{q^{i+1}})\\
+        &=\produit{0}{r-1}(X^q-\alpha^{q^i})\\
+        &=Q(X^q)\end{align*}
+        Et donc, par le lemme précédent, $Q\in\Fa_q[X]$. et $Q$ divise $P$ qui est irréductible unitaire donc $P=Q$ et $\deg P=r$
+    \end{proof}
+
+    \begin{nt}{}{}
+        Soit $\Fa_q$ corps à $q$ éléments avec $q=p^n$.\\
+        \[\text{Irr}_d=\{Q\in\Fa_q[X],\deg Q=d,Q\text{ irréductible unitaire}\}\]
+        \[I_d (q)=|\text{Irr}_d(\Fa_q)|\]
+    \end{nt}
+
+    \begin{tm}{}{}
+        Soit $p$ premier,$q=p^n,n\in\N^*,\Fa_q$ corps à $q$ éléments. Si $m\in\N^*$, alors :
+        \[X^{q^m}-X=\prod_{d|m}\prod_{Q\in\text{Irr}(\Fa_q)}Q\]
+    \end{tm}
+
+    \begin{proof}
+        Soit $P\in\text{Irr}_d(\Fa_q)$\\
+        Première étape : $P|X^{q^m}-X\iff d|m$ et $K$ corps de rupture pour $P$.\\
+        $K\cong\Fa_q[X]/(P)$ et $\exists\alpha \in K,P(\alpha)=0$\\
+        Soit $d$ le plus petit entier \tq $\alpha^{q^d}=\alpha$ (par le lemme précédent)\\
+        \[P|X^{q^m}-X\implies \alpha^{q^m}=\alpha\implies d|m \text{ car $m=dt+r,r<d$}\]
+        \[\alpha^{q^m}=\alpha^{q^{dt+r}}=(\alpha^{q^{dt}})^{q^r}=\alpha^{q^r}\]
+        donc $\alpha^{q^r}=\alpha$, d'où $r=0$ et donc $d$ minimal.\\
+        Réciproquement, $d|m\implies \alpha^{q^m}=\alpha^{q^{dt}}=\alpha$ donc $\alpha$ est racine de $X^{q^m}-X$ et $\alpha,\alpha^q,\ldots,\alpha^{q^{d-1}}$ sont racines de $P$ dans $K$.\\
+        Donc $\displaystyle{P=\produit{i=0}{r-1}(X-\alpha^{q^i})|X^{q^m}-X}$\\
+        Deuxième étape : On a donc
+        \[X^{q^m}-X=\prod_{d|m}\prod_{Q\in\text{Irr}_d(\Fa_q)}Q^{n_\alpha}\text{ avec }n_\alpha\in\N^*\]
+        On veut montrer que $n_\alpha=1\,\forall Q$. \\
+        En particulier : $X^{q^m}-X=Q^{n_\alpha}R$ avec $Q\wedge R=1$.\\
+        On dérive : $q^m X^{q^m-1}-1=n_\alpha Q' Q^{n_\alpha -1}R +Q^{n_\alpha}R'\implies -1=(n_\alpha Q' R+R'Q)(Q^{n_\alpha-1})$
+        \[Q^{n_\alpha-1}|-1\text{ qui est possible uniquement si $n_\alpha=1$}\]
+        \[\text{D'où }X^{q^m}-X=\prod_{d|m}\prod_{Q\in\text{Irr}(\Fa_q)}Q\]
+    \end{proof}
+
+    \begin{ex}{}{}
+        Dans $\Fa_2$, on factorise $X^8-X$, $q=2,m=3$\\
+        \begin{align*}
+            X^8-X&=\prod_{d\in\{1,3\}}\prod_{Q\in\text{Irr}_d(\Fa_2)} Q\\
+            &=\left(\prod_{Q\in\text{Irr}_1(\Fa_2)}Q\right)\left(\prod_{Q\in\text{Irr}_3(\Fa_2)}Q\right)
+        \end{align*}
+        On a $\text{Irr}_1(\Fa_2)=\{X,X+1\}$, qu'en est-t'il de $\text{Irr}_3(\Fa_2)$ ?\\
+        On a $Q=X^3+aX^2+bX+c$ n'a pas de racine donc $Q(0)=c\neq 0$ donc $c=1$.\\
+        $X^3+r\implies 1$ est racine.\\
+        $X^3+X^2+1$\\
+        $X^3+X+1$\\
+        $X^3+X^2+X+1\implies 1$ est racine.\\
+        \[X^8-X=X(X+1)(X^3+X^2+1)(X^3+X+1)\]
+    \end{ex}
+
+    \begin{cor}{}{}
+        Soit $q=p^n,p$ premier, $n\in\N^*$\\
+        \[m\in\N^*,q^m=\sum_{d|m}dI_d(q)\]
+        On calcule le degré de $Q$ :
+        \[q^m=\sum_{d|m}\sum_{Q\in\text{Irr}_d(\Fa_q)}\overset{d}{\overbrace{\deg Q}}=\sum_{d|m}d I_d(q)\]
+    \end{cor}
+
+    \begin{prop}{}{}
+        Soit $p$ premier, $q=p^n$, $n\in\N^*$, $m\in\N^*$, alors
+        \[\forall d|m,I_d(q)>0\]
+    \end{prop}
+
+    \begin{df}{}{}
+        Soit
+        \[\fundfto{\mu}{\N^*}{\{-1,0,1\}}{n}{\cho{(-1)^n\text{ si $n$ est le produit de $r$ nombres premiers distincts}\\0\text{ sinon}}}\]
+    \end{df}
+
+    \begin{prop}{}{}
+        Pour tout $n\in\N^*$,
+        \[\sum_{d|n}\mu(d)=\cho{1\text{ si n=1}\\0\text{ sinon}}\]
+    \end{prop}
+
+    \begin{proof}
+        \begin{itemize}
+        \item Si $n=1$, alors $\displaystyle{\sum_{d|n}\mu(d)=\mu(1)=1}$
+        \item Si $n\ge 2$, $n={p_1}^{\alpha_1}\ldots {p_r}^{\alpha_r}$, $p_i$ premiers et $\alpha_i\in\N^*$\\
+        $d|n_i$, $d={p_1}^{\beta_1}\ldots{p_r}^{\beta_r}$, $0\le \beta_i \le \alpha_i$.\\
+        Les seuls cas où $\mu(d)\neq 0$, sont les cas où chaque $\beta_i$ vérifie $\beta_i\in\{0,1\}$. Choix de $i$ indices parmis $r$ tel que $\beta_i=1$. Nombre de choix possibles : $\begin{pmatrix}
+            r\\
+            i
+        \end{pmatrix}$. Pour un tel $d$, $\mu(d)=(-1)^i$ et $\displaystyle{\sum_{d|n}\mu(d)=\sum_{i=0}^r(-1)^i\begin{pmatrix}
+            r\\
+            i
+        \end{pmatrix}=(1-1)^r=0}$
+    \end{itemize}
+    \end{proof}
+
+    \begin{tm}{Théorème (Formule d'inversion de Möbius)}{}
+        Soit $\funto{f}{\N^*}{G}$, $G$ groupe additif, on définit :
+        \[\fundfto{g}{\N^*}{G}{n}{\sum_{d|n}f(d)}\]
+        \[\text{On a alors }f(n)=\sum_{d|n}\mu(d) g\left(\frac{n}{d}\right)\quad (\star)\]
+    \end{tm}
+
+    \begin{re}{}{}
+        Dans $(\star)$, on peut changer $d$ en $\frac{n}{d}$
+    \end{re}
+
+    \begin{proof}
+        \begin{align*}
+            \sum_{d|n}\mu\left(\frac{n}{d}\right)g(d)&=\sum_{d|n}\mu\left(\frac{n}{d}\right)\sum_{k|d}f(k)\\
+            &=\sum_{k|d|n}f(k)\mu\left(\frac{n}{d}\right)\\
+            &=\sum_{k|n}f(k)\underset{\substack{d|n\\k|d}}{\sum}\mu\left(\frac{n}{d}\right)
+        \end{align*}
+        \begin{center}
+            $k|d$ signifie $d=kl$, donc :
+        \end{center}
+        \begin{align*}
+            \sum_{d|n}\mu\left(\frac{n}{d}\right)g(d)&=\sum_{k|d}f(k)\sum_{l|\frac{n}{d}}\mu\left(\frac{n}{kl}\right)\\
+            &=\cho{1\text{ si }\frac{n}{k}=1\\
+            0\text{ sinon}}\\
+            &=f(n)
+        \end{align*}
+    \end{proof}
+
+    \begin{cor}{}{}
+        $\forall n\in\N^*$, pour tout nombre premier $p$, $\forall m\in\N^*$, si $q=p^n$ :
+        \[nI_n(q)=\sum_{d|m}\mu(d)q^{\frac{m}{d}}\]
+    \end{cor}
+
+    \begin{proof}
+        On sait que
+        \[q^n=\sum{d|n}d I_d(q)\]
+        \[\text{On a }f(n)=nI_n(q),g(n)=q^n\]
+        \begin{center}
+            On applique la formule d'inversion de Möbius :
+        \end{center}
+        \[f(n)=\sum_{d|n}\mu(d)g\left(\frac{n}{d}\right)\]
+    \end{proof}
+
+    \begin{ex}{}{}
+        \begin{itemize}
+            \item Si $n=1$, on a :
+            \begin{align*}
+                I_1(q)&=\sum_{d|1}\mu(d)q^{\frac{1}{d}}\\
+                &=\mu(1)q^{1}=q\\
+                &=|\text{Irr}_1(q)|\\
+                &=|\{P,\deg P =1, P\text{ unitaire et irréductible}\}|\\
+                &=|\{X-\alpha,\alpha\in\Fa_q\}|=q
+            \end{align*}
+            \item Si $n=2$ :
+            \begin{align*}
+                2I_2(q)&=\sum_{d|2}\mu(d) q^{\frac{2}{d}}\\
+                &=\mu(d)q^2+\mu(2)q\\
+                &=q^2-q\\
+                I_2(q)&=\frac{q(q-1)}{2}
+            \end{align*}
+            \item Si $n=3$ :
+            \begin{align*}
+                3I_3(q)&=\sum_{d|3}\mu(d)q^{\frac{3}{d}}\\
+                &=\mu(1)q^3+\mu(3)q\\
+                I_3(q)&=\frac{q(q-1)(q+1)}{3}
+            \end{align*}
+        \end{itemize}
+    \end{ex}
+
+    \chapter{Réduction d'endomorphismes}
+
+    \section{Rappels}
+
+    Soit $(E,+,\cdot)$ un \ev sur $\K$, avec $\K$ un corps.\\
+    Si $F$ et $G$ sont des \sevs de $E\implies F\cap G$ est un \sev de E et $F+G$ est un sev de $E$.\\
+    ($F+G$ est le \sev engendré par $F\cup G$)
+
+    \begin{df}{}{}
+        Soit $E$ un $\K$-\ev. Soient $F,G$ des \sevs de $E$.\\
+        On dit que $F$ et $G$ sont en somme directe sur $E$ si :
+        \[F+G=E\text{ et }F\cap G=\acc{0}\text{, on la note :}\]
+        \[E=F\oplus G\]
+    \end{df}
+
+    \begin{prop}{}{}
+        Soit $E$ un $\K$-\ev, et $F,G$ des \sevs de $E$.\\
+        \[F\oplus G=E\iff \forall x\in E,\exists! (y,z)\in F\times G,x=y+z\]
+    \end{prop}
+
+    \begin{df}{}{}
+        Soit $E$ un $\K$-\ev, et $F_1,\ldots,F_n$ des \sevs de $E$.\\
+        \[E=F_1\oplus\dots\oplus F_n\iff \forall x\in E, \exists!(x_1,\ldots,x_n)\in F_1\times\ldots\times F_n,x=\sum_{i=1}^n x_i\]
+    \end{df}
+
+    \begin{nt}{}{}
+        Soit $E$ un $\K$-\ev de dimension $n$. $\Br=(e_1,\ldots,e_n)$ base de $\K$.\\
+        \[\forall x \in E, \exists!(x_i)_{i\in \llbracket 1,n\rrbracket},\sum_{i=1}^n x_i e_i\]
+        \[\text{On note } \begin{pmatrix}
+        x_1\\
+        \vdots\\
+        x_n
+        \end{pmatrix}=\left[x\right]_{\Br} \text{Les coefficients de $x$ dans la base $\Br$}\]
+    \end{nt}
+
+    \begin{prop}{Propriété (Formule de Grassmann)}{}
+        Soient $F,G$ deux \sevs de $E$.\\
+        \[\dim(F+G)=\dim(F)+\dim(G)-\dim(F\cap G)\]
+        \begin{center}
+            En particulier, si $F\oplus G=E$
+        \end{center}
+        \[\dim(F+G)=\dim(E)=\dim(F)+\dim(G)\]
+    \end{prop}
+
+    \begin{df}{}{}
+        Pour une famille de vecteurs $\Fr=(y_i)_{i\in I}, y_i\in E$, on définit :\\
+        \[\text{vect}(\Fr)=\text{\sev engendré par $\Fr$}\]
+        \[\text{rang}(\Fr)=\dim(\text{vect}(\Fr))\]
+    \end{df}
+
+    \begin{prop}{}{}
+        On a toujours $\text{rang}(\Fr)\le \dim(E)$
+    \end{prop}
+
+    \begin{df}{}{}
+        Soient $E$ et $F$ deux $\K$-\ev et $\funto{u}{E}{F}$ linéaire.\\
+        \[\ker(u)=\{x\in E,u(x)=0\}\text{ noyau de }u\]
+        \[\text{Im}(u)=\{u(x),x\in E\}\text{ image de }u\]
+    \end{df}
+
+    \begin{re}{}{}
+        $\ker(u)$ est un \sev de $E$, Im$(u)$ est un \sev de $F$
+    \end{re}
+
+    \begin{df}{}{}
+        rang$(u)=\dim(\text{Im}(u))$
+    \end{df}
+
+    \begin{tm}{Théorème du rang}{}
+        $\dim(E)=\dim(\ker(u))+\text{rang}(u)$
+    \end{tm}
+
+    \begin{re}{}{}
+        Soit $\Br=(e_1,\ldots,e_p)$ base de $E$ et $\Br'=(f_1,\ldots,f_n)$ base de $F$. $u\in \Lr(E,F)$ (applications linéaires de $E$ dans $F$)\\
+        $\forall j\in \{1,\ldots,p\}$, $u(e_j)\in F$, donc il existe de manière unique $\displaystyle{(a_{ij})_{1\le i\le n},u(e_j)=\sum_{i=1}^na_{ij}f_i}$.\\
+        \[A=(a_{ij})_{\substack{1\le i\le n\\ 1\le j\le p}}\text{ est la matrice de $u$ dans les bases $\Br$ et $\Br'$}\]
+        On la note $A=\text{Mat}_{\Br',\Br}(u)\left[x\right]_{\Br}$.\\
+        Dans le cas $E=F$ et $\Br=\Br'$, on note $\text{Mat}_{\Br}(u)$ pour $\text{Mat}_{\Br,\Br}(u)$
+    \end{re}
+
+    \begin{prop}{}{}
+        Soit $E$ un $\K$-\ev de dimension $p$. Soit $F$ un $\K$-\ev de dimension $n$.\\
+        \[\fundf{\Lr(E,F)}{\mathcal{M}_{n,p}(\K)}{u}{\text{Mat}_{\Br',\Br}(u)}\text{ est un isomorphisme d'\ev}\]
+    \end{prop}
+
+    \begin{re}{}{}
+        En particulier : $\dim (\Lr(E,F))=np$
+    \end{re}
+
+    \begin{prop}{}{}
+        Soient $E,F,G$ des $\K$-\evs de dimensions finis et $\Br,\Br',\Br''$ leurs bases respectives.\\
+        Soient $u\in \Lr(E,F),v\in\Lr(F,G)$. Alors, $v\circ u \in \Lr(E,G)$ vérifie :
+        \[\text{Mat}_{\Br'',\Br}(v\circ u)=\text{Mat}_{\Br'',\Br'}(v)\text{Mat}_{\Br',\Br}(u)\]
+    \end{prop}
+
+    \begin{df}{}{}
+        Soit $E$ un $\K$-ev et soient $\Br=(e_1,\ldots,e_n)$ et $\Br'=(e_1',\ldots,e_n')$ bases de $E$.\\
+        On définit la matrice de passage de $\Br$ vers $\Br'$ par :
+        \[P_{\Br',\Br}=\text{Mat}_{\Br',\Br}(\text{Id})\]
+        La colonne $j$ de $P_{\Br',\Br}$ est la décomposition de $e_j$ dans la base $\Br'$. On a alors :
+        \[\forall x\in E,\left[x \right]_{\Br'}=P_{\Br',\Br}\left[x \right]_{\Br}\]
+        \[\text{De plus, }\forall u\in\Lr(E) (=\Lr(E,E)),\text{Mat}_{\Br'}(u)=P_{\Br',\Br}\text{Mat}_{\Br}(u)P_{\Br,\Br'}\]
+        \[\text{De plus, }P_{\Br',\Br}P_{\Br,\Br'}=\text{Id}\]
+    \end{df}
+
+    \section{Polynôme d'endomorphismes}
+
+    Dans cette section, $K$ est un corps, $E$ est un $K$-\ev
+
+    \begin{df}{}{}
+        Soit $u\in\Lr(E)$ et soit $P\in K[X]$
+        \[P=\sum_{0}^{n} a_k X^k\]
+        On définit $P(u)\in\Lr(E)$ par
+        \[P(u)=\sum_{k=0}^n a_k u^k \text{ où $u^k=u\circ \ldots\circ u$}\]
+    \end{df}
+
+    \begin{lm}{}{}
+        Soit $\fundfto{\phi_u}{K[X]}{\Lr(E)}{P}{P(u)}$\\
+        Alors $\phi_u$ est un morphisme d'anneaux et $K[u]=\{P(u),P\in K[X]\}$ est un sous-anneau commutatif de $\Lr(E)$2
+    \end{lm}
+
+    \begin{proof}
+        On vérifie la stabilité par addition,
+        \[P=\sum_{k=0}^n a_k X^k,Q=\sum_{k=0}^nb_k X^k\text{ avec }n=\max(\deg P,\deg Q)\]
+        \begin{align*}P(u)+Q(u)&=\sum_{k=0}^n a_k u^k+b_k u^k\\
+        &=\sum_{k=0}^n (a_k+b_k)u^k\\
+        &=(P+Q)(u)\end{align*}
+        On vérifie la stabilité par composition. D'abord avec $P=aX^n,Q=bX^m,PQ=abX^{n+m}$
+        \begin{align*}P(u)\circ Q(u)&=(au^n)\circ (bu^n)\\
+        &= abo^n\circ u^m\\
+        &=abu^{n+m}\\
+        &=PQ(u)\end{align*}
+        Par linéarité, on étend cette égalité à $P,Q$ quelconques.
+    \end{proof}
+
+    $K[X]$ est un anneau commutatif. Donc $\text{Im}(\phi_u)(=K[u])$ est un sous anneau commutatif de $\Lr(E)$
+
+    \begin{df}{}{}
+        Soit $n\in\N$, $M\in\Mr_n(K),P\in K[X]$. On a
+        \[P=\sum_{k=0}^n a_k X^k\]
+        \begin{center}
+            On définit
+        \end{center}
+        \[P(M)=\sum_{k=0}^n a_k M^k, M^k=M\times \ldots\times M\]
+    \end{df}
+
+    \begin{prop}{}{}
+        Soient $n\in\N$, $E$ un $K$-\ev de dimension $n$, $\Br$ base de $E$ et $P\in K[X]$. Alors
+        \[\text{Mat}_\Br (P(u))=P(\text{Mat}_\Br(u))\]
+    \end{prop}
+
+    \begin{proof}
+        $k\in\N,\text{Mat}_\Br(u^k)=(\text{Mat}_\Br(u))^k$
+        \begin{align*}
+            \sum a_k \text{Mat}_{\Br}( u^k)&=\sum a_k(\text{Mat}_\Br (u))^k\\
+            \text{Mat}_\Br(\sum a_k u^k)&=P(\text{Mat}_\Br(u))\\
+            \text{Mat}_\Br(P(u))&=P(\text{Mat}_\Br(u))
+        \end{align*}
+    \end{proof}
+
+    \begin{lm}{Lemme des noyaux}{}
+        Soit $u\in\Lr(E)$, soient $P_1,\ldots,P_n\in K[X]$ premiers entre eux deux à deux.
+        \[P=\produit{i=1}{n}P_i\]
+        Alors
+        \[\ker(P(u))=\bigoplus_{i=1}^n\ker(P_i(u))\]
+    \end{lm}
+
+    \begin{proof}
+        Par réccurence sur $n$.
+        \begin{itemize}
+            \item $n=1$ Evident
+            \item Si le résultat est vrai au rang n : Soit $P_1,\ldots,P_{n+1}$.\\
+            On vérifie que $\ker(QR(u))=\ker(Q(u))\oplus \ker (R(u))$. \\
+            On regarde que : $\ker(Q(u)) + \ker (R(u))\subset\ker(QR(u))$\\
+            Soit $x\in\ker (Q(u))$ et $y\in\ker (R(u))$
+            \begin{align*} QR(u)(x+y)&=RQ(u)(x)+QR(u)(y)\\
+            &= R(u)\circ Q(u)(x)+Q(u)\circ R(u)(y)\end{align*}
+            Donc $x+y\in \ker (QR(u))$\\
+            On regarde que : $\ker(QR(u))\subset\ker(Q(u)) + \ker (R(u))$\\
+            Par le Théorème de Bézout : $\exists (A,B)\in K[X]^2,AQ+BR=1$
+            \[AQ(u)+BR(u)=I_E\qquad (*)\]
+            Si $x\in\ker (QR(u))$,
+            \[\underset{y}{\underbrace{AQ(u)(x)}}+\underset{z}{\underbrace{BR(u)(x)}}\]
+            \begin{align*}
+                R(u)(y)&=RAQ(u)(x)\quad&\quad Q(u)(z)&=QBR(u)(x)\\
+                &=(AQR)(u)(x)=0&&=(BQR)(u)(x)=0
+            \end{align*}
+            Donc $y\in\ker (R(u))$, $z\in\ker (Q(u))$ et donc $x\in\ker$\\
+            On regarde que : $\ker (Q(u))\cap\ker (R(u))=\{0\}$\\
+            Soit $x\in \ker (Q(u))\cap\ker(R(u))$,
+            \[\underset{=0}{A(u)(Q(u)(x))}+\underset{=0}{B(R(u)(x))}=x \text{ ( en applicant (*))}\]
+            Donc $x=0$
+        \end{itemize}
+        On a donc que $\ker (QR(u))=\ker(Q(u))\oplus\ker (R(u))$ ce qui implique que
+        \begin{align*}
+            \ker (\produit{i=1}{n+1}P_i(u))&=\ker(\produit{i=1}{n}P_i(u))\oplus\ker(P_{n+1}(u))\\
+            &=\bigoplus_{i=1}^n\ker(P_i(u))
+        \end{align*}
+    \end{proof}
+
+\end{document}

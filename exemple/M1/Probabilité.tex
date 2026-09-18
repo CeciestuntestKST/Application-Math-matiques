@@ -1,0 +1,2958 @@
+\documentclass[]{report}
+
+\usepackage{import}
+
+\import{../}{settings.tex}
+
+\title{Probabilité}
+
+\author{Cours de Fanny Augeri, transcrit par SADR TAHOURI Luca}
+\date{}
+
+\begin{document}
+
+    \maketitle
+    \tableofcontents
+
+    \chapter{Espaces mesurés}
+
+    \section{Espaces mesurables}
+
+    \begin{df}{}{}
+        Soit $S$ un ensemble. On dit que $\Sigma\in \Par(S)$ est une tribu ou $\sigma$-algèbre sur $S$ si:
+        \begin{enumerate}
+            \item $S\in\Sigma$
+            \item $A\in\Sigma \implies A^C\in \Sigma$
+            \item $A_n\in\Sigma,n\in\N\implies \cup_n A_n\in \Sigma$
+        \end{enumerate}
+        Auquel cas, $(S,\Sigma)$ est un espace mesurable
+    \end{df}
+
+    \begin{re}{}{}
+        Comme ${(\cup A_n)}^C=\cap A_n^C$, une tribu est stable par intersection dénombrable.\\
+        On peut remplacer 1 par 1': $\emptyset\in\Sigma$\\
+        On peut remplacer 3 par 3': $A_n\in\Sigma,n\in\N\implies \cap A_n\in\Sigma$
+    \end{re}
+
+    \begin{ex}{}{}
+        \begin{itemize}
+            \item Tribu triviale: $\{\emptyset,S\}$
+            \item Tribu discrète: $\Par(S)$
+        \end{itemize}
+    \end{ex}
+
+    \begin{exo}{}{}
+        Montrer que les ensembles suivants sont des tribus sur $S$:
+        \begin{itemize}
+            \item $\Sigma=\{A\subset S,\text{$A$ dénombrable ou $A^C$ dénombrable}\}$
+            \item Soit $\Pi=\{P_i,i\in\N\}$ partition de $S$, $\Sigma_\Pi=\{\cup_{i\in I} P_i,I\subset \N\}$
+        \end{itemize}
+    \end{exo}
+
+    "$\sigma$" renvoie à la stabilité par $U_d$. On définit aussi la notion d'algèbre.
+
+    \begin{df}{}{}
+        Soit $S$ un ensemble. On dit que $\Ar\subset \Par(S)$ est une algèbre sur $S$ si:
+        \begin{enumerate}
+            \item $S\in\Ar$
+            \item $A\in\Ar\implies A^C\in\Ar$
+            \item $A,B\in\Ar\implies A\cup B\in \Ar$
+        \end{enumerate} 
+    \end{df}
+
+    \begin{re}{}{}
+        On peut remplacer 1 et/ou 3 par 1' et/ou 3'': $A,B\in\Ar\implies A\cap\in\Ar$
+    \end{re}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item $\Ar=\{A\in S, A\text{ fini ou $A^C$ fini}\}$
+            \item $\Ar_0$ l'ensemble des unions finies d'intervalles disjoints de la forme $]a,b],0\le a<b\le A$ est une algèbre sur $]0,1]$
+        \end{enumerate}
+    \end{ex}
+
+    \begin{prop}{}{}
+        Toute intersection de tribus est une tribu.
+    \end{prop}
+
+    \begin{df}{}{}
+        Soient $S$ un ensemble et $\Cr\subset \Par(S)$. La tribu engendrée par $\Cr$, noté $\sigma(\Cr)$, est l'intersection de toutes les tribus contenant $\Cr$. C'est la plus petite tribu contenant $\Cr$.
+    \end{df}
+
+    \begin{re}{}{}
+        Comme un tribu est stable par complémentaire $\sigma(\Cr)=\sigma(\tilde{\Cr})$, où $\tilde{\Cr}=\{A^C,A\in\Cr\}$
+    \end{re}
+
+    \begin{ex}{}{}
+        Soit $\Pi$ une partition dénombrable de $S$. Alors $\Sigma_\Pi=\sigma(\Pi)$, où $\Sigma_\Pi$ est l'ensemble de toutes les unions d'éléments de $\Pi$.\\
+        D'une part, $\Pi\subset\sigma(\Pi)$, donc $\cup_{i\in I}\in\sigma(\Pi)$ pour tout $I\in\N$. D'où $\Sigma_\Pi\subset\sigma(\Pi)$.\\
+        D'autre part: $\Pi\subset \Sigma_\Pi$ donc $\sigma(\Pi)\subset\Sigma_\Pi$
+    \end{ex}
+
+    \begin{df}{}{}
+        Soit $S$ espace topologique. La tribu borélienne sur $S$, notée $\Br(S)$ est la tribu engendrée par les ouverts de $S$.
+    \end{df}
+
+    \begin{re}{}{}
+        $\Br(S)$ est également la tribu engendrée par les fermés de $S$.
+    \end{re}
+
+    \begin{qs*}{}{}
+        Si $S$ est un espace topologique et $S_0\subset S$ muni de la topologie induite, comment comparer $\Br(S)$ et $\Br(S_0)$?
+    \end{qs*}
+
+    \begin{df}{}{}
+        Soit $(S,\Sigma)$ un espace mesurable et $S_0\subset S$. La trace de $\Sigma$ sur $S_0$, notée $\Sigma\cap S_0$, est définie par $\Sigma\cap S_0=\{A\cap S_0,A\in\Sigma\}$. Cette notation reste abusive !
+    \end{df}
+
+    \begin{exo}{}{}
+        Montrer que $\Br([0,1])=\Br(\R)\cap[0,1]$
+    \end{exo}
+
+    \begin{prop}{}{}
+        $\Br(\R)$ est engendrée par les classes suivantes:
+        \begin{itemize}
+            \item $\{]-\infty,t],t\in\R\}$
+            \item $\{]-\infty,t[,t\in\R\}$
+            \item $\{[a,b],a<b\}$
+            \item $\{]a,b[,a<b\}$
+            \item $\{[a,b[,a<b\}$
+            \item $\{]a,b],a<b\}$
+        \end{itemize}
+    \end{prop}
+
+    \begin{proof}
+        Montrons que $\Cr=\{]a,b[,a<b\}$ engendre $\Br(\R)$
+        \begin{itemize}
+            \item $\sigma(\Cr)\subset\Br(\R)$: $]a,b[$ est un ouvert de $\R$, donc $\Cr\subset\Br(\R)$ et donc $\sigma(\Cr)\subset\Br(\R)$
+            \item $\Br(\R)\subset \sigma(\Cr)$: Il suffit de montrer que tout ouvert de $\R$ appartient à $\sigma(\Cr)$. Comme $\Q$ est dense dans $\R$, tout ouvert $U$ de $\R$ peut s'écrire comme
+            \[\bigcup_{\substack{a,b\in\Q\\]a,b[\subset U}}\]
+            Or $\Q^2$ est dénombrable et donc l'union est union dénombrable d'éléments de $\Cr$ d'où $U\in\sigma(\Cr)$
+        \end{itemize}
+    \end{proof}
+
+    \begin{df}{}{}
+        Soient $(S_1,\Sigma_1),(S_2,\Sigma_2)$ 2 espaces mesurables. La tribu produit, notée $\Sigma_1\otimes\Sigma_2$ est définie par $\Sigma_1\otimes\Sigma_2=\sigma(\{A\times B,A\in S_1,B\in S_2\})$
+    \end{df}
+
+    \begin{re}{}{}
+        Plus généralement, $S_1\otimes \cdots\otimes\Sigma_n=\sigma(\{A_1\times\cdots\times,A_i\in\Sigma_i,i\in\llbracket 1,n\rrbracket\})$
+    \end{re}
+
+    \begin{qs*}
+        Si $S_1$ et $S_2$ sont 2 espaces topologiques, $S_1\times S_2$ est un espace topologique. Comment comparer $\Br(S_1\times S_2)$ et $\Br(S_1),\Br(S_2)$?
+    \end{qs*}
+
+    \begin{prop}{}{}
+        $\forall n\ge 1, \Br(\R^n)=\Br(\R)^{\otimes n}$
+    \end{prop}
+
+    \begin{proof}{}{}
+        Cas $n=2$. On procède par double inclusion.
+        \begin{itemize}
+            \item $\Br(\R^2)\subset\BR\otimes\BR$ : Il suffit de montrer que $\BR\otimes\BR$ contient tous les ouverts de $\R^2$. Soit $U$ ouvert de $\R^2$. On peut montrer que
+                \[U=\bigcup_{\substack{a,b,c,d\in\R\\]a,b[\times]c,d[\subset U}} ]a,b[\times]c,d[\in\BR\]
+            \item $\BR\otimes\BR\subset\Br(\R^2)$: Il suffit de montrer que $A\times B\in\Br(\R^2)$ pour tout $A,B\in\BR$.\\
+                Notons pour $A\in\BR$, $\Sigma_A=\{B\in\BR,A\times B\in\Br(\R^2)\}$. On remarque que $\Sigma_A$ est une tribu sur $\R$ si $\R\in\Sigma_A$\\
+                $B\in\Sigma_A,A\times B^C=A\times\R\wt A\times B\in\Br(\R^2)$\\
+                Soit $B_n\in \Sigma_A,n\ge 0$: On a $A\times B_n\in\Br(\R^2),\forall n$. Donc $A\times \bigcup_n B_n=\bigcup_n A\times B_n\in\Br(\R^2)$.\\
+                Fixons $U$ ouvert de $\R$: $\forall V$ ouvert de $\R$, $U\times V$ est un ovuert de $\R^2$, donc $U\times V\in\Br(\R^2)$. C'est à dire que $\Sigma_U$ contient tous les ouverts de $\R$, comme $\R\in\Sigma_U$, en particulier, on obtient que $\Sigma_U$ est une tribu sur $\R$. D'où: $\Sigma_U=\BR$.\\
+                C'est à dire que $U\times B\in\Br(\R^2),\forall U$ ouvert et $B$ borélien.\\
+                Fixons $B\in\BR,\Sigma_B$ contient tous les ouverts de $\R$ par ???.Par le même raisonnement que précédemment, on obtient que $\Sigma_B=\BR$. C'est à dire que $A\times B\in\Br(\R^2),\forall A,B\in\BR$ 
+        \end{itemize}
+    \end{proof}
+
+    \section{Mesure}
+
+    \begin{df}{}{}
+        Soit $(S,\Sigma)$ un espace mesurable. Une fonction $\funto{\mu}{\Sigma}{[0,+\infty]}$ est une mesure sur $(S,\Sigma)$ si :
+        \begin{enumerate}
+            \item $\mu(\emptyset)=0$
+            \item $\sigma$-additivité: Soient $(A_n)_n\in\Sigma^\N$ 2 à 2 disjoints. Alors $\mu(\cup_{n\in\N}A_n)=\sum_{n\in\N}\mu(A_n)$
+        \end{enumerate}
+        Dans ce cas, $(S,\Sigma,\mu)$ est un espace mesuré.
+    \end{df}
+
+    \begin{ex}{}{}
+        \begin{itemize}
+            \item Mesure nulle: $\mu=0$
+            \item Mesure de Dirac: Soit $a\in S$. La mesure de Dirac en a est définie par $\delta_a(A)=\cho{1 \text{ si }a\in A\\ 0\text{ sinon}}$, $A\in\Sigma$
+            \item Mesure de comptage: $\nu(A)=\cho{\text{card}(A)\text{ si $A$ est fini}\\+\infty\text{ sinon}}$
+        \end{itemize}
+    \end{ex}
+
+    \begin{df}{}{}
+        Soit $(S,\Sigma,\mu)$ un espace mesuré.
+        \begin{itemize}
+            \item On dit que $\mu$ est finie si $\mu(S)<+\infty$
+            \item On dit que $\mu$ est une mesure de probabilité si $\mu(S)=1$
+            \item On dit que $\mu$ est $\sigma$-finie s'il existe $(E_n)_{n\in\N}$ une suite d'ensembles mesurables telles que $\cup_{n}E_n=S$ et $\mu(E_n)<+\infty,\forall n$
+        \end{itemize}
+    \end{df}
+
+    \begin{re}{}{}
+        La mesure nulle et les mesures de Dirac sont des mesures finies.\\
+        La mesure de comptage est $\sigma$-finie si $S$ est dénombrable.
+    \end{re}
+
+    \begin{prop}{}{}
+        Soit $(S,\Ar,\mu)$ un espace mesuré,
+        \begin{enumerate}
+            \item Croissance: Si $A,B\in\Ar,A\subset B$, alors $\mu(A)\le \mu(B)$
+            \item Sous-additivité: Soit $(A_n)_{n\in\N}\in\Ar^\N$, $\mu(\bigcup_{n\in\N})\le\sum_{n\in\N}\mu(A_n)$
+            \item Supposons $\mu$ finie, $\forall A,B\in\Ar,\mu(A\cup B)=\mu(A)+\mu(B)-\mu(A\cap B)$
+            \item Formule d'inclusion-exclusion: Soit $(A_n)_{n\in\N}$ une famille de $\Ar$.
+            \[\mu\left(\bigcup_{i=1}^n A_i\right)=\sum_{k=1}^{n}(-1)^{k+1}\sum_{1\le i_1<\cdots<i_k\le n} A_{i_j}\]
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}{}{}
+        Voir TD
+    \end{proof}
+
+    \begin{prop}{}{}
+        Soit $(S,\Ar,\mu)$ espace mesuré. Soit $(A_n)_{n\in\N}\in\Ar^\N,A\in\Ar$
+        \begin{enumerate}
+            \item Continuité croissante: Si $A_n \nearrow A$ alors $\mu(A_n)\nearrow \mu(A)$
+            \item Continuité décroissante: Si $A_n\searrow A$ et $\mu (A_k)$ pour un certain $k$, alors $\mu(A_n)\searrow\mu(A)$
+        \end{enumerate}
+        $\cdot$ $A_n \nearrow A$ si $A_n\subset A_{n+1},\forall n$ et $\bigcup_n A_n=A$\\
+        $\cdot$ $A_n \searrow A$ si $A_{n+1}\subset A_{n},\forall n$ et $\bigcap_n A_n=A$
+    \end{prop}
+
+    \begin{proof}{}{}
+        \begin{enumerate}
+            \item Posons $B_0=A_0,B_n=A_n/a_{n-1},n\ge 1$. $(B_n)_{n\in\N}$ est une suite de $\Ar$ 2 à 2 disjoints. On a $A_n=\bigcup_{k\le n}B_k$,$A=\bigcup_{n} B_n$.\\
+            $\mu(A_n)=\mu(\bigcup_{k\le n}B_k)=\sum_{k\le n}\mu(B_k)\nearrow \sum_{k\in\N}\mu(B_k)=\mu(A)$
+            \item $A=\bigcap_{n\le k}A_n$. Sans perdre de généralité, supposons que $\mu(A_k)<+\infty$ pour $k=0$(quitte à réindexer). Posons $\widetilde{A_n}=A_0\wt A_n,\forall n\in\N,\widetilde{A_0}=A_0\wt A$. Comme $A_n\searrow A$, on a $\widetilde{A_n}\nearrow \widetilde{A}$. Par (i), $\mu(\widetilde{A_n})\nearrow\mu(\widetilde{A})$. Or $\mu(\widetilde{A_n})=\mu(A_0)-\mu(A_n)$ donc $\mu(\widetilde{A})=\mu(A_0)-\mu(A)$ d'où $\mu(A_n)\searrow\mu(A)$
+        \end{enumerate}
+    \end{proof}
+    
+    \section{Lemme des classes monotones}
+
+    \begin{qs*}{}{}
+        Soit $(S,\Ar)$ un espace mesurable \tq $\Ar=\sigma(\Cr)$. Une mesure sur $(S,\Ar)$ est-elle déterminée par $\mu_{|\Cr}$?
+    \end{qs*}
+
+    \begin{df}{}{}
+        Soit $S$ un ensemble. On dit que $\Mr\subset \Par(S)$ est une classe monotone sur $S$ si:
+        \begin{enumerate}
+            \item $S\in\Mr$
+            \item $A,B\in\Mr,A\subseteq B\implies B\wt A\in \Mr$
+            \item $A_n\in\Mr,A_n\subset A_{n+1},\forall n\in\N\implies \bigcup_{n\in\N}A_n\in\Mr$
+        \end{enumerate}
+    \end{df}
+
+    \begin{prop}{}{}
+        Une $\sigma$-algèbre est une classe monotone
+    \end{prop}
+
+    \begin{proof}{}{}
+        1 et 3 sont clairs. Pour la 2: $B\wt A=B\cap A^C$. La réciproque est en général fausse.
+    \end{proof}
+
+    \begin{prop}{}{}
+        Soit $\Mr$ classe monotone. $\Mr$ est une $\sigma$-algèbre $\iff \Mr$ est stable par union finie $\iff \Mr$ est stable par intersection finie
+    \end{prop}
+
+    \begin{prop}{}{}
+        Toute intersection de classes monotones est classe monotone.
+    \end{prop}
+
+    \begin{proof}{}{}
+        Exercice
+    \end{proof}
+
+    \begin{df}{}{}
+        Soient $S$ un ensemble et $\Cr\subset \Par(S)$. La classe monotone engendrée par $\Cr$ est l'intersection des classes monotones contenant $\Cr$, c'est la plus petite classe monotone contenant $\Cr$, notée $\Mr(\Cr)$.
+    \end{df}
+
+    \begin{lm}{}{(Lemme des classes monotones)}
+        Soit $S$ un ensemble. Soit $\Cr$ un ensemble de parties de $S$ stable par intersection finie, alors $\Mr(\Cr)=\sigma(\Cr)$
+    \end{lm}
+
+    \begin{proof}{}{}
+        $\Cr\subset\sigma(\Cr)$ et $\sigma(\Cr)$ est une classe monotone donc $\Mr(\Cr)\subset\sigma(\Cr)$.\\
+        Pour montrer $\sigma(\Cr)\subset\Mr(\Cr)$, il suffit de montrer que $\Mr(\Cr)$ est une $\sigma$-algèbre. D'après l'exercice précédent, il suffit de prouver que $\Mr(\Cr)$ est stable par intersection finie.\\
+        On sait que $A\cap B\in\Cr\subset\Mr(\Cr)$, $\forall A,B\in\Cr$.\qquad (*)\\
+        Fixons $A\in\Mr(\Cr)$ et $\Mr_A=\{B\in\Mr(\Cr):A\cap B\in\Mr(\Cr)\}$ qui est une classe monotone.\\
+        Fixons $A\in\Cr$ : (*) implique que $\Cr\subset\Cr_A$, c'est à dire que :
+        \[A\cap B\in\Cr(\Cr),\forall A\in\Cr,B\in\Mr(\Cr)\qquad (**)\]
+        Fixons $B\in\Mr(\Cr)$: (**) implique $\Cr\subset \Mr_B$ et $\Mr$ est une classe monotone donc $\Mr(\Cr)\subset\Mr(_B)$ c'est à dire:
+        \[A\cap B\in\Mr(\Cr),\forall A,B\in\Mr(\Cr)\]
+    \end{proof}
+
+    \begin{cor}{}{(Unicité de la mesure)}
+        Soit $(S,\Ar)$ un espace mesurable \tq $\Ar=\sigma(\Cr)$ où $\Cr$ est stable par intersection finie.
+        \begin{enumerate}
+            \item Si $\mu,\nu$ sont 2 mesures sur $(S,\Ar)$ qui coïncident sur $\Cr$ et telles que $\mu(S)=\nu(S)<+\infty$, alors $\mu=\nu$
+            \item Si $\mu,\nu$ sont 2 mesures sur $(S,\Ar)$ qui coïncident sur $\Cr$ et telles qu'il existe $(E_n)_{n\in\N}\in\Cr^\N$ croissante pour l'inclusion vérifiant que $\bigcup_n E_n=S$ et $\mu(E_n)=\nu(E_n),\forall n$ alors $\mu=\nu$
+        \end{enumerate}
+    \end{cor}
+
+    \begin{proof}{}{}
+        Voir TD
+    \end{proof}
+
+    \section{Construction de la mesure de Lebesgue}
+
+    \begin{tm}{}{(Carathéodory)}
+        Soient $S$ un ensemble et $\Ar_0$ une algèbre sur $S$. Si $\funto{\mu_0}{\Ar_0}{[0,+\infty]}$ telle que :
+        \begin{enumerate}
+            \item $\mu_0(\emptyset)=0$
+            \item Si $A_n\in\Ar_0,\forall n\in\N$ sont 2 à 2 disjoints et $\bigcup_{n\in\N}A_n\in\Ar_0$, alors $\mu_0(\bigcup_{n\in\N}A_n)=\sum_{n\in\N}\mu(A_n)$.
+        \end{enumerate}
+        Alors il existe $\mu$ une mesure sur $\sigma(\Ar_0)$ telle que $\mu_{|\Ar_0}=\mu_0$
+    \end{tm}
+
+    \begin{proof}{}{}
+        Admis
+    \end{proof}
+
+    \begin{tm}{}{}
+        Il existe une unique mesure $\lambda$ sur $([0,1],\Br([0,1]))$ telle que $\lambda([a,b])=b-a,\forall 0\le a<b\le 1$
+    \end{tm}
+
+Admettons ce résultat pour le moment
+
+    \begin{cor}{}{(Existence et unicité de la mesure de Lebesgue)}
+        Il existe une unique mesure $\lambda$ sur $\RBR$ telle que $\lambda(I)=|I|,\forall I\subset \R$ intervalle, où $|I|$ désigne la longueur de $I$
+    \end{cor}
+
+    \begin{proof}{}{}
+        \begin{itemize}
+            \item Unicité: $\Cr$ la classe des intervalles de $\R$ est stable par intersection finie et $\sigma(\Cr)=\BR$
+            \[\forall n\in\N,|-n,n|=2n<+\infty\text{ et }[-n,n]\in\Cr\]
+            Par le lemme d'unicité de la mesuree, on en déduit que $\lambda$ est unique.
+            \item Existence: D'après le théorème précédent, il existe $\lambda_n$ mesure sur $(]n,n+1],\Br(]n,n+1]))$\\
+            \[\text{Posons }\lambda(A)=\sum_{n} \lambda_n(A\cap]n,n+1]),A\in\BR\]
+            On vérifie que $\lambda$ est une mesure (exercice). Soient $a,b\in\R,a<b$. Il existe $n,m\in\Z$ tels que $a\in]n,n+1]$ et $b\in]m,m+1]$
+            \begin{itemize}
+                \item Si $m=n$, $\lambda(]a,b])=\lambda_n(]a,b])=b-a$
+                \item Si $n<m$
+                \[\lambda(]a,b])=\lambda_n(]a,n+1])+\sum_{k=n+1}^{m-1}\lambda_k(]k,k+1])+\lambda_m(]m,b])=n+1-a+m-n-1+b-m=b-a\]
+            \end{itemize}
+        \end{itemize}
+        On a donc bien $\lambda(I)=|I|,\forall I\subset\R$ intervalle
+    \end{proof}
+
+    \begin{proof}{(Théorème d'existence sur [0,1])}{}
+        On rappelle: $\Ar_0$ est l'algèbre des Union finie d'intervalles 2 à 2 disjoints de la forme $]a,b],0\le a<b\le 1$.\\
+        On définit pour $A\in\Ar_0,A=\bigcup_{i=1}^n]a_i,b_i]$, où $]a_i,b_i]$ sont 2 à 2 disjoints d'où $\mu_0(A)=\sum_{i=1}^{n}(b_i-a_i)$.\\
+        A priori, $\mu_0$ est mal définie car $A$ admet une infinité d'écriture comme union finie d'intervalles 2 à 2 disjoints:
+        $]a,b]=]a,x]\cup]x,b],\forall x\in]a,b]$.\\
+        En effet :
+        \begin{align*}
+            \sum_{i=1}^{n}(b_i-a_i)&=\sum_{i=1}^{n}\int_{0}^{1}\mathbb{1}_{]a_i,b_i]}\, dx\\
+            &=\int_{0}^{1}\sum_{i=1}^{n}\mathbb{1}_{]a_i,b_i]}\, dx\\
+            &=\int_{0}^{1}\mathbb{1}_A\, dx
+        \end{align*}
+        Comme $\sigma(\Ar_0)=\Br(]0,1])$, il suffit d'après Carathéodory de montrer que $\mu_0$ est sous additif. On montre d'abord la sous additivité sur les intervalles.\\
+        Si $]a,b]=\bigcup_{i\in\N}]a_i,b_i]$ où les $]a_i,b_i]$ sont 2 à 2 disjoints alors $b-a=\sum_{i\in\N}(b_i-a_i)$
+    \end{proof}
+
+    \begin{lm}{}{(Borne inf)}
+        \[b-a\ge \sum_{i\in\N}(b_i-a_i)\]
+    \end{lm}
+
+    \begin{proof}{}{}
+        Il suffit de montrer que 
+        \[b-a\ge\sum_{i=1}^{n}(b_i-a_i),\forall n\in\N\]
+        Or $\cup_{i=1}^n]a_i,b_i]\subset ]a,b]$ donc $\mathbb{1}_{\bigcup_{i=1}^n]a_i,b_i]}\le \mathbb{1}_{]a,b]}$\\
+        D'où : $\int_{0}^{1} \mathbb{1}_{\bigcup_{i=1}^n]a_i,b_i]}\, dx\le\int_{0}^{1}\mathbb{1}_{]a,b]}\, dx$ au sens de Riemann c'est à dire $\sum_{i=1}^{n}(b_i-a_i)\le(b-a)$
+    \end{proof}
+
+    \begin{lm}{}{(Borne sup)}
+        \[b-a\le \sum_{i\in\N}(b_i-a_i)\]
+    \end{lm}
+
+    \begin{proof}{}{}
+        Soit $\epsilon>0$, $[a+\epsilon,b]\subset]a,b]\subset\bigcup_{i\in\N}]a_i,b_i+\epsilon Z^{-i}[$. Comme $[a+\epsilon,b]$ est compact, on peut extraire un sous-recouvrement fini: il existe $n\in\N,[a+\epsilon,b]\subset \bigcup_{i=1}^n]a_i,b_i+\epsilon Z^{-i}[$. Par le même argument que le lemme précédent, on obtient pour $\epsilon<b-a$:
+        \[b-a-\epsilon\le\sum_{i=1}^{n}(b_i-a_i+\epsilon 2^{-i})\le \sum_{i\in\N}(b_i-a_i)+\epsilon\]
+        En faisant tendre $\epsilon\to 0$, on obtient le résultat voulu
+    \end{proof}
+
+    \chapter{Intégration et mesure produit}
+
+    \section{Applications mesurables}
+
+    \begin{df}{}{}
+        Soient $(E,\Ar),(F,\Br)$ 2 espaces mesurables. On dit que $\funto{f}{E}{F}$ est $(\Ar,\Br)$-mesurable si
+        \[\forall B\in\Br,f^{-1}(B)\in\Ar\]
+    \end{df}
+
+    \begin{re}{}{}
+        Si $f$ est à valeurs dans $\R,\overline{\R},\R^+,\left[0,+\infty\right]$, alors on considérera toujours la tribu borélienne à l'arrivée.
+    \end{re}
+
+    \begin{ex}{}{}
+        \begin{itemize}
+            \item Toute $f_n$ constante est mesurable. $f_n:= c\in F$
+            \[\forall B\in F,f^{-1}(B)=\cho{\emptyset\text{ si }c\not\in B\\E\text{ si }c\in B}\]
+            \item Toute indicatrice d'un ensemble mesurable est mesurable. $f=\mathbb{1}_A,A\in\Ar$
+            \[\forall B\in\BR,f^{-1}(B)=\cho{E \qquad 0,1\in B\\A^C\qquad 0\in B,1\not\in B \\0\not\in\qquad B,1\in B \\ \emptyset\qquad 0,1\not\in B}\]
+        \end{itemize}
+    \end{ex}
+
+    \begin{prop}{}{}
+        Soient $(E,\Ar),(F,\Br)$ 2 espaces mesurables, tels que $\Br=\sigma(\Cr)$ où $\Cr\subset\Par(F)$. Soit $\funto{f}{E}{F}$, $f$ est $(\Ar,\Br)$-mesurable \ssi 
+        \[\forall C\in \Cr,f^{-1}(C)\in\Ar\]
+    \end{prop}
+
+    \begin{proof}{}{}
+        $\implies$ clair\\
+        $\impliedby$ En TD: $\{B\subset F: f^{-1}(B)\in \Ar\}=\tilde{\Br}$ est une tribu. Comme $\Cr\subset \tilde{B},$ on a: $\sigma(\Cr)\subset\tilde{\Br}\iff\Br\subset\tilde{\Br}$
+    \end{proof}
+
+    \begin{exo}
+        Montrons que $x\mapsto \lfloor x\rfloor$ est borélienne ($\iff$ mesurable pour la tribu borélienne) en utilisant $\BR=\sigma(\{]-\infty,t],t\in\R\})$
+    \end{exo}
+
+    \begin{prop}{}{}
+        Soient $E,F$ des espaces topologiques. Si $\funto{f}{E}{F}$ est continue, alors $f$ est $(\Br(E),\Br(F))$-mesurable
+    \end{prop}
+
+    \begin{proof}{}{}
+        Conséquence de la proposition précédente (1)
+    \end{proof}
+
+    \begin{prop}{}{(Mesurabilité et composition)}
+        Soient $(E,\Ar),(F,\Br),(G,\Cr)$ des espaces mesurables. Soient $\funto{f}{E}{F}$ $(\Ar,\Br)$-mesurable et $\funto{g}{F}{G}$ $(\Br,\Cr)$-mesurable alors $g\circ f$ est $(\Ar,\Cr)$-mesurable
+    \end{prop}
+
+    \begin{proof}{}{}
+        Soit $C\in\Cr,(g\circ f)^{-1}(C)=f^{-1}(g^{-1}(C))\in\Ar$ donc $g\circ f$ est $(\Ar,\Cr)$-mesurable
+    \end{proof}
+
+    \begin{prop}{}{}
+        Soient $(E,\Ar)$ et $(F_i,\Br_i)_{1\le i\le n}$ des espaces mesurables.\\
+        On note $\fundfto{\pi_i}{\prod_{j=1}^{n}F_j}{F_i}{x}{x_i}$la projection sur la i-ème coordonnée. Alors $\funto{f}{E}{\prod_{j=1}^{n}F_j}$ est $(\Ar,\otimes_{j\in\llbracket 1,n\rrbracket}\Br_j)$-mesurable \ssi $\forall 1\le i\le n,\pi_i\circ f$ est $(\Ar,\Br_i)$-mesurable.
+    \end{prop}
+
+    \begin{proof}{}{}
+        $\implies$ par la propriété 1, il suffit de montrer que $\pi_i$ est $(\Ar,\Br_i)$-mesurable $\forall i\in \llbracket 1,n\rrbracket$. Soient $i\in \llbracket 1,n\rrbracket$ et $B_i\in\Br_i$, $\pi_i^{-1}(B_i)=\prod_{j=1}^{n-1}F_j\times B_i\times \prod_{j=i+1}^{n}F_j\in\otimes_{j=1}^n\ Br_j$\\
+        $\impliedby$ Supposons que $\pi_i\circ f$ est mesurable $\forall i\in \llbracket 1,n\rrbracket$ par la propriété 1, il suffit de montrer que: $f^{-1}(\prod_{i=1}^{n} B_i)\Ar$, pour tout $(B_i)_{i\in\llbracket 1,n \rrbracket}\in \prod_{i=1}^{n}\Br_i$. Soit $(B_i)_{1\le i\le n}\in \prod_{i=1}^{n}\Br_i$.\\
+        $f^{-1}(\prod_{i=1}^{n}\Br_i)=\bigcap_{i=1}^n(\pi_i\circ f)^{-1}(B_i)\in\otimes_j \Br_j$
+    \end{proof}
+
+    \begin{prop}{}{}
+        Soient $(E,\Ar)$ un espace mesurable et $\funto{f,g}{E}{\R}$ mesurables, alors $fg$ et $f+g$ sont mesurables
+    \end{prop}
+
+    \begin{proof}{}{}
+        Notons $\fundfto{\phi}{E}{\R^2}{t}{(f(t),g(t))}$ et $\fundfto{h}{\R^2}{\R}{(x,y)}{x+y}$\\
+        Alors $f+g=h\circ\phi$ et $\phi$ est $(\Ar,\BR\otimes\BR)$-mesurable car $f$ et $g$ sont mesurables.\\
+        Comme $h$ est continue, $h$ est $(\Br(\R^2),\BR)$-mesurable.\\
+        Or $\Br(\R^2)=\BR\otimes\BR$. Donc $h\circ \phi$ est mesurable.
+    \end{proof}
+
+    \begin{df}{}{}
+        Soit $(E,\Ar)$ espace mesurable. On dit que $\funto{f}{E}{\R}$ est étagée si elle d'écrit sous la forme:
+        \[\sum_{i=1}^{n}a_i\mathbb{1}_{A_i}\text{ où }a_i\in\R\text{ et }A_i\in\Ar,\forall i \in\llbracket 1,n\rrbracket\]
+    \end{df}
+
+    \begin{re}{}{}
+        Une fonction étagée est une fonction mesurable qui prend un nombre fini de valeurs:
+        $\implies$ trivial\\
+        $\impliedby$ On écrit: $f=\sum_{c\in f(S)}c\mathbb{1}_{f^{-1}(\{c\})}$
+    \end{re}
+
+    \begin{prop}{}{}
+        Soit $(f_n)$ suite de fonctions mesurablesà valeurs dans $\overline{\R}$, alors $\inf f_n,\sup f_n,\lim \inf f_n,\lim \sup f_n$ sont mesurables.
+    \end{prop}
+
+    \begin{proof}{}{}
+        Voir TD
+    \end{proof}
+
+    \begin{cor}{}{}
+        Soit $(f_n)_{n\in\N}$ une suite d'applications mesurables à valeurs dans $\overline{\R}$. On suppose que $f_n(x)\underset{n\to +\infty}{\longrightarrow} f(x),\forall x\in E$, alors $f$ est mesurable. En particulier, toute limite simple de $f_n$ étagées est mesurables. La réciproque est vraie:
+    \end{cor}
+
+    \begin{prop}{}{}
+        Soit $\funto{f}{E}{\left[0,+\infty\right]}$ une fonction mesurable, alors il existe $(f_n)_{n\in\N}$ une suite de fonctions étagées positives telle que $f_n(x)\nearrow f(x)\forall x\in E$
+    \end{prop}
+
+    \begin{proof}{}{}
+        Posons $f_n(x)=(10^{-n}\lfloor 10^n f(x)\rfloor)\wedge n,\forall x\in E $ développement décimal tronqué de $f(x)$\\
+        où $a\wedge b=\min(a,b)$ et $a\lor b=\max(a,b)$\\
+        $f_n$ est mesurable composée d'applications mesurables et prend un nombre fini de valeurs positives. Donc $f_n$ est un fonction étagée positive. On peut vérifier ensuite que $f_n(x)\nearrow f(x),\forall x\in E$
+    \end{proof}
+
+    \section{Intégrale de Lebesgue}
+
+    \begin{df}{}{}
+        Soient $(E,\Ar,\mu)$ un espace mesuré et $\funto{f}{E}{\R_+}$ une fonction étagée. Alors $\int f\, d\mu=\sum_{c\in f(E)}c\mu(f^{-1}(\{c\}))$ avec la convention $0\times\infty=0$
+    \end{df}
+
+    \begin{re}{}{}
+        Si $f=\sum_{i=1}^{n}a_i\mathbb{1}_{A_i}$, où $(A_i)_{1\le i\le n}$ forme une partition mesurable de $E$. Alors $\int f\, d\mu=\sum_{i=1}^{n}a_i\mu(A_i)$. En effet: $\forall c\in f(E),I_c=\{i,a_i=c\}$\\
+        $(I_n)_{c\in f(E)}$ forme une partition de $\{1,\ldots,n\}$. De plus, $f^{-1}(\{c\})=\bigcup_{i\in I}A_i,\forall c\in f(E)$. D'où 
+        \begin{align*}
+            \int f\, d\mu&=\sum_{c\in f(E)} c\mu(f^{-1}(\{c\}))\\
+            &=\sum_{c\in f(E)}c\sum_{i\in I_c}\mu(A_i)\\
+            &=\sum_c\sum_{i\in I_c}a_i\mu(A_i)\\
+            &=\sum_{i=1}^{n}a_i\mu(A_i)
+        \end{align*}
+    \end{re}
+
+    \begin{prop}{}{}
+        Soient $f,g$ étagées positives:
+        \begin{enumerate}
+            \item Linéarité: $\forall \alpha,\beta\in\R_+,\int(\alpha f+\beta g)\,d\mu=\alpha\int f\, d\mu+\beta\int g\,d\mu$
+            \item Croissance: Si $f\le g$ alors $\int f\, d\mu\le \int g\, d\mu$
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}{}{}
+        \begin{enumerate}
+            \item On écrit $f=\sum_{i=1}^{n}a_i\mathbb{1}_{A_i}$ où $(A_i)_{1\le i\le n}$ est une partition mesurable et $g=\sum_{j=1}^{m} b_j\mathbb{1}_{B_j}$, où $(B_j)$ forme une partition mesurable.\\
+            On note que $(A_i\cap B_j)_{\substack{1\le i\le n\\1\le j\le m}}$ forme une partition.\\
+            Comme $A_i=\amalg_{1\le j\le m}(A_i\cap B_j),\forall i$.
+            \[f=\sum_{i=1}^{n}a_i\mathbb{1}_{A_i\cap B_j}\qquad g=\sum_{j=1}^{m} b_j\mathbb{1}_{A_i\cap B_j}\]
+            Donc $\alpha f+\beta g=\sum_{i,j}(\alpha a_i+\beta b_j)\mathbb{1}_{A_i\cap B_j}$\\
+            \begin{align*}\text{Par la remarque précédente (3)}&\int (\alpha f+\beta g)\,d\mu&=\sum_{(i,j)}(\alpha a_i+\beta b_i)\mu(A_i\cap B_j)\\
+                &&=\alpha\sum_{i,j}a_i\mu(A_i\cap B_j)+\beta\sum_{i,j} b_j\mu(A_i\cap B_j)\\
+                \text{Or }&\sum_{i}a_i\mu(A_i\cap B_j)&=\sum_{i}a_i\sum_j\mu(A_i\cap B_j)\\
+                &&=\sum_i a_i\mu(A_i)=\int f\,d\mu
+            \end{align*}
+            \[\text{De même, }\sum_j b_j \mu(A_i\cap B_j)=\int g\,d\mu\]
+            \item On pose $g=f+ (g-f)$. $g-f$ est mesurable, positive ($g\ge f$) et prend un nombre fini de valeurs: étagée positive. Par la linéarité:
+            \[\int g\,d\mu=\int f\,d\mu+\int (g-f)\,d\mu\text{ d'où }\int g\,d\mu\le \int f\,d\mu\]
+        \end{enumerate}
+    \end{proof}
+
+    \begin{df}{Intégrale de fonctions positives}{}
+        Soit $\EAmu$ un espace mesuré. Soit $\funto{f}{E}{[0,+\infty]}$ mesurable. Alors 
+        \[\int f\,d\mu:=\sup\left\{\int h\,d\mu:h\in \mathcal{E}^+,h\le f\right\}\in [0,+\infty] \]
+        où $\mathcal{E}^+$ désigne l'ensemble des $f_n$ étagées positives
+    \end{df}
+
+    \begin{re}{}{}
+        Cette définition coincide avec celle donnée précédemment lorsque $f\in\mathcal{E}^+$:
+        \[\int h\,d\mu\le\int f\,d\mu\forall h\le f,h\in\mathcal{E}^+\]
+        Dans la suite, on dira que $A\in\Ar$ est $\mu$-négligeable si $\mu(A)=0$. On dit qu'une propriété $P$ sur $E$ est vraie $\pp{\mu}$ ($\mu$-pp) si elle est vraie sauf sur un ensemble $\mu$-négligeable.
+    \end{re}
+
+    \begin{exo}{}{}
+        Si $\forall n\in\N$ ($P_n$ est vraie $\pp{\mu}$), alors $\pp{\mu}$ ($\forall n\in\N,P_n$ est vraie).
+    \end{exo}
+
+    \begin{lm}{}{}
+        Soit $\funto{f}{E}{[0,+\infty]}$ mesurable. Si $\int f\, d\mu<\infty$ alors $f<\infty,\pp{\mu}$
+    \end{lm}
+
+    \begin{proof}{}{}
+        Soit $h_n=n\mathbb{1}_{A},\forall n\in\N$, où $A=\{x,f(x)=\infty\}$. Alors $h_n\in \mathcal{E}^+$ et $h_n\le f$. Par définition, $\int h_n\,d\mu\le \int f\,d\mu$\\
+        $\forall n\in\N$, c'est à dire $n\mu(A)\le \int f\,d\mu<+\infty,\forall n\in\N$. Donc $\mu(A)=0$
+    \end{proof}
+
+    La croissance de l'intégrale de fonctions étagées positives s'étend aux $f_n$ mesurables positives:
+
+    \begin{prop}{}{}
+        \[\forall \funto{f,g}{E}{[0,+\infty]}\text{ mesuralbes telles que }f\le g,\text{ alors }\int f\,d\mu\le \int g\,d\mu\]
+    \end{prop}
+
+    \begin{tm}{Théorème de Convergence Monotone (TCM)}{}
+        Soit $(f_n)_{n\in\N}$ une suite de fonctions mesurables positives, telle que $f_n\nearrow f$, alors:
+        \[\underset{n\to+\infty}{\lim}\int f\,d\mu= \int f\,d\mu\]
+    \end{tm}
+
+    \begin{proof}{}{}
+        \begin{itemize}
+            \item Comme $(f_n)_{n\in\N}$ est croissante, $(\int f\,d\mu)_{n\in\N}$ est croissante
+            \item De nouveau par croissance, $\int f_n\,d\mu\le\int f\,d\mu,\forall n\in \N$
+            \item Donc $\underset{n}{\lim}\int f_n\,d\mu\le \int f\,d\mu$. $f$ étant mesurable car limite de fonctions mesurables.
+            \item Soient $\alpha\in]0,1[$ et $h\in\mathcal{E}^+,h\le f$. Posons $A_{n,\alpha}=\{x\in E,f_n(x)\ge \alpha h(x)\}\in A$
+            \item $\alpha h\mathbb{1}_{A_{n,\alpha}}\le f_n,\forall n\in\N$. Donc :$\int\alpha h\mathbb{1}_{A_{n,\alpha}}\,d\mu\le\int f_n\,d\mu,\forall n\in \N$
+            \item Notons: $h=\sum_{i=1}^{m}b_i\mathbb{1}_{B_i}$, où $b_i\ge 0,B_i\in\Ar$. On a $\int h\mathbb{1}_{A_{n,\alpha}}\,d\mu=\sum_{i=1}^{m} b_i\mu(A_{n,\alpha}\cap B_i)$. Comme $(f_n)_{n\in\N}$ est croissante $(A_{n,\alpha})$ est croissnate. De plus: $\bigcup_{n\in\N}A_{n,\alpha}=E$.
+            \item En effet: Soit $x\in E$. On a: $f(x)\ge h(x)>\alpha h(x)$. Comme $f_n(x)\nearrow f(x)$,\apcr $f_n(x)>\alpha h(x)$. Donc $\int h\mathbb{1}_{A_{n,\alpha}}\,d\mu\nearrow \sum_{i=0}^{m}b_i\mu(B_i)=\int h\,d\mu$ par continuité croissante de la mesure. En passant à la limite, on trouve $\alpha\int h\,d\mu\le \underset{n}{\lim}\int f_n\,d\mu,\forall \alpha\in]0,1[,\forall h\in \mathcal{E}^+,h\le f$. D'où $\int f\,d\mu\le \underset{n}{lim}\int f_n\,d\mu$
+        \end{itemize}
+    \end{proof}
+
+    \begin{prop}{Linéarité}{}
+        Soient $\funto{f,g}{E}{[0,+\infty]}$ mesurables et $\alpha,\beta\ge 0$. Alors $\int (\alpha f+\beta g)\,d\mu=\alpha\int f\,d\mu+\beta\int g\,d\mu$
+    \end{prop}
+
+    \begin{cor}{Interversion}{}
+        Soit $(f_n)_{n\in\N}$ une suite de fonctions mesurables positives.$\int \sum_{n} f_n\,d\mu=\sum_n\int f_n\,d\mu$
+    \end{cor}
+
+    \begin{proof}{}{}
+        Par linéarité: $\forall N\in\N,\int\sum_{n=0}^{N}f_n\,d\mu=\sum_{n=0}^{N}\int f_n\,d\mu$. Comme $\sum_{n=0}^{N}f_n\nearrow\sum_{n\in\N} f_n$, on obtient par le TCM:\\
+        \[\underset{n}{\lim}\sum_{n=0}^{N}f_n\,d\mu=\int\sum_{n\in\N} f_n\,d\mu\]
+        D'autre part, $\sum_{n=0}^{N}\int f_n\,d\mu\nearrow \sum_{n}\int f_n\,d\mu$
+    \end{proof}
+
+    \begin{lm}{Lemme de Fatou}{}
+        Soit $(f_n)_{n\in\N}$ une suite de fonctions mesurables positives. Alors
+        \[\int \liminf f_n\,d\mu\le \liminf\int f_n\,d\mu\]
+    \end{lm}
+
+    \begin{proof}{}{}
+        $\forall n\in \N,\inf_{m\ge n}f_m\le f_n$. Par croissance $\int \inf_{m\ge n}f_m\,d\mu \le\int f_n\,d\mu\forall n\in \N \quad(*)$\\
+        Or $\inf_{m\ge n}f_n\nearrow \liminf f_n$. Donc $\lim \int \inf_{m\ge n}d_n\,d\mu=\int\liminf f_n\,d\mu$.\\
+        En passant à la $\liminf$ dans $(*)$, on obtient le résultat.
+    \end{proof}
+
+    \begin{df}{}{}
+        Soit $\funto{f}{E}{\R}$ mesurable. Si $\int|f|\,d\mu<\infty$, alors on dit que $f$ est $\mu$-intégrable et on définit: $\int f\,d\mu:=\int f_+\,d\mu-\int f_-\,d\mu$
+    \end{df}
+
+    \begin{re}{}{}
+        Par croissance, si $\int|f|\,d\mu<\infty$, alors $\int f_{\pm}\,d\mu<+\infty$
+    \end{re}
+
+    \begin{re}{}{}
+        La définition de $\int f\,d\mu$ est indépendante de la représentation de $f$ comme $f_n$ positives intégrables:\\
+        Si $f=g-h$ où $g,h$ sont intégrables et positives. Alors $\int f\,d\mu=\int g\,d\mu-\int h\,d\mu$\\
+        En effet: $f_+$-$f_-=g-h$, c'est à dire $f_++h=g+f_-$\\
+        Par linéarité: $\int f_+\,d\mu+\int h\,d\mu+\int g\,d\mu=\int f_-\,d\mu$. Comme $h$ est intégrable et $f_-$ aussi:
+        \[\int f_+\,d\mu-\int f_-\,d\mu=\int g\,d\mu-\int h\,d\mu\]
+    \end{re}
+
+    \begin{prop}{}{}
+        Soient $\funto{f,g}{E}{\R}$ intégrables:
+        \begin{enumerate}
+            \item Soient $\alpha,\beta\in \R$, alors $\alpha f+\beta g$ est intégrable et $\int (\alpha f+\beta g)\,d\mu=\alpha \int f\,d\mu+\beta\int g\,d\mu$
+            \item Croissance: Si $f\le g$, alors $\int f\,d\mu\le \int g\,d\mu$
+            \item Inégalité triangulaire: $|\int f\,d\mu|\le \int |f|\,d\mu$
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}{}{}
+        Exercice
+    \end{proof}
+
+    \begin{tm}{Théorème de Convergence Dominée (TCD)}{}
+        Soient $(f_n)_{n\in\N},(g_n)_{n\in\N},f,g$ des fonctions mesurables à valeurs dans $\R$. On suppose:
+        \begin{enumerate}
+            \item $f_n\to f, g_n\to g$
+            \item $|f_n|\le g_n,\forall n\in\N$
+            \item $\int g_n\,d\mu\to \int g\,d\mu<\infty$.
+            Alors $\lim_n \int f_n\,d\mu=\int f\,d\mu$
+        \end{enumerate}
+    \end{tm}
+
+    \begin{proof}{}{}
+        Montrons que $f$ est $\mu$-intégrable: Par le lemme de Fatou:
+        \begin{align*}
+            \int |f|\,d\mu&\le\liminf\int |f_n|\,d\mu\\
+            &\le \liminf\int g_n\,d\mu\\
+            \int g\,d\mu<+\infty
+        \end{align*}
+        De plus, $(2)$ et $(3)$ implique que $f_n$ est intégrable \apcr. Par le lemme de $Fatou$: $(g_n\pm f_n)$ forment 2 suites de fonctions positives.\\
+        \[\int (g\pm f)\,d\mu\le \liminf\int(g_n\pm f_n)\,d\mu\]
+        Comme $g_n$ est intégrable et $f_n$ est intégrable \apcr par la linéarité: $\int (g_n\pm f_n)\,d\mu=\int g_n\,d\mu\pm\int f_n\,d\mu$ \apcr. Or $\int g_n\,d\mu\to \int g\,d\mu$.\\
+        On remarque que $\liminf(a_n+b_n)=\lim a_n+\liminf b_n$ si $\lim a_n<+\infty$. \\
+        D'où: $\liminf\int (g_n\pm f_n)\,d\mu=\int g\,d\mu+\liminf\int\pm f_n\,d\mu$.\\
+        On a: $\int g\,d\mu\pm\int f\,d\mu\le \int g\,d\mu+\liminf\int\pm f_n\,d\mu$\\
+        En simplifiant $\int g\,d\mu$ on trouve :
+        \[\int f\,d\mu\le\liminf \int f_n\,d\mu\le\limsup \int f_n\,d\mu\le \int f\,d\mu\]
+        \[|f_n-f|\le |f_n|+|f|\]
+        Donc $\int |f_n-f|\,d\mu\to 0$\\
+        Si $(f_n)$ satisfait les hypothèses du TCD, alors:$\int |f_n|\,d\mu\to \int|f|\,d\mu$
+    \end{proof}
+
+    \begin{prop}{Lien avec l'intégrale de Riemann}{}
+        \begin{enumerate}
+            \item Soient $a,b\in \R,a<b$ et $\funto{f}{[a,b]}{\R}$ continue. Alors l'intégrale de $f$ sur $[a,b]$ coincide avec son intégrale de Riemann.
+            \item Soient $a\in\R,b\in\R\cup\{+\infty\}$ et $\funto{f}{[a,b[}{\R_+}$ continue. Alors l'intégrale de Lebesgue de $f$ sur $[a,b[$ coincide avec l'intégrale de Riemann impropre de $f$: 
+            \[\lim_{c\to b^-}\int_{a}^{c}f(x)\, dx\]
+        \end{enumerate}
+    \end{prop}
+
+    \begin{lm}{}{}
+        Soit $\funto{f}{E}{[0,+\infty]}$ mesurable. Alors $\int f\,d\mu=0\iff f=0$ $\pp{\mu}$
+    \end{lm}
+
+    \begin{proof}{}{}
+        Si $f$ est étagée, $f=\sum_{c\in f(E)}c\mathbb{1}_{f^{-1}(\{c\})},c\ge 0$\\
+        $\int f\,d\mu=0\iff\sum_c c\mu(f^{-1}(\{c\}))=0\iff\forall c\in f(E),c\mu(f^{-1}(\{c\}))=0$\\
+        $\iff\forall c\in f(E)\wt\{0\},\mu(f^{-1}(\{c\}))=0\iff f=0$ $\pp{\mu}$\\
+        Soit $f$ mesurable positive. Il existe $(f_n)_{n\in\N},f_n$ étagées positives telle que $f_n\nearrow f$.\\
+        \begin{align*}
+            \int f\,d\mu=0&\iff& f_n\,d\mu=0\forall n&\iff&\forall n,(f_n=0,\pp{\mu})\\
+            &(\implies&\text{Croissance})&\iff&(f_n=0,\forall n)\pp{\mu}\\
+            &(\impliedby&\text{TCM})&\iff&f=0,\pp{\mu}
+        \end{align*}
+    \end{proof}
+
+    \begin{lm}{}{}
+        Soit $f$ mesurable positive, $\int f\,d\mu=0\iff f=0,\mu$-pp
+    \end{lm}
+
+    \begin{re}{}{}
+        \begin{enumerate}
+            \item Si $f\ge 0$ ou $\mu$-intégrable et si $A$ est $\mu$-négligeable, alors $\int_A f\,d\mu:=\int f\, \1_A\,d\mu=0$
+            \item Ce lemme permet de généraliser certains résultats précédents:\begin{itemize}
+                \item $f\le g$ $\mu$-pp et $f,g$ $\mu$-intégrable $\implies \int f\,d\mu\le \int g\,d\mu$
+                \item $f=g$ $\mu$-pp, $f,g$ $\mu$-intégrable $\implies \int f\,d\mu=\int g\,d\mu$
+                \item Les hypothèses de convergence dans les énoncés de TCM et TCD peuvent être affaiblies en une convergence $\mu$-pp.
+            \end{itemize}
+        \end{enumerate}
+        En effet, si $f_n\to f$ $\mu$-pp, alors si  on pose $A=\{x,f_n(x)\to f(x)\}$ et $\tilde{f_n}=f_n \1_A,n\in \N$, alors $(\tilde{f_n})_n$ fonctions mesurables (exo 2 TD2) et $\tilde{f_n}\to \tilde{f}$ où $\tilde{f}(x)=\cho{f(x)\text{ si $x\in A$}\\0\text{ si $x\notin A$}}$
+    \end{re}
+
+    \section{Espaces $\Lr^p$}
+    
+    \begin{df}{}{}
+        Soit $\EAmu$ espace mesuré. Pour $p\in ]0,+\infty[$, on note $\Lr^p\EAmu$ l'ensemble des fonctions mesurables à valeurs réelles telles que $|f|^p$ est $\mu$-intégrable et on note $\norme{f}_{L^p}=(\int |f|^p\,d\mu)^{\frac{1}{p}}$ pour toute fonction mesurable $f$.\\
+        On note $\Lr^{\infty}\EAmu$ l'ensemble des fonctions mesurables bornées et on définit $\norme{f}_{L^{\infty}}:=\inf\{M>0,|f|\le M,\mu\text{-pp}\}$ pour toute fonction mesurable, avec la convention $\inf \emptyset=+\infty$
+    \end{df}
+
+    \begin{exo}{}{}
+        Montrer que si $\norme{f}_{L^p}<+\infty$ alors $|f|\le \norme{f}_{L^\infty}$ $\mu$-pp
+    \end{exo}
+
+    \begin{df}{}{}
+        Soit $p\in]0,+\infty]$, l'ensemble $L^p\EA\mu$ est l'ensemble quotient de $\Lr^p\EAmu$ par la relation d'équivalence $\sim $ définie par $f \sim g\iff f=g$ $\mu$-pp, $f,g\in \Lr^p\EAmu$.\\
+        On définit pour tout $\overline{f}\in L^p\EAmu$, $\norme{\overline{f}}_{L^p}:=\norme{f}_{\Lr^p},f\in\overline{f}$.\\
+        En pratique, on identifiera souvent une fonction à sa classe d'équivalence par la relation $\sim$.
+    \end{df}
+
+    \begin{exo}{}{}
+        Soit $\mu$ mesure de probabilité et soit $f\in L^\infty$. Alors $\norme{f}_{L^p}\underset{p\to \infty}{\longrightarrow}\norme{f}_{L^\infty}$\\
+        Indication: Considérer pour $\alpha\in]0,1[,A_\alpha=\{x,f(x)\ge\alpha\norme{f}_{L^\infty}\}$, montrer que $\mu(A_\alpha)>0,\forall\alpha\in]0,1[$
+    \end{exo}
+
+    \begin{prop}{Inégalité de Hölder}{}
+        Soient $p,q\in [1,+\infty]$ tels que $\frac{1}{p}+\frac{1}{q}=1$. Soient $\funto{f,g}{E}{\overline{\R}}$. Alors $\norme{fg}_{L^1}\le \norme{f}_{L^p}\norme{g}_{L^q}$. En particulier, si $f\in L^p$ et $g\in L^q$, alors $fg\in L^1$
+    \end{prop}
+
+    \begin{proof}
+        On note qu'il suffit de montrer l'inégalité pour $0<\norme{f}_{L^p}<\infty$ et $0<\norme{g}_{L^p}<\infty$. En effet, si $\norme{f}_{L^p}=\infty$ ou $\norme{g}_{L^q}=\infty$, l'inégalité est triviale.\\
+        Si $\norme{f}_{L^p}=0$, alors $f=0$ $\pp{\mu}$ et donc $fg=0$ $\pp{\mu}$ ce qui implique $\norme{fg}_{L^1}=0$\\
+        Si $p=1$ et $q=\infty$, d'après l'exercice précédent, on a: $|g|\le\norme{g}_{L^\infty}$ $\pp{\mu}$. Donc $|fg|\le |f|\norme{g}_{L^\infty}$ $\pp{\mu}$. Par croissance: $\norme{fg}_{L^1}\le \norme{f}_{L^1}\norme{g}_{L^\infty}$.\\
+        Si $1<p,q<\infty$, pour tout $u,v\ge 0\quad uv\le \frac{1}{p}u^p+\frac{1}{q}v^q$\\
+        Si $u=0$ et $v=0$ cette inégalité découle de la convexité du log.\\
+        On a : \[\frac{|f|}{\norme{f}_{L^p}}\frac{|g|}{\norme{g}_{L^q}}\le \frac{1}{p}\frac{|f|^p}{\norme{f}_{L^p}^p}+\frac{1}{q}\frac{|g|^q}{\norme{g}_{L^q}^q}\]
+        D'où \[\frac{\norme{fg}_{L^1}}{\norme{f}_{L^p}\norme{g}_{L^q}}\le \frac{1}{p}+\frac{1}{q}=1\]
+    \end{proof}
+
+    \begin{prop}{Inégalité de Minkowski}{}
+        Soit $p\in[0,\infty]$. Soient $\funto{f,g}{E}{\R}$ Alors
+        \[\norme{f+g}_{L^p}\le \norme{f}_{L^p}+\norme{g}_{L^p}\]
+    \end{prop}
+
+    \begin{exo}{}{}
+        Montrer que pour $p\in]0,1[$, $\norme{f+g}_{L^p}^p\le \norme{f}_{L^p}^p+\norme{g}_{L^p}^p$\\
+        Indication: $x\in \R^+\qquad x\to x^p$ est sous additive
+    \end{exo}
+
+    \begin{proof}
+        Le cas $p=+\infty$ est laissé en exo\\
+        Pour $p<\infty$: Il suffit de montrer l'inégalité lorsque $f,g\ge 0$
+        \[\int (f+g)^p\,d\mu=\int (f+g)(f+g)^{p-1}\,d\mu=\int f(f+g)^{p-1}\,d\mu+ \int g(f+g)^{p-1}\,d\mu\]
+        Par Höller:\[\int f(f+g)^{p-1}\,d\mu\le \norme{f}_{L^p}\norme{f+g}_{L^p}^{p-1}\text{ car }\frac{1}{p}+\frac{1}{q}=1\iff q=\frac{p}{p-1}\]
+        De même $\int g(f+g)^{p-1}\,d\mu\le \norme{g}_{L^p}\norme{f+g}_{L^p}^{p-1}$ d'où $\norme{f+g}_{L^p}^p\le (\norme{f}_{L^p}+\norme{g}_{L^p})\norme{f+g}_{L^p}^{p-1}$\\
+        Sans perte de généralité, supposons $\norme{f}_{L^p},\norme{g}_{L^p}<\infty$, on a alors: $(f+g)^p\le 2^{p-1}(f^p+g^p)$ car $(\frac{x+y}{2})^p\le \frac{1}{2}x^p+\frac{1}{2}y^p,\forall x,y\ge 0,p\ge 1$ par convexité d'où $\norme{f+g}_{L^p}<+\infty$.\\
+        De plus, si $\norme{f+g}_{L^p}=0$ alors l'inégalité est triviale. On peut donc se restreindre au cas où $0<\norme{f+g}_{L^p}<+\infty$. En divisant par $\norme{f+g}_{L^p}^{p-1}$, on obtient le résultat voulu.
+    \end{proof}
+
+    \begin{tm}{}{}
+        Soit $p\in [1,+\infty],\qquad (L^p\EAmu,\norme{\cdot}_{L^p})$ est un espace de Banach, c'est à dire un espace vectoriel normé complet
+    \end{tm}
+
+    \begin{proof}
+        \begin{itemize}
+            \item Par l'inégalité de Minkowski, $L^p\EAmu$ est un espace vectoriel
+            \item $\norme{\cdot}_{L^p}$ est une norme: l'inégalité de Minkowski montre que $\norme{\cdot}_{L^p}$ vérifie l'inégalité triangulaire. La séparation découle du lemme 3 et de la définition de $L^p$. Complétude en TD
+        \end{itemize}
+    \end{proof}
+
+    \begin{prop}{Inégalité de Jensen}{}
+        Soit $\EAmu$ un espace mesuré où $\mu$ est une mesure de probabilité. Soient $\funto{\varphi}{\R}{\R^+}$ une fonction convexe et $\funto{f}{E}{\R}$ $\mu$-intégrable. Alors:
+        \[\varphi\left(\int f\,d\mu\right)\le \int \varphi\circ f\,d\mu\]
+    \end{prop}
+
+    \begin{exo}{}{}
+        Montrer cette inégalité dans le cas où $\mu$ est une somme de Dirac.
+    \end{exo}
+
+    \begin{proof}
+        On note que $\int \varphi\circ f\,d\mu$ est bien définie car $\varphi\circ f\ge 0 $ et mesurable car composée de fonctions mesurables ($\varphi$ convexe $\implies$ localement Lipschitzienne $\implies$ continue)\\
+        Toute fonction convexe admet des sous-gradients en tout point: c'est à dire: Pour tout $y_0\in \R$, il existe $\zeta=\zeta(y_0)\in\R$, tel que
+        \[\varphi(y)\ge\varphi{y_0}+\zeta(y-y_0),\forall y\in \R\]
+        Posons $f_0=\int f\,d\mu$. On alors $\varphi(f(x))\ge \varphi(y_0)+\zeta(f(x)-y_0)\forall x\in E$ où $\zeta(y_0)=\zeta\in \R$. Donc: $\int \varphi(f(x))\,d\mu(x)\ge \varphi(y_0)+\int \zeta(f(x)-y_0)\,d\mu(x)=\varphi(y_0)+\underset{=0}{\zeta(\int f\,d\mu-y_0)}$ d'où $\varphi(y_0)\le \int \varphi\circ f\,d\mu$
+    \end{proof}
+
+    \begin{re}{}{}
+        Ce résultat se généralise au cas où $\varphi$ est convexe sur $I\subset \R$ intervalle et $f$ est à valeur dans cet intervalle    
+    \end{re}
+
+    \section{Mesure produit}
+
+    \begin{df}{}{}
+        Soient $\EAmu,\FBnu$ 2 espaces mesurés. Pour tout $C\in \Ar\otimes \Br$, on note:
+        \[C_x=\{y,(x,y)\in C\},\forall x\in E\qquad C^y=\{x,(x,y)\in C\},\forall y\in E\]
+        Voir schéma p.25
+    \end{df}
+
+    \begin{dfprop}{}{}
+        On suppose que $\mu$ et $\nu$ sont $\sigma$-finies,
+        \begin{enumerate}
+            \item Il existe une unique mesure $m$ sur $\Ar\otimes\Br$ telle que
+            \[m(A\times B)=\mu(A)\nu(B),\forall (A,B)\in \Ar\times \Br\]
+            avec la convention $0\times \infty=0$. Cette mesure est $\sigma$-finie et notée $\mu\otimes\nu$
+            \item Pour tout $C\in\Ar\otimes \Br$
+            \[\mu\otimes\nu(C)=\int\nu(C_x)\,d\mu(x)=\int \mu(C^y)\,d\nu(y)\]
+        \end{enumerate}
+    \end{dfprop}
+
+    \begin{re}{}{}
+        La définition de la mesure produit se généralise à un nombre fini d'espaces mesurés $(E,\Ar_i,\mu_i)$ où $\mu_i$ est $\sigma$-finie $\forall i$. Il existe une unique mesure $\mu_1\otimes\cdots\otimes \mu_n$ sur $\otimes_{i=1}^n\Ar_i$ telle que $\mu_1\otimes \cdots \otimes \mu_n(A_1\cdots A_n)=\prod_{i=1}^{n}\mu_i(A_i),\forall (A_i)_i\in\prod_{i=1}^{n}\Ar_i$
+    \end{re}
+
+    \begin{df}{}{}
+        Soit $n\ge 1$. La mesure de Lebesgue sur $\R^n$ est $\lambda_n=\lambda^{\otimes n}$. C'est l'unique mesure telle que $\forall P$ pavé de $\R^n$, $\lambda_n(P)=\text{Vol}_n(P)\qquad (*)$ où un pavé est n'importe quel produit d'intervalles de $\R$ et où son volume est défini comme le préduit des longueurs de ses côtés.
+    \end{df}
+
+    \begin{proof}
+        Par définition de la mesure produit et en utilisant le fait que $\lambda_n$ coincide avec la fonction longueur sur les intervalles, on en déduit que $\lambda_n$ vérifie $(*)$\\
+        Unicité: Soit $m$ mesure sur $(\R^n,\Br(\R^n))$ telle que 
+        \[m(P)=\text{Vol}_n(P),\forall P\text{ pavé}\]
+        On a: $\lambda_n$ et $m$ coincide sur l'ensemble des pavés de $\R^n$ qui est stable par intersection finie et qui engendre $\Br(\R^n)$: tout ouvert $U$ de $\R^n$ s'écrit comme union dénombrable de pavés ouverts.\\
+        $\R^n=\bigcup_{k\in\N}[-k,k]^n$ et $\text{Vol}_n([-k,k]^n)<+\infty$. Puis on applique le théorème d'unicité de la mesure
+    \end{proof}
+
+    \begin{prop}{Invariance par translation}{}
+        Soit $n\ge 1$. La mesure de Lebesgue $\lambda_n$ sur $\R^n$ est l'unique mesure telle que:
+        \[m(A+v)=m(A),\forall A\in\Br(\R^n),v\in\R^n\text{ et }m([0,1]^n)=1\]
+    \end{prop}
+
+    \begin{exo}{}{}
+        Que dire si $m$ est seulement invariante par translation ? $m=\alpha\lambda_n$, où $\alpha\in\R$ si $\lambda_n([0,1]^n)<+\infty$
+    \end{exo}
+
+    \begin{proof}
+        La mesure de Lebesgue est invariante par translation: Fixons $v$, définissons $m(A)=\lambda_n(A+v),A\in\Br(\R^n)$, $m$ est une mesure\\
+        Comme $\text{vol}_n(P+v)=\text{vol}_n(P)$ pour tout pavé $P$ de $\R^n$, on en déduit que $\lambda_n$ et $m$ coincident sur les pavés. Par le même argument qu'à la preuve de la propriété précédente: $\lambda_n=m$\\
+        Unicité: Supposons que $m$ est invariante par translation et que $m(]0,1]^n)=1$\\
+        Montrons que $m$ coincide avec le volume sur tout cube dont les longueurs des côtés sont rationnelles\\
+        Soient $p,q\in\N,q\neq 0$. Soit $C_p=]0,p]^n$. On a $C_p=\bigcup_{k=1}C_{p,k}$, où $C_{p,k}$ sont des cubes dont les côtés sont de longueurs $\frac{p}{q}$.\\
+        Par $\sigma$-additivité: $m(C_p)=q^n m(C_{p,1})$ et par invariance par translation\\
+        En particulier, pour $q=p$, $m(C_{p,n})=1$ par hypothèse. Donc $m(C_p)=p^n$\\
+        D'où $m(C)=\left(\frac{p}{q}\right)^n=\text{vol}_n(P)$ pour tout cube $C$ de côté $p/q$. Par le théorème d'unicité, on en conclut: $m=\lambda_n$
+    \end{proof}
+
+    \begin{tm}{Fubini-Tonelli}{}
+        Soient $\EAmu,\FBnu$ 2 espaces mesurés où $\mu,\nu$ sont $\sigma$-finies et $\funto{f}{E\times F}{[0,+\infty[}$ $(\Ar\otimes\Br)$- mesurable. Alors
+        \begin{enumerate}
+            \item $\fun{x}{\int_F f(x,y)\,d\nu(y)}$ est $\Ar$-mesurable et $\fun{y}{\int_E} f(x,y)\,d\mu(x)$ est $\Br$-mesurable
+            \item $\int_{E\times F} f d\mu\otimes\nu=\int_E(\int_F f(x,y)\,d\nu(y))\,d\mu(x)=\int_F(\int_E f(x,y)\,d\mu(x))\,d\nu(y)$
+        \end{enumerate}
+    \end{tm}
+
+    \begin{proof}
+        Notes de cours
+    \end{proof}
+
+    \begin{tm}{Fubini-Lebesgue}{}
+        Soient $\EAmu$ et $\FBnu$ 2 espaces mesurés $\sigma$-finies. Soit $\funto{f}{E\times F}{\R}$ une fonction $\mu\otimes\nu$-intégrable
+        \begin{enumerate}
+            \item $\fun{x}{f(x,y)}$ est $\mu$-intégrable pour $\nu$ presque tout $y$, $\fun{y}{f(x,y)}$ est $\nu$-intégrable pour $\mu$ presque tout $x$
+            \item $\fun{y}{\int_E f(x,y)\,d\mu(x)}$ est bien définie pour $\nu$-presque tout $y$ et est $\nu$-intégrable. $\fun{x}{\int_F f(x,y)\,d\nu(y)}$ est bien définie pour $\mu$-presque tout $x$ et est $\mu$-intégrable
+        \end{enumerate}
+    \end{tm}
+
+    \begin{proof}
+        Notes de cours
+    \end{proof}
+
+    \section{Formule de changement de variable}
+
+    \begin{prop}{}{}
+        Soient $M\in M_n(\R),b\in \R^n$, on définit $f(x)=Mx+b, x\in \R^n$. Alors:
+        \[ \forall A\in \Br(\R^n),\lambda_n(f(A))=|\det M|\lambda_n(A)\]
+    \end{prop}
+
+    \begin{re}{}{}
+        $M\in O_n$, alors $|\det M|=1$. Donc $\lambda_n(f(A))=\lambda_n(A),\forall A\in\Br(\R^n)$ car $\lambda_n$ est invariante par translation, donc isométrique.\\
+        Si $M$ est inversible, $\lambda_n(f(\R^n))=0$
+    \end{re}
+
+    \begin{proof}
+        Notes de cours, utilise l'invariance par translation
+    \end{proof}
+
+    \begin{tm}{Changement de variable}{}
+        Soient $U,V$ ouverts de $\R^n$ et $\funto{\varphi}{U}{V}$ un $C^1$-difféomorphisme. Alors pour tout $\funto{f}{V}{\R_+}$ borélienne,
+        \[\int_V f\,d\lambda_n=\int_{\varphi(V)} f\circ \varphi |\text{Jac}(\varphi)|\,d\lambda_n\]
+    \end{tm}
+
+    \begin{proof}
+        Ebauche dans les notes de cours
+    \end{proof}
+
+    \chapter{Fondements de la théorie des probabilités}
+
+    \section{Vocabulaire et premières définitions}
+
+    \begin{df}{}{}
+        Un espace de probabilité est un espace mesuré $(\Omega,\Fr,\Pa)$ où $\Pa$ est une mesure de probabilité (i.e. $\Pa(\Omega)=1$)
+    \end{df}
+
+    Un espace de probabilité modélisé une expérience aléatoire.
+    
+    \begin{itemize}
+        \item $\Omega$ représente l'ensemble des réalisations possibles et est appelé "espace fondamental". Un élément $\omega\in\Omega$ est appelé "réalisation".
+        \item $\Fr$ représente tous les sous-ensembles de réalisations que l'on peut mesurer. Les éléments de $\Fr$ sont appelés "évenements".
+        \item On dit que "$A$ est réalisé" si $\omega\in A$. Si $A,B\in\Fr$, on dit "$A$ implique $B$" si $A\subset B$.
+        \item $\Pa(A)$ représente la probabilité d'occurence de $A\in\Fr$.
+        \item On dit qu'une propriété est vraie "presque partout", si elle est vraie $\Pa$-presque partout.
+    \end{itemize}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item L'expérience aléatoire "On lance une pièce" est modélisée par $(\{0,1\},\Par(\{0,1\}),\frac{1}{2}\delta_0+\frac{1}{2}\delta_1)$
+            \item L'expérience aléatoire "On lance une infinité de pièces" a pour espace fondamental naturel $\{0,1\}^\N$ mais on ne sait pas encore comment construire une mesure sur un produit infini (cf chapitre 4)
+            \item L'expérience aléatoire: "On lance une fléchette sur une cible" est modélisée par $(D,\Br(D),\frac{\lambda_{2|D}}{\lambda_2(D)})$ où $D$ est le disque unité."
+        \end{enumerate}
+    \end{ex}
+
+    En pratique, on n'explicitera presque jamais l'espace de probabilité sur lequel on travaille
+
+    \begin{df}{}{}
+        Soient $\OmegaFP$, un espace de probabilité et $(E,\Ar)$ un espace mesurable. On dit que $\funto{X}{\Omega}{E}$ est une variable aléatoire si $X$ est $(\Fr,\Ar)$-mesurable.
+    \end{df}
+
+    \begin{re}{}{}
+        En pratique, $E$ est soit:
+        \begin{itemize}
+            \item Dénombrable, auquel cas on dit que $X$ est une \va discrète
+            \item $\R$, on parlera de \va réelle
+            \item $\R^d$, on parlera de vecteur aléatoire
+            \item $\R^\N,\Cr([0,1])$ auquel cas on parlera de processus discret $(\R^\N)$ ou continu $(\Cr([0,1]))$
+        \end{itemize}
+    \end{re}
+
+    \begin{df}{}{}
+        Soient $(\Omega,\Fr,\Pa)$ espace de probabilité, $(E,\Ar)$ un espace mesrable, et $\funto{X}{\Omega}{E}$ variable aléatoire. La loi de $X$ est la mesure image de $\Pa$ par $X$:
+        \[\mu_X=\Pa\circ X^{-1}\iff\mu_X(A)=\Pa(X^{-1}(A))\forall A\in \Ar\]
+        On omet $\omega$ dans les notations, et ce de manière abusive. A toute variable aléatoire, on peut associer une mesure de probabilité. Réciproquement, pour toute mesure de probabilité $\mu$ sur $(E,\Ar)$, il existe une variable aléatoire "canonique" tel que $\mu_X=\mu$ avec $\fundfto{X}{(E,\Ar,\mu)}{(E,\Ar)}{\omega}{\omega}$
+    \end{df}
+
+    On distingue 2 familles de variables aléatoires:\\
+    \begin{enumerate}
+        \item Variables aléatoires discrètes: $X$ prend ses valeurs dans $E$ dénombrable: $\mu_X=\sum_{x\in E}p_x\delta_x$, où $p_x=\Pa(X=x)$. Une telle mesure est dite pûrement atomique.
+        \item Variables aléatoires à densité: Une variable aléatoire $X$ à valeurs dans $\R^n$ est dite à densité si $\mu_X=f\,d\lambda_n$ où $f$ est borélienne positive et $\lambda_n$ est la mesure de Lebesgue sur $\R^n$
+    \end{enumerate}
+
+    \begin{re}{}{}
+        Il existe des variables aléatoires qui ne sont ni à densité, ni discrète
+    \end{re}
+
+    \section{Espérance}
+
+    \begin{df}{}{}
+        Soient $(\Omega,\Fr,\Pa)$ espace de probabilité et $X$ variable aléatoire réelle. L'espérance de $X$ est la quantité
+        \[\Ea[X]:=\int X\,d\Pa\qquad \text{(Si celle-ci est bien définit)}\]
+        L'espérance est interprétée comme une valeur typique ou moyenne de $X$
+    \end{df}
+
+    \begin{prop}{}{}
+        Soient $X$ variable aléatoire à valeurs dans $(E,\Ar)$ et $\funto{f}{E}{\R}$ fonction borélienne positive ou bornée, alors
+        \[\Ea[f(X)]=\int f\,d\mu\]
+    \end{prop}
+
+    \begin{proof}
+        $\mu_X=\Pa\circ X^{-1}$ l'égalité a été démontré en TD
+    \end{proof}
+
+    \begin{re}{}{}
+        Réciproquement, on peut récupérer $\mu_X$ par la connaissance de $\Pa\circ f^{-1}(X)$ pour une famille de fonctions $f_i$ bien choisie (avec $f$ borélienne positive ou bornée)
+    \end{re}
+
+    \begin{ex}{}{}
+        Soit $X$ une variable aléatoire à valeurs dans $D$ de loi $\lambda_{2|D}/\lambda_2(D)$. Calculons la loi de $\norme{X}$. Soit $\funto{f}{\R_+}{\R_+}$ borélienne, $\Ea[f(\norme{X})]=\int_{D}f(\norme{X})\,d\frac{\lambda_2(X)}{\lambda_2(D)}$. En passant aux coordonnées polaires\\
+        \[\Ea[f(\norme{X})]=\int_{[0,2\pi[\times ]0,1]}f(r)\frac{r\,drd\theta}{\lambda_2(D)}=\frac{2\pi}{\lambda_2(D)}\int f(r)r\,dr\]
+        En prennant $f=1$, on obtient $1=\frac{2\pi}{\lambda_2(D)}\int_{0}^{1} r\,dr$ donc $\frac{2\pi}{\lambda_2(D)}=2$, d'où $\Ea[f(X)]\overset{(*)}{=}\int f(x)2\pi \1_{[0,1]}(x)\,dx$ et ce pour toute fonction borélienne positive ou bornée. On en conclut que:\\
+        $\mu_{\norme{X}}=2r\1_{[0,1]}(r)\,dr$. En prennant $f=\1_A,\Ar\in\Br(\R_+)$: $(*)$ devient $\Pa(\norme{X}\in A)=\Vr(A)$, où $\Vr=2\pi\1_[0,1](r)\,dr$
+    \end{ex}
+
+    Les théorèmes de convergences vus au chapitre précédent prennent en notation probabiliste les formes suivantes:
+
+    \begin{tm}{Théorème de convergence monotone (TCM)}{}
+        \[X_n\ge 0,X_n\nearrow X\implies \Ea[X_n]\searrow \Ea[X]\]
+    \end{tm}
+
+    \begin{lm}{Lemme de Fatou}{}
+        Soit $X_n\ge 0,\forall n$, alors
+        \[\Ea[\liminf X_n]\le \liminf \Ea[X_n]\]
+    \end{lm}
+
+    \begin{tm}{Théorème de convergence dominée (TCD)}{}
+        Soient $X_n,Y_n,n\in \N,X,Y$ tels que $X_n\to X, Y_n\to Y$
+        \[(X_n)\le Y_n,\forall n, \Ea[Y_n]\to\Ea[Y]<+\infty\implies X\in L^1\text{ et }\Ea[X_n]\to \Ea [X]\]
+    \end{tm}
+
+    \begin{df}{}{}
+        Soit $X$ une variable aléatoire à valeurs dans $\R^n$ et $\forall 1\le i\le n$, la $i$-ème marginale de $X$ est la loi de $X_i$, c'est à dire la mesure image de $\Pa$ par $\pi_i\circ X$, où $\pi_i$ est la projection canonique sur la $i$-ème coordonnée.
+    \end{df}
+
+    \begin{re}{}{}
+        Les marginales ne caractérisent pas en général la loi:
+        \begin{itemize}
+            \item $\mu(A)=\lambda_2(A\cap[0,1]^2),\forall A\in \Br(\R^2)$
+            \item $\nu(A)=\lambda_1(\{x\in[0,1],(x,x)\in A\}),\forall A\in \Br(\R^2)$
+            \item $\mu\circ \pi_1^{-1}(B)=\mu(B\times\R)=\lambda_2(B\times\R\cap[0,1]^2)=\lambda_1(B\cap[0,1]),\forall B\in \BR$. Donc $\mu\circ \pi_1^{-1}=\lambda_{1|[0,1]}$ idem pour $\mu\circ \pi_1^{-1}=\lambda_{1|[0,1]}$
+            \item $\nu\circ \pi_1^{-1}(B)=\nu (V\times \R)=\lambda_1(\{x\in[0,1],(x,x)\in B\times \R\})=\lambda_1(B\cap[0,1]),\forall B\in \BR$. Donc $\nu\circ \pi_1^{-1}$. De même, $\nu\circ\pi_2^{-1}=\lambda_{1|[0,1]}$. Cependant $\mu\neq\nu:\mu(D)=0,\nu(D)=1$, or $D=\{(x,x),x\in \R\}$
+        \end{itemize}
+    \end{re}
+
+    \begin{prop}{}{}
+        Soit $X$ une variable aléatoire à valeurs dans $\R^n$ de densité $p$. Pour tout $1\le i\le n$, $X_i$ est de densité $p_i$ donnée par: $p_i(x_i)=\int p(x_1,\ldots,x_n)\,dx_1\ldots\,dx_{i-1}\,dx_{i+1}\ldots \,dx_n,\forall x_i\in\R$
+    \end{prop}
+
+    \begin{proof}
+        Soit $f$ une fonction borélienne positive $\Ea[f(X_i)]=\int f(x_i)p(x_1, \ldots,x_n)\,dx_1\ldots\,dx_n=\int f(x_i)(\int p(x_1,\ldots,x_n)\,dx_1\ldots\,dx_n)\,dx_i$. Par le théorème de Fubini-Tonelli, on a donc:
+        \[\Ea[f(X_i)]=\int f(x_i)p_i(x_i)\,dx_i\]
+        et ce pour toute fonction borélienne positive $f$. On en déduit que $\mu_{X_i}=p_i\,dx_i$
+    \end{proof}
+
+    \begin{df}{}{}
+        Soit $\mu$ une mesure de probabilité sur $(\R^n,\Br(\R^n))$. Le support de $\nu$, noté $\text{supp } \mu$, est défini par 
+        \[\text{supp} \mu=\bigcap_{\substack{F\text{ fermé}\\ \mu(F)=1}}F\]
+        C'est le plus petit fermé de mesure $1$. 
+    \end{df}
+
+    \begin{proof}
+        Justifions le fait que $\mu(\text{supp} \mu)=1$:
+        \[(\text{supp }\mu)^C=\bigcup_{\substack{O\text{ ouvert}\\\mu(O)=0}}O\]
+        Montrons que $\bigcup_{a_i,b_i\in\Q}\prod_{i=1}^{n}]a_i,b_i[\subseteq (\text{supp }\mu)^C$\\
+        Soit $x\in (\text{supp }\mu)^C$, $\mu(\prod_{i=1}^{n}]a_i,b_i[)=0$\\
+        Il existe $O$ ouvert tel que $\mu(O)=0$ et $x\in O$. Par densité de $\Q$ dans $\R$, il existe $(a_i)_i,(b_i)_i\in\Q^n$ tel que $x\in \prod_{i=1}^{n}]a_i,b_i[\subset O$. Or $\mu(O)=0$. Donc $\prod_{i=1}^{n}]a_i,b_i[$. Ceci achèbve la preuve. En pratique, on utilise: $x\in \text{supp }\mu \iff \forall U$ ouvert, $x\in U, \mu(U)>0$
+    \end{proof}
+
+    \begin{ex}{}{}
+        Montrer que supp $\mu=[0,1]^2$, supp $\nu=D$ où $D=\{(x,x),x\in[0,1]\}$ et $\mu$ et $\nu$ sont définis à l'exercice précédent.
+    \end{ex}
+
+    \section{Lois classiques}
+
+    \subsection*{Lois discrètes}
+
+    \begin{itemize}
+        \item $X$ est de loi uniforme sur $E$ un ensemble fini si
+        \[\Pa(X\in A)=\frac{|A|}{|E|},A\subset E\]
+        \item $X$ est de loi de Bernouilli de paramètre $p\in]0,1[$ si
+        \[\mu_X=p\delta_1+(1-p)\delta_0\]
+        \item $X$ est de loi binomiale de paramètre $(n,p), n\ge 1$ et $p\in[0,1]$ si
+        \[\Pa(X=k)=\left(\begin{matrix}n\\ k \end{matrix}\right)p^k(1-p)^{n-k},k\in \{0,n\}\]
+        \item $X$ est de loi de Poisson de paramètre $\lambda>a$ si:
+        \[\Pa(X=k)=\frac{\lambda^k}{k!}e^{-\lambda},k\in \N\]
+        \item $X$ est de loi géométrique sur $\N^*$ de paramètre $p\in]0,1]$ si:
+        \[\Pa(X=k)=(1-p)^{k-1} p,k\ge 1\] 
+    \end{itemize}
+
+    \subsection*{Lois à densité}
+
+    \begin{itemize}
+        \item Soit $A\in \Br(\R^n)$ tel que $0<\lambda_n(A)<+\infty$. $X$ est de loi uniforme sur $A$ si $X$ admet pour densité 
+        \[\mu_X=\1_A/\lambda_n(A)\]
+        \item $X$ est de loi exponentielle de paramètre $\lambda> 0$ si $X$ admet pour densité
+        \[\mu_X(x)=\lambda e^{-\lambda x}\1_{\R^+}(x),x\in \R\]
+        \item $X$ est de loi gaussienne de moyenne $m$ et de variance $\sigma^2>0$ si $X$ admet pour densité:
+        \[\mu_X(x)=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\left(\frac{(x-m)^2}{2\sigma^2}\right)},x\in\R\]
+    \end{itemize}
+
+    \section{Fonction de répartition}
+
+    \begin{df}{}{}
+        Soit $\mu$ une mesure de probabilité sur $\RBR$, la fonction de répartition de $\mu$, notée $F_\mu$, est définie par
+        \[F_\mu(t)=\mu(]-\infty,t]),t\in \R\]
+    \end{df}
+
+    \begin{prop}{}{}
+        Soit $\mu$ une mesure de probabilité sur $\RBR$, $F_\mu$ est croissante, continue à droite et $\underset{n\to-\infty}{\lim}F_\mu(t)=0$ et $\underset{n\to+\infty}{\lim}F_\mu(t)=1$. De plus,
+        \[\forall t\in \R,\mu(\{t\})=F_\mu(t)-F_\mu(t^-)\text{ où }F_\mu(t^-)\text{ désigne la limite à gauche de $F_\mu$ en $t$}\]
+    \end{prop}
+
+    \begin{re}{}{}
+        Les atomes de $\mu$ correspondent aux points de discontinuité et la masse des atomes aux sauts de $F_\mu$.
+    \end{re}
+
+    \begin{proof}
+        $F_\mu$ est clairement croissante. Soit $t\in \R$, on a $]-\infty,t+\epsilon]\searrow]-\infty,t]$ lorsque $\epsilon\searrow 0$. Par continuité décroissante,
+        \[\underset{\epsilon\searrow 0}{\lim} F_\mu(t+\epsilon)=\underset{\epsilon\searrow 0}{\lim} \mu(]-\infty,t+\epsilon])=\mu(]-\infty,t])=F_\mu(t)\]
+        \begin{itemize}
+            \item On a: $]-\infty,t]\nearrow\R$ lorsque $t\nearrow+\infty$. Par continuité croissante: $\mu(]-\infty,t])=F_\mu(t)\nearrow \mu(\R)=1$
+            \item On a: $]-\infty,t]\searrow\emptyset$ lorsque $t\searrow-\infty$. Par continuité décroissante, $F_\mu(t)\searrow 0$ lorsque $t\searrow-\infty$
+            \item Soit $t\in \R$. Alors $]t-\epsilon,t]\nearrow\{t\}$ lorsque $\epsilon\searrow 0$. De nouveau par continuité:\\
+            \[\mu(\{t\})=\underset{\epsilon\searrow 0}{\lim}\mu(]t-\epsilon,t])=\underset{\epsilon\searrow 0}{\lim} (F_\mu(t)-F_\mu(t-\epsilon))\]
+            D'où: $\mu(\{t\})=F_\mu(t)-F_\mu(t^-)$
+        \end{itemize}
+    \end{proof}
+
+    \begin{df}{}{}
+        On définit la fonction de répartition d'une variable aléatoire réelle $X$ comme la fonction de répartition de $\mu_X$. On la note:
+        \[F_X(t)=\mu_X(]-\infty,t])=\Pa(X\le t),\forall t\in \R\]
+    \end{df}
+
+    \begin{prop}{}{}
+        Soient $\mu,\nu$ 2 mesures de probabilité sur $\RBR$
+        \[\mu=\nu\iff F_\mu=F_\nu\]
+    \end{prop}
+
+    \begin{proof}
+        Supposons $F_\mu=F_\nu$. La classe $\{]-\infty,t],t\in \R\}$ génère $\BR$ et est stable par intersection finie. Par le lemme d'unicité de la mesure $\mu=\nu$
+    \end{proof}
+
+    \begin{prop}{}{}
+        Soit $\funto{F}{\R}{\R}$ une fonction croissante, continue à droite et telle que $\underset{+\infty}{\lim}F=1$ et $\underset{-\infty}{\lim}F=0$. Alors il existe une variable aléatoire $X$ réelle tel que $F_X=F$
+    \end{prop}
+
+    \begin{df}{}{}
+        Soit $\funto{F}{\R}{\R}$ croissante. L'inverse généralisé de $F$ est notée $F^{(-1)}$, et définie par:
+        \[F^{(-1)}(p)=\inf\{t\in \R:F(t)\ge p\}\]
+    \end{df}
+
+    \begin{prop}{}{}
+        Notons $l_\pm=\underset{\pm\infty}{\lim} F$
+        \begin{enumerate}
+            \item $F^{(-1)}$ prend des valeurs finies dans $]l_-,l_+[$
+            \item $F^{(-1)}$ croissante
+            \item $F^{(-1)}(F(s))\le s,\forall s\in\R$
+            \item $F^{(-1)}$ est continue à droite
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item Soit $p\in]l_-,l_+[$, il existe $s<s'$, $F(s)<p<F(s')$,\\ 
+            \[F^{(-1)}(p)<+\infty, s'\in \{t,F(t)\ge p\}\]
+            \[F^{(-1)}(p)\ge s>-\infty,\forall t\text{ tels que }F(t)\ge p\text{ on a }t\ge s\text{ car }F\text{ croissante et }F(s)<p\]
+            \item Soient $p\le q$: $\{t, F(t)\ge q\}\subset \{t,F(t)\ge p\}$ donc $F^{(-1)}(q)\ge F^{(-1)}(p)$
+            \item $F^{(-1)}(F(s))\le s$ car $s\in \{t,F(t)\ge F(s)\}$
+            \item Soient $p\in ]l_-,l_+[$ et $\epsilon>0$. Il existe $s$ tel que $F(s)>p$ et $F^{(-1)}\le s< F^{(-1)}(p)+\epsilon$. Posons $p'=F(s)$\\
+            $\forall q\in [p,p'], F^{(-1)}(p)\le F^{(-1)}(q)\le F^{(-1)}(p')=F^{(-1)}(F(s))\le s\le F^{(-1)}(p)+\epsilon$.\\
+            Sous réserve que $F^{(-1)}(p)=\inf\{t,F(t)>p\}$, ce qui est vrai lorsque $F$ est continue à droite (laissé en exercice).
+        \end{enumerate}
+    \end{proof}
+
+    \begin{proof}
+        Soit $U$ variable aléatoire de loi uniforme sur $]0,1[$. Posons $X=F^{(-1)}(U)$. On a $F_X(t)=\Pa(X\le t)=\Pa(F^{(-1)}(U)\le t),\forall t$\\
+        Montrons que $F^{(-1)}(p)\le t\iff p\le F(t),\forall p\in]0,1[,t\in \R$\\
+        $\implies$ si $p\le F(t)$ alors $F^{(-1)}(p)\overset{(2)}{\le} F^{(-1)}(F(t))\overset{(3)}{\le} t$\\
+        $\impliedby$ Supposons que $F^{(-1)}(p)\le t$, $\forall t'>t,F(t')\ge p$:
+        \begin{itemize}
+            \item En effet: Si $t'>t\ge F^{(-1)}(p)$ donc il existe $s'$ tel que $F(s')\ge p$ et $s'<t'$. Par croissance $F(t')\ge p$
+            \item En passant à la limite lorsque $t'\searrow t$, on obtient: $F(t)\ge p$
+        \end{itemize}
+        On a donc: $F_X(t)=\Pa(F^{(-1)}(U)\le t)=\Pa(U\le F(t))=F(t),\forall t\in \R$
+    \end{proof}
+
+    \begin{re}{}{}
+        La "régularité" de la mesure est étroitement liée à celle de sa fonction de répartition. En particulier, la continuité de $F_\mu$ est équivalent au fait que $\mu$ n'ait pas d'atome
+    \end{re}
+
+    \begin{prop}{}{}
+        Soit $\mu$ mesure de probabilité sur $\RBR$. Si $F_\mu$ est $C^1$ par morceaux, alors $\mu$ admet une densité donnée par $F_\mu'$
+    \end{prop}
+
+    \begin{proof}
+        Posons $\nu=F_\mu'\,d\lambda_1$. $\nu$ est une mesure car $F_\mu'$ est borélienne positive. $\nu$ est une mesure de probabilité: $\nu([-r,r])=\int_{-r}^{r}F_\mu'(x)\,dx=F_\mu(r)-F_\mu(-r)$. En passant à la limite lorsque $r\to+\infty$, on trouve $\nu(\R)=1$. Pour tout $a<b$:\\
+        $\mu(]a,b])=F_\mu(b)-F_\mu(a)=\int_{a}^{b} F_\mu'(x)\,dx=\nu(]a,b])$.\\
+        Comme la classe des intervalles $]a,b],a<b$ engendre la tribu borélienne et est stable par intersection finie, on en conclut que $\mu=\nu$
+    \end{proof}
+
+    \section{Tribu engendrée par une variable aléatoire}
+
+    En probabilité, on interprète souvent une sous-tribu comme une "information".\\
+    Si $X$ est une variable aléatoire, la tribu engendrée par $X$ est la tribu des évènements qui "concernent" $X$, l'information apportée par l'observatoin de $X$
+    
+    \begin{df}{}{}
+        Soit $X$ une variable aléatoire à valeurs dans $(E,\Ar)$. La tribu engendrée par $X$ est la plus petite tribu qui rend mesurable $X$. Elle est donnée par:
+        \[\sigma(X):=\sigma(\{X^{-1}(A),\forall A\in \Ar\})\subset \Fr\]
+        Plus généralement, si $(X_i)_{i\in I}$ est une famille de variables aléatoires. On définit la tribu engendrée par $(X_i)_{i\in I}$ par:
+        \[\sigma((X_i)_{i\in I})=\sigma(\{X_i^{-1}(A_i),A_i\in\Ar_i,i\in I\})\]
+        Pour $X_i$ à valeurs dans $(E_i,\Ar_i),\forall i\in I$\\
+        Comme la tribu engendrée est la plus petite tribu qui rend mesurables les $(X_i)_{i\in I}$. On dit que $Y$ est $X$-mesurable si $Y$ est $\sigma(X)$-mesurable
+    \end{df}
+
+    \begin{prop}{}{}
+        Soient $Y$ variable aléatoire réelle et $X$ variable aléatoire à valeurs dans $(E,\Ar)$. $Y$ est $X$-mesurable \ssi il existe $\funto{h}{E}{\R}$ tel que $Y=h(X)$
+    \end{prop}
+
+    \section{Moments et inégalités}
+
+    \begin{df}{}{}
+        Soient $X$ une variable aléatoire réelle et $p>0$. Le moment d'ordre $p$ de $X$ est la quantité $\Ea [X^p]$, dès que celle-ci est bien définie.\\
+        Le moment absolu d'ordre $p$ est défini comme $\Ea[|X|^p]$ 
+    \end{df}
+
+    \begin{prop}{}{}
+        Par l'inégalité de Hölder, $\forall 0<p\le q$
+        \[\Ea [|X|^p]\le \left(\Ea[|X|^{p\frac{q}{p}}]\right)^\frac{p}{q}=\left(\Ea[|X|^q]\right)^\frac{p}{q}\]
+        On en déduit que $(\norme{X}_{L^p})_{p>0}$ est croissante. Ceci découle également de l'inégalité de Jensen:
+        \[\left(\Ea\left[|X|^p\right]\right)^{\frac{q}{p}}\le\Ea\left[{|X|^p}^{\frac{q}{p}}\right]=\Ea[|X|^q]\]
+        car $x\in \R_+\mapsto x^\frac{q}{p}$ est convexe pour $q\ge p$
+    \end{prop}
+
+    Les moments d'une variable aléatoire sont liés à la décroissance de la queue de distribution.\\
+    Pour $X$ variable aléatoire positive: $P(X>t)\searrow 0$ lorsque $t\nearrow+\infty$. A quelle vitesse ?
+
+    \begin{tm}{Inégalité de Markov}{}
+        Soit $X$ variable aléatoire positive 
+        \[\forall t>0, P(X>t)\le \frac{\Ea[X]}{t}\]
+        Conséquence: $\Ea[X]<+\infty\implies P(X>t)=o(\frac{1}{t})$ quand $t\to+\infty$. De plus si $\Ea[X^p]<+\infty$ alors $P(X>t)=o(\frac{1}{t^p}),t\to+\infty$
+    \end{tm}
+
+    \begin{proof}
+        Comme $X$ est positive: $X\ge t\1_{X>t},\forall t>0$\\
+        Par croissance, on obtient:
+        \[\Ea[X]\ge tP(X>t)\]
+        Réciproquement, on peut calculer les moments à l'aide de la fonction de répartition
+    \end{proof}
+
+    \begin{prop}{Intégration par partis}{}
+        Soient $X$ une variable aléatoire positive et $p>0$
+        \[\Ea[X^p]=p\int_{0}^{\infty} t^{p-1}P(X>t)\,dt\]
+        Conséquence: Si $\Ea[X^p]<+\infty$ alors $P(X>t)=o(t^{-p}),t\to+\infty$
+    \end{prop}
+
+    \begin{proof}
+        On utilise le théorème de Fubini-Tonelli.
+    \end{proof}
+
+    \begin{df}{}{}
+        Soient $X,Y$ variable aléatoire réelles de carré intégrable. On définit la variance de $X$ par:
+        \[\Var(X)=\Ea[X-\Ea[X]]^2=\Ea[X^2]-(\Ea[X])^2\]
+        L'écart-type de $X$ est 
+        \[\sigma_X=\sqrt{\Var(X)}\]
+        On définit la covariance entre $X$ et $Y$ par:
+        \[\Cov(X,Y)=\Ea[(X-\Ea[X])(Y-\Ea[Y])]=\Ea(XY)-\Ea[X]\Ea[Y]\]
+        Soit $Z$ une variable aléatoire à valeurs dans $\R^d$. La matrice de covariance de $Z$ est la matrice de taille $d\times d$ donnée par:
+        \[K_Z:=(\Cov(Z_i,Z_j))_{1\le i,j\le d}\]
+    \end{df}
+
+    \begin{re}{}{}
+        \begin{itemize}
+            \item Comme $\Cov(X,Y)=\Cov(Y,X)$, la matrice de covariance est symétrique.
+            \item $K_Z$ est la matrice de la forme quadratique $\fun{x}{\Var}\sca{Z,v}$:
+            \[\Var(\sca{Z,v})=\sca{v,K_{Z}v},\forall v\in \R^d\text{(à montrer en exercice)}\]
+            \item $\Cov(X,Y)$ est bien définie dès que $X$ et $Y$ sont dans $L^2$ et
+            \[|\Cov(X,Y)|\le\sigma_X\sigma_Y\text{ (Par Cauchy-Schwartz)}\]
+            \item L'écart-type mesure la dispersion d'une variable aléatoire autour de sa moyenne.
+        \end{itemize}
+    \end{re}
+
+    \begin{tm}{Inégalité de Tchebychev}{}
+        Soit $X$ variable aléatoire réelle de carré intégrable
+        \[\forall t>0,P(|X-\Ea[X]|>t)\le\frac{\Var(X)}{t^2}\]
+        Conséquence: Avec probabilité supérieure à $99\%$: $|X-\Ea[X]|\le 10\sigma_X$
+    \end{tm}
+
+    \begin{proof}
+        On applique Markov à $(X-\Ea[X])^2$
+    \end{proof}
+
+    \chapter{Indépendance}
+
+    \section{Evènements indépendants}
+
+    On se place sur un espace de probabilité $(\Omega,\Fr,\Pa)$
+
+    \begin{df}{}{}
+        Les évènements $A_i,i\in I$ sont indépendants si pour tout $n\ge 1$ et $i_1,\ldots,i_n$ 2 à 2 distincts:
+        \[\Pa(\bigcap_{j=1}^nA_{i_j})=\prod_{j=1}^{n}\Pa(A_{i_j})\]
+    \end{df}
+
+    \begin{re}{}{}
+        L'indépendance d'évènements est plus forte que l'indépendance 2 à 2.
+    \end{re}
+
+    \begin{ex}{}{}
+        Par exemple sur $(\{0,1\}^2,\Par(\{0,1\}^2),\Pa)$ où $\Pa$ est la loi uniforme des évènements:
+        \begin{itemize}
+            \item $A=\text{"1er lancer donne pile"}=\{1\}\times\{0,1\}$
+            \item $B=\text{"2eme lancer donne pile"}=\{0,1\}\times\{1\}$
+            \item $C=\text{"Les deux lancers donnent le même résultat"}=\{(0,0),(1,1)\}$
+        \end{itemize}
+        Ces évènements sont 2 à 2 indépendants mais pas mutuellement indépendants
+    \end{ex}
+
+    \begin{df}{}{}
+        Soient $\Cr_i\subset \Fr,\forall i\in I$. Les familles d'évènements $\Cr_i,i\in I$ sont indépendants si pour tout $(A_i)_{i\in I}\in\prod_{i\in I} \Cr_i$, les $A_i$ sont indépendants,$\forall i\in I$\\
+        Dans ce cas, les évènements $A_i,i\in I$ sont indépendants
+    \end{df}
+
+    \begin{re}{}{}
+        \begin{enumerate}
+            \item Si $(\Cr_i)_{i\in I}$ sont des familles d'évènements indépendants et $J\subset I$, alors $(\Cr_j)_{j\in J}$ sont indépendants.
+            \item $(\Cr_i)_{i\in \N}$ sont familles d'évènements indépendants \ssi pour tout $n\ge 1$, $(\Cr_i)_{i\le n}$ sont indépendants(Exercice).
+            \item Soit $(\Cr_i)_{i\le n}$ des familles d'évènements qui contiennent toute $\Omega$ (par exemple si $\Cr_i$ est une sous-tribu pour tout $i$) alors $(\Cr_i)_{i\le n}$ sont indépendantes \ssi $\forall (A_i)_{i\le n}\in\prod_{i=1}^{n}\Cr_i$
+            \[\Pa(\bigcap_{i=1}^nA_i)=\prod_{i=1}^{n}\Pa(A_i)\qquad (*)\]
+            $\implies$ par def\\
+            $\impliedby$ Soit $(A_i)_{i\le n}\in \prod_{i=1}^{n}\Cr_i$. Soient $i_1,\ldots,i_k\in\{1,\ldots,n\}$ 2 à 2 distincts. On applique $(*)$ à $A_i'=\cho{A_i\text{ si $i\in\{i_1,\ldots,i_k\}$}\\ \Omega\text{ sinon}}$ ce qui donne
+            \[\Pa(\bigcap_{j=1}^nA_{i_j})=\prod_{j=1}^{n}\Pa(A_{i_j})\]
+        \end{enumerate}
+    \end{re}
+
+    \begin{prop}{Extension}{}
+        Soit $\Cr_i\subset \Fr_i$ pour tout $i\in I$. Si $\Cr_i$ est stable par intersection finie pour tout $i\in I$ et si $(\Cr_i)_{i\in I}$ sont des familles d'évènements indépendants alors $(\sigma(\Cr_i))_{i\in I}$ sont indépendants.\\
+        Conséquence: En appliquant la proposition précédente à $\Cr_i=\{A_i\}$, où $A_i\in \Fr,i\in I$. On a alors: $(A_i)_{i\in I}$ sont indépendants \ssi $(\sigma(A_i))_i$ sont indépendants. Or $\sigma(A)=\{\emptyset,\Omega,A,A^C\},A\in \Fr$\\
+        Donc $(A_i)_{i\in I}$ sont indépendants \ssi $(B_i)_{i\in I}$ sont indépendants pour tout $(B_i)_{i\in I}$ telle que $B_i\in \{A_i,A_i^C\},i\in I$
+    \end{prop}
+
+    \begin{proof}
+        Soient $n\ge 2$ et $i1,\ldots,i_n\in I$ 2 à 2 distincts. On montre par réccurence sur $k\in\{0,\ldots,n\}$ qui pour tout évènements $(A_{ij})_{j\le n}$ tels que $A_{ij}\in \sigma(\Cr_{ij})$ si $j\le k$ et $A_{ij}\in \Cr_{ij},j>k$.
+        \[\Pa(\bigcap_{j=1}^n A_{ij})=\prod_{j=1}^{n}\Pa(A_{ij})\]
+        Initialisation pour $k=0$ découle de l'hypothèse d'indépendances des $\Cr_i,i\in I$.\\
+        Hérédité: Supposons la propriété vraie au rang $k\ge 0$.\\
+        Fixons $(A_{ij})_{j\neq k+1}$ des évènements tels que $A_{ij}\sigma(\Cr_{i,j})$ pour $j\le k$ et $A_{ij}\in \Cr_{ij},j\ge k+2$.\\
+        Notons $B=\bigcap_{j\neq k+1}A_{ij}$. En utilisant l'hypothèse de réccurence pour $A_{ik+1}=\Omega$, on obtient
+        \[\Pa(B)=\prod_{j\neq k+1} \Pa(A_{ij})\qquad (**)\text{ (Sous réserve d'avoir ajouté $\Omega$ à tous les $\Cr$)}\]
+        \begin{itemize}
+            \item Si $\Pa(B)=0$: Alors pour tout $A_{ik+1}\in \sigma(\Cr_{ik+1})$
+            \[\Pa(\bigcap_{j=1}^n A_{ij})=\Pa(B\cap A_{ik+1})=0\text{ et }\prod_{j=1}^{n}\Pa(A_{ij})=0\text{ par }(**)\]
+            \item Si $\Pa(B)>0$: On note $\Pa_B=\Pa(\cdot \cap B)/\Pa(B)$
+        \end{itemize}
+        L'hypothèse de réccurence se réécrit sous la forme
+        \[\Pa_B(A_{ik+1})=\Pa(A_{ik+1}),\forall A_{ik+1}\in\Cr_{ik+1}\]
+        où on a utilisé $(**)$. Comme $\Cr_{ik+1}$ est stable par intersection finie et $\Pa,Pa_B$ sont des mesures de probabilité, on obtient par le théorème d'unicité de la mesure que $\Pa$ et $\Pa_B$ coicident sur $\sigma(\Cr_{ik+1})$
+    \end{proof}
+
+    \begin{nt}{}{}
+        Soit $(\Fr_i)_{i\in I}$ une famille de sous-tribu. La tribu engendrée par les $\Fr_i,i\in I$, est notée
+        \[\bigvee_{i\in I}\Fr_i=\sigma(\Fr_i,i\in I)\]
+    \end{nt}
+
+    \begin{prop}{Regroupement par pacquets}{}
+        Soient $(\Fr_i)_{i\in I}$ des sous-tributs indépendantes. Soit $\Pi$ une partition de $X$. Alors $(\bigvee_{i\in J}\Fr_i)_{J\in \Pi}$ sont indépendantes
+    \end{prop}
+
+    \begin{proof}
+        Pour tout $J\in \Pi$,
+        \[\bigvee_{i\in J}\Fr_i=\sigma(\{A_i,A_i\in\Fr_i,i\in J\})\]
+        On peut écrire:\[\bigvee_{i\in J}\Fr_i=\sigma(\Cr_J)\text{ où }\Cr_J=\{A_{i_1}\cap\ldots\cap A_{i_k}|A_{i_j}\in\Fr_{i_j}|i_1,\ldots,i_k\in J\text{ 2 à 2 distincts}|k\ge 1\}\]
+        Par construction, $\Cr_J$ est stable par intersection finie. Comme les $\Fr_i,i\in I$, sont des tribus indépendantes, on en déduit que $\Cr_J,J\in \Pi$, sont indépendantes. Par la propriété 1, on en conclut que $\sigma(\Cr_J),J\in \Pi$, sont indépendantes
+    \end{proof}
+
+    \begin{df}{}{}
+        Soient $(X_i)_{i\in I}$ des variables aléatoires définies sur le même espace de probabilité. On dit que les variables aléatoires $X_i,i\in I$, sont indépendantes si les sous-tribus $\sigma(X_i),i\in I$, sont indépendantes.
+    \end{df}
+
+    \begin{re}{}{}
+        \begin{enumerate}
+            \item Si $(\Fr_i)_{i\in I}$ les tribus indépendantes et $(X_i)_{i\in I}$ des variables aléatoires telles que $X_i$ est $\Fr_i$-mesurable pour tout $i\in I$, alors les variables aléatoires $X_i,i\in I$ sont indépedantes (car $\sigma(X_i)\subset \Fr_i,\forall i\in I$)
+            \item Si $(X_i)_{i\in I}$ variables aléatoires indépendantes et $J\subset I$, alors $(X_i)_{i\in J}$ sont indépendantes.
+            \item $(X_i)_{i\in \N}$ sont des varaibles aléatoires indépendantes \ssi $\forall n\ge 1$, $(X_i)_{i\le n}$ sont indépendantes.
+            \item Soient $X_1,\ldots,X_n$ varialbes aléatoires à valeurs dans $(E_1,\Ar_1),\ldots,(E_n,\Ar_n)$ respectivement $(X_i)_{i\le n}$ sont indépendantes \ssi $\forall (A_i)_{i\le n}\in \prod_{i=1}^{n}\Ar_i$
+            \[ \Pa(\bigcap_{i=1}^n X_i^{-1}(A_i))=\prod_{i=1}^{n}\Pa(X_i^{-1}(A_i))\]
+            \[\text{C'est à dire si }\Pa(X_1\in A_1,\ldots,X_n\in A_n)=\prod_{i=1}^{n}\Pa(X_i\in A_i)\]
+            Dans le cas où $E_i$ est dénombrable et $\Ar_i=\Par(E_i),\forall i\le n, (X_i)_{i\le n}$ sont indépendantes \ssi $\forall (k_i)_{i\le n}\in \prod_{i=1}^{n}E_i$,
+            \[\Pa(X_1= k_1,\ldots,X_n= k_n)=\prod_{i=1}^{n}\Pa(X_i=k_i)\]
+            \item (Regroupement) Soient $(X_i)_{i\in I}$ des variables aléatoires indépendantes et $\Pi$ une partition de $I$. Alors $(\sigma(X_i,i\in J))_{J\in \Pi}$ sont indépendantes (car $\bigvee_{i\in J}\sigma(X_i)=\sigma(X_i,i\in J)$)
+        \end{enumerate}
+    \end{re}
+
+    \section{Mesures produit et indépendance}
+
+    \begin{prop}{}{}
+        Soient $X_1,\ldots,X_n$ des variables aléatoires à valeurs dans $(E_1,\Ar_1),\ldots,(E_n,\Ar_n)$ respectivement. $(X_1,\ldots, X_n)$ sont indépendantes \ssi $\mu_{(X_1\ldots X_n)}=\mu_{X_1}\otimes\ldots\otimes \mu_{X_n}$ où $\mu_{(X_1\ldots X_n)}$ est la loi de $(X_1\ldots X_n)$ variables aléatoires à valeurs dans $(\prod_{i=1}^{n}E_i,\bigotimes_{i=1}^n \Ar_i)$\\
+        Conséquences: 
+        \begin{enumerate}
+            \item Si $X_1\ldots X_n$ sont indépendantes et $\funto{f_i}{E_i}{\R}$ mesurables positives ou bornées pour tout $i\le n$, alors
+            \[\Ea[\prod_{i=1}^{n}f_i(X_i)]=\prod_{i=1}^{n}\Ea[f_i(X_i)]\]
+            Ceci découle du fait que $\mu_{(X_1\ldots X_n)}=\mu_{X_1}\otimes \ldots \otimes \mu_{X_n}$ et du théorème de Fubini.
+            \item Si $X_1,\ldots,X_n$ sont indépendantes et intégrables alors $X_1,\ldots,X_n$ est intégrable et $\Ea[X_1\ldots X_n]=\prod_{i=1}^{n}\Ea[X_i]$
+            (On applique d'abord le théorème de Fubini-Tonelli pour montrer l'intégrabilité puis Fubini-Lebesgue pour montrer l'égalité)
+            \item Si $X,Y\in L^2$ et indépendantes alors $\Cov(X,Y)=0$ et $\Var(X+Y)=\Var(X)+\Var(Y)$ (Laisser en exercice)
+        \end{enumerate}
+    \end{prop}
+
+    
+    \begin{proof}
+        $(X_i)_{i\le n}$ sont indépendantes \ssi $\forall (A_i)_{i\le n}\in \prod_{i=1}^{n}\Ar_i$,
+        \[\Pa(X_1\in A_1,\ldots,X_n\in A_n)=\prod_{i=1}^{n}\Pa(X_i\in A_i)\]
+        \[\iff \mu_{(X_1\ldots X_n)}(A_1\times\ldots \times A_n)=\mu_{X_1}\otimes\ldots\otimes \mu_{X_n}(A_1\times\ldots\times A_n)\]
+        Par le théorème d'unicité de la mesure, on en déduit que $(X_i)_{i\le n}$ sont indépendantes \ssi $\mu_{(X_1\ldots X_n)}=\mu_{X_1}\times\ldots\times \mu_{X_n}$
+    \end{proof}
+
+    \begin{prop}{}{}
+        \begin{enumerate}
+            \item Soient $X_1,\ldots,X_n$ variables aléatoires réelles indépendantes et de densité respectives $p_1,\ldots,p_n$. Alors
+            \[\mu_{(X_1\ldots X_n)}=p_1(x_1)\ldots p_n(x_n)\,d\lambda_n(x_1,\ldots x_n)\]
+            \item Si $X_1,\ldots,X_n$ variables réelles telles que
+            \[\mu_{(X_1\ldots X_n)}=q_1(x_1)\ldots q_n(x_n)\,d\lambda_n(x_1\ldots x_n)\]
+            où $q_1\ldots q_n$ sont boréliennes positives, alors $X_1,\ldots X_n$ sont indépendantes et pour tout $i\le n$, $X_i$ a pour densité $q_i/\int q_i(x_i)\,d\lambda(x_i)$
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item D'après la propriété 3, il suffit de montrer que $\bigotimes_{i=1}^n\mu_{X_i}=p_1(x_1)\ldots p_n(x_n)\,d\lambda_n(x_1,\ldots x_n)$
+            \[\forall(A_i)_{i\le n}\in \Br(\R)^n:\bigotimes_{i=1}^n\mu_{X_i}(\prod_{i=1}^{n}A_i)=\prod_{i=1}^{n}\mu_{X_i}(A_i)=\prod_{i=1}^{n}\int_{A_i}p_i(x_i)\,d\lambda(x_i)\]
+            Donc $\forall (A_i)_{i\le n}\in \Br(\R)^n$
+            \[\bigotimes_{i=1}^n \mu_{X_i}(\prod A_i)=\int \1_{\prod_{i=1}^{n}A_i}(x_1\ldots x_n)p_1(x_1)\ldots p_n(x_n)\,d\lambda_n(x_1\ldots x_n)\]
+            Par le théorème de Fubini-Tonelli et le fait que $\lambda_n=\lambda^{\otimes n}$ par définition:Les mesures de probabilité $\bigotimes_{i=1}^n\mu_{X_i}$ et $p_1(x_1)\ldots p_n(x_n)\,d\lambda_n(x_1\ldots x_n)$ coincident sur les produits de boréliens. Par le théorème d'unicité de la mesure, on en conclut que
+            \[\bigotimes_{i=1}^n=p_1(x_1)\ldots p_n(x_n)\,d\lambda_n(x_1\ldots x_n)\]
+            \item Supposons que $\mu(X_1\ldots X_n)=q_1(x_1)\ldots q_n(x_n)\,d\lambda_n(x_1\ldots x_n)$: \\
+            $\forall (A_i)_{i\le n}\in \Br(\R)^n: \Pa(X_1\in \Ar_1,\ldots X_n\in \Ar_n)=\prod_{i=1}^{n}(\int_{A_i} q_i(x_i)\,d\lambda(x_i))$ par le théorème de Fubini-Tonelli.\\
+            Fixons $i\in\{1,\ldots,n\}$. En appliquant $(*)$ à $\Ar_j=\R,j\neq i,A_i\in \BR$, on trouve
+            \[\Pa(X_i\in\Ar_i)=C_i\int_{A_i}q_i(x_i)\,d\lambda(x_i)\text{ où }C_i\ge 0\]
+            On en déduit que $C_i=\frac{1}{\int q_i(x_i\,d\lambda(x_i))}$. En particulier, $\mu_{X_i}=\frac{q_i(x_i)}{\int q_i(y_i)\,d\lambda(y_i)}\,d\lambda(x_i)$\\
+            En utilisant $(*)$ avec $\Ar_i=\R,\forall i$, on obtient: $\prod_{i=1}^{n}C_i=1$. En multipliant $(*)$ par $\prod_{i=1}^{n} C_i$, on trouve
+            \[\forall (A_i)\in \BR^n, \Pa(X_1\in \Ar_1,\ldots, X_n\in \Ar_n)=\prod_{i=1}^{n}(\int_{A_i}C_i q_i(x_i)\,d\lambda(x_i))\overset{(**)}{=}\prod_{i=1}^{n}\Pa(X_i\in \Ar_i)\]
+            Les variables aléatoires donc indépendants.
+        \end{enumerate}
+    \end{proof}
+
+    \begin{df}{}{}
+        Soient $\mu,\nu$ deux mesures de probabilité sur $(\R^d,\Br(\R^d))$. La convolée de $\mu$ et $\nu$ est la mesure image de $\mu\otimes \nu$ par $(x,y)\mapsto x+y$. C'est une mesure de probabilité que l'on note $\mu*\nu$:\\
+        Pour tout $\funto{f}{\R^d}{\R}$ borélienne positive ou bornée,
+        \[\int f\,d\mu*\nu =\int f(x+y)\,d\mu\otimes \nu(x,y)\]
+        Par la définition de la mesure produit,
+        \[\forall A\in \Br(\R^d):\mu*\nu(A)=\mu\otimes \nu(\{(x,y),x+y\in A\})=\int \mu(A-y)\,d\nu(y)=\int \nu(A-x)\,d\mu(x)\]
+        Comme pour la convolution de fonction, la convolution de mesures a un effet "lissant":\\
+        En particulier: Si $\mu,\nu$ sont des mesures de probabilité sur $\R^d$ telles que $\nu$ est de densité $g$ alors $\mu*\nu$ est à densité donnée par
+        \[\phi(t)=\int g(t-x)\,d\mu(x),t\in \R^d\text{ (Exercice)}\]
+    \end{df}
+
+    \begin{prop}{}{}
+        Soient $\mu,\nu$ mesures de probabilité sur $(\R^d,\Br(\R^d))$ de densités respectives $f,g$. Alors $\mu *\nu$ est de densité donneé par:
+        \[f*g(t)=\int f(x)g(t-x)\,d\lambda_d(x)=\int f(t-y)g(y)\,d\lambda_d(y),t\in\R^d\]
+    \end{prop}
+
+    \begin{proof}
+        Par l'exercice précédent, on sait que $\mu*\nu$ est de densité donnée par:
+        \[\phi(t)=\int g(t-x)\,d\mu(x),t\in \R\]
+        Or $\mu=f \lambda_d$, donc
+        \[\phi(t)=\int f(x)g(t-x)\,d\lambda_d(x)=\int f(t-y)g(y)\,d\lambda_d(y)\]
+    \end{proof}
+
+    \begin{prop}{}{}
+        Soient $X,Y$ variables aléatoires indépendantes à valeurs dans $\R^d$. Alors $\mu_{X+Y}=\mu_X+\mu_Y$
+    \end{prop}
+
+    \begin{ex}{}{}
+        Soient $(E,\Ar),(F,\Br)$ espaces mesurables, $X$ variable aléatoire à valeurs dans $E$ et $\funto{\psi}{E}{F}$ mesurable. Alors $\mu_{\psi(X)}=\mu_X\circ\psi^{-1}$
+    \end{ex}
+
+    \begin{proof}
+        Appliquer l'exercice à $(X,Y)$ et $\funto{\psi}{(x,y)}{x+y}$. On obtient
+        \[\mu_{X+Y}=\mu_{(X,Y)}\circ\psi^{-1}=(\mu_X\otimes \mu_Y)\circ \psi^{-1}=\mu_X*\mu_Y\]
+    \end{proof}
+
+    \section{Existence de suite de variables aléatoires indépendantes}
+
+    \begin{tm}{}{}
+        Soit $(\mu_n)_{n\ge 1}$ une suite de mesures de probabilité sur $\R$. Il existe une de variables aléatoires $(X_n)_{n\ge 1}$ indépendantes telles que $\forall n\ge 1, \mu_{X_n}=\mu_n$\\
+        Si $x\in[0,1[$, alors il existe un unique développement dyadique propre: c'est à dire qu'il existe une unique suite $(r_n)_n\in\{0,1\}^\N$ qui n'est pas constante égale à 1 à partir d'un certain rang telle que $x=\sum_{n\ge 1}r_n 2^{-n}$.\\
+        Explicitement: $r_n=\lfloor 2^nx\rfloor-2\lfloor Z^{n-1}x\rfloor,n\ge 1$
+    \end{tm}
+
+    \begin{lm}{}{}
+        Soit $U$ une variable aléatoire à valeurs dans $[0,1[$. On note $(X_n)_{n\ge 1}$ son développement dyadique propre $U$ est de loi uniforme sur $[0,1[$ \ssi $(X_n)_{n\ge 1}$ sont indépendants et de loi de Bernouilli de paramètre $1/2$
+    \end{lm}
+
+    \begin{proof}
+        Soit $(r_k)_{1\le k\le n}\in \{0,1\}^n$. On a: $\forall k\le n, X_k=r_k\iff U\in [x,x+2^{-n}[$ où $x=\sum_{k=1}^{n}r_k 2^{-k}$.\\
+        En effet: par unicité du développement dyadique propre,
+        \[\forall k\le n, X_k=r_k\overset{(*)}{\iff} U=x+\sum_{k>n} X_k 2^{-k}\iff U\in [x,x+2^{-n}[\]
+        car $\sum_{k>n}X_k 2^{-k}<2^{-n}$ et l'égalité impliquerait que  $X_k=1,\forall k>n$\\
+        $\implies$ Supposons que $U$ est de loi uniforme sur $[0,1[$. Soit $(r_k)_{k\le n}\in \{0,1\}^n$.\\
+        Par $(*)$, $\Pa(X_k=r_k,\forall k\le n)=\Pa(U\in [x,x+2^{-n}[)$ où $x=\sum_{k=1}^{n}r_k2^{-k}$. Comme $x+2^{-n}\le 1$, on a $\Pa(X_k=r_k,\forall k\le n)\overset{(**)}{=}2^{-n}$\\
+        Fixons $r_k\in \{0,1\}$. En sommant sur tous les $r_k\in\{0,1\},k'\neq k$, alors on obtient $\Pa(X_k=r_k)=1/2$ donc $X_k\sim \text{Ber}(1/2,\forall k)$\\
+        En revenant à $(**)$, on trouve:
+        \[\Pa(X_k<r_k,\forall k\le n)=\prod_{k=1}^{n}\Pa(X_k=r_k),\forall (r_k)_{k\le n}\in \{0,1\}^n\]
+        Les variables aléatoires $(X_k)_{k\le n}$ sont indépendantes pour tout $n\ge 1$. C'est-à-dire $(X_k)_{k\in \N}$ sont indépendantes.\\
+        $\impliedby$ Supposons que $(X_k)_{k\ge 1}$ forme une suite de variables aléatoires iid de loi Ber$(1/2)$\\
+        Soient $n\in \N$ et $m\in \{0,\ldots,2^n-1\}$
+        \[\Pa(U\in\left[\frac{m}{2^n},\frac{m+1}{2^n}\right[)=\Pa(U\in [x,x+2^n[)\text{ où $x=m2^{-n}$}\]
+        \begin{itemize}
+            \item La classe $\{[\frac{m}{2^n},\frac{m+1}{2^n}[\},m\in\{0,\ldots,2^{n}-1,n\in\N\}$ est stable par intersection finie et engendre la tribu borélienne sur $[0,1[$
+            \item Par le théorème d'unicité de la mesure $\mu_U=\lambda_{|[0,1[}$
+        \end{itemize}
+    \end{proof}
+
+    \begin{lm}{}{}
+        Soit $U$ variable aléatoire de loi uniforme sur $[0,1[$. Il existe une suite de fonctions boréliennes $(f_n)_n$ telle que $(f_n(U))_{n\ge 1}$ sont iid de loi uniforme sur $[0,1[$
+    \end{lm}
+
+    \begin{proof}
+        Pour tout $x\in[0,1[$, on note $g_k(x)$ le k-ième coefficient du développement dyadique propre de $x$. Réarrangeons les $(g_k)_{k\in \N^*}$ en tableau $(h_{n,m})_{n,m\in \N^*}$.\\
+        Plus précisemment, on choisit une bijection $\funto{\varphi}{(\N^*)^2}{\N^*}$. On pose $h_{n,m}=g_{\varphi(n,m)},\forall n,m\in \N^*$
+        \begin{itemize}
+            \item Soit $f_n(x)=\sum_{n\ge 1} h_{n,m}(x)2^{-m},n\in \N^*,x\in [0,1[$
+            \item Les $g_k$ sont des fonctions boréliennes car $g_k(x)=\lfloor 2^kx\rfloor-2\lfloor 2^{k-1}x\rfloor$. Donc les $h_{n,m}$ le sont aussi.
+            \item On en déduit que $f_n$ est borélienne car limite de fonctions boréliennes.
+            \item On sait d'après le lemme 1, que $g_k(u)_{k\ge 1}$ sont indépendantes.\\
+            \item Par la propriété de regroupement par paquet, $\sigma(f_{n,m}(u),m\in \N^*)$ sont des tribus indépendantes.
+            \item Donc $(f_n(u))_{n\in \N^*}$ sont indépendantes (car $f_n(u)$ est mesurable par rapport à $\sigma(f_{n,m}(u),m\in \N^*)$)
+            \item Soit $n\in \N^*$. On sait que $(f_{n,m}(u)_{m\ge 1})$ sont iid de loi Ber$(1/2)$.
+            \item On montre que presque surement, $(h_{n,m}(u))_{m\ge 1}$ n'est pas constante égale à 1 \apcr.
+            \item Donc $(h_{n,m}(u))_{m\ge 1}$ sont égaux aux coefficients du développement dyadique propre de $f_n(u)$ presque surement.
+        \end{itemize}
+        Par le lemme $1$, on en déduit que $f_n(u)$ est de loi uniforme sur $[0,1[$
+    \end{proof}
+
+    \begin{proof}
+        Preuxe du Théorème d'existence: Soit $(U_n)_\nN$ une suite de variables aléatoires iid de loi uniforme sur $[0,1[$. Posons: $X_n=F_{\mu_n}^{(-1)}(U_n),\nN$. Alors $(X_n)_\nN$ est une suite de variables aléatoires indépendantes $(\sigma(X_n)\subset \sigma(U_n))$.\\
+        On a vu au chapitre III que $X_n$ a pour loi $\mu_n$
+    \end{proof}
+
+    \section{Loi de Kolmogorov du $0-1$}
+
+    Soit $(\Fr_n)_\nN$ une suite de tribus. La tribu asymptotique est définie par 
+    \[F_\infty=\bigcap_{\nN}\bigvee_{m>n}\Fr_m\]
+    Soient $\Fr_n=\sigma(X_n)$ où $X_n$ est une certaine variable aléatoire.\\
+    Intuitivement, $A\in F_\infty$ si le fait de changer un nombre fini de variables aléatoires $X_n$, ne change pas la réalisation de $A$
+
+    \begin{ex}{}{}
+        Soient $(X_n)_\nN$ des variables aléatoires réelles et $\Fr_n=\sigma(X_n),\forall \nN$. On note $S_n=\sum_{k\le n} X_k,\forall\nN$.
+        \begin{enumerate}
+            \item $\{(S_n)_\nN,\text{ converge dans $\R$}\}$\\
+            $(S_k)_{k\in \N}$ converge dans $\R \iff (S_{n+k})_{k\in \N}$ converge dans $\R,\forall n\in \N \iff (S_{n+k}-S_n)_{k\in \N}$ converge dans $\R,\forall n\in \N$\\
+            Comme $\{(S_{n+k}-S_n)_{k\in \N}=(\sum_{m=n+1}^{n+k}X_m)_{k\in \N}\text{ converge dans $\R$}\}\in \sigma(X_m,m>n)=\bigvee_{m>n}\Fr_m$\\
+            On en déduit que $\{(S_n)_n\text{ converge dans $\R$}\}\in T_{\infty}$
+            \item En général, $\limsup S_n$ n'est pas $T_\infty$-mesurable.
+            \item Si $(c_n)_n$ est une suite déterministe telle que $c_n\to \infty$, alors $\limsup (S_n/c_n)$ est $T_\infty$-mesurable donc $\limsup S_n/c_n$ est $T_\infty$-mesurable.
+        \end{enumerate}
+    \end{ex}
+
+    \begin{df}{Limites supérieure et inférieure}{}
+        Soit $(A_n)_\nN$ une suite d'évènements. 
+        \begin{itemize}
+            \item On définit la limite supérieure des $A_n$ par:
+            \[\limsup A_n=\bigcap_n\bigcup_{m\ge n} A_m\]
+            Et on a que $\omega\in \limsup A_n\iff \omega\in A_n$ pour une infinité de $n$ $\iff \omega\in A_n$ infiniment souvent.
+            \item On définit la limite inférieure des $A_n$ par:
+            \[\liminf A_n=\bigcup_n\bigcap_{m\ge n}A_m\]
+        \end{itemize}
+    \end{df}
+    
+    \begin{ex}{}{}
+        Soient $(\Fr_n)_n$ une suite de tribus et $(A_n)_n$ une suite d'évènements telle que $A_n\in \Fr_n,\forall n\in \N$.\\
+        Alors $\limsup A_n,\liminf A_n\in T_{\infty}$(Laisser en exercice)
+    \end{ex}
+
+    \begin{df}{}{}
+        Soit $\Gr$ une sous-tribu. On dit que $\Gr$ est $\Pa$-triviale Si
+        \[\forall A\in \Gr,\Pa(A)\in \{0,1\}\]
+    \end{df}
+
+    \begin{lm}{}{}
+        Soit $\Gr$ une sous-tribu. $\Gr$ est $\Pa$-triviale \ssi $\Gr \inde \Gr$\\
+        Si $\Gr$ est $\Pa$-triviale et $X$ variable aléatoire réelle $\Gr$-mesurable alors $\exists c\in \R, X=c$ presque surement.
+    \end{lm}
+
+    \begin{proof}
+        $\implies$ Supposons que $\Gr$ est $\Pa$-triviale. Soient $A,B\in \Br$, on a $\Pa(A),\Pa(B)\in\{0,1\}$ donc $\Pa(A)\times \Pa(B)\in \{0,1\}$. Par disjonction de cas et par inclusion des $A\cap B\subset A,B$ on obtient que $A\inde B$ donc $\Gr\inde \Gr$\\
+        $\impliedby$ Supposons que $\Gr\inde\Gr$. Soit $A\in \Gr$, on a $\Pa(A\cap A)=\Pa(A) \Pa(A)$ c'est à dire que $\Pa(A)=\Pa(A)^2$ d'où $\Pa(A)\in\{0,1\}$.\\
+        Supposons que $\Gr$ est $\Pa$-triviale et que $X$ est une variable aléatoire réelle $\Gr$-mesurable. En TD, on a vu que $X$ admet une médiane, donc qu'il existe $m\in \R,\Pa(X\ge m)\ge 1/2,\Pa(X\le m)\ge 1/2$.\\
+        Or $X$ est $\Gr$-mesurable, donc $\{X\le m\},\{X\ge m\}\in \Gr$. Comme $\Gr$ est $\Pa$-triviale, on déduit que $P(X\ge m)\in \{0,1\},P(X\le m)\in \{0,1\}$ mais par continuité $\Pa(X\ge m)>0,\Pa(X\le m)>0$
+    \end{proof}
+
+    \begin{exo}{}{}
+        Soient $\Gr$ une sous-tribu $\Pa$-triviale et $X$ une variable aléatoire à valeurs dans $E$ espace métrique séparable $\Gr$-mesurable.\\
+        Montrer que $\exists c\in E, X=c$ presque surement.\\
+        Indication: Construire pour tout $n\ge 1$, une partition $(B_{nj})_{j\in \N}$ de $E$ telle que:
+        \begin{itemize}
+            \item $\forall j\in \N,B_{n,j}\in B(E)$
+            \item $\forall j\in \N, \text{diam} (B_{n,j})\le \frac{1}{n}$ c'est à dire $\sup_{x,y\in B_{n,j}}d(x,y)\le \frac{1}{n}$
+        \end{itemize}
+    \end{exo}
+
+    \begin{prop}{Loi du $0-1$ de Kolmogorov}{}
+        Soit $(\Fr_n)_n$ une suite de sous-tribus indépendantes. Alors $T_\infty:=\bigcap_{n\in \N} \bigvee_{m>n} \Fr_m$ est $\Pa$-triviale.\\
+        Conséquence: \begin{enumerate}
+            \item Soit $(A_n)_\nN$ des évènements indépendants tels que $\Pa(\limsup A_n)\in \{0,1\}$ et $\Pa(\liminf A_n)\in \{0,1\}$.
+            \begin{itemize}
+                \item Posons $\Fr_n=\sigma(\{A_n\}),\nN$. Par la propriété d'extension, les tribus $\Fr_n,\nN$, sont indépendantes car les $A_n,\nN$, sont des évènements indépendants.
+                \item Or $\limsup A_n$ et $\liminf A_n$ sont des éléments de la tribus asymptotique associée aux $(\Fr_n)_n$ car $A_n\in \Fr_n,\forall n$.
+            \end{itemize}
+            \item Soit $(X_n)_\nN$ variables aléatoires indépendantes. On pose $S_n=\sum_{k=0}^{n}X_k,\nN$.\\
+            Notons $\Fr_n=\sigma(X_n),\nN$. On a que $(\Fr_n)_n$ sont indépendantes. On a vu que $\{(S_n/n)_n\text{ converge dans $\R$}\}\in T_\infty$ (Laisser en exercice) et $\limsup (S_n/n)$ est $T_\infty$-mesurable. Par la loi du $0-1$, soit presque sûrement $(S_n/n)$ converge dans $\R$, soit presque sûrement $(S_n/n)_n$ diverge\\
+            Si presque sûrement $(S_n/n)_n$ converge dans $\R$ alors presque sûrement $\lim_n (S_n/n)=\limsup(S_n/n)$. Or $\limsup S_n/n$  est $T_\infty$-mesurable. Par le lemme 3, il existe $c\in \R\cup\{+\infty\}$, presque sûrement $\limsup(S_n/n)=c$. Donc $\exists c\in \R,\lim_n (S_n/n)=c$ presque sûrement
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        Il suffit de montrer que $T_\infty\inde T_\infty$ d'après le lemme 3. Pour la propriété de regroupement par pacquets, pour tout $n\in \N$, les tribus $\Fr_0,\ldots,\Fr_n,\bigvee_{m>n}\Fr_m$ sont indépendantes. Comme $T_\infty\subset \bigvee_{m>n}\Fr_m$, on en déduit que $\Fr_0,\ldots,\Fr_n,T_\infty$ sont indépendantes pour tout $\nN$.\\
+        Donc $(\Fr_n)_\nN,T_\infty$ sont indépendantes. De nouveau par regroupement par paquets,
+        \[\bigvee_\nN \Fr_n\inde T_\infty\text{. Or } T_\infty\subset \bigvee_\nN \Fr_n\]
+        Donc $T_\infty\inde T_\infty$
+    \end{proof}
+
+    \section{Lemmes de Borel-Cantelli}
+
+    \begin{lm}{Borel-Cantelli}{}
+        Soit $(A_n)_n$ une suite d'évènements
+        \begin{enumerate}
+            \item Si $\sum_{n}\Pa(A_n)<+\infty$ alors $\Pa(\limsup A_n)=0$
+            \item Si $\sum_{n} \Pa(A_n)=+\infty$ et les évènements $(A_n)_\nN$ sont indépendants alors $\Pa(\limsup A_n)=1$
+        \end{enumerate}
+    \end{lm}
+
+    \begin{re}{}{}
+        \begin{itemize}
+            \item $\sum_n\Pa(A_n)<+\infty$ est une condition sur la vitesse de convergence des $\Pa(A_n)$ vers $0$. $(1)$ dit: si la probabilité de réalisation de $A_n$ est trop petite, alors la proba qu'une infinité de $A_n$ se réalise est nulle.
+            \item $(1)$ et $(2)$ donnent l'équivalence lorsque les $A_n,n\in \N$ sont indépendants: $\sum_{n}\Pa(A_n)\overset{<}{=}+\infty$ \ssi $\Pa(\limsup A_n)=\overset{0}{1}$
+        \end{itemize}
+        $\implies (2)\impliedby$ la contraposée de $(1)$
+    \end{re}
+
+    \begin{proof}
+        $(1)$ Comme $\bigcup_{m\ge n} A_m\searrow \liminf A_n$. Par continuité:
+        \[\Pa(\liminf A_n)=\lim_n \Pa(\bigcup_{m\ge n}A_m)\le \lim_{n\to +\infty}\sum_{m\ge n}\Pa(A_m)\]
+        Or $\sum_n \Pa(A_n)<+\infty$ donc $\lim_{n\to +\infty}\sum_{m\ge n}\Pa(A_n)=0$. D'où $\Pa(\limsup A_n)=0$\\
+        $(2)$ Supposons que $(A_n)_n$ est une suite d'évènements indépendants et que $\sum_n \Pa(A_n)=+\infty$. Il suffit de montrer que $\Pa(\liminf A_n^C)=0$. Comme $\bigcap_{m\ge n}A_m^C\nearrow \liminf A_n$ lorsque $n\nearrow +\infty$.\\
+        Par continuité, $\Pa(\liminf A_n^C)=\lim_{n}\Pa(\bigcap_{m\ge n}A_m^C)$. On montre que $\Pa(\bigcap_{m\ge n}A_m^C)=0,\forall n\in \N$\\
+        $(\limsup A_n)^C=(\bigcap_n\bigcup_{m\ge n}A_n)^C=\bigcup_n\bigcap_{m\ge n}A_m^C=\liminf A_m^N$. Soit $n\in \N$, par continuité décroissante, $\Pa(\bigcap_{m\ge n}A_m^C)=\lim_{N\to \infty}\Pa(\bigcap_{m\ge n}^N A_m^C)=\lim_{N\to +\infty}\prod_{m\ge n}^{N}(1-\Pa(A_m))$.\\
+        Or $1-x\le e^{-x},\forall x\in \R$, donc $\prod_{m\ge n}^{N}(1-\Pa(A_m))\le e^{-\sum_{m\ge n}^{N}\Pa(A_m)},\forall N\ge n$. Or $\sum_m\Pa(A_m)=+\infty$ donc $\sum_{m\ge n}\Pa (A_m)=+\infty$.\\
+        Donc $e^{-\sum_{m\ge n}^{N}(A_m)}\searrow 0$ lorsque $N\nearrow +\infty$. D'où $\Pa(\bigcap_{m\ge n}A_m^C)=0\forall n$
+    \end{proof}
+
+    \begin{exo}{}{}
+        
+    \end{exo}
+
+    \begin{exo}{}{}
+        Soit $(X_n)_n$ variables aléatoires réelles
+        \[\text{Si }\forall \epsilon>0,\sum_n \Pa(|X_n|>\epsilon)<+\infty\text{ alors }X_n\to 0\text{ presque sûrement}\]
+    \end{exo}
+    
+    \chapter{Conditionnement}
+
+    \section{Conditionnement discret}
+
+    On se place sur un espace de probabilité $(\Omega,\Fr,\Pa)$
+
+    \begin{df}{}{}
+        Soit $B\in \Fr,\Pa(B)>0$. On peut définir $\Pa(\cdot |B)$ la mesure de probabilité sachant $B$,
+        \[\Pa(A|B)=\frac{\Pa(A\cap B)}{\Pa(B)},A\in \Fr\]
+        On définit l'espérance conditionnelle de $X$ sachant $B$ est définie par:
+        \[\Ea(X|B)=\frac{\Ea[X\1_B]}{\Pa(B)},\text{ pour $X$ intégrable ou positive}\]
+        Soit $Y$ une variable aléatoire discrète à valeurs dans $E$ dénombrable. On pose $E'$ tel que pour tout $y\in E$, $\Pa(Y=y)>0$. Si $X$ est une variable aléatoire intégrable, alors on définit:
+        \[\Ea[X|Y]=\sum_{y\in E'}\1_{Y=y}\Ea[X|Y=y]\]
+    \end{df}
+
+     \begin{prop}{}{}
+        Soit $X$ variable aléatoire intégrable et $\Gr\subset \Fr$ une sous-tribu. Il existe $Z$ variable aléatoire $\Gr$-mesurable et intégrable telle que
+        \[\Ea[X\1_B]=\Ea[Z\1_B],\forall B\in \Gr\]
+        $Z$ est unique presque sûrement et est notée $\Ea(X|\Gr)$
+    \end{prop}
+
+    \begin{proof}
+        \begin{itemize}
+            \item Comme $X_+,X_-\in L^1$, il existe $Z',Z''$ variables aléatoires $\Gr$-mesurables intégrables telle que:
+            \[\forall B\in \Gr, \Ea(X_+\1_B)\overset{(1)}{=}\Ea[Z'\1_B]\text{ et }\Ea(X_-\1_B)\overset{(2)}{=}\Ea[Z''\1_B]\]
+            Posons $Z=Z'-Z''$. $Z$ est $\Gr$-mesurable intégrable car $Z',Z''$ le sont. Par $(1)$-$(2)$ et par linéarité de $\Ea$:
+            \[\Ea[X\1_B]=\Ea[X_+\1_B]-\Ea[X_- \1_B]=\Ea[Z'\1_B]-\Ea[Z''\1_B]=\Ea[Z\1_B]\]
+            Par le théorème de Fubini-Lebesgue:
+            \begin{align*}
+                \Ea[Z\1_B]&=\sum_{n\in I}\Ea[Z\1_{A_n}]\\
+                &=\sum_{\substack{n\in I\\ P(A_n)>0}}\Ea [Z\1_{A_n}]\\
+                &=\sum_{\substack{n\in I\\P(A_n)>0}} \Ea[Ea[X|A_n]\1_{A_n}]\\
+                &=\sum_{\substack{n\in I\\ P(A_n)>0}}\Ea(X|A_n)P(A_n)\\
+                &=\sum_{\substack{n\in I\\ P(A_n)>0}}\Ea[X \1_{A_n}]\\
+                &=\sum_{n\in I} \Ea[X\1_{A_n}]\\
+                &=\Ea[X\1_B]
+            \end{align*}
+        \end{itemize}
+    \end{proof}
+
+    \begin{ex}{}{}
+        Soit $\Gr$ une sous-tribu engendrée par $\Pi=\{A_n,n\in \N\}$ une partition de $\Omega$ en évènements.\\
+        Soit $X$ variable aléatoire intégrable
+        \[\Ea(X|\Gr)=\sum_{\substack{n\in \N}\\ P(A_n)>0}\1_{A_n}\Ea(X|A_n)\text{ presque sûrement}\]
+        Notons $Z=\sum_{\substack{n\in \N}\\ P(A_n)>0}\1_{A_n}\Ea(X|A_n)$ bien définie car les $(A_n)_n$ sont deux à deux disjoints\\
+        $Z$ est $\Gr$-mesurable car $A_n\in \Gr,\forall n\in \N$\\
+        $\Ea[|Z|]\le \Ea(\sum_{\substack{n\in \N}\\ P(A_n)>0}\1_{A_n}\Ea(X|A_n))\le \sum_{\substack{n\in \N}\\ P(A_n)>0}P(A_n)\Ea(|X|| A_n)=\sum_{\substack{n\in \N}\\ P(A_n)>0}\Ea(|X|\1_{A_n})$\\
+        $=\sum_{n} \Ea(|X|\1_{A_n})=\Ea(\sum_n \1_{A_n}|X|)=\Ea(|X|)<+\infty$ car $\Omega=\bigcup_n A_n$. Donc $Z$ est intégrable.\\
+        Soit $B\in \Gr$, il existe $I\subset \N,B=\bigsqcup_n\in I A_n$ (cf chapitre 1), on a $\1_B=\sum_{n\in I}\1_{A_n}$\\
+        Par le théorème de Fubini-Lebesgue,\\
+        $\Ea (Z\1_B)=\sum_{n\in I}\Ea(Z\1_{A_n})=\sum_{\substack{n\in I\\P(A_n)>0}}\Ea(Z\1_{A_n})=\sum_{\substack{n\in I\\P(A_n)>0}}\Ea(\Ea(X|A_n)\1_{A_n})=\sum_{\substack{n\in I\\P(A_n)>0}}\Ea(X|A_n)P(A_n)=\sum_{\substack{n\in I\\P(A_n)>0}}\Ea(X\1_{A_n})=\sum_{\substack{n\in I}}\Ea(X\1_{A_n}=\Ea(X\1_B))$\\
+        Cette expression de $\Ea(X|\Gr)$ est cohérente avec celle de $\Ea(X|Y)$ lorsque $Y$ est discrète (à valeurs dans $E$):
+        \[\Gr=\sigma(\{\{Y=y\},y\in E\}),\Pi=\{\{Y=y\},y\in E\}\]
+    \end{ex}
+
+    \begin{prop}{}{}
+        Soient $X$ variable aléatoire intégrable et $\Gr$ une sous-tribu
+        \begin{enumerate}
+            \item Si $X$ est $\Gr$-mesurable alors $\Ea(X|\Gr)=X$ presque sûrement
+            \item Soient $Y$ variable aléatoire intégrable et $\alpha,\beta\in \R$
+            \[\Ea(\alpha X+\beta Y|\Gr)=\alpha\Ea(X|\Gr)+\beta\Ea(Y|\Gr)\text{ presque sûrement}\]
+            \item $\Ea[\Ea[X|\Gr]]=\Ea[X]$
+            \item Si $Y\ge X$ presque sûrement, alors $\Ea(Y|\Gr)\ge \Ea(X|\Gr)$ presque sûrement
+            \item $\left|\Ea(X|\Gr)\right|\le \Ea[|X||\Gr]\text{ presque sûrement}$
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item Supposons $X$ est $\Gr$-mesurable. Par définition de l'espérance conditionnelle $X=\Ea(X|\Gr)$ presque sûrement. Proposition de moyennisation de $\Ea(X|\Gr)$
+            \item $Z=\alpha\Ea(X|\Gr)+\beta \Ea(Y|\Gr)$. $Z$ est $\Gr$-mesurable intégrable car $\Ea(X|\Gr)$ et $\Ea(Y|\Gr)$ le sont. Soit $B\in \Gr$, par linéarité et définition de l'espérance conditionelle:
+            \[\Ea(Z\1_B)=\alpha\Ea(\Ea(X|\Gr)\1_B)+\beta\Ea(\Ea(Y|\Gr)\1_B)=\alpha\Ea(X\1_B)+\beta\Ea(Y\1_B)=\Ea((\alpha X+\beta Y)\1_B)\]
+            Donc $Z=\Ea(\alpha X+\beta Y|\Gr)$ presque sûrement.
+            \item On prend $B=\Omega\in \Gr$ dans la définition de $\Ea(X|\Gr)$, on obtient $\Ea[X]=\Ea[\Ea(X|\Gr)]$
+            \item Grâce à la linéarité, il suffit de montrer que si $Y\ge 0$ presque sûrement alors $\Ea(Y|\Gr)\ge 0$ presque sûrement. On a $\forall B\in \Gr,\Ea(\Ea(Y|\Gr)\1_B)=\Ea(Y\1_B)\overset{(*)}{\ge}0$. Posons $B=\{\Ea(Y|\Gr)<0\}\in \Gr$ car $\Ea(X|\Gr)$ est mesurable. On obtient $\Ea(\Ea(Y|\Gr)\1_B)\le 0$ par définition de $B$. Par $(*)$, on a aussi $\Ea(\Ea(Y|\Gr)\1_B)\ge 0$. Donc $\Ea(\Ea(X|\Gr)\1_B)=0$.\\
+            Donc $\Ea[(Y|\Gr)\1_B]=0$ presque partout. Or $\{\Ea(Y|\Gr)\1_B=0\}\subset B^C$. Donc $P(B^C)=1$ $\iff \Ea(Y|\Gr)\ge 0$ presque sûrement
+            \item $-|X|\le X\le |X|$, par $(4)$,
+            \[\Ea(-|X||\Gr)\le \Ea(|X||\Gr)\le \Ea(|X||\Gr)\text{ presque sûrement}\]
+            Par $(2)$, $\Ea(-|X||\Gr)=-\Ea(|X||\Gr)$ presque sûrement donc $-\Ea(|X||\Gr)\le \Ea(X|\Gr)\le \Ea(|X||\Gr)$
+        \end{enumerate}
+    \end{proof}
+
+    \begin{prop}{}{}
+        Soient $X$ variable aléatoire à valeurs dans $[0,+\infty]$ et $\Gr$ une sous-tribu. Il existe $Z$ une variable aléatoire $\Gr$-mesurable à valeurs dans $[0,+\infty]$ telle que
+        \[\forall B\in \Gr,\Ea(X\1_B)=\Ea(Z\1_B)\]
+        La variable aléatoire $Z$ est unique presque sûrement. Elle est appelée espérance conditionelle de $X$ sachant $\Gr$ et est notée $\Ea(X|\Gr)$.
+    \end{prop}
+
+    \begin{proof}
+        Unicité: Soient $Z,Z'$ 2 versions de $\Ea(X|\Gr)$. On a: $\forall B\in \Gr,\Ea(Z\1_B)=\Ea(Z'\1_B)$\\
+        Par symétrique des rôles de $Z$ et $Z'$, il suffit de montrer que $Z=Z'$ presque sûrement. Or 
+        \[\{Z'<Z\}=\bigcup_{\substack{a,b\in \Q_+\\ a<b}}\{Z'<a<b<Z\}\text{ par densité de $\Q$ dans $\R$}\]
+        Comme $\Q^2$ est dénombrable, il suffit de montrer que $P(Z'<a<b<Z)=0\forall a,b\in\Q,a<b$\\
+        En appliquant $(*)$ à $B=\{Z'<a<b<Z\}\in \Gr$ car $Z,Z'$ sont $\Gr$-mesurables
+        \[bP(B)<\Ea(Z\1_B)=\Ea(Z'\1_B)\le a P(B)\]
+        Or $a<b$ donc $P(B)=0$\\
+        Existence: Posons $X_n=\min(X,n),n\in \N$. On a: $X_n\in L^1,\forall n\in \N$. Donc $\Ea(X_n|\Gr)$ bien définie $\forall n\in \N$.\\
+        Comme $(X_n)_n$ est croissante, $(\Ea(X_n|\Gr))_\nN$ l'est aussi presque sûrement. Posons $Z=\lim_{n\to+\infty}\Ea(X_n|\Gr)$.\\
+        $Z$ est $\Gr$-mesurable car limite de variables aléatoires $\Gr$-mesurables et positives car $\Ea(X_n|\Gr)\ge 0$ presque sûrement par la propriété précédente.\\
+        Soit $B\in \Gr$, par le TCM et la définition de l'espérance conditionnelle,
+        \[\Ea(Z\1_B)=\Ea(\lim_{n\to +\infty}(\Ea(X_n|\Gr)\1_B))=\lim_{n\to \infty} \Ea(\Ea(X_n|\Gr)\1_B)=\lim_{n\to \infty}\Ea(X_n \1_B)=\Ea(\lim_{n\to \infty}X_n \1_B)=\Ea(X\1_B)\text{ car $X_n\nearrow X$}\]
+    \end{proof}
+
+    \begin{prop}{}{}
+        Soient $X,Y$ variables aléatoires positives et $\alpha,\beta \ge 0$ et $\Gr$ sous-tribu
+        \begin{enumerate}
+            \item Si $X$ est $\Gr$-mesurable, alors $\Ea(X|\Gr)=X$ presque sûrement
+            \item $\Ea(\alpha X+\beta Y)|\Gr=\alpha \Ea(X|\Gr)+\beta \Ea(Y|\Gr)$ presque sûrement
+            \item Si $Y\ge X$ presque sûrement, alors $\Ea(Y|\Gr)\ge \Ea(X|\Gr)$ presque sûrement
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        $(1)$ et $(2)$ identiques au cas intégrable.\\
+        $(3)$ On a vu dans la preuve de la propriété 4,
+        \[\Ea(X|\Gr)=\lim_{n\to \infty}\Ea(\min(X,n)|\Gr)\text{ presque sûrement}\qquad \Ea(Y|\Gr)=\lim_{n\to \infty}\Ea(\min(Y,n)|\Gr)\]
+        Comme $x\mapsto \min(x,n)$ est croissante, $\forall n\in \N, \min(Y,n)\ge \min (X,n)$ presque sûrement. Par $(4)$ de la propriété 3, on obtient:
+        \[\forall n\in \N, \Ea(\min(Y,n)|\Gr)\Gr \Ea(\min(X,n)|\Gr)\text{ presque sûrement}\]
+        En passant à la limite, on obtient l'inégalité voulu
+    \end{proof}
+
+    \section{Propriétés de l'espérance conditionnelle}
+
+    La propriété de "moyennisation" admet une version fonctionnelle que l'on utilise souvent en pratique.
+
+    \begin{prop}{}{}
+        Soient $\Gr$ une sous-tribu, $X$ une variable aléatoire, $Y$ une variable aléatoire $\Gr$-mesurable
+        \begin{enumerate}
+            \item Si $X$ et $Y$ sont positives alors
+            \[\Ea(XY)=\Ea(\Ea(X|\Gr)Y)\]
+            \item Si $X$ et $XY$ sont intégrables, alors $\Ea(X|\Gr)Y$ est intégrable et
+            \[\Ea(XY)=\Ea(\Ea(X|\Gr)Y)\]
+            En particulier, si $X$ est intégrable et $Y$ est $\Gr$-mesurable bornée, alors
+            \[\Ea(XY)=\Ea(\Ea(X|\Gr)Y)\]
+        \end{enumerate}
+    \end{prop}
+
+    \begin{re}{}{}
+        Lorsque $Y=\1_B,B\in \Gr$, on retrouve la propriété de "moyennisation"
+    \end{re}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item Par définition de l'espérance conditionnelle et linéarité de l'espérance, on sait que $\Ea(XY)=\Ea(\Ea(X|\Gr)Y)$ lorsque $Y$ est une fonction étagée positive $\Gr$-mesurable. Soit $Y$ $\Gr$-mesurable positive. Il existe $(Y_n)_n$ une suide de fonctions étagées positives $\Gr$-mesurables telles que $Y_n\nearrow Y$. Pour tout $n\in \N$, $\Ea(XY_n)=\Ea(\Ea(X|\Gr)Y_n)$. En passant à la limite et en utilisant le TCM, on obtient
+            \[\Ea(XY)=\Ea(\Ea(X|\Gr)Y)\]
+            \item Supposons $X,XY\in L^1$. Par l'inégalité triangulaire conditionnelle:
+            \[\Ea (|\Ea(X|\Gr)Y|\le \Ea(\Ea(|X||\Gr)|Y|)\]
+            Comme $|Y|$ est $\Gr$-mesurable positive, par $(1)$, on obtient:
+            \[\Ea(\Ea(|X||\Gr)|Y|)=\Ea(|X||Y|)\]
+            D'où
+            \[\Ea(\Ea(X|\Gr)Y)\le \Ea(|XY|)<+\infty\]
+            Donc $\Ea(X|\Gr)Y\in L^1$. On sait qu'il existe $(Y_n)_n$ une suite de variables aléatoires $\Gr$-mesurables étagées telles que $Y_n\Longrightarrow Y, |Y_n|\le |Y|,\forall n\in \N$. Par définition de l'espérance conditionnelle et linéarité de l'espérance, $\forall n\in \N, \Ea(XY_n)=\Ea(\Ea(X|\Gr) Y_n)$\\
+            On a: $XY_n\underset{n\to \infty}{\longrightarrow}XY$, $|XY_n|\le |XY|\in L^1$.\\
+            De même $\Ea(X|\Gr)Y_n\underset{n\to +\infty}{\Longrightarrow}\Ea (X|\Gr)Y$.
+            \[|\Ea(X|\Gr)Y_n|\le |\Ea(X|\Gr)Y|\in L^1\]
+            Le TCD permet de conclure.
+        \end{enumerate}
+    \end{proof}
+
+    \begin{re}{}{}
+        Cette propriété implique la caractérisation de l'espérance conditionnelle suivante:
+        \begin{enumerate}
+            \item Soient $X$ variable aléatoire positive et $\Gr$ une sous-tribu. Une variable aléatoire $Z$ $\Gr$-mesurable positive est une version de $\Ea(X|\Gr)$ \ssi pour toute variable aléatoire $\Gr$-mesurable positive $Y$,
+            \[\Ea(XY)=\Ea(ZY)\]
+            \item Soient $X$ variable aléatoire intégrable et $\Gr$ une sous-tribu. Une variable aléatoire $Z$ $\Gr$-mesurable intégrable est une version de $\Ea(X|\Gr)$ \ssi pour toute variables aléatoires $Y$ $\Gr$-mesurable bornée $\Ea(XY)=\Ea(ZY)$. Cette caractérisation "fonctionnelle" est souvent préférée en pratique.
+        \end{enumerate}
+    \end{re}
+
+    Les théorèmes de convergence de la théorie de La mesure ont tous une "version conditionnelle"
+
+    \begin{prop}{Théorème de convergence monotone conditionnel}{}
+        Soient $(X_n)_n$ une suite de variables aléatoires positives et $\Gr$ une sous-tribu. Si $X_n\nearrow X$ presque sûrement, alors $\Ea(X_n|\Gr)\nearrow \Ea(X|\Gr)$ presque sûrement.
+    \end{prop}
+
+    \begin{prop}{Lemme de Fatou conditionnel}{}
+        Soit $(X_n)_n$ une suite de variables aléatoires positives. Alors
+        \[\Ea(\liminf X_n|\Gr)\le \liminf \Ea(X_n|\Gr)\text{ presque sûrement}\]
+    \end{prop}
+
+    \begin{prop}{Théorème de convergence dominée contitionnel}{}
+        Soient $(X_n)_n$ une suite de variables aléatoires et $Y$ une variable aléatoire intégrable. Si $X_n\to X$ presque sûrement et $|X_n|\le Y,\forall n\in \N$.\\
+        Alors $\Ea(X_n|\Gr)\underset{n\to +\infty}{\longrightarrow}\Ea(X|\Gr)$ presque sûrement.
+    \end{prop}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item Supposons que $(X_n)_n$ est une suite de variables aléatoires positives et que $X_n\nearrow X$ presque sûrement. Par la proriété de croissance de l'espérance conditionnelle, $(\Ea(X_n|\Gr))_n$ est une suite croissante presque sûrement de variables aléatoires positives.\\
+            Notons $Z$ une variable aléatoire $\Gr$-mesurable telle que $Z=\lim_{n\to +\infty}\Ea (X_n|\Gr)$ presque sûrement. Soit $B\in \Gr$, $\Ea (Z\1_B)=\Ea (\lim_{n\to +\infty}(\Ea(X_n|\Gr)\1_B))=\lim_{n\to +\infty} \Ea(\Ea(X_n|\Gr)\1_B)$ et par le TCM:
+            \begin{align*}
+                \Ea (Z\1_B)&=\lim_{n\to +\infty} \Ea(X_n \1_B) \text{ par définition de l'espérance conditionnelle}\\
+                &=\Ea(\lim_{n\to +\infty X_n \1_B})\text{ Par le TCM}\\
+                &= \Ea(X \1_B)
+            \end{align*}
+            Donc $Z=\Ea(X|\Gr)$ presque sûrement
+            \item Soit $(X_n)_n$ une suite de variables aléatoires positives. Comme $\inf_{m\ge n}X_m \nearrow \liminf X_n$, par le TCM conditionnel,
+            \[\Ea (\liminf X_n|\Gr)\overset{(*)}{=}\liminf_{n\to +\infty}\Ea(\inf_{m\ge n}X_m|\Gr)\]
+            Or $\inf_{m\ge n} X_m \le X_n,\forall n\in \N$, donc
+            \[\Ea (\inf_{m\ge n} X_m|\Gr)\le \Ea(X_n|\Gr)\text{ presque sûrement}, \forall n\in \N\]
+            D'où presque sûrement, $\forall \N$
+            \[\Ea(\inf_{m\ge n}X_m|\Gr)\le \Ea(X_n|\Gr)\]
+            Ainsi, presque sûrement
+            \[\liminf \Ea(\inf_{m\ge n}X_m|\Gr)\le \liminf \Ea(X_n |\Gr)\]
+            En repartant dans $(*)$, on obtient l'inégalité voulue.
+            \item Soient $(X_n)_n, Y, X$ des variables aléatoires réelles telles que $X_n\to X$ presque sûrement et $|X_n|\le Y,\forall n\in \N$ où $Y\in L^1$. Comme $(Y\pm X_n)_n\in \N$ sont des suites de variables aléatoires positives, par le lemme de Fatou conditionnell, on a:
+            \[\Ea(Y\pm X|\Gr)\le \liminf \Ea(Y\pm X_n|\Gr)\text{ presque sûrement}\]
+            Par l'hypothèse de domination, toutes les variables aléatoires sont intégrables. Par la linéarité de l'espérance conditionnelle,
+            \[\Ea(Y|\Gr)\pm \Ea(X|\Gr)\le \Ea(Y|\Gr)+ \liminf \pm \Ea(X_n|\Gr)\text{ presque sûrement}\]
+            En soustrayant $\Ea(Y|\Gr)$, on obtient
+            \[\Ea(X|\Gr)\overset{+}{\le} \liminf \Ea(X_n|\Gr)\le \liminf \Ea (X_n|\Gr)\overset{-}{\le} \Ea(X|\Gr)\text{ presque sûrement}\]
+        \end{enumerate}
+    \end{proof}
+
+    \begin{prop}{Inégalité de Jensen conditionnelle}{}
+        Soient $X$ une variable aléatoire intégrable, $\Gr$ une sous-tribu et $\funto{f}{\R}{\R_+}$ convexe. Alors
+        \[f(\Ea(X|\Gr))\le \Ea(f(X)|\Gr)\text{ presque sûrement}\]
+    \end{prop}
+
+    \begin{lm}{}{}
+        Soit $\funto{f}{\R}{\R}$ convexe. Alors il existe $(\phi_n)_\nN$ une suite de fonctions affines telle que $f=\sup_n \phi_n$, preuve dans les notes de cours
+    \end{lm}
+
+    \begin{proof}
+        Pour l'inégalité de Jensen conditionnelle: Par le lemme précédent, on sait $f=\sup_n \phi_n$ où les $\phi_n$ sont affines. Donc $\phi_n(x)=a_n x+ b_n$, $a_n,b_n\in \R$.
+        \begin{align*}
+            \Ea(\phi_n(X)|\Gr)&=\Ea(a_n X+b_n|\Gr)\\
+            &=a_n\Ea(X|\Gr)+\Ea(b_n|\Gr)\text{ presque sûrement}
+        \end{align*}
+        Comme $b_n$ est $\Gr$-mesurable, $\Ea(b_n|\Gr)=b_n$ presque sûrement. Donc:
+        \[\Ea(\phi_n(X)|\Gr)=\phi_n(\Ea(X|\Gr))\text{ presque sûrement}\]
+        Donc presque sûrement:
+        \[\forall n\in \N,\Ea (\phi_n(X)|\Gr)=\phi_n(\Ea(X|\Gr))\]
+        Donc presque sûrement, $\forall n\in \N$,
+        \[\phi_n(\Ea(X|\Gr))\le \Ea(f(X)|\Gr)\]
+        D'où presque sûrement $f(\Ea(X|\Gr))\le \Ea (f(X)|\Gr)$.
+    \end{proof}
+
+    Soient $\Gr, \Hr$ 2 sous-tribus et $X$ variable aléatoire intégrable ou positive $\Ea(\Ea(X|\Hr)|\Gr)$ est une certaine variable aléatoire $\Gr$-mesurable. Peut-on simplifier cette expression ?
+
+    \begin{prop}{"La plus petite tribu gagne"}{}
+        Soient $\Gr,\Hr$ 2 sous-tribus telles que $\Gr\subset \Hr$ et $X$ une variable aléatoire intégrable ou positive. Alors
+        \[\Ea (\Ea(X|\Hr)|\Gr)=\Ea(X|\Gr)\text{ presque sûrement}\]
+    \end{prop}
+
+    \begin{proof}
+        Supposons $X$ positive, $\Ea(X|\Gr)$ est une variable aléatoire $\Gr$-mesurable positive. Soit $B\in \Gr\subset \Hr$
+        \[\Ea(\Ea(X|\Gr)\1_B)\overset{\text{déf}}{=}\Ea(X\1_B)=\Ea (\Ea(X|\Hr)\1_B)\]
+        Donc $\Ea(X|\Gr)=\Ea(\Ea(X|\Hr)|\Gr)$ presque sûrement.
+    \end{proof}
+
+    \begin{re}{}{}
+        Si $\Gr\subset \Hr$, alors on a aussi
+        \[\Ea(\Ea(X|\Gr)|\Hr)=\Ea(X|\Gr)\text{ presque sûrement}\]
+    \end{re}
+
+    Soient $A,B\in \Fr$ tel que $\Pa(B)>0$, on a:
+    \[A\inde B\iff \Pa(A|B)=\Pa(A)\]
+    Cette propriété se généralise à des tribus:
+
+    \begin{prop}{}{}
+        Soient $\Gr, \Hr$ 2 sous-tribus,
+        \[\Gr\inde \Hr \iff \forall A\in \Gr, \Pa(A|\Hr)=\Pa(A)\text{ presque sûrement}\]
+        Auquel cas, pour toute variable aléatoire $\Gr$-mesurable positive ou intégrable,
+        \[\Ea(X|\Hr)=\Ea(X)\text{ presque sûrement}\]
+        En d'autres termes, si $X$ est indépendante de $\Hr$, alors conditionner par rapport à $\Hr$ n'apporte pas d'information sur $X$ et tout se passe comme si on conditionnait par rapport à la tribu triviale.
+    \end{prop}
+
+    \begin{proof}
+        $\implies$ Supposons $\Gr \inde \Hr$. Soit $A\in \Gr$, $\Pa(A)$ est une variable aléatoire $\Hr$-mesurable.\\
+        Soit $B\in \Hr$
+        \[\Ea(\1_A \1_B)=\Pa(A\cap B)=\Pa(A)\Pa(B)=\Ea(\Pa(A)\1_B)\]
+        Donc $\Pa(A|\Hr)=\Pa(A)$ presque sûrement.
+        $\impliedby$ Supposons que $\forall A\in \Gr, \Pa(A|\Hr)=\Pa(A)$ presque sûrement. Soient $A\in \Gr,B\in \Hr$,
+        \[\Pa(A\cap B)=\Ea(\1_A \underset{\in \Hr}{\1_B})\overset{\text{déf}}{=}\Ea(\Pa(A|\Hr)\1_B)=\Ea(\Pa(A)\1_B)=\Pa(A)\Pa(B)\]
+        Donc $\Gr\inde \Hr$\\
+        Supposons que $\Gr\inde \Hr$. Soit $X$ une variable aléatoire $\Gr$-mesurable positive. Il existe $(X_n)_n$ une suite de variables aléatoires $\Gr$-mesurables étagées positives telles que $X_n\nearrow X$. Par linéarité de l'espérance conditionnelle et de l'espérance:
+        \[\Ea(X_n|\Hr)=\Ea(X_n),\text{ presque sûrement}, \forall n\in \N\]
+        Par le TCM conditionnelle, $\Ea(X_n|\Hr)\nearrow \Ea(X|\Hr)$ presque sûrement.\\
+        De plus, par le TCM, $\Ea(X_n)\nearrow \Ea(X)$, d'où
+        \[\Ea(X|\Hr)=\Ea(X)\text{ presque sûrement}\]
+        Le même argument dans le cas intégrable, en remplaçant le TCM conditionnelle par le TCD conditionnelle.
+    \end{proof}
+
+    \begin{re}{}{}
+        $\Gr\inde \Hr$ \ssi pour toute variable aléatoire $\Gr$-mesurable positive $X$,
+        \[\Ea(X|\Hr)=\Ea(X)\text{ presque sûrement}\]
+        \ssi pour toute variable aléatoire $\Gr$-mesurable bornée $X$,
+        \[\Ea(X|\Hr)=\Ea(X)\text{ presque sûrement}\]
+        Cette caractérisation "fonctionnelle" est quelque fois préférée en pratique.
+    \end{re}
+
+    \begin{re}{}{}
+        Soient $X,Y$ deux variables aléatoires. Comme toute variable aléatoire $X$-mesurable positive est de la forme $\varphi(X)$ où $\varphi$ est mesurable, on a par la remarque précédente:
+        \[X\inde Y\iff \text{ pour toute fonction $\funto{\varphi}{E}{\R_+}$ mesurable, }\Ea(\varphi(X)|Y)=\Ea(\varphi(X)) \text{ presque sûrement}\]
+        où $X$ est à valeurs dans $(E,\Ar)$\\
+        On a également:
+        \[X\inde Y\iff \text{ pour toute fonction $\funto{\varphi}{E}{\R}$ mesurable bornée, }\Ea(\varphi(X)| Y)=\Ea(\varphi(X))\text{ presque sûrement}\]
+        En particulier, si $X$ est à valeurs dans $\R$ et est intégrable et $Y\inde X$, alors $\Ea(X|Y)=\Ea(X)$ presque sûrement.
+    \end{re}
+
+On a vu: Si $X$ est une variable aléatoire $\Gr$-mesurable positive ou intégrable, alors $\Ea(X|\Gr)=X$ presque sûrement. Les variables aléatoires $\Gr$-mesurables se comportent comme des constantes vis-à-vis de $\Ea(\cdot|\Gr)$
+
+    \begin{prop}{}{}
+        Soient $X$ une variable aléatoire, $\Gr$ une tribu et $Y$ une variable aléatoire $\Gr$-mesurable. Alors:
+        \begin{enumerate}
+            \item Si $X,Y$ sont positives, alors $\Ea(XY|\Gr)=Y\Ea(X|\Gr)$ presque sûrement
+            \item Si $X\in L^1$ et $XY\in L^1$, alors $\Ea(XY|\Gr)=Y\Ea(X|\Gr)$ presque sûrement
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item Soit $Z=Y\Ea(X|\Gr)$. $Z$ est $\Gr$-mesurable positive. Soit $B\in \Gr$, $\Ea(XY\1_B)=\Ea(\Ea(X|\Gr)Y\1_B)=\Ea(Z\1_B)$. Donc $Z=\Ea(XY|\Gr)$ presque sûrement.
+            \item Même preuve, l'intégrabilité de $Y\Ea(X|\Gr)$ est garantie par une propriété précédente.\\
+        \end{enumerate}
+    \end{proof}
+
+    On sait calculer facilement $\Ea(Z|\Gr)$ si $Z$ est $\Gr$-mesurable ou bien si $Z\inde \Gr$. Que se passe-t'il lorsque $Z=\varphi(X,Y)$ où $X\inde \Gr$ et $Y$ est $\Gr$-mesurable ?
+
+    \begin{prop}{}{}
+        Soient $\Gr$ une sous-tribu, $X$ une variable aléatoire indépendante de $\Gr$ et $Y$ une variable aléatoire $\Gr$-mesurable. Pour toute fonction $\varphi$ borélienne positive ou bornée, 
+        \[\Ea(\varphi(X,Y)|\Gr)=\int \varphi(x,Y)\,d\mu_X(x)\text{ presque sûrement}\]
+    \end{prop}
+
+    \begin{proof}
+        On suppose $\varphi$ est positive. Notons $\Psi(y)=\int \varphi(x,y)\,d\mu_X(x), y\in F$ où $F$ est l'ensemble dans lequel $Y$ prend ses valeurs.\\
+        Par le théorème de Fubini-Tonelli, $\Psi$ est borélienne. Donc $\Psi(Y)$ est $\Gr$-mesurable car $Y$ est $\Gr$-mesurable. Soit $Y'$ $\Gr$-mesurable positive.\\
+        Comme $X\inde \Gr$ d onc $X\inde (Y,Y')$ donc la loi de $(X,Y,Y')$ est $\mu_X\otimes \mu_{(Y,Y')}$, d'où, par des théorèmes de transfert:
+        \begin{align*}
+            \Ea(\varphi(X,Y)Y')&=\int \varphi(x,y)y'\,d\mu_{(X,Y,Y')}(x,y,y')\\
+            &=\int y'(\int \varphi(x,y)\,d\mu_X(x))\,d\mu_{(Y,Y')}(y,y')\\
+            &=\int y'\Psi (y)\,d\mu_{(Y,Y')}(y,y')\\
+            &=\Ea(Y'\Psi(Y))
+        \end{align*}
+        Ceci étant vrai pour tout $Y'$ $\Gr$-mesurable positive. Donc $\Psi(Y)=\Ea(\varphi(X,Y)|\Gr)$ presque sûrement.
+    \end{proof}
+
+    \begin{ex}{}{}
+        Soient $X,Y$ 2 variables aléatoires réelles indépendantes. On suppose $X$~$\Nr(0,1)$, calculons $\Ea(e^{XY}|Y)$:
+        \begin{align*}
+            \Ea(e^{XY}|Y)&=\int e^{xY-\frac{x^2}{2}}\,\frac{dx}{\sqrt{2\pi}}\text{ presque sûrement}\\
+            &= \int e^{\frac{(x-Y)^2}{2}+\frac{Y^2}{2}}\,\frac{dx}{\sqrt{2\pi}}\\
+            &= e^{\frac{Y^2}{2}}\int e^{-\frac{x^2}{2}}\,\frac{dx}{\sqrt{2\pi}}\\
+            &=e^{\frac{Y^2}{2}}\text{ presque sûrement}
+        \end{align*}
+    \end{ex}
+
+    \subsection*{Cas des variables de carré intégrable}
+
+    \begin{tm}{}{}
+        Soit $X\in \Lr^2(\Omega,\Fr,\Pa)$ et $\Gr$ une sous-tribu. Alors $\Ea(X|\Gr)$ est la projection orthogonale de $X$ sur $L^2(\Omega,\Gr,\Pa)$ que l'on identifie à un \sev de $L^2(\Omega,\Fr,\Pa)$
+    \end{tm}
+
+    \begin{nt}{}{}
+        Notons $\overline{Y}$ la classe d'équivalence de $Y\in \Lr^2(\Omega,\Fr,\Pa)$ dans $L^2(\Omega,\Fr,\Pa)$ et\\
+        $\widehat{Y}$ la classe d'équivalence de $Y\in \Lr^2(\Omega,\Fr,\Pa)$ dans $L^2(\Omega,\Fr,\Pa)$\\
+        L'application $\fundfto{j}{L^2(\Omega,\Gr,\Pa)}{L^2(\Omega,\Fr,\Pa)}{\widehat{Y}}{\overline{Y}}$ permet d'identifier $L^2(\Omega,\Gr,\Pa)$ à un \sev de $L^2(\Omega,\Fr,\Pa)$ (i.e. à $F=\{\overline{Y},Y\in \Lr^2(\Omega,\Gr,\Pa)\}$)\\
+        En effet, on peut vérifier que $j$ est linéaire et est une isométrie pour la norme $L^2$.\\
+        \begin{itemize}
+            \item $F$ est fermé car $(L^2(\Omega,\Gr,\Pa),\norme_{L^2})$ est un espace de Hilbert et $j$ est une isométrie: $F$ est complet pour $\norme{\cdot}_{L^2}$. Il est en particulier fermé.
+            \item La projection orthogonale sur $F$, \sev fermé d'un espace de Hilbert, est bien définie.
+            \item De plus, si $X\in \Lr^2$, alors $\Ea(X|\Gr)\in L^2$. En effet:
+            \[\Ea((\Ea(X|\Gr))^2)\overset{\text{Jensen}}{\le} \Ea(\Ea(X^2|\Gr))=\Ea(X^2)<+\infty\]
+        \end{itemize}
+    \end{nt}
+
+    \begin{proof}
+        Soit $X\in \Lr^2(\Omega,\Fr,\Pa)$. Notons $\overline{Z}$ la projection orthogonale de $\overline{X}$ sur $F$. On a que pour tout $\overline{Y}\in F, \sca{\overline{X},\overline{Y}}_{L^2}=\sca{\overline{Z},\overline{Y}}_{L^2}$ c'est à dire pour tout $Y\in \Lr^2(\Omega,\Gr,\Pa)$.
+        \[\Ea(XY)=\Ea(ZY)\]
+        En particulier, pour $Y=\1_B$ où $B=\Gr$, on a:
+        \[\Ea(X\1_B)\Ea(Z\1_B)\]
+        Or $Z$ est $\Gr$-mesurable et dans $\Lr^2$ donc $Z$ est $\Gr$-mesurable intégrable ($\Lr^2\subset \Lr^1$) d'où $Z=\Ea(X|\Gr)$ presque sûrement.\\
+        Si $X\in \Lr^2, \Ea(X|\Gr)$, c'est la meilleure approximation de $X$ (au sens de $\norme{\cdot}_{L^2}$) par une variable $\Gr$-mesurable.\\
+        En effet: $\Ea(X|\Gr)=$argmin$\{\Ea((X-Y)^2),Y\in \Lr^2(\Omega,\Fr,\Pa)\}$
+        \[d(x,F)=\min_{y\in F}\norme{x-y}=\norme{x-p_{F}(x)}\text{ où $p_F(x)$ est la projection orthogonale sur $F$}\]
+    \end{proof}
+
+    \begin{exo}{}{}
+        Soient $X,Y$ 2 variables aléatoires réelles. On suppose que $\Ea(X^2)=\Ea(Y^2)<+\infty$ et $Y=\Ea(X|\Gr)$ presque sûrement. Alors $X=Y$ presque sûrement.\\
+        Correction: Par le théorème de Pythagore, $\norme{X}_{L^2}^2=\norme{\Ea(X|\Gr)}_{L^2}^2+\norme{X-\Ea(X|\Gr)}_{L^2}^2$ \\
+        ($\norme{x}^2=\norme{p_F(x)}^2+\norme{x-p_F(x)}^2$)\\
+        Donc $\norme{X-\Ea(X|\Gr)}_{L^2}^2=0$ i.e. $X=\Ea(X|\Gr)$ presque sûrement.
+    \end{exo}
+
+    \section{Calculs d'espérances conditionnelles}
+
+    Nous allons voir comment calculer $\Ea(\phi(X)|Y)$ dans le cas où $X$ et $Y$ sont discrètes et dans le cas à densité.
+
+    \subsection{Cas discret}
+
+    On suppose que $X$, respectivement $Y$ sont à valeurs dans $E$, respectivement $F$, des ensembles dénombrables. Notons: $F'=\{y\in F, P(Y=y)>0\}$\\
+    Soit $\funto{\phi}{E}{\R}$ bornée ou positive. On avait vu à la section $1$:
+    \[\Ea(\phi(X)|Y)=\Ea(\phi(X)|Y=y)\text{ presque sûrement sur }\{Y=y\}\]
+    Or $\Ea(\phi(X)|Y=y)=\sum_{x\in E}\phi(x)P(X=x,Y=y)$ (Théorème de transfert sous $P(Y=y)$)\\
+    On obtient donc, $\forall y\in F'$
+    \[\Ea(\phi(X)|Y)=\sum \phi(x)P(X=x|Y=y)\text{ presque sûrement sur }\{Y=y\}\]
+    On reconnait à droite une intégrale de $\phi$ contre une mesure de probabilité sur $E$ qui dépend de $y$: C'est la loi conditionnelle de $X$ sachant $Y=y$
+
+    \begin{dfprop}{}{}
+        Pour tout $y\in F$, on définit la loi conditionnelle de $X$ sachant $Y=y$ comme étant la mesure de probabilité sur $E$, $\nu(y,\cdot)$ donnée par:
+        \[\nu(y,\{x\})=\cho{P(X=x|Y=y),\text{ si }P(Y=y)>0\\ \1_{x=x_0}\text{ si }P(Y=y)=0}\]
+        où $x_0\in E$ arbitraire.\\
+        Pour tout $\funto{\phi}{E}{\R}$ positive ou bornée,
+        \[\Ea(\phi(X)|Y)\overset{(*)}{=}\int \phi(x)\nu(Y,dx)\text{ presque sûrement où }\nu\]
+        En d'autres termes, la loi conditionnelle de $X$ sachant $Y=y$, $y\in F$, permet de calculer toutes les espérances conditionnelles\\
+        Lorsque $P(Y=y)=0$, on choisit $\nu(y,dx)=\delta_{x_0}$ pour un certain $x_0\in E$. Ce choix est arbitraire. On aurait pu choisir n'importe quelle autre mesure de proba sur $E$, cela ne change pas l'égalité $(*)$ car $P(Y\notin F')=0$\\
+        $(*)$ veut dire que presque sûrement sur $\{Y=y\}$,
+        \[\Ea(\phi(X)|Y)=\int \phi(x)\nu(y,dx)\]
+    \end{dfprop}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item Soient $\epsilon,\epsilon'$ 2 variables aléatoires indépendantes de loi Ber$(\frac{1}{2})$.
+            \begin{itemize}
+                \item La loi conditionnelle de $\epsilon\epsilon'$ sachant $\epsilon =0$:$\delta_0$
+                \item La loi conditionnelle de $\epsilon\epsilon'$ sachant $\epsilon =1$: Ber$(\frac{1}{2})$
+            \end{itemize}
+            \item Soit $(X_k)_{k\ge 1}$ iid de loi $\Ur(\{-1,1\})$. Notons $S_n=\sum_{k=1}^{n}X_k,n\in\N$.
+            \begin{itemize}
+                \item $S_n$ est à valeurs dans $\Z$ et $P(S_n=k)>0\iff k\in [-n,n]\cap \Z$
+                \item La loi conditionnelle de $S_{n+1}$ sachant $S_n=k$ est:
+                \[\frac{1}{2}\delta_{k+1}+\frac{1}{2}\delta_{k-1},\text{ pour tout $k$ tel que $P(S_n=k)>0$}\]
+            \end{itemize}
+        \end{enumerate}
+    \end{ex}
+
+    \subsection{Cas à densité}
+
+    Soient $X$ et $Y$ 2 vecteurs aléatoires à valeurs dans $\R^n$ et $\R^m$. On suppose que $(X,Y)$ admet une densité $p$.\\
+    Soit $\funto{\phi}{\R^n}{\R}$ borélienne positive. On veut calculer $\Ea(\phi(X)|Y)$. Pour cela, il suffit de montrer que $\Ea(\phi(X)\psi(Y))=\Ea(\tilde{\phi}(Y)\psi(Y))$ pour toute fonction $\funto{\psi}{\R^n}{\R}$ borélienne positive où $\tilde{\phi}$ est borélienne et à déterminer.\\
+    D'après l'exercice 2 du TD5, cela montrera que $\Ea(\phi(X)|Y)=\phi(Y)$ presque sûrement.\\
+    Soit $\funto{\psi}{\R^m}{\R}$ borélienne positive.
+    \begin{align*}
+        \Ea(\phi(X)\psi(Y))&=\int \phi(x)\psi(y)p(x,y) \, dx\, dy\\
+        &=\int \psi(y)\left( \int \phi(x) p(x,y)\, dx\right)\, dy
+    \end{align*}
+    Par le théorème de Fubini-Tonelli.\\
+    On sait que $Y$ admet la densité $q(y)=\int p(x,y)\, dx,y\in \R^n$\\
+    Si $q(y)=0$, alors $p(x,y)=0$, x-presque partout et donc $\int \psi(x)p(x,y)\, dx= 0$. On peut restreindre l'intégrale à l'ensemble $\{y,q(y)>0\}$:
+    \[\Ea(\phi(X)\psi(Y))=\int \psi(y)\left(\int \phi(x)\frac{p(x,y)}{q(y)}\, dx\right)\1_{q(y)>0}q(y)\, dy=\Ea(\psi(Y)\tilde{\phi}(Y))\text{ par le théorème de transfert}\]
+    Où $\tilde{\phi}(y)=\cho{\int \phi(x)\frac{p(x,y)}{q(y)}\, dx \text{ si }q(y)>0\\ 0\text{ si }q(y)=0}$.\\
+    On a montré que $\Ea(\phi(X)|Y)=\tilde{\phi}(Y)$ presque sûrement.\\
+    $\tilde{\phi}(y)$ s'écrit comme une intégrale par rapport à une mesure de probabilité qui dépend de $y$: c'est la loi conditionnelle de X sachant $Y=y$
+
+    \begin{dfprop}{}{}
+        Pour tout $y\in \R^m$, la loi conditionnelle de $X$ sachant $Y=y$, est notée $\nu(y,dx)$ et est définie par:
+        \[\nu(y,dx)=\cho{\frac{p(x,y)}{q(y)}\, dx \text{ si $q(y)>0$}\\ \delta_0 \text{ si $q(y)=0$}}\]
+        Pour toute fonction $\funto{\phi}{\R^n}{\R}$ borélienne positive ou bornée,
+        \[\Ea(\phi(X)|Y)=\int \phi(x)\nu(Y,dx)\text{ presque sûrement}\]
+        $\fun{x}{\frac{p(x,y)}{q(y)}}$ est appelée densité conditionnelle de $X$ sachant $Y=y$.\\
+        On note $\tilde{\phi}(y)$ quelque fois $\Ea(\phi(X)|Y=y)$ mais ceci n'est pas l'espérance conditionnelle sachant l'évènement $\{Y=y\}$ qui est de proba $0$
+    \end{dfprop}
+
+    \chapter{Convergence de variables aléatoires}
+
+    \section{Les différentes notions de convergence}
+
+    \begin{df}{}{}
+        Soient $(X_n)_n,X$ variables aléatoires à valeurs dans un espace métrique $E$. On dit que $X_n\to X$ presque sûrement si
+        \[P(\{\omega,X_n(\omega)\underset{n\to+\infty}{\longrightarrow} X(\omega)\})=1\]
+    \end{df}
+
+    \begin{ex}{}{}
+        Soit $X_n=(\cos(U))^n,n\in \N$ où $U$ est une variable aléatoire dont la loi est sans atome. On a: $X_n\to 0$ presque sûrement.\\
+        En effet, $\{X_n\not\to 0\}\subset \{U\in \pi \Z\}$\\
+        Or la loi de $U$ est sans atomes et $\pi \Z$ est dénombrable. Donc $\Pa(U\in \pi\Z)=0$ et donc $P(X_n\to 0)=0$
+    \end{ex}
+
+    \begin{lm}{}{}
+        Soient $(X_n)_n,X$ des variables aléatoires à valeur dans $(E,d)$ espace métrique.
+        \[X_n\underset{n\to\infty}{\longrightarrow}X\text{ presque sûrement}\iff \forall \epsilon>0,P(\limsup\{d(X_n,X)>\epsilon\})=0\]
+    \end{lm}
+
+    \begin{proof}
+        $\implies$ Soit $\epsilon>0$\\
+        presque sûrement $X_n\underset{n\to \infty}{\longrightarrow}X$ donc presque sûrement, $\exists n_0\in \N,\forall n\ge n_0, d(X_n,X)\le \epsilon$, c'est à dire
+        \[P(\liminf \{d(X_n,X)\le \epsilon\})=1\]
+        Donc $P(\limsup\{d(X_n,X>\epsilon)\})=0$\\
+        $\impliedby \forall \epsilon >0$, presque sûrement, $\exists n_0\in \N,\forall n\ge n_0,d(X_n,X)\le \epsilon$. En particulier, $\forall k\in \N$, presque sûrement $\forall n\ge n_0,d(X_n,X)\le 2$. Donc presque sûrement, $\forall k\in \N,\exists n_0\in \N,\forall n\ge n_0,d(X_n,X)\le 2^{-k}$ c'est-à-dire presque sûrement $X_n\longrightarrow X$
+    \end{proof}
+
+    \begin{ex}{}{}
+        Soit $(X_n)_n$ une suite de variables aléatoires réelles telle que $X_n$~ $\frac{1}{n^2}\delta_1+(1-\frac{1}{n^2})\delta_0$ pour tout $n\ge 1$.\\
+        Montrons que $X_n\to 0$ presque sûrement. Par le lemme $1$, il suffit de montrer que $P(\limsup\{|X_n|>\epsilon\})=0,\forall \epsilon>0$.\\
+        Soit $\epsilon>0$:
+        \[\forall n\ge 1,P(|X_n|>\epsilon)=\frac{1}{n^2}\text{ donc }\sum P(|X_n|>\epsilon)<+\infty\]
+        et donc par le lemme de Borel Cantelli, $P(\limsup \{|X_n|>\epsilon\})=0$.\\
+        Donc $P(d(X,X')>2\epsilon)\le P(d(X_n,X)>\epsilon)+P(d(X_n,X')>\epsilon),\forall n\in \N$. En passant à la limite lorsque $n\to +\infty$, on obtient:
+        \[P(d(X,X')>2\epsilon)=0,\forall \epsilon>0\]
+        En particulier, $\forall k\in \N,P(d(X,X')>2^{-k})=0$. Donc
+        \[\text{presque sûrement }d(X,X')=0 (\iff \text{ presque sûrement }X=X')\]
+    \end{ex}
+
+    \begin{df}{}{}
+        Soient $(X_n)_n,X$ des variables aléatoires à valeurs dans $(E,d)$ un espace métrique. On dit $(X_n)_n$ converge en probabilité vers $X$ si $\forall \epsilon>0, P(d(X_n,X)>\epsilon)\underset{n\to +\infty}{\longrightarrow}0$. On note $X_n\underset{n\to +\infty}{\overset{P}{\longrightarrow}}X$
+    \end{df}
+
+    \begin{lm}{}{}
+        La limite en probabilité est unique presque sûrement.
+    \end{lm}
+
+    \begin{proof}
+        Supposons que $X_n\overset{P}{\longrightarrow}X$ et $X_n\underset{P}{\longrightarrow} X$.\\
+        Soit $\epsilon>0$. On a par l'inégalité triangulaire:
+        \[d(X,X')\le d(X,X_n)+d(X_n,X'),\forall n\in \N\text{ d'où}\]
+        \[\{d(X,X')>2\epsilon\}\subset \{d(X,X_n)>\epsilon\}\cup\{d(X_n,X')>\epsilon\}\]
+    \end{proof}
+
+    La convergence en probabilité est plus faible que la convergence presque sûre.
+    
+    \begin{lm}{}{}
+        Soient $(X_n)_n,X$ variables aléatoires à valeurs dans $(E,d)$ un espace métrique. Si $X_n\underset{n\to+\infty}{\longrightarrow}X$ presque sûrement, alors $X_n\overunderset{\Pa}{n\to +\infty}{\longrightarrow}X$
+    \end{lm}
+
+    \begin{proof}
+        Soient $\delta>0,n\in \N$,
+        \[\{d(X_n,X)>\delta\}\overset{(*)}{\subset} \bigcup_{m\ge n}\{d(X_m,X)>\delta\}\]
+        Comme $\bigcup_{m\ge n}\{d(X_m,X)>\delta\}\searrow\limsup \{d(X_m,X)>\delta\}$, on a par continuité décroissante:
+        \[\Pa(\bigcup_{m\ge n}\{d(X_m,X)>\delta\})\underset{n\to +\infty}{\longrightarrow} \Pa(\limsup \{d(X_m,X)>\delta\})\]
+        Or $X_n\underset{n\to +\infty}{\longrightarrow}X$ presque sûrement donc par le lemme $1$, $\Pa(\limsup \{d(X_m,X)>\delta\})=0$.\\
+        Par $(*)$, on en conclut que
+        \[\Pa(d(X_n,X)>\delta)\underset{n\to+\infty}{\longrightarrow} 0\]
+    \end{proof}
+
+    \begin{ex}{}{}
+        Soit $(X_n)_\nN$ une suite de variables aléatoires indépendantes. On suppose $X_n$~ $\frac{1}{n}\delta_1+(1-\frac{1}{n})\delta_0,\forall n\ge 1$\\
+        \begin{itemize}
+            \item $X_n\overunderset{\Pa}{n\to +\infty}{\longrightarrow}0:\forall \delta >0$,\\
+            \[\Pa(|X_n|>\delta)=\Pa(X_n=1)=\frac{1}{n}\underset{n\to +\infty}{\longrightarrow}0\]
+            \item Mais $X_n\not\to 0$ presque sûrement
+            \item On a: $\sum_{n\ge 1}\Pa(X_n=1)=\sum_{n\ge 1}\frac{1}{n}=+\infty$ et $(\{X_n=1\})_{n\ge 1}$ est une suite d'évènements indépendants. Par le 2ème lemme de Borel Cantelli, $\Pa(\limsup \{X_n=1\})=1$ i.e. presque sûrement, $X_n=1$ pour une infinité de $n$ donc presque sûrement, $X_n\not\to 0$.
+        \end{itemize}
+    \end{ex}
+
+    \begin{lm}{Caractérisation séquentielle}{}
+        Soient $(X_n),X$ variables aléatoires à valeurs dans $(E,d)$. Les deux propositions suivantes sont équivalentes.
+        \begin{enumerate}
+            \item $X_n\overset{\Pa}{\longrightarrow}X$
+            \item Toute sous-suite admet une sous-suite qui converge presque sûrement vers $X$.
+        \end{enumerate}
+        Application: La notion de convergence en probabilité ne dépend que de la topologie et non de la métrique choisie: Soient $d,d'$ métriques équivalentes: $\forall (x_n)_n\in E^{\N},x\in E$
+        \[d(x_n,x)\underset{n\to +\infty}{\longrightarrow}0\iff d'(x_n,x)\underset{n\to +\infty}{\longrightarrow} 0\]
+        Si $(X_n)_n,X$ sont des variables aléatoires à valeurs dans $E$, alors $X_n\overset{\Pa}{\longrightarrow}X$ pour la métrique $x$ \ssi $X_n\overset{\Pa}{\longrightarrow}X$ pour la métrique $d'$\\
+        En effet: Supposons $X_n\overset{\Pa}{\longrightarrow}X$ pour la métrique $d$. Soit $\funto{\varphi}{\N}{\N}$ strictement croissante. Il existe $\funto{\Psi}{\N}{\N}$ strictement croissante telle que $d(X_{\varphi\circ\Psi(n)},X)\underset{n\to +\infty}{\longrightarrow}0$ presque sûrement par le lemme 4.\\
+        Par $(*)$, on en déduit que presque sûrement, $d'(X_{\varphi\circ\Psi(n)},X)\underset{n\to+\infty}{\longrightarrow}0$.\\
+        Par la caractérisation séquentielle (Lemme 4), on en conclut que $X_n\overset{\Pa}{\longrightarrow}$ pour la métrique $d'$
+    \end{lm}
+
+    \begin{proof}
+        $(1)\implies (2)$ Soit $\funto{\varphi}{\N}{\N}$ strictement croissante. On a $X_{\varphi(n)}\overunderset{\Pa}{n\to +\infty}{\longrightarrow}X$.\\
+        \begin{itemize}
+        \item Pour tout $k\in \N$,
+        \[\Pa(d(X_{\varphi(n)},X)>2^{-k})\underset{n\to +\infty}{\longrightarrow}0\]
+        \item Il existe $N_k\in \N, \forall n\ge N_k$,
+        \[\Pa(d(X_{\varphi(n)},X)>2^{-k})\le 2^{-k}\]
+        \item Sans perte de généralité, on peut supposer $(N_k)_k$ strictement croissante.\\
+        Posons $\Psi(k)=N_k,\forall k\in \N$. On a $\forall k\in \N,\Pa(d(X_{\varphi(\Psi(k))},X)>2^{-k})\le 2^{-k}$\\
+        Ces probailités sont donc sommables. Par le lemme de Borel-Cantelli,
+        \[\Pa(\limsup \{d(X_{\varphi(\Psi(k))},X)>2^{-k}\})=0\text{ donc}\]
+        \[\Pa(\limsup \{d(X_{\varphi(\Psi(k))},X)\le 2^{-k}\})=1\]
+        Presque sûrement, $\exists k_0,\forall k\ge k_0$, $d(X_{\varphi(\Psi(k))},X)\le 2^{-k}$, c'est à dire que presque sûrement, $X_{\varphi(\Psi(k))}\underset{k\to +\infty}{\longrightarrow}X$.
+        $(2)\implies (1)$ Par l'absurde, on suppose que $X_n\overset{\Pa}{\not\to}X$. Il existe $\delta >0$, tel que
+        \[\Pa(d(X_n,X)>\delta)\not\to 0\]
+        Il existe $\epsilon>0$, et $\funto{\varphi}{\N}{\N}$ strictement croissante telle que $\Pa(d(X_{\varphi(n)},X)>\delta)>\epsilon\qquad (*)$, $\forall n\in \N$
+        \item Or il existe $\funto{\Psi}{\N}{\N}$ strictement croissante telle que $X_{\varphi\circ \Psi(k)}\underset{k\to +\infty}{\longrightarrow}X$ presque sûrement
+        \item Par le lemme 3, on a en particulier que $X_{\varphi\circ \Psi(k)}\overunderset{\Pa}{k\to +\infty}{\longrightarrow}X$ ce qui contredit $(*)$
+        \end{itemize}
+    \end{proof}
+
+    \begin{cor}{Image continue}{}
+        Soient $(X_n)_n,X$ variables aléatoires à valeurs dans $E$ et $\funto{f}{E}{F}$ continue, où $E,F$ sont des espaces métriques. Si $X_n\overset{\Pa}{\longrightarrow}X$ alors $f(X_n)\overunderset{\Pa}{n\to +\infty}{\longrightarrow}f(X)$
+    \end{cor}
+
+    \begin{proof}
+        Supposons que $X_n\overset{\Pa}{\longrightarrow}X$. On utilise la caractérisation séquentielle:\\
+        Soit $\funto{\varphi}{\N}{\N}$ strictement croissante. Comme $X_n\overset{\Pa}{\longrightarrow}X$, il existe par le lemme 4, $\funto{\Psi}{\N}{\N}$ strictement croissante telle que $X_{\varphi\circ \Psi(n)}\longrightarrow X$ presque sûrement.\\
+        Comme $f$ est continue, on en déduit presque sûrement $f(X_{\varphi\circ \Psi(n)})\underset{n\to +\infty}{f(X)}$. D'après le lemme 4, ceci implique
+        \[f(X_n)\overset{\Pa}{\longrightarrow}f(X)\]
+        \[d(X,Y)=\Ea(\min(d(X,Y),1))=\min(\Ea(|X-Y|),1)\]
+    \end{proof}
+
+    \begin{lm}{}{}
+        Soient $(X_n)_n, X$ variables aléatoires à valeurs dans $\R^d$,
+        \[X_n\overset{\Pa}{\longrightarrow}X\iff \forall i\in \{1,\ldots,d\},X_n(i)\overunderset{\Pa}{n\to +\infty}{\longrightarrow}X(i)\]
+    \end{lm}
+
+    \begin{proof}
+        $\implies$ par le Corollaire 1, $\pi_i(X_n)\overunderset{\Pa}{n\to +\infty}{\longrightarrow}\pi_i(X)$, pour tout $i\in \{1,\ldots,d\}$, où $\pi_i$ désigne la projection sur la $i$-ème coordonnée.\\
+        $\impliedby$ Munissons $\R^d$ de $\norme{\cdot}_\infty$.\\
+        Soient $\delta >0,n\in \N$,
+        \[\{\norme{X_n-X}_\infty >\delta\}\subset \bigcup_{i=1}^d\{|X_n(i)-X(i)|>\delta\}\]
+        D'où $\Pa(\norme{X_n-X}_\infty>\delta)\le \sum_{i=1}^{d}\Pa(|X_n(i)-X(i)|>\delta)$. En passsant à la limite, on obtient
+        \[\Pa(\norme{X_n-X}_{\infty}>\delta)\underset{n\to +\infty}{\longrightarrow} 0\]
+    \end{proof}
+
+    \begin{lm}{}{}
+        Soient $(X_n),(Y_n),X,Y$ variables aléatoires réelles telles que $X_n\overset{\Pa}{\longrightarrow}X,Y_n\overset{\Pa}{\longrightarrow}Y$, alors
+        \begin{itemize}
+            \item $X_n+Y_n\overset{\Pa}{\longrightarrow}X+Y$
+            \item $X_nY_n\overset{\Pa}{\longrightarrow}XY$
+            \item $\frac{X_n}{Y_n}\overset{\Pa}{\longrightarrow}\frac{X}{Y}$ dès que $Y_n\neq 0,\forall n$ et $Y\neq 0$.
+        \end{itemize}
+    \end{lm}
+
+    \begin{proof}
+        Par lemme 5, on sait que $(X_n,Y_n)\overset{\Pa}{\longrightarrow}(X,Y)$. Comme $(x,y)\mapsto x+y$ est continue, on en déduit par le corollaire 1 $X_n+Y_n \overset{\Pa}{\longrightarrow} X+Y$
+    \end{proof}
+
+    \begin{df}{}{}
+        Soient $p>0,(X_n)_n,X$ des variables aléatoires réelles. On dit que $(X_n)_n$ converge vers $X$ dans $L^p$ si $\Ea[|X_n-X|^p]\underset{n\to +\infty}{\longrightarrow}0$. On note $X_n\overunderset{L^p}{n\to+\infty}{\longrightarrow}X$
+    \end{df}
+
+    \begin{prop}{}{}
+        Soient $p>0,(X_n),X$ des variables aléatoires réelles. Si $X_n\overset{L^p}{\longrightarrow} X$ alors $X_n\overset{\Pa}{\longrightarrow}X$
+    \end{prop}
+
+    \begin{proof}
+        Soit $\delta>0$, par stricte croissance de $x^p$:
+        \[\Pa (|X_n-X|>\delta)=\Pa(|X_n-X|^p>\delta^p)\]
+        Par l'inégalité de Markov:
+        \[\Pa(|X_n-X|^p>\delta^p)\le \delta^{-p}\Ea[|X_n-X|^p]\]
+        Or $\Ea[|X_n-X|^p]\underset{n\to +\infty}{\longrightarrow} 0$. Donc $\Pa(|X_n-X|>\delta)\underset{n\to +\infty}{\longrightarrow}0$
+    \end{proof}
+
+    \begin{re}{}{}
+        Par le lemme 4, on en déduit que si $X_n\overset{L^p}{\longrightarrow}X$, alors il existe $(X_{n_k})_k$ une sous-suite qui converge presque sûrement vers $X$.
+    \end{re}
+
+    \begin{ex}{}{}
+        Soit $(X_n)_n$ suite de variables aléatoires réelles telles que
+        \[X_n~ \frac{1}{n^\alpha}\delta_n+(1-\frac{1}{n^\alpha})\delta_0,n\ge 1\]
+        \begin{itemize}
+            \item On a: $X_n\overunderset{\Pa}{n\to +\infty}{0}$
+            \item Soit $p>0$, si $(X_n)_n$ converge dans $L^p$, alors sa limite doit être $0$.
+            \item En effet: Si $X_n\overset{L^p}{\longrightarrow}X$ alors $X_n\overset{\Pa}{\longrightarrow}X$.
+            \item Par unicité de la limite en proba, $X=0$ presque sûrement.
+            \item On en déduit que: $X_n$ converge dans $L^p \iff \Ea[|X_n|^p]\underset{n\to +\infty}{\longrightarrow} 0$.\\
+            Or $\Ea[|X_n|^p]=\frac{n^p}{n^\alpha}=n^{p-\alpha},\forall n\ge 1$. Donc $(X_n)_n$ converge dans $L^p$ \ssi $\alpha>p$
+        \end{itemize}
+    \end{ex}
+
+    \begin{lm}{}{}
+        Soient $0<p<q$ et $(X_n)_n,X$ des variables aléatoires réelles. Si $X_n\overunderset{L^q}{n\to +\infty}{\longrightarrow} X$ alors $X_n \overunderset{L^p}{n\to +\infty}{\longrightarrow}X$
+    \end{lm}
+
+    \begin{proof}
+        On sait que:
+        \[\norme{X_n-X}_{L^p}\le \norme{ X_n-X}_{L^q},\forall n\in \N\text{ car }p<q\]
+        On en déduit que si $\norme{X_n-X}_{L^q}\longrightarrow 0$, alors $\norme{X_n-X}_{L^p}\longrightarrow 0$.\\
+        Intégration de la limite: Soient $(X_n),X$ variables aléatoires réelles. Supposons $X_n\overset{\Pa}{\longrightarrow}X$. A quelle condition a-t'on que $\Ea[X_n]\longrightarrow \Ea[X]$ ?
+    \end{proof}
+
+    \begin{lm}{}{}
+        Soient $(X_n)_n,X$ des variables aléatoires réelles et $r>1$. Supposons que $X_n\overunderset{\Pa}{n\to +\infty}{\longrightarrow} X$ et que $(X_n)_n$ est bornée dans $L^r$: $\sup \Ea[|X_n|^r]<+\infty$. Alors $\forall p\in [1,r[, X_n\overset{L^p}{\longrightarrow}X$
+    \end{lm}
+
+    \begin{proof}
+        Montrons que $X\in L^r$.
+        Il existe $(X_{n_k})_k$ une soute suite telle que $X_{n_k}\to X$ presque sûrement. Par le lemme de Fatou $(|X_{n_k}|^r,k\in \N)$:
+        \[\Ea[|X|^r]\le \liminf \Ea[|X_{n_k}|^r]\le \sup \Ea[|X_n|^r]<+\infty\]
+        Donc $X\in L^r$.\\
+        Soient $p\in [1,r[,\delta>0$. Pour tout $n\in \N$,
+        \[\Ea[|X_n-X|^p]=\Ea[|X_n-X|^p \1_{|X_n-X|\le \delta}]+\Ea[|X_n-X|^p\1_{|X_n-X|^p\1_{|X_n-X|>\delta}}]\delta^p+(\Ea[|X_n-X|^r])^{\frac{p}{r}}\Pa(|X_n-X|>\delta)^{1-\frac{p}{r}}\text{(Hölder)}\]
+        Or $(\Ea[|X_n-X|^r])^{\frac{1}{r}}\le \norme{X_n}_{L^r}+\norme{X}_{L^r}$ (Minkowski, $r\ge 1$) d'où
+        \[(\Ea[|X_n-X|^r])^{\frac{p}{r}}\le (\sup \norme{X_m}_{L^r}+\norme{X}_{L^r})^{p}:=M\]
+        On a montrer que $\forall n\in \N, \delta>0,$
+        \[\Ea[|X_n-X|^p]\le \delta^p+M\Pa(|X_n-X|>\delta)\]
+        En passant à la limite supérieure lorsque $n\to +\infty$:
+        \[\limsup \Ea[|X_n-X|^p]\le \delta^p\text{ car }X_n\overset{\Pa}{\longrightarrow}X\]
+        En faisant tendre $\delta\to 0$, on obtient:
+        \[\limsup \underset{\ge 0}{\Ea[|X_n-X|^p]}=0\]
+        Donc $\Ea[|X_n-X|^p]\underset{n\to +\infty}{\longrightarrow}0$
+    \end{proof}
+
+    \section{La loi forte des grands nombres}
+
+    \begin{tm}{La loi forte des grands nombres}{}
+        Soit $(X_n)_{n\ge 1}$ une suite de variables aléatoires réelles i.i.d. et intégrables. Alors
+        \[\frac{1}{n}\sum_{i=1}^{n}X_i\underset{n\to \infty}{\Longrightarrow}\Ea[X_1]\text{ presque sûrement}\]
+        Sans perte de généralité, on peut supposer que $\Ea[X_1]=0$, quitte à remplacer $X_i$ par $X_i-\Ea[X_1]$. La loi forte des grands nombres est reliée à la convergence de séries aléatoires.
+    \end{tm}
+
+    \begin{lm}{}{}
+        Soit $(x_n)_{n\ge 1}$ une suite de réels. Si $\sum_{n\ge 1}n^{-1}x_n$ est convergente, alors $\frac{1}{n}\sum_{k\le n}x_k\to 0$.
+    \end{lm}
+
+    \begin{proof}
+        Notons $c=\sum_{n\ge 1}n^{-1}x_n$. Soit $n\ge 1$,
+        \begin{align*}
+            \sum_{k=1}^{n}k^{-1}x_k-\frac{1}{n}\sum_{k=1}^{1}x_k&=\sum_{k=1}^{n}\frac{x_k}{k}\left(1-\frac{k}{n}\right)\\
+            &=\sum_{k=1}^{n}\frac{x_k}{k}\int_{\frac{k}{n}}^{1}\, dx\\
+            &= \sum_{k=1}^{n}\frac{x_k}{k}\int_{0}^{1}\1_{x\ge \frac{k}{n}}\, dx
+        \end{align*}
+        D'où \begin{align*}
+            \sum_{k=1}^{n}k^{-1}x_k-\frac{1}{n}\sum_{k=1}^{1}x_k&=\int_{0}^{1}\left(\sum_{k=1}^{n}\frac{x_k}{k}\1_{x\ge \frac{k}{n}}\right)\, dx\\
+            &=\int_{0}^{1}\left(\sum_{k\le nx} \frac{x_k}{k}\right)\, dx
+        \end{align*}
+        Soit $x\in ]0,1]$,
+        \[\sum_{k\le nx}\frac{x_k}{k}\underset{n\to +\infty}{\Longrightarrow}c\]
+        \[|\sum_{k\le nx}\frac{x_k}{k}|\le \sup_m |\sum_{k\le m}\frac{x_k}{k}|<+\infty\]
+        Par le théorème de convergence dominée,
+        \[\sum_{k=1}^{n}\frac{x_k}{k}-\frac{1}{n}\sum_{k=1}^{n}x_k\underset{n\to +\infty}{\Longrightarrow} c\]
+        Or $\sum_{k=1}^{n}\frac{x_k}{k}\longrightarrow 0$. Donc $\frac{1}{n}\sum_{k=1}^{n}x_k\to 0$
+    \end{proof}
+    
+    \begin{prop}{Critère de variance}{}
+        Soit $(E_n)_{n\ge 1}$ une suite suite de variables aléatoires réelles indépendantes et dans $L^2$. On suppose que $\Ea[E_n]=0,\forall n\in \N$ et $\sum_{n}\Ea[E_n^2]<+\infty$.\\
+        Alors $\sum E_n$ converge presque sûrement
+    \end{prop}
+
+    \begin{lm}{Inégalité maximale de Kolmogorov}{}
+        Soit $(E_n)_{n\ge 1}$ une suite de variables aléatoires indépendantes, donc $L^2$, et centrées. On note $S_n\sum_{k=1}^{n}E_k,n\in \N$. $\forall t>0,n\ge 1$,
+        \[\Pa(\max_{m\le n}|S_m|>t)\le t^{-2}\Ea[S_n^2]=t^{-2}\sum_{k=1}^{n}\Ea[S_k^2]\]
+        Application: borne inférieure sur le temps de sortie d'un intervalle de la marche aléatoire simple sur $\Z$.\\
+        Soit $(E_k)_{k\ge 1}$ variables aléatoires \iid de loi $\Ur(\{-1,1\})$. Notons $S_n=\sum_{k=1}^{n}E_k,n\in \N$\\
+        Posons $\tau_r=\inf \{n,|S_n|>r\},r\in \N$,\\
+        Quel est l'ordre de grandeur typique de $\tau_r$? Clairement, $\tau_r\ge r$ presque sûrement\\
+        Avec probabilité $\ge 1-\epsilon^2,\tau_r\ge \lfloor \epsilon r^2 \rfloor$: D'après l'inégalité maximale,
+        \[\Pa(\tau\le \lfloor \epsilon r^2 \rfloor)\le \frac{1}{r^2}\Ea[S_{\lfloor \epsilon r^2 \rfloor}^2]=\frac{\lfloor \epsilon r^2\rfloor}{r^2}\le \epsilon\]
+        car $\Ea[E_k^2]=1$.
+    \end{lm}
+
+    \begin{proof}
+        Soit $\tau=\inf\{m:|S_m|>t\}$. On a: (Voir schéma en photo)
+        \[\{\max_{m\le n}|S_m|>t\}=\{\tau \le n\}\]
+        Notons $\Fr_m=\sigma(E_k,k\le m),m\in \N$
+        \[\Ea[S_n^2]\ge \Ea[S_n^2\1_{\tau\le n}]=\sum_{k=1}^{n}\Ea[S_n^2\1_{\tau=k}]\]
+        Or $\{\tau=k\}\in \Fr_k$ (Laisser en exercice) pour $k\ge 1$
+        \[=\sum_{k=1}^{n}\Ea[\Ea[S_n^2|\Fr_k]\1_{\tau= k}]\]
+        Comme $x\mapsto x^2$ est convexe, on a par l'inégalité de Jensen conditionnelle:
+        \[\Ea[S_n^2|\Fr_k]\ge \left(\Ea[S_n|\Fr_k]\right)^2\text{ presque sûrement}\]
+        Or $\Ea[S_n|\Fr_k]=S_k,\text{ presque sûrement}\qquad k\le n$ (Laisser en exercice).\\
+        D'où: $\Ea[S_n^2]\ge \sum_{k=1}^{n}\Ea[\underset{\ge t^2}{S_k^2}\1_{\tau=k}]\ge t^2\Pa(\tau\le n)$
+    \end{proof}
+
+    \begin{re}{}{}
+        Par continuité croissante, on obtient:
+        \[\Pa(\sup_{n\ge 1}|S_n|>t)\le t^{-2}\sum_{k\ge 1}\Ea[E_k^2]\text{ (Laisser en exercice)}\]
+    \end{re}
+
+    \begin{proof}
+        Preuve de la propriété 1: On suppose $\sum \Ea[Z_k^2]<+\infty$. On va montrer que $\sum E_k$ satisfait le critère de Cauchy presque sûrement.\\
+        Soit $n\ge 1$, on applique $(*)$ à $(E_k)_{k\ge n}$.
+        \[\forall t>0,\Pa(\sup_{m\ge n}|\underset{\sum_{k=n+1}^{m}E_k}{S_m-S_n}|>t)\le t^{-2}\sum_{k>n} \Ea[E_k^2]\]
+        On obtient: $\sup_{m>n}|S_m-S_n|\overunderset{\Pa}{n\to +\infty}{\Longrightarrow} 0$ car $\sum_{k>n}\Ea[E_k^2]\underset{n\to +\infty}{\Longrightarrow}0$\\
+        Or $\forall m,m'>n, |S_m-S_{m'}|\le |S_m-S_n|+|S_{m'}-S_n|$. Donc
+        \[\sup_{m,m'>n} |S_m-S_{m'}|\le 2\sup_{m>n}|S_m-S_n|\]
+        Ce qui implique que $\sup_{m,m'>n}|S_m-S_{m'}| \overunderset{\Pa}{n\to +\infty}{\Longrightarrow}0$. Il existe $ \funto{\varphi}{\N}{\N}$ strictement croissante telle que presque sûrement,
+        \[\sup_{m,m'>\varphi(n)}|S_m-S_{m'}|\Longrightarrow 0\]
+        Or $(\sup_{m,m'>k}|S_m-S_{m'}|)_k$ est décroissante. Donc, presque sûrement, $\sup_{m,m'>n}|S_m-S_{m'}|\underset{n\to +\infty}{\Longrightarrow} 0$ d'où presque sûrement $(S_n)_n$ est de Cauchy.
+    \end{proof}
+
+    \begin{proof}
+        Loi forte des grands nombres: Sans perte de généralité, on peut supposer $\Ea[X_1]=0$.\\
+        \begin{enumerate}
+            \item Troncation: Posons $X_k'=X_k\1_{|X_k|\le k},k\ge 1$
+            \[\forall k\ge 1,P(X_k\neq X_k')\le P(|X_k|>k)\]
+            i.e. $P(X_k\neq X_k')\le P(|X_1|>k)$ car $X_k$~$X_1,\forall k\ge 1$. Or:
+            \[\sum_{k\ge 1}P(|X_1|>k)\le \int_{0}^{+\infty} P(|X_1|>t)\, dt\]
+            car $P(|X_1|>k)\le P(|X_1|>t),t\in [k,k+1]$. Comme
+            \[\int_{0}^{+\infty}P(|X_1|>t)\, dt=\Ea[|X_1|]<+\infty\]
+            On en déduit que
+            \[\sum_{k\ge 1}P(X_k\neq X_k')<+\infty\]
+            Par le lemme de Borel-Cantelli:
+            \[P(\liminf \{X_k=X_k'\})=1\text{ presque sûrement }\exists k_0,\forall k\ge k_0,X_k=X_k'\]
+            Donc presque sûrement, $\frac{1}{n}\sum_{k=1}^{n}(X_k-X_k')\underset{n\to \infty}{\longrightarrow}0$\\
+            Il suffit de montrer que
+            \[\frac{1}{n}\sum_{k=1}^{n}X_k'\to 0\text{ presque sûrement}\]
+            \item Centrage: Posons $X_k''=X_k'-\Ea[X_k'],k\ge 1$\\
+            Montrons que $\frac{1}{n}\sum_{k=1}^{n}\Ea[X_k']\underset{n\to +\infty}{\longrightarrow}0$.\\
+            Par le théorème de Cesaro, il suffit de montrer que $\Ea[X_n']\underset{n\to \infty}{\longrightarrow}0$. Or
+            \[\Ea[X_n']=\Ea[X_n\1_{|X_n|\le n}]=\Ea[X_1\1_{|X_1|\le n}]\longrightarrow \Ea[X_1]=0\]
+            On est ramené à montrer que
+            \[\frac{1}{n}\sum_{k=1}^{n}X_k''\longrightarrow 0 \text{ presque sûrement\qquad (*)}\]
+            \item Critère de variance: Par un lemme précédent, il suffit pour montrer $(*)$ de démontrer $\sum_{n}\zeta_n$ est convergent normalement presque sûrement où $\zeta_n=n^{-1}X_n'',n\ge 1$\\
+            $(\zeta_n)_n$ sont des variables aléatoires indépendantes, centrées et dans $L^2$.
+            \[\sum_{n\ge 1}\Ea[\zeta_n^2]=\sum_{n\ge 1}\frac{1}{n^2}\Ea[X_n'']^2\]
+            Or $X_n''=X_n'-\Ea[X_n'],n\ge 1$ donc $\Ea[(X_n)^2]=\Var(X_n')\le \Ea[(X_n')^2]$.
+            \[\sum_{n\ge 1}\Ea[\zeta_n^2]\le \sum_{n\ge 1}\frac{1}{n}\Ea[(X_n')^2]\]
+            Or $X_n'=X_n\1_{|X_n|\le n},n\ge 1$, donc
+            \[=\sum_{n\ge 1}\frac{1}{n^2}\Ea[X_1^2\1_{|X_1|\le n}]\]
+            Par le théorème d'inversion (toutes les variables étant positives):
+            \[=\Ea[X_1^2 \sum_{n\ge |X_i|}\frac{1}{n^2}]\]
+            \[=\underset{(1)}{\Ea[X_1^2\sum_{n\ge |X_i|}\frac{1}{n^2}\1_{|X_i|\le 2}]}+\underset{(2)}{\Ea[X_i^2\sum_{n\ge |X_i|}\frac{1}{n^2}\1_{|X_i|\ge 2}]}\]
+            Comme $\sum \frac{1}{n^2}<\infty,(1)<\infty$. $(2)\le \Ea[X_i^2\int_{|X_i|-1}\frac{dx}{x^2}\1_{|X_i|\ge 2}]$
+            \[\le \Ea[\frac{X_1^2}{|X_1|-1}\1_{|X_1|\ge 2}]\]
+            Or $|X_1|-1\ge \frac{1}{2}|X_1|$.
+            \[\le 2 \Ea[|X_1|]<\infty\]
+            \[\sum_{n\ge m}\frac{1}{n^2}\le \int_{m-1}^{\infty}\frac{dx}{x^2}\le \int \frac{dx}{x^2}\]
+            Par le critère de variance, on en conclut que $\sum \zeta_n$ converge presque sûrement.
+        \end{enumerate}
+    \end{proof}
+
+    \begin{re}{}{}
+        La Loi forte des grands nombres permet d'interpréter les probabilités comme des fréquences.\\
+        Soit $\mu$ une mesure de probabilité sur $(E,\Ar)$ un espace mesurable: Soit $(X_k)_k$ i.i.d. de loi $\mu$. $\forall A\in \Ar$
+        \[\mu(A)=\lim_{n\to \infty}\frac{|\{k\le n,_k\in A\}|}{n}\text{ presque sûrement}\]
+        En effet: $(\1_{X_k\in A})_{k\in \N}$ i.i.d. de loi Ber$(\mu(A))$. Par la Loi forte des grands nombres,
+        \[\frac{1}{n}\sum_{k=1}^{n}\1_{X_k\in A}\underset{n\to\infty}{\longrightarrow} \Ea[\1_{X_1\in A}]=\mu(A)\text{ presque sûrement}\]
+    \end{re}
+
+    Application: Methode de Monte-Carlo:\\
+    Soit $\funto{f}{[0,1]}{\R}$ borélienne bornée. Comment calculer de manière approchée $\int_{0}^{1}f(x)\, dx$ ?\\
+    Soit $(U_k)_{k\ge 1}$ une suite de variables aléatoires i.i.d. de loi $\Ur([0,1])$. La Loi forte des grands nombres nous dit que
+    \[\frac{1}{n}\sum_{k=1}^{n}f(U_k)\longrightarrow\Ea[f(U_1)]\text{ presque sûrement et }\Ea[f(U_1)]=\int_{0}^{1}f(x)dx\]
+
+    \section{Convergence en loi-convergence étroite}
+
+    \begin{df}{}{}
+        Soient $(\mu_n)_n,\mu$ des mesures de probabilité boréliennes sur $\R^d$. On dit que $(\mu_n)_n$ converge étroitement vers $\mu$ si pour tout $\varphi\in C_b(\R^d)$,
+        \[\int \varphi\, d\mu_n\underset{n\to \infty}{\longrightarrow}\int \varphi\, d\mu\]
+        où $C_b(\R^d)$ désigne l'ensembles des fonctions continues bornées sur $\R^d$ à valeurs réelles.\\
+        Soient $(X_n),X$ des variables aléatoires à valeurs dans $\R^d$. On dit que $(X_n)_n$ converge en loi vers $X$ si $(\mu_{X_n})_\nN$ converge étroitement vers $\mu_X$.
+    \end{df}
+
+    \begin{re}{}{}
+        On note $\mu_n\Longrightarrow \mu$ la convergence étroite de $(\mu_n)_n$ vers $\mu$. De même, on note $X_n\Longrightarrow X$ la convergence en loi.\\
+        Contrairement à la convergence presque sûre, en proba, ou dans $L^p$, la convergence en loi ne nécessite pas que les variables aléatoires soient définies sur le même espace de proba.\\
+        On pourra également écrire: $X_n \underset{n\to \infty}{\Longrightarrow} \mu$ où $\mu$ est une certain mesure de probabilité. Par le théorème de transfert:
+        \[\int \varphi \, d\mu_{X_n}=\Ea[\varphi(X_n)],n\in \N\]
+        \[\int \varphi \, d\mu_X=\Ea[\varphi(X)],\varphi\in C_b(\R^d)\]
+        On a: $X_n\Longrightarrow X$ \ssi $\forall \varphi\in C_b(\R^d)$
+        \[\Ea[\varphi(X_n)]\underset{n\to\infty}{\longrightarrow}\Ea[\varphi(X)]\]
+    \end{re}
+
+    \begin{ex}{}{}
+        Soit $\mu_n=\frac{1}{n}\sum_{k=1}^{n}\delta_{k/n},n\ge 1$. Alors:
+        \[\mu_n\underset{n\to \infty}{\Longrightarrow} \lambda_{|[0,1]}\]
+        En effet, $\varphi\in C_b(\R)$:
+        \[\int \varphi\, d\mu_n=\frac{1}{n}\sum_{k=1}^{n}\varphi\left(\frac{k}{n}\right)\underset{n\to \infty}{\longrightarrow} \int_{0}^{1}\varphi\, dx\]
+        On retiendra qu'une suite de mesures purement atomique peut converger vers une mesure à densité.
+    \end{ex}
+
+    \begin{ex}{}{}
+        Soit $\mu$ une mesure de probabilité sur $\R$. Posons $\mu_n=\mu\circ(x\mapsto \frac{x}{n})^{-1},n\ge 1$. Alors $\mu_n\Longrightarrow \delta_0$.\\
+        En effet: $\forall \varphi\in C_b(\R)$,
+        \begin{align*}
+            \int \varphi\, d\mu_n&=\int \varphi \,d\mu\circ(x\mapsto \frac{x}{n})^{-1}\\
+            &= \int \varphi \left(\frac{x}{n}\right)\, d\mu(x)\\
+            &\longrightarrow \int \varphi(0)\,d\mu (x)=\varphi(0)=\int \varphi\delta_0
+        \end{align*}
+        \begin{itemize}
+            \item $\varphi\left(\frac{x}{n}\right)\underset{n\to +\infty}{\longrightarrow} \varphi(0),\forall x\in \R$ par continuité.
+            \item $\left|\varphi\left(\frac{x}{n}\right)\right|\le \norme{\varphi}_{\infty},\forall x, \forall n$
+            \item En terme probabiliste, on a montrer que:
+            \[\frac{X}{n}\Longrightarrow \delta_0\text{ où $X$ est une variable aléatoire réelle}\]
+        \end{itemize}
+    \end{ex}
+
+    \begin{lm}{}{}
+        Si une suite de mesures de probabilité converge étroitement, alors la limite est unique.
+    \end{lm}
+
+    Avant de démontrer ce lemme, on établit le résultat de "séparation" suivant:
+
+    \begin{lm}{}{}
+        Soient $\mu,\nu$ deux mesures de probabilité boréliennes sur $\R^d$
+        \[\mu=\nu \iff \forall \varphi\in C_b(\R^d),\int \varphi \,d\mu=\int \varphi\, d\nu\]
+    \end{lm}
+
+    \begin{nt}{}{}
+        $\forall A\subset \R^d,x\in \R^d$,
+        \[d(x,A)=\inf_{y\in A}\norme{x-y}_{L^2}\]
+        $\forall A\subset \R^d,\delta>0$, on note $A_\delta$ le $\delta$-voisinage ouvert de $A$,
+        \[A_\delta=\{x\in \R^d,d(x,A)<\delta\}\]
+        $A_\delta$ est un ouvert.
+    \end{nt}
+
+    \begin{lm}{}{}
+        Soient $F\subset \R^d$ fermé et $\epsilon>0$: Il existe $\funto{f_{\epsilon}}{\R^d}{[0,1]}$ lipschitzienne telle que:
+        \[ f_{\epsilon}(x)=1,x\in F,f_{\epsilon}(x)=0\text{ si }x\not\in F_\epsilon\]
+        Explicitement, $f_\epsilon (x)=\left( 1-\frac{d(x,F)}{\epsilon}\right),x\in \R^d$. VOIR PHOTO SCHEMA.
+    \end{lm}
+
+    \begin{proof}
+        Par définition: $f_\epsilon (x)\in [0,1],\forall x\in \R^d$.\\
+        $f_\epsilon$ est $\epsilon^{-1}$-lipschitzienne car $x\mapsto d(x,F)$ est $1$-lipschitzienne, $y\mapsto (1-\frac{y}{\epsilon})_+$ est $\epsilon^{-1}$-lipschitzienne où $F_\epsilon=\{x\in \R^d,d(x,F)<\epsilon\}$\\
+        \begin{itemize}
+            \item Si $x\in F$: $d(x,F)=0$ et $f_\epsilon(x)=1$
+            \item Si $x\notin F_\epsilon$: $d(x,F)\ge \epsilon$ donc $f_\epsilon (x)=0$
+        \end{itemize}
+    \end{proof}
+
+    \begin{proof}
+        Preuve du lemme de séparation: Soient $\mu,\nu$ mesures de probabilité sur $\R^d$:
+        \[\int \varphi \,d\mu=\int \varphi\,d\nu,\forall \varphi\in \Cr_b(\R^d)\]
+        Soit $F\subset \R^d$ et $\epsilon>0$. Par le lemme précédent, il existe $f_{\epsilon}\in \Cr_b(\R^d)$ telle que: $\1_F\le f_{\epsilon}\le \1_{F_\epsilon}$ (équivaut aux propriétés $f_{\epsilon}(x)\in [0,1],\forall x$ et $f_{\epsilon|F}=1,f_{\epsilon|F_\epsilon^C}=0$).\\
+        Donc \begin{align*}
+            \mu(F)&\le \int f_\epsilon \,d\mu\\
+            &=\int f_\epsilon \,d\mu\\
+            \le \nu(F_\epsilon)
+        \end{align*}
+        Or: $F_\epsilon=\{x,d(x,F)<\epsilon\}$ donc $(F_\epsilon)_{\epsilon>0}$ est croissante pour l'inclusion. De plus,
+        \[\bigcap_{\epsilon>0}F_\epsilon =\{x,d(x,F)=0\}=\overline{F}=F\text{ car $F$ est fermé}\]
+        On a donc: $F_\epsilon\searrow F$, lorsque $\epsilon \searrow 0$. Par continuité décroissante,
+        \[\lim_{\epsilon \searrow 0} \nu\left(F_\epsilon\right)=\nu(F)\]
+        D'où $\mu(F)\le \nu(F)$. Par symétrie des rôles, on obtient également: $\nu(F)\le \mu(F)$.\\
+        On a montré que $\mu(F)=\nu(F),\forall F$ fermé. Comme $\Br(\R^d)$ est engendrée par les fermés, et stable par intersection finie, on en déduit par le théorème d'unicité de la mesure que $\mu=\nu$
+    \end{proof}
+
+    \begin{proof}
+        Preuve de l'unicité de la limite de la convergence étroite: Soient $(\mu_n)_n,\mu,\nu$ des mesures de probabilité sur $\R^d$ telles que $\mu_n\Longrightarrow \mu$ et $\mu_n \Longrightarrow \nu$. La limite d'une suite réelle étant unique, on en déduit que $\int \varphi\,d\mu=\int \varphi\,d\nu,\forall \varphi\in \Cr_b(\R^d)$.\\
+        Par le lemme de séparation: $\mu=\nu$.
+    \end{proof}
+
+    \begin{re}{}{}
+        La convergence en loi ainsi définie coincide avec celle donnée pour des variables aléatoires discrètes. Soient $(X_n)_n,X$ variables aléatoires à valeurs dans $\Z$,\\
+        $X_n\Longrightarrow X$ \ssi $\forall m\in \Z, P(X_n=m)\to P(X=m)$.\\
+        En d'autres termes, si $(\mu_n)_n,\mu$ sont des mesures de probabilité sur $\Z$:
+        \[ \mu_n\to \mu\iff \forall m\in \Z,\mu_n(\{m\})\to\mu(\{m\})\]
+        Ce résultat sera démontré en TD.
+    \end{re}
+
+    \begin{tm}{Théorème de Portemanteau}{}
+        Soient $(\mu_n)_n,\mu$ des mesures de probabilité sur $\R^d$. Les conditions suivantes sont équivalentes:
+        \begin{enumerate}
+            \item $\mu_n\underset{n\to +\infty}{\Longrightarrow}\mu$
+            \item Pour toute fonction lipschitzienne bornée $\funto{\varphi}{\R^d}{\R}$
+            \[\int \varphi \,d\mu_n\to \int \varphi d\mu\]
+            \item $\forall U$ ouvert de $\R^d$, $\liminf \mu_n(U)\ge \mu(U)$
+            \item $\forall F$ fermé de $\R^d$, $\limsup \mu_n(F)\le \mu(F)$
+            \item $\forall A\in \Br(\R^d),\mu(\delta A)=0$, alors $\mu_n(A)\underset{n\to +\infty}{\longrightarrow} \mu(A)$
+        \end{enumerate}
+    \end{tm}
+
+    \begin{lm}{}{}
+        Soit $(E,\Ar,\mu)$ espace mesuré. Soit $(A_t)_{t\in I}$ une famille d'évènements 2 à 2 disjoints. $\{t,\mu(A_t)>0\}$ est au plus dénombrable.
+    \end{lm}
+
+    \begin{proof}
+        Pour tout $k\in \N$, Posons
+        \[I_k=\{x,\mu\left(A_t\right)>2^{-k}\}\]
+        On montre que $|I_k|<2^{-k}$. Supposons que $|I_k|\ge 2^{k}$. Il existe $t_1,\ldots,t_{2^k}\in I_k$ 2 à 2 distincts.
+        \[\mu\left(\bigcup_{i=1}^{2^k}\right)=\sum_{i=1}^{2^k}\mu(A_{t_i})>1\]
+        On obtient une contradiction. Donc $I_k$ est fini pour tout $k$. Par suite $\bigcup_k I_k$ est au plus dénombrable
+    \end{proof}
+
+    \begin{proof}
+        Preuve de Portemanteau: On va montrer que $(1)\implies(2)\implies(3)\implies (1)$ et $(3)\iff (5)$ et $(3)\iff (5)$\\
+        $(1)\implies (2)$ Clair par définition\\
+        $(2)\implies (4)$ Soient $F\subset \R^d$ fermé et $\epsilon>0$. Par le lemme d'approximation, il existe $\funto{f_\epsilon}{\R^d}{[0,1]}$ lipschitzienne bornée telle que $\1_F\overset{(*)}{\le}f_\epsilon\overset{(**)}{\le }\1_{F_\epsilon}$\\
+        En intégrant $(*)$ par rapport à $\mu_n$:
+        \[\mu_n(F)\le \int f_\epsilon \,d\mu_n,\forall n\in \N\]
+        Donc $\limsup \mu_n(F)\le \limsup \int f_\epsilon\,d\mu_n=\int f_\epsilon\,d\mu$.\\
+        Or $\int f_\epsilon \,d\mu \le \mu(F_\epsilon)$ par $(**)$. D'où: $\limsup \mu_n(F)\le \mu(F_\epsilon),\forall \epsilon>0$.\\
+        Or $F_\epsilon\searrow F$ lorsque $\epsilon \searrow 0$ car $F$ fermé. Par continuité décroissante: $\mu(F)=\lim_{\epsilon\nearrow 0}\mu(F_\epsilon)$. D'où $(4)$\\
+        $(3)\iff (4)$ Par passage au complémentaire.\\
+        $(3)$ et $(4) \implies (5)$ Soit $A\in \Br(\R^d)$ telle que $\mu(\delta A)=0$.
+        \[\mu(\mathring{A})\le \liminf \mu_n(\mathring{A})\le \liminf \mu_n(A)\le \limsup \mu_n (A)\le \limsup \mu_n(\overline{A})\le \mu(\overline{A})\]
+        Or $\mu(\delta A)=0$ et $\delta A=\overline{A}\wt \mathring{A}$. Donc $\mu(\overline{A})=\mu(\mathring{A})$. Donc $\lim_{n\to +\infty}\mu_n (A)=\mu(A)$. En effet:
+        \[\mu(\mathring{A})\le \mu(A)\le \mu(\overline{A})\qquad \left(\iff \mu(\mathring{A})=\mu(A)=\mu(\overline{A})\right)\]
+        $(5)\implies (3)$ Soit $F\subset \R^d$ fermé. Considérons la famille $(F_\epsilon)_{\epsilon>0}$
+        \[\delta F_\epsilon \subset \{x,d(x,F)=\epsilon\}\]
+        où $F_\epsilon=\{x,d(x,F)<\epsilon\}$. On en déduit que $(\delta F_\epsilon)_{\epsilon>0}$ est une famille de boréliens 2 à 2 disjoints.\\
+        Par le lemme précédent: $\Er=\{\epsilon>0,\mu(\delta F_\epsilon)>0\}$ est dénombrable.\\
+        Il existe donc $(\epsilon_k)_{k\in \N},\epsilon_k\searrow 0, k\to \infty$ telle que $\epsilon_k\notin \Er,\forall k$ (Laisser en exercice).\\
+        On applique $(5)$ à chacun des $F_{\epsilon_k}$. $\forall k\in \N,\limsup \mu_n(F_{\epsilon_k})\le \mu(F_{\epsilon_k})$. D'où $\limsup \mu_n(F)\le \mu(F_{\epsilon_k}),\forall k\in \N$. Or $F_{\epsilon_k}\searrow F$ lorsque $k\to \infty$. Par continuité décroissante, $\mu(F)=\lim \mu(F_{\epsilon_k})$ d'où $(4)$.\\
+        $(3)\implies (1)$ On veut montrer que: $\forall \varphi\in \Cr_b(\R^d), \int \varphi \,d\mu_n \longrightarrow \int \varphi\,d\mu$. Il suffit de montrer que
+        \[\forall \varphi\in \Cr_b(\R^d), \liminf \int \varphi\,d\mu_n\overset{(*)}{\ge} \int \varphi\,d\mu\]
+        En effet: On peut appliquer $(*)$ à $\varphi$ et $-\varphi$. Quitte à considérer $\varphi-\inf \varphi$, on peut supposer $\varphi\ge 0$. Or
+        \[\int \underset{\ge 0}{\varphi}\,d\mu=\int_{0}^{+\infty}\mu\left(\{x,\varphi(x)>t\}\right)\,dt\]
+        Comme $\varphi$ est continu, $\{x,\varphi(x)>t\}$ ouvert pour tout $t\in \R$.\\
+        Donc $\forall t>0,\liminf \mu_n\left(\{x,\varphi(x)>t\}\right)\ge \mu(\{x,\varphi(x)>t\})$
+    \end{proof}
+
+    \subsection*{Lien avec les autres modes de convergence}
+
+    \begin{prop}{}{}
+        Soient $(X_n)_n,X$ variables aléatoires à valeurs dans $\R^d$. Si $X_n\overset{P}{\longrightarrow} X$ alors $X_n\Longrightarrow X$.
+    \end{prop}
+
+    \begin{proof}
+        Par le théorème de Portemanteau, il suffit de montrer que
+        \[\Ea[\varphi(X_n)]\longrightarrow \Ea[\varphi(X)],\forall \varphi\text{ lipschitzienne borné}\]
+        Soit $\funto{\varphi}{\R^d}{\R}$ une fonction $1$-lipschitzienne bornée.
+        \begin{align*}
+            \left|\Ea[\varphi(X_n)]-\Ea[\varphi(X)]\right|&=\left|\Ea[\varphi(X_n)-\varphi(X)]\right|\\
+            &\le \Ea[|\varphi(X_n)-\varphi(X)|]\\
+            &=\Ea[\1_{|X_n-X|\le \epsilon}|\varphi(X_n)-\varphi(X)|]+\Ea[\1_{|X_n-X|>\epsilon}\left|\varphi(X_n)-\varphi(X)\right|],\forall \epsilon>0\\
+            &\le \epsilon +2\norme{\varphi}_\infty \Pa(\norme{X_n-X}>\epsilon)
+        \end{align*}
+        D'où: $\limsup|\Ea[\varphi(X_n)-\Ea[\varphi(X)]|\le \epsilon,\forall \epsilon$ (car $X_n\overset{\Pa}{\longrightarrow} X$)\\
+        En faisant tendre $\epsilon \to 0$, on conclut que:
+        \[\Ea[\varphi(X_n)]\longrightarrow \Ea[\varphi(X)]\]
+    \end{proof}
+    
+    La réciproque est vraie dans le cas où $X$ est déterminante:
+
+    \begin{lm}{}{}
+        Soient $(X_n)_n$ variables aléatoires à valeurs dans $\R^d$ et $a\in \R^d$, alors 
+        \[X_n\Longrightarrow a \iff X_n \overset{\Pa}{\longrightarrow} a\]
+    \end{lm}
+
+    \begin{proof}
+        $\impliedby$ donné par la propriété précédente.\\
+        $\implies$ On suppose que $X_n \Longrightarrow a$. Soit $\epsilon>0$. Notons $B'(a,\epsilon)$ la boule fermée de centre $a$ et de rayon $\epsilon$ pour une norme $\norme{\cdot}$. Or $\delta B'(a,\epsilon)=\{x,\norme{x-a}=\epsilon\}$ et $\delta_a(\{x,\norme{x-a}=\epsilon\})=0$.\\
+        Par le théorème de Portemanteau (5), on en conclut que:
+        \[\Pa(\norme{X_n-a}\le \epsilon)=\mu_{X_n}(B'(a,\epsilon))\underset{n\to+\infty}{\longrightarrow}\delta_a(B'(a,\epsilon))=1\]
+        Donc $\Pa(\norme{X_n-a}>\epsilon)\underset{n\to +\infty}{\longrightarrow} 0$.
+    \end{proof}
+
+    \section{Convergence en loi et fonction de répartition}
+
+    \begin{tm}{}{}
+        Soient $(\mu_n)_n,\mu$ des mesures de probabilité sur $\R$. Alors $(\mu_n)_n$ converge étroitement vers $\mu$ \ssi pour tout point de continuité de $F_\mu$:
+        \[F_{\mu_n}(t)\underset{n\to +\infty}{\longrightarrow}F_{\mu}(t)\]
+    \end{tm}
+
+    \begin{re}{}{}
+        $t$ est un point de continuité de $F_\mu$ \ssi $F_\mu(t^-)=F_\mu(t)$ \ssi $\mu(\{t\})=0$
+    \end{re}
+
+    \begin{proof}
+        La condition nécessaire est une conséquence directe du théorème de Portemanteau: Si $t$ est un point de continuité de $F_\mu$, alors $\mu(\delta(]-\infty,t]))=\mu(\{t\})=0$. D'où
+        \[\mu_n(]-\infty,t])\underset{n\to \infty}{\longrightarrow}\mu(]-\infty,t])\qquad (\text{i.e.}F_{\mu_n}(t)\to F_{\mu}(t))\]
+        Pour la condition suffisante, on note que $F_{\mu_n}(t)\longrightarrow F_\mu(t),\forall t\notin \Dr$ où $\Dr$ est l'ensemble des points de discontinuité alors $\forall s<t,s,t\notin \Dr$,
+        \[\mu_n(]s,t])\underset{n\to \infty}{\longrightarrow}\mu(]s,t])\]
+    \end{proof}
+
+    \begin{lm}{}{}
+        Soient $\mu$ une mesure de probabilité sur $\R^d$ et $\Fr$ une famille de boréliens de $\R^d$ telle que:
+        \begin{enumerate}
+            \item $\Fr$ est stable par intersection finie
+            \item Tout ouvert de $\R^d$ est réunion dénombrable d'éléments de $\Fr$.
+        \end{enumerate}
+        Soit $(\mu_n)_n$ une suite de mesures de probabilité sur $\R^d$. Si $\mu_n(A)\to \mu(A),\forall A\in \Fr$, alors $\mu_n\Longrightarrow \mu$.
+    \end{lm}
+
+    \begin{proof}
+        Soit $U$ un ouvert de $\R^d$, il existe $(A_i)_{i\in \N}$ une famille d'éléments de $\Fr$ telle que $U=\bigcup_{i\in \N} A_i$. Montrer pour tout $m\ge 1$,
+        \[\mu_n(\bigcup_{i=1}^m A_i)\longrightarrow \mu(\bigcup_{i=1}^m A_i)\]
+        Soit $m\ge 1$. Pour tout $\nu$ mesure de probabilité
+        \[\nu\left(\bigcup_{i=1}^m A_i\right)\overset{(*)}{=}\sum_{j=1}^{m}(-1)^{j+1}\sum_{1\le i_1<\ldots<i_j\le m}\nu(\bigcap_{k=1}^j A_{i_k})\]
+        Comme $\bigcap_{k=1}^j A_{i_k} \in \Fr$ pour $1\le i_1<\ldots<i_j\le m$, $1\le j\le m$. On a:
+        \[\mu_n\left(\bigcap_{k=1}^j A_{i_k}\right) \longrightarrow \mu(\bigcap_{k=1}^j A_{i_k})\]
+        En passant à la limite dans $(*)$ pour $\nu =\mu_n$ et de nouveau $(*)$ pour $\nu=\mu$, on obtient
+        \[\mu_n\left(\bigcup_{i=1}^{m} A_i \right)\longrightarrow \mu\left(\bigcup_{i=1}^m\right)\]
+        Pour tout $m\ge 1$:
+        \[\liminf \mu_n(U)\ge \liminf \mu_n\left(\bigcup_{i=1}^m A_i\right)\qquad \left(\bigcup_{i=1}^m A_i \subset U\right)\]
+        Or $\liminf \mu_n\left(\bigcup_{i=1}^m A_i\right)=\mu\left(\bigcup_{i=1}^m A_i\right)$. D'où $\liminf \mu_n(U)\ge \mu\left(\bigcup_{i=1}^m A_i\right),\forall m\ge 1$.\\
+        Or $\bigcup_{i=1}^m A_i\nearrow U$. Donc par continuité croissante, on a:
+        \[\mu\left(\bigcup_{i=1}^m A_i\right)\nearrow \mu(U)\]
+        On a obtenu:
+        \[\liminf \mu_n(U)\ge \mu (U),\forall U\text{ ouvert de $\R^d$}\]
+        Par le théorème de Portemanteau, on en conclut que $\mu_n\Longrightarrow \mu$.\\
+    \end{proof}
+
+    \begin{proof}
+        Retour sur la preuve du théorème: $\impliedby$ On suppose $F_{\mu_n}(t)\longrightarrow F_\mu(t),\forall t\in \Dr$. On a remarqué que: $\mu_n(A)\to \mu(A),\forall A\in \Fr$ où $\Fr=\{]s,t]; s,t\notin \Dr\}$\\
+        Clairement $\Fr$ est stable par intersection finie. On sait déjà que tout ouvert de $\R$ s'écrit comme réunion dénombrable d'intervalles ouverts. Pour appliquer le lemme précédent, il suffit de montrer que tout intervalle ouvert est union dénombrable d'éléments de $\Fr$.\\
+        Soient $a<b$. On sait que $\Dr$ est dénombrable. En particulier $\mathring{\Dr}=\emptyset$. Par suite $\overline{\Dr^C}=\R$. Il existe $S_k\searrow a$ et $t_k\searrow b$, tels que $S_k,t_k\notin \Dr,\forall k$.
+    \end{proof}
+
+    \section{Fonction caractéristique et convergence en loi}
+
+    \begin{df}{}{}
+        Soit $\mu$ une mesure de probabilité sur $\R$. La fonction caractéristique de $\mu$ notée $\phi_\mu$ est définie par:
+        \[\phi_{\mu}(t)=\int e^{itx}\,d\mu (x),t\in \R\]
+        Soit $X$ une variable aléatoire réelle la fonction caractéristique de $X$ est la fonction $\phi_X=\phi_{\mu_X}$ (i.e.) $\phi_X(t)=\Ea[ e^{itx}],t\in \R$.\\
+        Autrement dit, la fonction caractéristique est la transformée de Fourrier d'une mesure.
+    \end{df}
+
+    \begin{re}{}{}
+        La fonction caractéristique établit une correspondance entre espace physique ($\mu$) et l'espace des fréquences ($\phi_\mu$).\\
+        En particulier: \begin{itemize}
+            \item La convolution correspond à la multiplication dans l'espace des fréquences.
+            \item La transformation de Fourrier met en correspondance régularité et comportement en l'infini.
+        \end{itemize}
+    \end{re}
+
+    \begin{prop}{}{}
+        Soit $\mu$ une mesure de probabilité sur $\R$.
+        \begin{enumerate}
+            \item $\phi_\mu$ est uniformément continue
+            \item $\phi_\mu(0)=1,|\phi_\mu(t)|\le 1,\forall t\in \R$
+            \item Soit $\nu$ une mesure de probabilité
+            \[\phi_{\mu\times \nu}=\phi_\nu \phi_\nu\]
+            \item $\forall t\in \R, \overline{\phi_\mu(t)}=\phi_\mu(-t)$
+            \item Soient $X,X'$ des variables aléatoires indépendantes de loi $\mu$. Alors $\forall t\in\R$
+            \[\phi_{X-X'}(t)=|\phi_\mu(t)|^2\]
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item Soient $\epsilon>0$,$s,t\in \R,|s-t|\le \epsilon$
+            \[|\phi_\mu(t)-\phi_\mu(s)|\le \int |e^{itx}-e^{isx}|\, d\mu(x)=\int |1-e^{i(s-t)x}|\, d\mu(x)\]
+            Par le théorème des accroissements finis,
+            \[|1-e^{i(s-t)x}|\le |(s-t)x|\]
+            D'où: $|1-e^{i(s-t)x}|\le \min(|(s-t)x|,2)$. On obtient:
+            \begin{align*}
+                |\phi_\mu(t)-\phi_{\mu}(s)|&\le \int\min(|(s-t)x|,2)\, d\mu(x)\\
+                &\le \int \min(\epsilon|x|,2)\,d\mu(x) 
+            \end{align*}
+            C'est à dire:
+            \[\sup_{|s-t|\le \epsilon}|\phi_{\mu}(t)-\phi_{\mu}(t)|\le \int \min(\epsilon |x|,2)\,d\mu(x)\]
+            \begin{itemize}
+                \item Soit $(\epsilon_k)_k$ une suite de réels strictement positifs tels que $\epsilon_k\longrightarrow 0$.
+                \item Pour tout $x\in \R,\min(\epsilon_k |x|,2)\underset{k\to \infty}{\longrightarrow}0$
+                \item $\forall k\in \N, x\in \R, 0\le \min(\epsilon_k|x|,2)\le 2$\\
+                Par le TCD, on en déduit que:
+                \[\lim_{k\to \infty} \int \min(\epsilon_k|x|,2)\,d\mu(x)\underset{k\to \infty}{\longrightarrow}0\]
+                Par le critère séquentielle de la limite
+                \[\lim_{\epsilon\to 0} \sup_{|s-t|\le \epsilon}|\phi_\mu(t)-\phi_\mu(s)|=0\]
+            \end{itemize}
+            \item $\phi_\mu(0)=\int e^0\,d\mu(x)=1$
+            \begin{align*}
+                |\phi_\mu(t)|&=|\int e^{itx}\,d\mu (x)|, t\in \R\\
+                &\le \int |e^{itx}|\,d\mu(x)=1
+            \end{align*}
+            \item Soient $X,Y$ variables aléatoires indépendantes telles que $X\sim \mu$ et $Y\sim\nu$. On sait que $X+Y\sim \mu*\nu$\\
+            Pour tout $t\in \R$,
+            \begin{align*}
+                \phi_{\mu*\nu}(t)&=\Ea[e^{it(X+Y)}]\\
+                &=\Ea[e^{itX}e^{itY}]
+            \end{align*}
+            Comme $X\inde Y$, on en déduit que
+            \begin{align*}
+                \phi_{\mu*\nu}(t)&=\Ea[e^{itX}]\Ea[e^{itY}]\\
+                &=\phi_\mu(t)\phi_\nu(t)
+            \end{align*}
+        \end{enumerate}
+        Les (4) et (5) sont laissés en exercice
+    \end{proof}
+
+    \begin{lm}{Lemme de Riemann-Lebesgue}{}
+        Soit $\mu$ une mesure de probabilité sur $\R$ absoluement continu. Alors $\phi_\mu(t)\underset{|t|\to \infty}{\longrightarrow}0$.
+    \end{lm}
+
+    \begin{proof}
+        On suppose que $\mu=f\lambda$, où $f$ est borélienne, positive et intégrable. On a:$\phi_\mu=\Fr(f)$.\\
+        On utilise un argument de densité.\\
+        Soit $g\in C_C^{\infty}$. Alors $g',g''\in L^1$. Par IPP, on a:
+        \[\Fr(g'')(t)=(it)^2\Fr(g)(t),t\in \R\]
+        D'où:
+        \begin{align*}
+            |\Fr(g)(t)|&\le \frac{1}{t^2}|\Fr(g'')(t)|,t\neq 0\\
+            &\le \frac{1}{t^2}\norme{g''}_{L^1}
+        \end{align*}
+        On en déduit $\Fr(g)(t)\underset{|t|\to\infty}{\longrightarrow}0$
+        \begin{itemize}
+            \item Or $C_C^\infty$ est dense dans $L^1$. Il existe $(g_k)_k$ une suite de $C_C^\infty$ telle que $g_k\overset{L^1}{\longrightarrow} f$
+            \item Soit $t\in \R$
+            \[|\Fr(f)(t)|\le |\Fr(g_k)(t)|+\norme{f-g_k}_{L^1}\]
+            car $\norme{\Fr(h)}_\infty\le \norme{h}_{L^1}$. D'où:
+            \[\limsup |\Fr(f)(t)|\le \norme{f-g_k}_{L^1},\forall k\in \N\]
+            En faisant tendre $k\to \infty$, on conclut que $\lim_{|t|\to \infty}|\Fr(f)(t)|=0$.
+        \end{itemize}
+    \end{proof}
+
+    \begin{ex}{}{}
+        Soit $\mu=\frac{1}{2}\delta_1+\frac{1}{2}\delta_{-1}$
+        \[\phi_\mu(t)=\int e^{itx}\,d\mu(x)=\frac{1}{2}e^{it}+\frac{1}{2}e^{-it}=cos(t),\forall t\in \R\]
+    \end{ex}
+
+    \begin{ex}{}{}
+        Soit $\mu= U([-1,1])$
+        \[\phi_\mu(t)=\frac{1}{2}\int_{-1}^{1}e^{itx}\,dx=\frac{1}{2}[\frac{e^{itx}}{it}]_{-1}^1,t\neq 0=\frac{\sin (t)}{t},\forall t\neq 0\]
+        Comme cette fonction est prolongeable par continuité en $t>0$, on a:
+        \[\phi_\mu(t)=\frac{\sin t}{t},\forall t\in \R\]
+    \end{ex}
+
+    \begin{prop}{}{}
+        Soient $m\in \R,\sigma>0$,
+        \[\forall t\in \R,\phi_{\Nr(m,\sigma^2)}(t)=e^{itm-\frac{\sigma^2 t^2}{2}},\forall t\in \R\]
+    \end{prop}
+
+    \begin{proof}
+        Sans perte de généralité, on peut supposer que $m=0$ et $\sigma^2=1$, quitte à considérer $\frac{\Gamma-m}{\sigma}$ où $\Gamma\sim \Nr(m,\sigma^2)$. Soit $\Gamma \sim \Nr(0,1)$.\\
+        Notons: $\Lambda(z)=\Ea[e^{z\Gamma}],z\in \C$. $\Lambda$ est bien définie:
+        \[\Ea[e^{r\Gamma}]<+\infty,\forall r\in \R\]
+        On a vu en TD: $\Lambda(z)=e^{\frac{Z^2}{2}},\forall z\in \R$. Montrons que $\Lambda$ est holomorphe, on sait que:
+        \[e^{z\Gamma}=\sum_{k\in \N}\frac{z^{k}\Gamma^{k}}{k!},\forall z\in \C\]
+        Par le théorème d'inversion des séries à termes positifs:
+        \[\sum_k \Ea[\frac{|z^k\Gamma^k|}{k!}]=\Ea[\sum_k \frac{|z\Gamma|^k}{k!}]=\Ea[e^{|z\Gamma|}]<+\infty\]
+        Par le théorème d'interversion (Exo 7 TD 2)
+        \[\Lambda(z)=\sum_k\frac{\Ea[z^k\Gamma^k]}{k!}=\sum_k\frac{\Ea[\Gamma^k]}{k!}z^k,\forall z\in \C\]
+        On en déduit que $\Lambda$ est développable en série entière donc holomorphe. $\Lambda$ coïncide avec $z\mapsto e^{\frac{z^2}{2}}$, également holomorphe, sur $\R$ qui admet un point d'accumulation. Par le principe des zéros isolés:
+        \[\Lambda(z)=e^{\frac{Z^2}{2},\forall z\in \C}\]
+    \end{proof}
+
+    \begin{lm}{}{}
+        Soit $\mu$ une mesure de probabilité sur $\R$,
+        \[\forall r>0,\mu\left([-r,r]^C\right)\le \frac{r}{2}\int_{-\frac{2}{r}}^{\frac{2}{r}}(1-\phi_\mu(t))\,dt\]
+    \end{lm}
+
+    \begin{proof}
+        Soit $c>0$
+        \[\frac{1}{c}\int_{-c}^{c}(1-\phi_\mu(t))\,dt=\frac{1}{c}\int_{-c}^{c}\left(\int (1-e^{ixt})\,d\mu(x)\right)\,dt\]
+        $(t,x)\mapsto 1-e^{ixt}$ est bornée, donc intégrable par rapport $\lambda_{|[-c,c]}\otimes \mu$ (mesure finie). Par le théàrème de Fubini Lebesgue:
+        \[\frac{1}{c}\int_{-c}^{c}(1-\varphi_\mu(t))\,dt=\frac{1}{c}\int \left(\int_{-c}^{c}(1-e^{ixt})\,dt\right)\,d\mu(x)\]
+        Comme $t\mapsto \cos(xt)$ est paire et $t\mapsto \sin(xt)$ est impaire:
+        \begin{align*}
+            &=\frac{1}{c}\int \left(2c-2\int_{0}^{0}\cos(xt)\,dt\right)\, d\mu(x)\\
+            &=\frac{2}{c}\int \left(c-\left[\frac{\sin(xt)}{x}\right]_0^c\right) \,d\mu(x)\\
+            &=\frac{2}{c}\int \left(c-\frac{\sin (cx)}{x}\right)\,d\mu(x)\\
+            &=2\int \left(1-\sinc(cx)\right)\,d\mu(x)
+        \end{align*}
+        Or $\sin(y)\le \frac{y}{2},\forall y\ge 2$ donc $\sinc(y)\overset{(*)}{\le}\frac{1}{2}$ si $|y|\ge 2$. Or $1-\sinc (cx)\ge 0, \forall x$.\\
+        Donc $\int (1-\sin(cx))\,d\mu(x)\ge \int \1_{|cx|>2}(1-\sinc(cx))\,d\mu(x)$
+        VOIR PHOTO
+    \end{proof}
+
+    \begin{tm}{Théorème de Lévy}{}
+        Soient $(\mu_n)_n,\mu$ des mesures de probabilité sur $\R$
+        \[\mu_n\Longrightarrow\mu \iff \phi_{\mu_n}(t)\longrightarrow \phi_\mu(t),\forall t\in \R\]
+    \end{tm}
+
+    \begin{cor}{}{}
+        Soient $\mu,\nu$ 2 mesures de probabilité sur $\R$
+        \[\mu=\nu \iff \phi_\mu=\phi_\nu\]
+    \end{cor}
+
+    \begin{proof}
+        $\impliedby$ On applique le théorème de Lévy à $\mu_n=\nu$, on a alors que $\mu_n\Longrightarrow \mu$ or $\mu_n\Longrightarrow \nu$. Par unicité de la limite $\mu=\nu$.
+    \end{proof}
+
+    \begin{df}{}{}
+        Soit $\Pi$ une famille de mesures de probabilité sur $\R^d$. On dit que $\Pi$ est tendue si $\forall \epsilon>0,\exists K_\epsilon\subset \R^d$ compact tel que $\sup_{\mu\in \Pi}\mu(K\epsilon^C)\le \epsilon$
+    \end{df}
+
+    \begin{re}{}{}
+        \begin{itemize}
+            \item Toute mesure de probabilité sur $\R^d$ est tendue: $\R^d=\bigcup_{k\in \N}[-k,k]^d$. Par continuité croissante,
+            \[\mu\left([-k,k]^d\right)\underset{k\to \infty}{\longrightarrow}1\]
+            \[\forall \epsilon>0,\exists k_\epsilon\in \N, \mu\left([-k_\epsilon,k_\epsilon]^d\right)\ge 1-\epsilon\]
+            \item Comme une union finie de compact est compact, toute famille finie de mesures de probabilité est tendue.
+        \end{itemize}
+    \end{re}
+
+    \begin{exo}{}{}
+        Soit $(\mu_n)_n$ une suite de mesures de probabilité sur $\R^d$. $(\mu_n)_n$ est tendue \ssi $\forall \epsilon>0,\exists K_\epsilon\subset \R^d$ compact $\limsup \mu_n(K_\epsilon^C)\le \epsilon$
+    \end{exo}
+
+    \begin{ex}{}{}
+        La famille $\{\delta_n,n\in \N\}$ n'est pas tendue (La masse s'échappe à l'infini). Si $K$ compact, alors $K$ est borné, et donc il existe $n\in \N,n\notin K$. D'où $\sup_n \delta_n(K^C)=1$.
+    \end{ex}
+
+    \begin{lm}{}{}
+        Soient $(\mu_n)_n,\mu$ mesures de probabilité sur $\R$.\\
+        Si $\phi_{\mu_n}(t)\longrightarrow \phi_\mu(t),\forall t$ alors $(\mu_n)_n$ est tendue
+    \end{lm}
+
+    \begin{cor}{}{}
+        Toute suite de mesures de probabilité sur $\R$ convergeant étroitement est tendue\\
+        En effet: Pour tout $t\in \R,x\mapsto e^{itx}$ est continue bornée. Si $\mu_n\Longrightarrow \mu$ alors $\phi_{\mu_n}(t)\longrightarrow \phi_{\mu}(t),\forall t$.
+    \end{cor}
+
+    \begin{proof}
+        Preuve du lemme: On suppose que $\phi_{\mu_n}(t)\longrightarrow \phi_\mu(t),\forall t$. $\forall r>0,n\in \N$,
+        \[\mu_n\left([-r,r]^C\right)\le \frac{r}{2}\int_{-\frac{2}{r}}^{\frac{2}{r}}\left(1-\phi_{\mu_n}(t)\right)\,dt\]
+        Comme $\phi_{\mu_n}(t)\longrightarrow\phi_\mu(t),\forall t$ et $\left|\phi_{\mu_n}(t)\right|\le 1,\forall n,\forall t\in \R$. Par le TCD, on en déduit que:
+        \[\limsup \mu_n\left([-r,r]^C\right)\le \frac{r}{2}\int_{-\frac{2}{r}}^{\frac{2}{r}}\left(1-\phi_\mu(t)\right)\, dt\le 2\sup_{t\in[-\frac{2}{r},\frac{2}{r}]}|1-\phi_\mu(t)|\]
+        Comme $\phi_\mu(0)=1$ et $\phi_\mu$ est continue, $\sup_{t\in[-\frac{2}{r},\frac{2}{r}]}|1-\phi_\mu(t)|\underset{r\to \infty}{\longrightarrow}0$. On a montrer que
+        \[\lim_{r\to \infty}\lim_{n\to \infty}\mu_n([-r,r]^C)=0\]
+        Par l'exercice, on en déduit que $(\mu_n)_n$ est tendue.
+    \end{proof}
+
+    \begin{proof}
+        Preuve du Théorème de Lévy:$\impliedby$ On suppose que $\phi_{\mu_n}(t)\underset{n\to \infty}{\longrightarrow}\phi_\mu(t),\forall t$. Par le lemme précédent, $(\mu_n)_n$ est tendue. D'autre part, $\mu$ est tendue: on en déduit que $\forall \epsilon>0,\exists r_\epsilon >0$ tel que:
+        \[\mu_n\left([-r_\epsilon,r_\epsilon]^C\right)\epsilon,\forall n,\mu\left([-r_\epsilon,r_\epsilon]^C\right)\le \epsilon\]
+        En effet, si $K$ compact est tel que $\mu(K)\ge 1-\epsilon$ pour $\epsilon >0$ alors $K\subset [-r,r]$ et $\mu([-r,r])\ge 1-\epsilon$.\\
+        Soit $f\in \Cr_b(\R)$ VOIR PHOTO SCHEMA 03/12\\
+        Il existe $g$ une fonction $2\pi r_\epsilon$-périodique continue telle que $\norme{g}_\infty\le \norme{f}_\infty$ et $g_{|[-r\epsilon,r_\epsilon]}=f_{|[-r\epsilon,r_\epsilon]}$.\\
+        Par le théorème de Stone-Weierstrass, l'espace vectoriel engendré par $x\mapsto e^{ik\frac{x}{r\epsilon}},k\in \Z$ est dense dans l'espace des fonctions $2\pi r_\epsilon$-périodique: Il existe $p_\epsilon\in\text{Vect} (e^{ik\frac{x}{r_\epsilon}})$ tel que $\norme{p_\epsilon -g}_\infty\le \epsilon$. Or $\phi_{\mu_n}\left(\frac{k}{r_\epsilon}\right)\longrightarrow \phi_\mu\left(\frac{k}{r_\epsilon}\right),\forall k\in \Z$.\\
+        Donc $\int p_\epsilon \,d\mu_n\longrightarrow \int p_\epsilon \,d\mu$ par linéarité. Ainsi
+        \begin{align*}
+            \left|\int f\, d\mu_n-\int f\,d\mu\right|&\le \left| \int \1_{[-r_\epsilon,r_\epsilon]} f\,d\mu_n -\int \1_{[-r_\epsilon,r_\epsilon]} f\, d\mu \right| + 2\norme{f}_{\infty} \epsilon\\
+            &=\left|\int \1_{[r_\epsilon,r_\epsilon]}g\, d\mu_n -\int \1_{[-r_\epsilon,r_\epsilon]} g\,d\mu \right| +2\norme{f}_E\\
+            &\le \left| \int g\,d\mu_n -\int g\,d\mu\right| +4\norme{f}_\infty \epsilon\\
+            &\le \left|\int p_\epsilon \,d\mu_n -\int p_\epsilon \,d\mu\right| +2\epsilon +4\norme{f}_\infty \epsilon
+        \end{align*}
+        En faisant tendre $n\to \infty$ et ensuite $\epsilon\to 0$, on obtient le résultat. Ainsi
+        \[\left|\int f\,d\mu_n -\int f\, d\mu\right|\le \left|\int \1_{[-r_\epsilon,r_\epsilon]} f\,d\mu_n -\int \1_{[-r_\epsilon,r_\epsilon]} f\,d\mu\right| +2\norme{f}_\infty \epsilon\]
+    \end{proof}
+
+    \section{Théorème central limite}
+
+    \begin{prop}{}{}
+        Soit $X$ variable aléatoire réelle telle que $\Ea[|X|^n]<\infty$. Alors $\phi_X$ est de classe $C^n$ et
+        \[\forall 0\le k\le n,\phi_X^{(k)}(0)=i^{k}\Ea[X^k]\]
+    \end{prop}
+
+    \begin{proof}
+        Notons $\mu$ la loi de $X$ et $\psi(x,t)=e^{itx},t\in \R,x\in \R$. On a:
+        \[\phi_X(t)=\int \psi(x,t)\, d\mu(x),\forall t\in \R\]
+        \begin{itemize}
+            \item $t\mapsto \psi(x,t)$ est $C^n$
+            \item $\forall 0\le k\le n,\forall x, \forall t\in \R$,
+            \[\left|\frac{\partial^k \psi}{\partial t^k}(x,t)\right|= \left|\left(ix\right)^k e^{itx}\right|\le \left|x\right|^k\]
+            Or $\Ea[|X|^k]<+\infty$ donc $\Ea[|X|^k]<+\infty,\forall 0\le k\le n$ c'est à dire $x\mapsto |x|^k\in L^1(\mu)$.
+        \end{itemize}
+        Par le théorème de dérivation sous le signe intégral, on en déduit que $\phi_X$ est de classe $C^n$ et $\forall 0\le k\le n,\forall t\in \R$
+        \begin{align*}
+            \phi_X^{(k)}(t)&=\int (ix)^k e^{itx} \,d\mu(x)\\
+            &=\Ea[\left(iX\right)^k e^{itX}]
+        \end{align*}
+        En particuliern $\phi_X^{(k)}(0)=i^k\Ea[ X^k],\forall 0\le k\le n$.\\
+        Ce lien entre moments et dérivée de $\phi_X$ permet de calculer quelque fois rapidement les moments.
+    \end{proof}
+
+    \begin{ex}{}{}
+        Soit $X\sim \Nr(0,1)$. On sait que:
+        \[\phi_X(t)=e^{-\frac{t^2}{2}},\forall t\in \R\]
+        On développe en série entière $\phi_X$:
+        \[\forall t\in \R, \phi_X(t)=\sum_{k\in \N}\frac{(-t^2)^k}{2^{k}k!}=\sum_{k\in \N}(-1)^k\frac{t^{2k}}{2^{k}k!}\]
+        Donc $\phi_X^{(2k+1)}(0)=0,\forall k\in \N$ et $\forall k\in \N, \phi_X^{(2k)}(0)=(-1)^k\frac{(2k)!}{2^{k}k!}$.\\
+        Comme $X$ admet des moments finis à tout ordre, on déduit de la propriété précédente que:
+        \[i^{2k}\Ea[X^{2k}]=(-1)^k\frac{(2k)!}{2^{k}k!},\forall k\]
+        D'où: $\Ea[X^{2k}]=\frac{(2k)!}{2^k k!},\forall k\in \C$
+    \end{ex}
+
+    \begin{tm}{Théorème centrale limite}{}
+        Soit $(X_k)_k$ une suite de variables aléatoires réelles i.i.d. telles que:
+        \[\Ea[X_1]=0\text{ et }\Ea[X_1^2]=\sigma^2\in ]0,+\infty[\]
+        Notons $S_n=\sum_{k=1}^{n}X_k,n\in \N$, $\frac{S_n}{\sqrt{n}}\Longrightarrow \Nr(0,\sigma^2)$
+    \end{tm}
+
+    \begin{re}{}{}
+        Informellement, $S_n\cong \Nr(0,n\sigma^2)$. Typiquement, $S_n$ est d'ordre $\sqrt{n}$.\\
+        Le TCL est un résultat d'universalité: La loi limite ne dépend que des 2 premièrs moments de la loi de l'échantillon.
+    \end{re}
+
+    \begin{proof}
+        Par le théorème de Levy, il suffit de montrer que
+        \[\phi_{S_n/\sqrt{n}}(t)\longrightarrow \phi_{\Nr(0,\sigma^2)}(t),\forall t\in \R\]
+        C'est à dire
+        \[\phi_{S_n/\sqrt{n}}(t)\longrightarrow e^{-t^2\frac{\sigma^2}{2}},\forall t\in \R\]
+        Fixons $t\in \R$,
+        \begin{align*}
+            \phi_{S_n/sqrt{n}}(t)&=\phi_{S_n}\left(\frac{t}{\sqrt{n}}\right)\\
+            &=\left(\phi\left(\frac{t}{\sqrt{n}}\right)\right)^n\text{ où $\phi=\phi_{X_1}$}
+        \end{align*}
+        Par la propriété précédente, $\phi$ est de classe $C^2$ et $\phi'(0)=0$ et $\phi''(0)=-\sigma^2$. Par Taylor-Young, au voisinage de $0$:
+        \[\phi(u)=1-\frac{\sigma^2 u^2}{2}+o(u^2)\]
+        Donc $\phi(\frac{t}{\sqrt{n}})=1-\frac{\sigma^2 t^2}{2n}+o\left(\frac{1}{n}\right)$.\\
+        Pour $n$ assez grand $\phi\left(\frac{t}{\sqrt{n}}\right)\in D(1,1)$ où $D(r,\epsilon)$ désigne le disque de centre $r$ et de rayon $\epsilon$. $\log \phi\left(\frac{t}{\sqrt{n}}\right)$ est donc bien définie pour $n$ assez grand où $\log$ défini le logarithme sur $\C\wt \R^-$.\\
+        Donc $\log (\phi(t/\sqrt{n}))=\log (1-\frac{t^2\sigma^2}{2n}+o(\frac{1}{n}))=-\frac{t^2\sigma^2}{2n}+o(\frac{1}{n})$.\\
+        Donc $n\log(\phi(t/\sqrt{n}))=-\frac{t^2\sigma^2}{2}+o(1)$\\
+        Donc $n\log \phi(t/\sqrt{n})\longrightarrow \frac{-t^2 \sigma^2}{2}$ d'où $(\phi (T/\sqrt{n}))^n\longrightarrow e^{-\frac{t^2\sigma^2}{2}}$ c'est à dire $\phi_{S_n/\sqrt{n}}(t)\longrightarrow e^{-\frac{t^2\sigma^2}{2}}$
+    \end{proof}
+\end{document}

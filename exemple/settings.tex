@@ -1,22 +1,245 @@
-% settings.tex — préréglages LaTeX partagés pour tous les cours.
-% L'application lit ce fichier pour :
-%   1. reconnaître les environnements « à titre » (les notions) ;
-%   2. injecter vos macros lors du rendu des formules.
+% ================================
+% Packages
+% ================================
+\usepackage[francais]{babel}
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage{amsmath,amsthm,amssymb,amsfonts,stmaryrd,bbold,graphicx,tcolorbox,tikz,mathabx,mathtools,fourier-orns,enumitem} % Required for inserting images
+\usepackage[T1]{fontenc}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage[nottoc]{tocbibind}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 
-% --- Macros ---
-\newcommand{\R}{\mathbb{R}}
+
+% ================================
+% Style "poly"
+% ================================
+
+\renewcommand{\thesection}{\Roman{section}}
+
+\frenchbsetup{StandardLists=true}
+\tcbuselibrary{%
+  theorems,%
+  breakable,%
+  skins
+}
+\usetikzlibrary{automata, positioning,fadings,shapes,arrows.meta,calc,fit,backgrounds,shapes.multipart,positioning,patterns,decorations.pathmorphing} 
+
+\tcbset{set1/.style={%
+  colback=white,%
+  separator sign colon,%
+  description delimiters none,%
+  enhanced jigsaw,%
+  breakable,%
+  sharp corners=all,
+  coltitle=black,
+  frame hidden,
+  borderline west={1pt}{0pt}{black},
+  overlay unbroken and last={%
+        \draw[line width=1pt, black] (frame.south west)   -- ++(0:1cm);},
+  sharp corners=southwest,
+  before skip=10pt, after skip=10pt,
+  left=6pt, right=6pt, top=6pt, bottom=6pt,
+attach boxed title to top left={xshift=1.5mm},
+boxed title style={skin=enhanced jigsaw,
+colback=white,sharp corners,frame hidden,  borderline south={1pt}{0pt}{black},left=-3pt,right=-3pt,bottom=-1pt
+}}
+}
+
+
+
+
+
+
+
+\newtcbtheorem[number within=section]{df}{Définition}{set1}{df}
+\newtcbtheorem[number within=section]{re}{Remarque}{set1}{re}
+\newtcbtheorem[number within=section]{prop}{Proposition}{set1}{prop}
+\newtcbtheorem[use counter from=df]{dfprop}{Définition-Proposition}{set1}{dfprop}
+\newtcbtheorem[number within=section]{tm}{Théorème}{set1}{tm}
+\newtcbtheorem[number within=section]{lm}{Lemme}{set1}{lm}
+\newtcbtheorem[number within=section]{ex}{Exemple}{set1}{ex}
+\newtcbtheorem[number within=section]{exo}{Exercice}{set1}{exo}
+\newtcbtheorem[number within=section]{cor}{Corollaire}{set1}{cor}
+\newtcbtheorem[number within=section]{ra}{Rappel}{set1}{ra}
+\newtcbtheorem[number within=section]{nt}{Notation}{set1}{nt}
+\newtcbtheorem{qs}{Question}{set1}{qs}
+
+% ================================
+% Nouveaux opérateurs et définitions
+% ================================
+
+\definecolor{treeblue}{RGB}{50, 90, 180}
+\definecolor{labelgreen}{RGB}{0, 140, 130}
+\definecolor{gridblue}{RGB}{70, 100, 200}
+\definecolor{signpink}{RGB}{220, 60, 150}
+\definecolor{myblue}{RGB}{50, 90, 180}
+\definecolor{mypink}{RGB}{180, 50, 130}
+\DeclareMathOperator{\inde}{\perp \!\!\! \perp}
+
+% ================================
+% Raccourcis
+% ================================
+
+\newcommand{\ssi}{\text{si et seulement si} }
+\newcommand{\tq}{\text{tel que} }
+\newcommand{\apcr}{\text{à partir d'un certain rang} }
+\newcommand{\ev}{\text{espace vectoriel} }
+\newcommand{\evs}{\text{espaces vectoriels} }
+\newcommand{\sev}{\text{sous espace vectoriel} }
+\newcommand{\sevs}{\text{sous espaces vectoriels} }
+\newcommand{\pgcd}{\text{pgcd}}
+\newcommand{\ppcm}{\text{ppcm}}
+\newcommand{\evn}{\text{espace vectoriel normé} }
+\newcommand{\gr}{\text{groupe} }
+\newcommand{\grs}{\text{groupes} }
+\newcommand{\sg}{\text{sous-groupe} }
+\newcommand{\sgs}{\text{sous-groupes} }
+\newcommand{\sgd}{\text{sous-groupe distingué} }
+\newcommand{\sgds}{\text{sous-groupes distingués} }
+\newcommand{\aut}{\text{Aut}}
+\def\Xint#1{\mathchoice
+{\XXint\displaystyle\textstyle{#1}}%
+{\XXint\textstyle\scriptstyle{#1}}%
+{\XXint\scriptstyle\scriptscriptstyle{#1}}%
+{\XXint\scriptscriptstyle\scriptscriptstyle{#1}}%
+\!\int}
+\def\XXint#1#2#3{{\setbox0=\hbox{$#1{#2#3}{\int}$}
+\vcenter{\hbox{$#2#3$}}\kern-.5\wd0}}
+\def\dashint{\Xint-}
+
+\newcommand{\toninfty}{\underset{n\to +\infty}{\longrightarrow}}
+\newcommand{\tops}{\overset{\text{p.s.}}{\longrightarrow}}
+\newcommand{\toproba}{\overset{\text{proba}}{\longrightarrow}}
+\newcommand{\support}{\text{supp}}
+\newcommand{\Lloc}{L^1_{\text{loc}}}
+\newcommand{\1}{\mathbb{1}}
 \newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Rb}{\overline{\R}}
+\newcommand{\Pa}{\mathbb{P}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
 \newcommand{\K}{\mathbb{K}}
-\newcommand{\norme}[1]{\left\lVert #1 \right\rVert}
-\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
-\newcommand{\ens}[1]{\left\{ #1 \right\}}
-\newcommand{\indicatrice}{\mathbf{1}}
+\newcommand{\Fa}{\mathbb{F}}
+\newcommand{\La}{\mathbb{L}}
+\newcommand{\Ea}{\mathbb{E}}
+\newcommand{\Gr}{\mathcal{G}}
+\newcommand{\Kr}{\mathcal{K}}
+\newcommand{\Ar}{\mathcal{A}}
+\newcommand{\Br}{\mathcal{B}}
+\newcommand{\Cr}{\mathcal{C}}
+\newcommand{\Mr}{\mathcal{M}}
+\newcommand{\Hr}{\mathcal{H}}
+\newcommand{\Nr}{\mathcal{N}}
+\newcommand{\Fr}{\mathcal{F}}
+\newcommand{\Ur}{\mathcal{U}}
+\newcommand{\Yr}{\mathcal{Y}}
+\newcommand{\Zr}{\mathcal{Z}}
+\newcommand{\Lr}{\mathcal{L}}
+\newcommand{\Or}{\mathcal{O}}
+\newcommand{\Rr}{\mathcal{R}}
+\newcommand{\Dr}{\mathcal{D}}
+\newcommand{\Er}{\mathcal{E}}
+\newcommand{\Par}{\mathcal{P}}
+\newcommand{\Tr}{\mathcal{T}}
+\newcommand{\Vr}{\mathcal{V}}
+\newcommand{\Sr}{\mathcal{S}}
+\newcommand{\Xr}{\mathcal{X}}
+\newcommand{\BR}{\Br(\R)}
+\newcommand{\BRb}{\Br(\Rb)}
+\newcommand{\RBR}{(\R,\BR)}
+\newcommand{\RBRb}{(\Rb,\BRb)}
+\newcommand{\nN}{{n\in\N}}
+\newcommand{\wt}{\backslash}
+\newcommand{\lims}{\overline{\lim}}
+\newcommand{\limi}{\underline{\lim}}
+\newcommand{\EA}{(E,\Ar)}
+\newcommand{\EAmu}{(E,\Ar,\mu)}
+\newcommand{\FB}{(F,\Br)}
+\newcommand{\FBnu}{(F,\Br,\nu)}
+\newcommand{\LEA}{L^1(E,\Ar,\mu)}
+\newcommand{\LFB}{L^1(F,\Br,\nu)}
+\newcommand{\OmegaFP}{(\Omega,\Fr,\Pa)}
+\newcommand{\LCEA}{L_\C^1(E,\Ar,\mu)}
+\newcommand{\pp}[1]{#1\text{-presque partout} }
+\newcommand{\va}{\text{variable aléatoire} }
+\newcommand{\vas}{\text{variables aléatoires} }
+\newcommand{\LRBR}{L^1(\R,\BR,\lambda)}
+\newcommand{\cl}{{\text{cl}}}
+\newcommand{\Sn}{\Sr_n}
+\newcommand{\An}{\Ar_n}
+\newcommand{\id}{\text{id} }
+\newcommand{\Id}{\text{Id} }
+\newcommand{\Var}{\text{Var} }
+\newcommand{\Cov}{\text{Cov} }
+\newcommand{\Hom}{\text{Hom} }
+\newcommand{\car}{\text{car} }
+\newcommand{\Aut}{\text{Aut} }
+\newcommand{\Gal}{\text{Gal} }
+\newcommand{\iid}{\text{i.i.d.} }
+\newcommand{\sinc}{\text{sinc} }
 
-% --- Environnements « notions » (titre entre accolades) ---
-\newtheorem{theoreme}{Théorème}
-\newtheorem{lemme}{Lemme}
-\newtheorem{proposition}{Proposition}
-\newtheorem{corollaire}{Corollaire}
-\newtheorem{definition}{Définition}
-\newtheorem{exemple}{Exemple}
-\newtheorem{remarque}{Remarque}
+% ================================
+% Raccourcis à paramètres
+% ================================
+
+\newcommand{\produit}[2]{\prod_{#1}^{#2}}
+\newcommand{\vect}[1]{\overrightarrow{#1}}
+\newcommand{\bnorme}[1]{ \left\lVert #1 \right\rVert }
+\newcommand{\norme}[1]{ \lVert #1 \rVert }
+\newcommand{\acc}[1]{ \left\{ #1 \right\} }
+\newcommand{\cho}[1]{ \left\{\begin{array}{ll} #1 \end{array} \right. }
+\newcommand{\fun}[2]{\begin{array}{ccccc}
+#1 & \to & #2
+\end{array}}
+\newcommand{\funinj}[2]{\begin{array}{ccccc}
+#1 & \hookrightarrow & #2
+\end{array}}
+\newcommand{\funsurj}[2]{\begin{array}{ccccc}
+#1 & \twoheadrightarrow & #2
+\end{array}}
+\newcommand{\mfun}[2]{\begin{array}{ccccc}
+#1 & \mapsto & #2
+\end{array}}
+\newcommand{\funto}[3]{\begin{array}{ccccc}
+#1 : & #2 & \to & #3
+\end{array}}
+\newcommand{\funtoinj}[3]{\begin{array}{ccccc}
+#1 : & #2 & \hookrightarrow & #3
+\end{array}}
+\newcommand{\funtosurj}[3]{\begin{array}{ccccc}
+#1 : & #2 & \twoheadrightarrow & #3
+\end{array}}
+\newcommand{\fundf}[4]{\begin{array}{ccccc}
+& #1 & \to & #2 \\
+& #3 & \mapsto & #4  
+\end{array}}
+\newcommand{\fundfinj}[4]{\begin{array}{ccccc}
+& #1 & \hookrightarrow & #2 \\
+& #3 & \mapsto & #4  
+\end{array}}
+\newcommand{\fundfsurj}[4]{\begin{array}{ccccc}
+& #1 & \twoheadrightarrow & #2 \\
+& #3 & \mapsto & #4  
+\end{array}}
+\newcommand{\fundfto}[5]{\begin{array}{ccccc}
+#1 : & & #2 & \to & #3 \\
+& & #4 & \mapsto & #5  
+\end{array}}
+\newcommand{\fundftoinj}[5]{\begin{array}{ccccc}
+#1 : & & #2 & \hookrightarrow & #3 \\
+& & #4 & \mapsto & #5  
+\end{array}}
+\newcommand{\fundftosurj}[5]{\begin{array}{ccccc}
+#1 : & & #2 & \twoheadrightarrow & #3 \\
+& & #4 & \mapsto & #5  
+\end{array}}
+\newcommand{\sca}[1]{\langle #1 \rangle}
+\newcommand{\ext}[2]{\begin{matrix}
+  #1\\
+  |\\
+  #2
+\end{matrix}}

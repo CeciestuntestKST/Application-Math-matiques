@@ -1,0 +1,1576 @@
+\documentclass[]{report}
+
+\usepackage{import}
+
+\import{../}{settings.tex}
+
+\tikzstyle{operation}=[->,>=latex]
+\tikzstyle{etiquette}=[midway,fill=black!20]
+
+\title{Théorie des corps et théorie de Galois}
+
+\author{Cours de Emmanuel Wagner, transcrit par SADR TAHOURI Luca}
+\date{}
+
+\begin{document}
+
+    \maketitle
+    \tableofcontents
+
+    \chapter{Introduction}
+
+    \subsection*{Equation de degré 2}
+
+    \[X^2+bX+c=0\]
+    \begin{center}
+        On connaît les racines de ce polynôme:
+    \end{center}
+    \[\alpha_1=\frac{-b+\sqrt{b^2-4c}}{2}\qquad \alpha_2=\frac{-b-\sqrt{b^2-4c}}{2}\]
+
+    \subsection*{Equation de degré 3}
+
+    \begin{center}
+        On peut se ramener à $X^3+pX+q=0$ par translation\\
+        On suppose qu'on peut écrire $X^3+pX+q=(X-\alpha_1)(X-\alpha_2)(X-\alpha_3)$\\
+        $\implies\cho{\alpha_1\alpha_2\alpha_3=-q\\\alpha_1\alpha_2+\alpha_1\alpha_3+\alpha_2\alpha_3=p \\\alpha_1+\alpha_2+\alpha_3=0}$\\
+        On pose $j=e^{\frac{2i\pi}{3}}$ racine de $X^2+X+1$ car $X^3-1=(X-1(X^2+X+1))$. On considère $A_1={(\alpha_1+j\alpha_2+j^2\alpha_3)}^3$ et $A_2={(\alpha_1+j^2\alpha_2+j\alpha_3)}^3$\\
+        On calcule $A_1 A_2$ et $A_1+A_2$:$\cho{A_1A_2=-27p^3\\ A_1+A_2=-27q}$\\
+        On en déduit que $A_1$ et $A_2$ sont racines de: $Y^2+27qY-27p^3=0$. On peut extraire des racines cubiques: $\cho{B_1=\sqrt[3]{A_1}\\B_2=\sqrt[3]{A_2}}$\\
+        On sait que $\cho{\alpha_1+\alpha_2+\alpha_3=0\\\alpha_1+j\alpha_2+j^2\alpha_3=B_1 \\\alpha_1+j^2\alpha_2+j\alpha_3=B_2}\iff \left(\begin{matrix}
+        1&1&1\\
+        1&j&j^2\\
+        1&j^2&j^4            
+        \end{matrix}\right)\left(\begin{matrix}
+            \alpha_1\\
+            \alpha_2\\
+            \alpha_3
+        \end{matrix}\right)=\left(\begin{matrix}
+            0\\
+            B_1\\
+            B_2
+        \end{matrix}\right)$
+    \end{center}
+
+    \subsection*{Equation de degré 4}
+
+    \begin{center}
+        $X^4+pX^2+qX+r=0$ (On peut se ramener à $0\times X^3$ par translation)\\
+        1er cas: $q=0,X^4+pX^2+r=0$, on peut résoudre avec $Y=X^2,Y^2+pY+r=0$\\
+        2ème cas: $q\neq 0$, on cherche à factoriser sous la forme $X^4+pX^2+qX+r=(X^2+aX+b)(X^2-aX+c)\implies \cho{c-a^2+b=p&(1)\\ac-ad=q&(2)\\bc=r&(3)}$\\
+        $q\neq0\implies a\neq0$ d'où $(1)+(2)\implies\cho{c=\frac{p+a^2+\frac{q}{a}}{2}\\b=\frac{p+a^2-\frac{q}{a}}{2}}$\\
+        On injecte les valeurs $b$ et $c$ dans $(3)$:\\
+        $a^6+2pa^4+(p^2-4r)a^2-q^2=0$\\
+        On se ramène ainsi au fait que $a^2$ soit solution de $Y^3+2pY^2+(p^2-4r)Y-q^2=0$
+    \end{center}
+
+    \chapter{Théorie des groupes}
+
+    \section{Groupes}
+
+    \begin{df}{}{}
+        Soit $H$ un sous-groupe de $G$ fini. On définit $\fundf{H\times G}{G}{(h,g)}{hg}$ l'action de H sur G à gauche.\\
+        On a un morphisme de groupe $H\to$Aut$(G)$.\\
+        On pose pour $g\in G,Hg=\{hg,h\in H\}$ classe à gauche et on a $|Hg|=|H|$.\\
+        On peut aussi définir une relation d'équivalence par $(x,y)\in G^2\quad xRy\iff xy^{-1}\in H$
+    \end{df}
+
+    \begin{ex}{}{}
+        $G=\Z\qquad H=n\Z$
+    \end{ex}
+
+    \begin{dfprop}{}{}
+        On note $H\wt G$ l'ensemble des classes d'équivalence et on a: $|G|=|H||H\wt G|$
+    \end{dfprop}
+
+    \begin{nt}{}{}
+        $X\subset G\qquad X^{-1}=\{g^{-1},g\in X\}\qquad {(Hg)}^{-1}=g^{-1}H^{-1}$    
+    \end{nt}
+
+    \begin{prop}{}{}
+        Il y a une bijection entre les classes à droites et les classes à gauches.
+    \end{prop}
+
+    \begin{re}{}{}
+        Si $G$ est abélien, $\forall g\in G,gH=Hg$
+    \end{re}
+
+    \begin{df}{}{}
+        Un sous groupe $H\subset G$ est distingué (ou normal) si
+        \[\forall g\in G,g^{-1}Hg=H\]
+        Dans ce cas, on note $H\triangleleft G$
+    \end{df}
+
+    \begin{tm}{}{}
+        Si $H\triangleleft G$, il existe une unique structure de groupe sur $G/H$ telle que $\funtosurj{\pi}{G}{G/H}$ la surjection canonique, soit un morphisme de groupe.
+    \end{tm}
+
+    \begin{nt}{}{}
+        $\twoheadrightarrow$ désigne une surjection et $\hookrightarrow$ une injection
+    \end{nt}
+
+    \begin{ex}{}{}
+        $\funto{\phi}{G}{G'}$ morphisme de groupes, $\ker(\varphi)\triangleleft G$
+    \end{ex}
+
+    \begin{tm}{}{}
+        Soit $\funto{f}{G}{G'}$ un morphisme de groupes. $H$ sous groupes de $G$, $\funtosurj{\pi}{G}{G/H}$ surjection canonique.\\
+        Il existe $\funto{\overline{f}}{G/H}{G'}$. Voir diagramme p.3\\
+        $f=\overline{f}\circ\pi\iff H\subset\ker(f)$ et dans ce cas $H\triangleleft G$ et $G/H$ est un groupe, $\funto{\overline{f}}{G/H}{G'}$ morphisme de groupes et $\overline{f}$ est unique.
+    \end{tm}
+    
+    \begin{re}{}{}
+        $\overline{f}(G/H)=f(G)$ et $\ker(\overline{f})=\ker(f)/h$
+    \end{re}
+
+    \begin{cor}{}{}
+        $\funto{f}{G}{G'}$ morphisme de groupes, alors $f(G)\cong G/\ker(f)$
+    \end{cor}
+
+    \begin{re}{}{}
+        $V$ espace vectoriel, $F$ \sev, $uRv\iff u-v\in F$. Alors $V/F$ est un \sev, et pour $\funto{f}{V}{W}$ application linéaire, $\ker f$ est un \sev de $V$.
+    \end{re}
+
+    \section{Groupes abéliens et groupes cycliques}
+
+    \begin{ex}{}{}
+        $\Z$ est engendrée par 1
+        $\Z/n\Z$
+    \end{ex}
+
+    \begin{tm}{}{}
+        Tous les sous-groupes de $\Z$ sont de la forme $n\Z,n\in\N$.\\
+        Soit $n\ge 2$ et $d$ diviseur de $n$. Alors $\Z/n\Z$ a un unique sous groupe d'odre $d$ engendré par $\frac{n}{d}$ et ce sous-groupe est cyclique.
+    \end{tm}
+
+    \begin{cor}{}{}
+        Soit $d$ un diviseur de $n$, le nombre d'éléments d'ordre $d$ dans $\Z/n\Z$ est égal à $\varphi(d)$ (indicatrice d'Euler)
+    \end{cor}
+
+    \begin{df}{}{}
+        Un groupe est cyclique s'il est engendré par un éléments $\iff \exists g\in G, G=\{g^n,n\in\Z\}$
+    \end{df}
+
+    \begin{tm}{}{}
+        Tout groupe abélien fini est isomorphe à un produit fini de groupes cycliques (finis).
+    \end{tm}
+
+    \begin{tm}{}{}
+        $m,n$ premiers entre eux, $\funto{\varphi}{\Z}{\Z/m\Z\times\Z/n\Z}$ morphisme de groupes, alors $\ker\varphi=mn\Z$, d'où $\Z/mn\Z\cong\Z/m\Z\times\Z/n\Z$
+    \end{tm}
+
+    \begin{exo}{}{}
+        Expliciter l'application réciproque
+    \end{exo}
+
+    \begin{proof}
+        $\funto{\varphi}{\Z}{\Z/m\Z\times\Z/n\Z}$. $\ker \varphi=n\Z\cap m\Z=mn\Z$.\\
+        \[\funtoinj{\overline{\varphi}}{mn\Z}{\Z/m\Z\times\Z/n\Z}\]
+        \begin{center}
+            Or $|\Z/mn\Z|=|\Z/m\Z\times\Z/n\Z|$ donc $\overline{\varphi}$ est bijective
+        \end{center}
+    \end{proof}
+
+    \begin{ex}{}{}
+        Considérons le groupe à 6 éléments $\Z/6\Z$ :
+        \begin{align*}
+            \Z/3\Z&\hookrightarrow\Z/6\Z\twoheadrightarrow \Z/2\Z=(\Z/6\Z)/(\Z/3\Z)\\
+            \overline{0}&\mapsto\overline{0}\\
+            \overline{1}&\mapsto\overline{2}\\
+            \overline{2}&\mapsto\overline{4}
+        \end{align*}
+        une suite de morphisme $\hookrightarrow$ puis $\twoheadrightarrow$ est appelée suite exacte
+    \end{ex}
+
+    \section{Groupes résolubles}
+
+    \begin{df}{}{}
+        Un groupe $G$ est dit résoluble s'il possède une suite de sous-groupes 
+        \[\{e\}=G_0\triangleleft G_1\triangleleft G_2\triangleleft\cdots\triangleleft G_n=G\]
+        telle que tous les quotients $G_{i+1}/G_i$ soient abéliens
+    \end{df}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item Les groupes abéliens sont résolubles
+            \item $S_3$ est résoluble
+        \end{enumerate}
+    \end{ex}
+
+    \begin{df}{}{}
+        Soit $G$ groupe et $x,y\in G$. Le commutateur de $x$ et $y$ est l'élément $[x,y]=xyx^{-1}y^{-1}$.\\
+        Le sous-groupe de $G$ engendré par les commutateurs est noté $[G,G]$ 
+    \end{df}
+
+    \begin{prop}{}{}
+        Le sous-groupe $[G,G]$ est distingué dans $G$ et le quotient $G/[G,G]$ est abélien.\\
+        Si $H\triangleleft G$, alors $G/H$ est abélien $\iff[G,G]\subset H$
+    \end{prop}
+
+    \begin{proof}
+        Soit $y\in[G,G]$ et $x\in G$, $xyx^{-1}y^{-1}\in[G,G]$.\\
+        Donc $xyx^{-1}=(xyx^{-1}y^{-1})y\in[G,G]$. En prennant la sujection canonique: $\funtosurj{\pi}{G}{G/[G,G]}$, avec $(\bar{x}=\pi(x),\bar{y}=\pi(y))\in G/[G,G]$\\
+        $\bar{x}\bar{y}\bar{x}^{-1}\bar{y}^{-1}=\pi(xyx^{-1}y^{-1})=\bar{e}$ d'où $G/[G,G]$ est abélien\\
+        Pour $H\triangleleft G,x\in G,y\in G$,$\bar{x}$ classe de $x$ dans $G/H$, de même pour $\bar{y}$\\
+        $G/H$ est abélien $\iff\forall (x,y)\in G^2,\bar{x}\bar{y}=\bar{y}\bar{x}\iff\forall (x,y)\in G^2,[\bar{x},\bar{y}]=\bar{e}\iff\forall (x,y)\in G^2,[x,y]\in H\iff[G,G]\subset H$
+    \end{proof}
+
+    \begin{df}
+        Soit G un groupe, on définit la suite dérivée de \sgs $D^n(G)$ par
+        \[D^0(G)=G,\qquad D^{n+1}(G)=[D^n(G),D^n(G)]\]
+    \end{df}
+
+    \begin{re}{}{}
+        $D^1(G)=[G,G]$\\
+        Les $D^n(G)$ sont des \sgs dit caractéristique de $G\iff\forall\sigma\in\aut(G),\sigma(D^n(G))=D^n(G)$ car $\forall\sigma\in\aut(G),\sigma([x,y])=[\sigma(x),\sigma(y)]$
+    \end{re}
+
+    \begin{prop}{}{}
+        $G$ est résoluble$\iff\exists n\in\N^*,D^n(G)=\{e\}$
+    \end{prop}
+
+    \begin{proof}
+        $\impliedby$ : $\{e\}=D^n(G)\subset D^{n-1}(G)\subset \cdots \subset D^{-1}(G)\subset D^0(G)=G$\\
+        $D^{i+1}(G)=[D^i(G),D^i(G)]\subset D^i(G)$\\
+        $\implies$ On a $\{e\}=G_n\triangleleft G_{n-1}\triangleleft\cdots\triangleleft G_1\triangleleft G_0=G$ et $G_i/G_{i+1}$ abélien. On sait que $D^1(G)=[G,G]\subset G_1,D^2(G)=[D^1(G),D^1(G)]\subset[G_1,G_1]\subset G_2$. On en déduit $D^n(G)\subset G_n=\{e\}\implies D^n(G)=\{e\}$
+    \end{proof}
+
+    \begin{cor}{}{}
+        Si $G$ est résoluble, alors il existe $\{e\}=G_0\triangleleft G_1\triangleleft \cdots\triangleleft G_n=G$ tels que $G_i\triangleleft G$ et $G_{i+1}/G_i$ abélien
+    \end{cor}
+
+    \begin{cor}{}{}
+        Si $G$ est résoluble fini, il existe une suite de \sgs: $\{e\}=G_0\triangleleft\cdots\triangle G_n=G$ telle que $G_{i+1}/G_i$ est cyclique $\forall i\in\llbracket 1,n\rrbracket$
+    \end{cor}
+
+    \begin{proof}
+        On dit qu'une suite $\{e\}=G_0\subset G_1\subset \cdots\subset G_n=G$ est maximale si $\forall i$, il n'existe pas $H$ tel que $G_i\subsetneq H\subsetneq G_{i+1}$ tel que $H/G_i$ et $G_{i+1}/H$ sont abélien et $H\triangleleft G_{i+1}$.\\
+        Comme $G$ est fini, on peut toujours trouver une suite maximale. Par l'absurde, s'il existe $i$ tel que $G_{i+1}/G_i$ n'est pas cyclique, il existe un \sg $\{e\}\neq H'\subsetneq G_{i+1}/G_i$.
+        On considère la surjection canonique $\funtosurj{\pi}{G_{i+1}}{G_{i+1}/G_i}$. $H=\pi^{-1}(H')$. Dans ce cas, $H$ serait un raffinement de la suite, contradiction.
+    \end{proof}
+
+    \begin{prop}{}{}
+        $H$ \sg de $G$
+        \begin{enumerate}
+            \item Si $G$ est résoluble, alors $H$ est résoluble
+            \item Si $H\triangleleft G,G$ est résoluble \ssi $H$ et $G/H$ sont résolubles
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item $G_n=\{e\}\subset G_{n-1}\subset \cdots\subset G_0=G$\\
+            avec $G_{i+1}\triangleleft G_i$ et $G_i/G_{i+1}$ abélien. Pour $H$ \sg de $G$, on pose $H_i=G_i\cap H\forall i\in \llbracket 1,n\rrbracket$. On a bien $H_{i+1}\triangleleft H_i$.\\
+            Soit $\varphi: H_i\hookrightarrow G_i\twoheadrightarrow G_i/G_{i+1}$, alors $\ker \varphi_i=G_{i+1}\cap H_i=H_{i+1}$\\
+            $\overline{\varphi_i}: H_i/H_{i+1}\hookrightarrow G_i/G_{i+1}$\\
+            $H_i/H_{i+1}$ est un \sg de $G_i/G_{i+1}$ qui est abélien donc $H_i/H_{i+1}$ est abélien $\forall i\in \llbracket 1,n-1\rrbracket$ donc $H$ est résoluble.
+            \item $\implies$ $H$ est résoluble d'après (1).\\
+            Montrons que $G/H$ est résoluble. $\funtosurj{\pi}{G}{G/H}$. On considère $\{e\}=\pi(G_n)\triangleleft \pi (G_{n-1})\triangleleft\cdots\triangleleft\pi(G_0)=G/H$. Les $\pi(G_i)$ sont distingués les un dans les autres car $G_i\triangleleft G_{i+1}$\\
+            $\psi_i: G_i\twoheadrightarrow \pi(G_i)\twoheadrightarrow \pi(G_i)/\pi(G_{i+1})$. $\ker(\psi_i)=G_{i+1}\implies G_i/G_{i+1}\cong\pi(G_i)/G_{i+1}$
+            donc $\forall i\in\llbracket 1,n-1\rrbracket$,$\pi(G_i)/\pi(G_{i+1})$ est abélien\\
+            $\impliedby H$ et $G/H$ résolubles\\
+            $\{e\}=G_n'\subset G_{n-1}'\subset \cdots \subset G_0'=G/H$\\
+            $\{e\}=H_m\subset H_{m-1}\subset \cdots \subset H_0=H$.\\
+            En considérant la suite exacte: $H\hookrightarrow G\overset{\pi}{\twoheadrightarrow}G/H$\\
+            $\ker\pi=\pi^{-1}(G_i)=H$. On pose $G_i=\pi^{-1}(G_i)$. On a bien $G_{i+1}\triangleleft G_i$. $f_i:\pi^{-1}(G_i)=G_i\twoheadrightarrow G_i\to G_i'/G_{i+1}'$\\
+            $\ker f_i=G_{i+1}$ d'où $G_i/G_{i+1}\cong G_i'/G_{i+1}'$ est abélien.\\
+            $\{e\}=H_m\subset H_{m-1}\subset\cdots\subset H_0=H=\pi^{-1}(G_n')=G_n\subset\cdots\subset G_0=G$. On en déduit que $G$ est résoluble
+        \end{enumerate}
+    \end{proof}
+
+    \section{Les groupes $\Ar_n$ et $\Sr_n$}
+
+    \begin{nt}{}{}
+        $\llbracket 1,n\rrbracket=\{1,\cdots,n\}$\\
+        $\Sn=$Bij$(\llbracket1,n\rrbracket)$
+    \end{nt}
+
+    \begin{tm}{Théorème de Cayley}{}
+        Tout groupe fini est \sg d'un groupe de permutations.
+    \end{tm}
+
+    \begin{proof}
+        Soit $G$ un groupe \tq $|G|=n$, $X=G=\{g_1,\ldots,g_n\}$\\
+        $\fundf{G}{\text{Bij}(G)}{g}{(g_i\mapsto gg_i)}$
+    \end{proof}
+
+    \begin{dfprop}
+        Le support de $\sigma\in\Sn$ est l'ensemble $\{i\in\llbracket 1,n\rrbracket,\sigma(i)\neq i\}$. On considère $\{\sigma\in\Sn,\sigma(n)=n\}\cong\Sr_{n-1}$.\\
+        $G_{n-1}$ sous groupe de $G_n$,$|\Sn/\Sr_{n-1}|=n$ et $|\Sn|=n!$
+    \end{dfprop}
+
+    \begin{ex}{}{}
+        $\sigma \in\Sn,n=10$
+        \[\sigma=\left(\begin{matrix}
+            1&2&3&4&5&6&7&8&9&10\\
+            2&6&3&5&8&4&10&9&1&7
+        \end{matrix}\right)\]
+    \end{ex}
+
+    \begin{df}{}{}
+        Un cyble de longueur $m$ est associé à un sous-ensemble $I=\{i_1,\ldots,i_m\}\subset \llbracket 1,n\rrbracket$ et est donné par $\sigma(i_1)=i_2,\ldots,\sigma(i_m)=i_1$. Il sera noté $(i_1\, i_2\,\ldots\, i_m)=(i_2\,\ldots\, i_m\, i_1)$. On sait que $I$ est le support de cycle de longueurs $m$.
+    \end{df}
+
+    \begin{tm}{}{}
+        Soit $\sigma\in\Sn\wt\{\id\}$. Il existe $\sigma_1,\ldots,\sigma_r$ cycles de longueur $m_1,\ldots,m_r$ de supports disjoints tels que $\sigma=\sigma_1\,\sigma_2\,\ldots\,\sigma_r$. De plus, le support de $\sigma$ est l'union des supports des $\sigma_i$. Les $\sigma_i$ commutent.
+    \end{tm}
+
+    \begin{proof}
+        On décompose $\llbracket 1,n\rrbracket$ en orbite sous l'action de $\sigma$. $\sigma$ restreint à une orbite est un cycle et on a le résultat
+    \end{proof}
+
+    \begin{ex}{}{}
+        $\sigma=(1\,2\,6\,4\,5\,8\,9)(7\,10)$
+    \end{ex}
+
+    \begin{nt}{}{}
+        $\sigma=\sigma_1\,\ldots\,\sigma_r$ avec $\sigma_i$ cycle de longueur $m_i$. On dira que $\sigma$ est de type $(m_1,\ldots,m_r)$,$m_i\ge 2$
+    \end{nt}
+
+    \begin{re}{}{}
+        $\sigma$ est de type $(m_1,\ldots,m_r)$ alors $\sigma$ est d'ordre $\ppcm(m_1,\ldots,m_r)$
+    \end{re}
+
+    \begin{lm}{}{}
+        Soit $\rho\in\Sn$ et $\sigma=(i_1,\cdots,i_m),\rho\sigma\rho^{-1}=(\rho(i_1)\ldots\rho(i_m))$. La conséquence: $\sigma$ est de type $(m_1\cdots m_r)$, alors $\rho\sigma\rho^{-1}$ aussi
+    \end{lm}
+
+    \begin{proof}
+        $\sigma=(i_1,\,\cdots\, ,i_m)$ et $j\not\in \{\rho(i_1)\cdots\rho(i_m)\}$\\
+        $\rho^{-1}(j)\not\in\{i_1,\cdots ,i_m\}$\\
+        $\rho\sigma\rho^{-1}(j)=j$. Si $j=\rho(i_k)$, $i_k=\rho^{-1}(j)$\\
+        $\sigma\rho^{-1}(j)=i_{k+1}$, $\rho\sigma\rho^{-1}(j)=\rho(i_{k+1})$
+    \end{proof}
+
+    \begin{df}{}{}
+        Les cycles de longueur 2 s'appellent des transpositions
+    \end{df}
+
+    \begin{df}{}{}
+        \[\fundfto{\epsilon}{\Sn}{\{\pm 1\}}{\sigma}{\prod_{1\le i < j \le n}\frac{\sigma(i)-\sigma(j)}{i-j}}\qquad \text{ est la signature}\]
+    \end{df}
+
+    \begin{prop}{}{}
+        $\epsilon$ est un morphisme de groupes. La signature d'une transposition est $-1$
+    \end{prop}
+
+    \begin{re}{}{}
+        \[\eta_\sigma(i,j)=\frac{\sigma(i)-\sigma(j)}{i-j}=\frac{\sigma(j)-\sigma(i)}{j-i}\]
+    \end{re}
+
+    \begin{proof}
+        $\epsilon(\sigma)=\prod_{\{i,j\}\subset\llbracket 1,n\rrbracket}\eta_{\sigma}(i,j)$. Soient $\sigma,\tau\in\Sn$,
+        \[\epsilon(\sigma\tau)=\prod_{\{i,j\}}\frac{\sigma\tau(i)-\sigma\tau(j)}{\tau(i)-\tau(j)}\frac{\tau(i)-\tau(j)}{i-j}=\prod_{\{i,j\}}\frac{\sigma(\tau(i))-\sigma(\tau(j))}{\tau(i)-\tau(j)}\epsilon(\tau)=\epsilon(\sigma)\epsilon(\tau)\]
+    \end{proof}
+
+    \begin{df}{}{}
+        $\An\hookrightarrow \Sn\twoheadrightarrow \Z/2\Z$\\
+        $\An=\ker(\epsilon)\in\Sn$ groupe alterné $|\An|=\frac{n!}{2}$    
+    \end{df}
+
+    \begin{df}{}{}
+        $G$ groupe est simple si $\forall H\triangleleft G$, alors $H=G$ ou $H=\{e\}$
+    \end{df}
+
+    \begin{re}{}{}
+        \begin{enumerate}
+            \item Si $G$ est fini et simple, $\exists p$ premier tel que $G=\Z/p\Z$
+            \item Si $G$ pas abélien et simple, alors $G$ n'est pas résoluble.
+        \end{enumerate}
+    \end{re}
+
+    \section{Générateurs de $\An$ et $\Sn$}
+
+    \begin{itemize}
+        \item Les transpositions engendrent $\Sn$
+        \item $(i,i+1),i\in\llbracket 1,n-1\rrbracket$ engendrent $\Sn$
+        \item Les $3$-cycles engendrent $\An$
+    \end{itemize}
+
+    \begin{ex}{}{}
+        \begin{itemize}
+            \item Pour $\Sr_2\cong \Z/2\Z$ abélien simple résoluble
+            \item Pour $\Sr_3, \Z/3\Z\cong\Ar_3\hookrightarrow \Sr_3\overset{\epsilon}{\twoheadrightarrow}\Z/2\Z$. Donc $\Sr_3$ est résoluble, pas abélien et pas simple
+            \item Pour $\Sr_4, |\Sr_4|=24=4!\qquad |A_4|=12$.\\
+            On pose $V_4=\{\id,\underset{\tau_1}{(1\, 2)(3\,4)},\underset{\tau_2}{(1\,3)(2\,4)},\underset{\tau_3}{(1\,4)(2\,3)}\}$ et on observe que $\tau_1^2=\tau_2^2=\tau_3^2=\id$.\\
+            Donc $V_4\hookrightarrow\Ar_4\twoheadrightarrow A_4/V_4\cong \Z/3\Z$ et donc $\Ar_4$ est résoluble.\\
+            $\{e\}\triangleleft V_4\triangleleft \Ar_4\triangleleft\Sr_4$ donc $\Sr_4$ est résoluble.
+        \end{itemize}
+    \end{ex}
+
+    \begin{tm}{}{}
+        \begin{itemize}
+            \item Si $n\ge 5,\An$ est simple
+            \item Si $n\le 4,\An$ est résoluble
+        \end{itemize}
+    \end{tm}
+
+    \begin{proof}
+        Montrons que les 3-cycles de $\An$ forment une unique classe de conjuguaison dans $\An$. On sait déjà que tout 3-cycles $(i\,j\,k)$ est conjugué du 3-cycles $(1\,2\,3)$ dans $\Sn$, $\rho(i\,j\,k)\rho^{-1}=(\rho(i)\,\rho(j)\,\rho(k)),\rho\in\Sn$
+        \begin{itemize}
+            \item Si $\epsilon(\rho)=1$ alors $\rho\in\An$ et $(i\,j\,k)$ est conjugué à $(1\,2\,3)$ dans $\An$
+            \item Si $\epsilon(\rho)=-1$, on pose $\rho'=(4\,5)\rho$,$\epsilon(\rho')=1$\\
+            $\rho'(i\,j\,k){\rho'}^{-1}=(4\,5)\rho(i\,j\,k)\rho^{-1}(4\, 5)=(4\,5)(1\,2\,3)(4\,5)=(1\,2\,3)$\\
+            \end{itemize}
+        Montrons que $\Ar_5$ est simple. Soit $\{\id\}\neq H\triangleleft\Ar_5$, alors $H$ contient au moins soit un 3-cycle, soit une double transpositions, soit un 5-cycle. Soit $\sigma\neq \id$:
+        \begin{itemize}
+            \item Si $\sigma$ est un 3-cycle, alors $H$ contient tous les 3-cycles et donc $H=\Ar_5$ car les 3-cycles engendrent $\Ar_5$.
+            \item Si $\sigma$ est une double transpositions, par exemple, $\sigma=(1\,2)(3\,4)$, on considère $\rho=(1\,2\,3)$\\
+            $\rho\sigma\rho^{-1}=(1\,2)(4\,5)\in H$, $\rho\sigma\rho^{-1}\sigma^{-1}=(3\,5\,4)\implies H=\Ar_5$
+            \item Si $\sigma$ est un 5-cycle, $\sigma=(1\,2\,3\,4\,5)$, $\rho=(3\,4\,5)\implies \rho\sigma\rho^{-1}\sigma^{-1}=(1\,3\,4)$ donc on a toujours $H=\Ar_5$ et donc $\Ar_5$ est simple.
+        \end{itemize}
+        Montrons que si $n\ge 6$, alors si $\Ar_{n-1}$ est simple, $\Ar_n$ aussi. $G_i=\{\sigma\in\Ar_n,\sigma(i)=i\}\cong \Ar_{n-1}$.\\
+        Soit $\{\id\}\neq H\triangleleft\Ar_n$. On remarque que s'il existe $i$ tel que $H\cap G_i\neq \{\id\}$, $H\cap G_i\triangleleft G_i=\Ar_{n-1}$ donc $H\cap G_i=\Ar_{n-1}$ donc $H$ contient un 3-cycle. Donc $H=\An$.\\
+        Il reste à montrer qu'il n'est pas possible que $H\cap G_i=\{\id\},\forall i\in\llbracket1,n\rrbracket$. Si c'était le cas, on aurait $\forall \sigma\in H\wt\{\id\}$, on aurait $\sigma(i)\neq i$. Prennons un tel $\sigma$. On pose $\sigma(1)=i\neq 1$. Choisissons $j$ tel que $j\neq i$ et $j\neq 1$ et tel que $j\neq k=\sigma(j)$. Choisissons $l,m\not\in\{1,i,j,k\},l\neq m$.\\
+        Prennons $\rho=(j,l,m),\tau=\rho^{-1}\sigma^{-1}\rho\sigma,\quad \tau(1)=1\quad,\tau\in H\cap G_i,\quad \tau(j)=m\neq j,\quad \tau\neq\id,\quad \tau\in H\cap G_i$
+    \end{proof}
+
+    \begin{tm}{}{}
+        $\Sn$ est résoluble \ssi $n\le 4$. Plus précisément, les sous-groupes distingués de $\Sn$ sont:
+        \begin{itemize}
+            \item $\{\id\}$ et $\Sn$
+            \item $\An$
+            \item $V_4$ si $n=4$
+        \end{itemize}
+    \end{tm}
+
+    \begin{re}{}{}
+        $D(\Sn)=\An$\\
+        $D(\An)=\cho{A_n\text{ si } n\ge 5\\
+        V_4\text{ si } n=4\\
+        \{e\}\text{ si } n=2,3}$
+    \end{re}
+
+    \chapter{Théorie des anneaux}
+
+    \begin{ra}{Anneaux, Idéaux}{}
+        \begin{enumerate}
+            \item Idéal: $I$ est un idéal de $A$ si $I$ est un sous-anneau de $A$ et que
+            \[\forall x\in A,\forall i\in i, x\times i\in I\]
+            \item Idéal maximal: un idéal $I$ de $A$ est dit maximal si pour tout idéal 
+            \[\forall J \text{ idéal tel que } I\subset J\subset A\implies J=A\text{ ou }J=I\]
+            \item Idéal premier: un idéal $I$ de $A$ est un idéal premier si
+            \[\forall x,y\in A,xy\in P\implies x\in P\text{ ou }y\in P\]
+            \item Idéal principal: Un idéal $I$ est un idéal principal si il est engendré un par un élément:
+            \[\exists x\in I, I=(x)\]
+        \end{enumerate}
+    \end{ra}
+
+    \begin{lm}{}{}
+        $A$ un anneau et $I$ un idéal
+        \begin{itemize}
+            \item $A/I$ est un corps $\iff$ $I$ maximal
+            \item $A/I$ intègre $\iff$ $I$ premier
+            \item Si $A$ principal, les deux premiers non nuls sont aussi maximaux. Ils sont engendrés par les éléments qui sont aussi irréductibles (premiers)
+            \item $\K$ un corps, $\K[X]$ est euclidien, en particulier principal\\
+            $I$ idéal premier, $I=(P)$
+            \[\funinj{\K}{\K[X]/(P)=L}\text{qui est un corps}\]
+        \end{itemize}
+    \end{lm}
+
+    \begin{ex}{}{}
+        $\K=\R$, $P=X^2+1\in \R[X]\qquad \funinj{\R}{\R[X]/(X^2+1)}$
+    \end{ex}
+
+    \begin{re}{}{}
+        $\Z$ est principal.\\
+        Pour $n\neq 0,\Z/n\Z$ est un corps $\iff$ $\Z/n\Z$ intègre $\iff$ $n$ premier\\
+        Pour $n=0$, $\Z/n\Z=\Z$ intègre mais pas un corps
+    \end{re}
+
+    Dans la suite, $K=\Q,\Z/p\Z=\Fa_p,\Fa_q=\Fa_{p^n}$
+
+    \begin{prop}{}{}
+        $\K$ corps, $P\in \K[X]$ non constant tel que $\deg P=n>0$ donc $\K[X]/(P)$ est un anneau. C'est aussi un $\K$-\ev de dimension $n$($\K$-algèbre).
+        \[\K[X]/(P)\text{ est un corps }\iff P\text{ est irréductible} \]
+    \end{prop}
+
+    \begin{proof}
+        Base de $\K[X]/(P)$: $(1,X,X^2,\ldots,X^{n-1})$\\
+        \[P\text{ est irréductible}\iff (P)\text{ premier }\iff \K[X]/(P)\text{ est intègre}\iff \K[X]/(P)\text{ est un corps}\]
+    \end{proof}
+
+    \begin{re}{}{}
+        Soient $A,B$ anneaux commutatifs
+        $\begin{matrix*}
+            A& \overset{f}{\longrightarrow}& B\\
+            \text{\rotatebox{90}{$\hookrightarrow$}}&&\text{\rotatebox{90}{$\hookrightarrow$}}\\
+            A[X]&\overset{f}{\longrightarrow}&B[X]
+        \end{matrix*}$
+    \end{re}
+
+    \begin{df}{}{}
+        $\La$ est une extension de corps d'un corps $\K$ si il existe $i$ morphisme de corps injectif $\funtoinj{i}{\K}{\La}$
+    \end{df}
+
+    \begin{nt}{}{}
+        $\begin{matrix}
+            \La\\
+            |\\
+            \K
+        \end{matrix}$ à comprendre $\La$ extension de corps de $\K$
+    \end{nt}
+
+    \begin{lm}{}{}
+        Soit $P\in \K[X],\alpha\in\La$, $\La$ extension de corps de $\K$
+        \begin{itemize}
+            \item $\alpha$ racine de $P$ ($P(\alpha)=0$)$\iff$ $X-\alpha|P$ dans $\La[X]$
+            \item $P(\alpha)=0$ et $P'(\alpha)=0\iff (X-\alpha)^2| P$
+        \end{itemize}
+    \end{lm}
+
+    \begin{df}{}{}
+        On dit qu'un polynôme $P\in\K[X]$ est séparable si toutes ses racines sont d'ordre 1.
+    \end{df}
+
+    \begin{re}{}{}
+        $P$ est séparable $\iff$ $\pgcd(P,P')=1$
+    \end{re}
+
+    \begin{ex}{}{}
+        $P=(X+1)^2\in\Z/2\Z[X]$\\
+        $P(1)=0,P'(1)=0,\ldots,P^{(n)}(1)=0$
+    \end{ex}
+
+    \begin{dfprop}{}{}
+        Soit $A $ anneau commutatif unitaire, $\exists! \funto{i}{\Z}{A}$ morphisme d'anneaux. La caractéristique de l'anneau $A$ est l'unique $n\in \N$ tel que $\ker(i)=n\Z$.\\
+        On peut passer au quotient $\Z/n\Z\hookrightarrow A$. Si $A$ est un corps, $n$ est premier ou $n=0$
+    \end{dfprop}
+
+    \begin{df}{}{}
+        Si $\K$ est un corps, alors
+        \begin{enumerate}
+            \item $\K$ est de caractéristique nulle et $\K$ est extension de $\Q$
+            \item $\K$ est de caractéristique première et $\K$ est extension de $\Z/p\Z$
+        \end{enumerate}
+    \end{df}
+
+    \begin{ex}{}{}
+        Caractéristique $0$: $\Q,\R,\Q[\sqrt2],\Q[i],\C$\\
+        Caractéristique $p$: $\Z/p\Z,\Z/p\Z[X],\Z/p\Z[X]/(P)$ avec $P$ irréductible.
+    \end{ex}
+
+    \begin{df}{Morphisme de Frobenius}{}
+        \[\fundfto{\phi_\K}{\K}{\K}{x}{x^p}\]
+        Ce morphisme est appelé homomorphisme de Frobenius
+    \end{df}
+
+    \begin{re}{}{}
+        Si $\K$ corps fini, $\phi_\K$ est bijective, donc on peut l'appeler l'automorphisme de Frobenius
+    \end{re}
+
+    Soit $\funto{f}{K}{L}$ un morphisme de corps.
+
+    \begin{df}{}{}
+        $\fundf{\K\times \La}{\La}{(n,x)}{f(n)x}$ muni $L$ d'une structure de $\K$-\ev\\
+        On note $[\La:\K]$ la dimentionde $\La$ comme $\K$-\ev
+    \end{df}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item $\C\hookrightarrow \C[X]\hookrightarrow \C(X)$. D'où $\C(X)$ est un $\C$-\ev de dimension infinie, une base de $\C(X)$ est :$\{X^k,k\in\N\}\cup\{\frac{1}{(X-\alpha)^k},\alpha\in\C,k\in\N^*\}$
+            \item $\R\hookrightarrow\C$ et $\C$ est un $\R$-\ev de dimension 2
+            \item $\Q\hookrightarrow\R$, $\R$ est un $\Q$-\ev de dimension infinie
+        \end{enumerate}
+    \end{ex}
+
+    \begin{prop}{}{}
+        $\K\subset \Fa\subset \La$ corps tels que $[\La:\Fa]<+\infty$ et $[\Fa:\K]<+\infty$\\
+        $[\La:\K]=[\La:\Fa][\Fa:\K]$
+    \end{prop}
+
+    \begin{proof}
+        Soit $(e_1,\ldots,e_m)$ base de $\Fa$ sur $\K$ comme \ev, soit $(f_1,\ldots,f_n)$ base de $\La$ sur $\Fa$. On a $[\Fa:\K]=m$ et $[\La:\Fa]=n$ alors $(e_i,f_j)_{\substack{1\le i\le m\\ 1\le j\le n}}$ base de $\La$ sur $\K$ donc $[\La:\K]=mn$
+    \end{proof}
+
+    \begin{df}{}{}
+        Soit $\K\subset \La,\alpha\in \La$, on note $\K[\alpha]$ le plus petit sous-anneau de $\La$ contenant $\K$ et $\alpha$ et $\K(\alpha)$ le plus petit sous-corps de $\La$ contenant $\K$ et $\alpha$
+    \end{df}
+
+    \begin{re}{}{}
+        On pose $\fundfto{\text{ev}_\alpha}{\K[X]}{\La}{P(X)}{P(\alpha)}$ qui est un morphisme d'anneaux. $\Im (\text{ev}_\alpha)=\K[\alpha]$ et $I(\alpha)=\ker(\text{ev}_\alpha)=\{P\in\K[X],P(\alpha)=0\}=(P_\alpha)$ qui est un $\K[X]$ anneau principal.
+    \end{re}
+
+    \begin{df}{}{}
+        On appelle $P_\alpha$ le polynôme minimal de $\alpha$ sur $\K$.
+    \end{df}
+
+    \begin{ex}{}{}
+        $\K=\R,\alpha\in \C$
+        \begin{enumerate}
+            \item Si $\alpha\in \R$, $P_\alpha=(X-\alpha)$
+            \item Si $\alpha \in \C\wt \R$, $P_\alpha=(X-\alpha)(X-\overline{\alpha})$
+        \end{enumerate}
+    \end{ex}
+
+    \begin{ex}{}{}
+        $\K=\Q,\La=\R,\alpha=\sqrt[3]{2}$, alors $P_\alpha=(X^3-2)$
+    \end{ex}
+
+    \begin{df}{}{}
+        Si $I(\alpha)=\{0\}$, alors on dit que $\alpha$ est transcendant sur $\K$.\\
+        Si $I(\alpha)\neq \{0\}$, alors on dit que $\alpha$ est algébrique sur $\K$
+    \end{df}
+
+    \begin{ex}{}{}
+        $\pi$ est transcendant sur $\Q$\\
+        $\sqrt[3]{2}$ est algébrique sur $\Q$\\
+        $i$ est algébrique sur $\R$
+    \end{ex}
+
+    \begin{df}{}{}
+        $\begin{matrix}
+            \La\\
+            |\\
+            \K
+        \end{matrix}$ est algébrique  si $\forall \alpha\in \La,\alpha$ est algébrique sur $\K$
+    \end{df}
+
+    \begin{prop}{}{}
+        \begin{enumerate}
+            \item Si $\begin{matrix}
+                \alpha \in\La\\
+                |\\
+                \K
+            \end{matrix}$, $\alpha$ transcendant sur $\K$, alors $\K[X]\cong\K[\alpha]$ donc $\K[\alpha]\neq \K(\alpha)$
+            \item Si $\begin{matrix}
+                \alpha \in\La\\
+                |\\
+                \K
+            \end{matrix}$, $\alpha$ algébrique sur $\K$, alors $\K[\alpha]\cong \K[X]/(P_\alpha)\cong \K(\alpha)$.\\
+            En particulier, $\K(\alpha)$ est un $\K$-\ev de dimension $\deg P_\alpha$
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}{Idée de preuve pour $\K[X]/(P_\alpha)\cong\K(\alpha)$}{}
+        $P_\alpha$ est irréductible donc $(P_\alpha)$ est premier\\
+        $\K[X]$ principal donc $(P_\alpha)$ maximal par définition.\\
+        $\K[\alpha]\cong\K[X]/(P_\alpha)$ est un corps (Il contient $\K$, $\alpha$ et c'est le plus petit, à vérifier)
+    \end{proof}
+
+    \begin{cor}{}{}
+        \begin{enumerate}
+            \item $\begin{matrix}
+                \alpha\in &\K(\alpha)\\
+                &|\\
+                &\K
+            \end{matrix}$ algébrique $\iff [\K(\alpha):\K]<+\infty$
+            \item La somme, le produit et le quotient d'éléments algébriques sont algébriques
+        \end{enumerate}
+    \end{cor}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item $\implies \alpha$ alébrique, $[\K(\alpha):\K]=\deg P_\alpha<+\infty$\\
+            $\impliedby [\K(\alpha):\K]<+\infty$. Supposons $\alpha$ transcendant. Alors $\K[X]\cong \K[\alpha]\subseteq \K(\alpha)$ or $\K[X]$, $\K$-\ev de dimension infinie donc $\K(\alpha)$ aussi absurdre
+            \item Montrer que $[\K(\alpha,\beta):\K]<+\infty$, si $\alpha$ et $\beta$ sont algébriques sur $\K$ pour $\begin{matrix}
+                \alpha,\beta\in& \La\\
+                &|\\
+                &\K
+            \end{matrix}$\\
+            Comme $\alpha$ est algébrique sur $\K$, $[\K(\alpha):\K]<+\infty$. De plus, $\beta$ est algébrique sur $\K(\alpha)$ car il l'est sur $\K$ donc $[\K(\alpha,\beta):\K(\alpha)]<+\infty$ ($\K(\alpha,\beta)=\K(\alpha)(\beta)$) donc $[\K(\alpha,\beta):\K]=[\K(\alpha,\beta):\K(\alpha)][\K(\alpha):\K]<+\infty$ donc $\K(\alpha,\beta)$ est un extension algébrique de $\K$ donc $\alpha+\beta,\alpha\beta,\frac{\alpha}{\beta}\in\K(\alpha,\beta)$ sont donc algébrique sur $\K$
+        \end{enumerate}
+    \end{proof}
+
+    \begin{re}{}{}
+        \begin{enumerate}
+            \item $\begin{matrix}
+                \La\\
+                |\\
+                \K
+            \end{matrix}$ algébrique n'implique pas que $\begin{matrix}
+                \La\\
+                |\\
+                \K
+            \end{matrix}$ est de dimension finie
+            \item Qu'en est-il de $P_{\alpha+\beta}$ ou $P_{\alpha\beta}$? La propriété précédente n'est pas constructive
+        \end{enumerate}
+    \end{re}
+
+    \begin{prop}{}{}
+        $\K\subset \Fa\subset \La$\\
+        $\begin{matrix}
+            \Fa\\
+            |\\
+            \K
+        \end{matrix}$ algébrique et $\begin{matrix}
+            \La\\
+            |\\
+            \Fa
+        \end{matrix}$ algébrique $\implies$ $\begin{matrix}
+            \La\\
+            |\\
+            \K
+        \end{matrix}$ algébrique
+    \end{prop}
+
+    \begin{proof}
+        Soit $\alpha\in \La$, comme $\alpha$ algébrique sur $\Fa$, notons $P_\Fa$ son polynôme minimal sur $\Fa$. $P_\Fa\in\Fa[X]$. Soit $\Fa_0$ le sous-corps de $\Fa$ engendrée par $\K$ et les coefficients de $P_\Fa$. Chacun de ses coefficients est algébrique sur $\K$. On en déduit que $[\Fa_0:\K]<+\infty$.\\
+        Explicitation: Si $P_{\Fa}=\sum_{i=0}^{n}a_iX_i$, alors $\Fa_0=\K(a_0,\ldots,a_n)$. $\alpha$ est algébrique sur $\Fa_0$ donc $[\Fa_0(\alpha):\Fa_0]<+\infty$. Conclusion: on en déduit que $[\Fa_0(\alpha):\K]<+\infty$ et donc $\alpha$ est algébrique sur ????
+    \end{proof}
+
+    \begin{prop}{Construire des extensions}{}
+        \begin{tikzpicture}[line width=.5pt, node distance = .5cm and 1.5cm,
+block/.style = {inner sep=3pt,rectangle split, draw, rectangle split parts=2,
+     text centered, rounded corners, minimum height=4em,rectangle split part fill={blue!20,white},font=\fontsize{10}{0}
+     \selectfont},line/.style={draw, -{Latex[length=2.5mm,width=1.75mm]}}
+                     ]
+            \draw (0,2)node (A) [draw, diamond, aspect=5]{$\La$};
+            \draw (0,1)node (B) [draw, diamond, aspect=5]{$\K_1 \K_2$};
+            \draw (0,-1)node (C) [draw, diamond, aspect=5]{$\K_1 \cap\K_2$};
+            \draw (0,-2)node (D) [draw, diamond, aspect=5]{$\K$};
+            \draw (-3,0)node (E) [draw, diamond, aspect=5]{$\K_2$};
+            \draw (3,0)node (F) [draw, diamond, aspect=5]{$\K_1$};
+            \draw (B) -- (A);
+            \draw (B) -- (E);
+            \draw (B) -- (F);
+            \draw (C) -- (D);
+            \draw (C) -- (E);
+            \draw (C) -- (F);
+            \draw (A) -- (E);
+            \draw (A) -- (F);
+            \draw (D) -- (E);
+            \draw (D) -- (F);
+        \end{tikzpicture}
+        \\
+        $\K_1\cap\K_2$ sous-corps de $\La$. $\K_1\K_2$ sous-corps de $\La$. On peut en parler seulement si on s'est donné $\La$
+    \end{prop}
+
+    \chapter{Théorie des corps}
+
+    \section{Corps de rupture}
+
+    \begin{tm}{}{}
+        Soit $\K$ corps, $P\in \K[X]$ non constant
+        \begin{enumerate}
+            \item Il existe une extension de corps finie $\begin{matrix}
+                \La\\
+                |\\
+                \K
+            \end{matrix}$ dans laquelle $P$ possède une racine $\iff \exists \alpha\in \La,P(\alpha)=0$
+            \item Si $P$ est irréductible sur $\K$, l'extension minimale dans laquelle $P$ admet une racine est unique à isomorphisme près et elle est isomorphe à $\K[X]/(P)$
+        \end{enumerate}
+    \end{tm}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item Soit $P_1$ un facteur irréductible de $P$, $L=\K[X]/(P_1)$ est une extension de corps de $\K$: $\exists \funtoinj{i}{\K}{\K[X]/(P)}=\La$. On identifie $\K$ et $i(\K)$. Notons $\alpha$ la classe de $X$ dans $\K[X]/(P_1)$. Si $P_1=\sum_{k=0}^{m} a_kX^k$, $i(P_1)(\alpha)=0$. $\alpha$ racine de $P_1$ et de $P$
+            \item Si $P$ est irréductible, $\K[X]/(P) \longrightarrow \K[X]$
+        \end{enumerate}
+    \end{proof}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item $\K=\R$, $P=X^2+1\implies \K /(P)\cong \C, \R$-\ev de dimension 2
+            \item $\Z/2\Z$
+        \end{enumerate}
+    \end{ex}
+
+    \section{Corps de décomposition}
+
+    \begin{tm}{}{}
+        Soit $P\in \K[X],\deg P\ge 1$
+        \begin{enumerate}
+            \item Il existe une extension $\begin{matrix}
+                \La\\
+                |\\
+                \K
+            \end{matrix}$ dans laquelle $P$ admet toutes ses racines $\alpha_i\in \La$
+            \item $\La=\K(\alpha_1,\ldots,\alpha_n)$ est l'extension engendré par les racines de $P$. Cette extension est unique à isomorphisme près.
+        \end{enumerate}
+    \end{tm}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item Soit $\La$ une extension de $\K$ qui contient une racine $\alpha$ de $P$, alors $\K(\alpha)\subset\La$. $\La$ est minimale \ssi $\La=\K(\alpha)$. Par réccurence sur le degré, $n=\deg P$ de $P$. Montrons l'existence du corps de décomposition:\\
+            Soit $P_1$ un facteur irréductible de $P$. $\K_1=\K[X]/(P_1)=\K(\alpha_1)$ corps de rupture de $P_1$ donc $P_1\in\K_1[X]$ et dans $\K_1[X]$, $P_1=(X-\alpha_1)Q\K_1[X]$ avec $Q\in\K_1[X]$\\
+            $\deg Q=\deg P=1$. Par hypothèse de réccurence, il existe une extension $\La_1$ de $\K$ dans laquelle $Q$ est scindé. On a que dans $\La_1$, $P$ est scindé.\\
+            $\La=\K(\alpha_1,\ldots,\alpha_n)\subset \L_1$ $\La$ est le plus petit sous-corps dans lequel $P$ est scindé. Il reste à montrer l'unicité de ce corps de décomposition.\\
+        \end{enumerate}
+    \end{proof}
+
+    \begin{lm}{}{}
+        Soit $i:\K\overset{\cong}{\longrightarrow}\K'$ isomorphisme de corps. Soit $P\in \K[X]$ et $\La$ un corps de décomposition de $P$ sur $\K$ et soit $\La'$ un corps de décomposition $i(P)$ sur $\K'$ alors $i$ se prolonge à un morphisme\\
+        \[\begin{matrix}
+            i:&\La&\overset{\cong}{\longrightarrow}&\La'\\
+            &\text{\rotatebox{90}{$\hookrightarrow$}}&&\text{\rotatebox{90}{$\hookrightarrow$}}\\
+            i:&\K&\overset{i}{\longrightarrow}&\K'
+        \end{matrix}\]
+        Ce lemme prouve le théorème en prennant $\K=\K'$ et $i=\Id$
+    \end{lm}
+
+    \begin{proof}
+        \[\begin{matrix}
+            \phi:&\K&\overset{\cong}{\longrightarrow}&\K'\\
+            &\text{\rotatebox{270}{$\hookrightarrow$}}&&\text{\rotatebox{270}{$\hookrightarrow$}}\\
+            &\K[X]&\overset{i}{\longrightarrow}&\K'[X]
+        \end{matrix}\]
+        Soit $\alpha_1$ racine de $P$ dans $\La$. On note $P_1$ son polynôme minimal dans $\K[X]$ et on a $P=P_1 Q$. $i(P)=i(P_1)i(Q)$. Soit $\alpha_1'$ une racine de $i(P_1)$ dans $\La'$. $\La_1=\K(\alpha_1)$ corps de rupture de $P_1$ et $\L_1'=\K'(\alpha_1)$ corps de rupture de $i(P_1)$\\
+        \[\begin{matrix}
+            \alpha_1&\mapsto&\alpha_1'\\
+            \K(\alpha_1)&\overset{i}{\longrightarrow}&\K(\alpha_1')\\
+            \text{\rotatebox{90}{$\hookrightarrow$}}&&\text{\rotatebox{90}{$\hookrightarrow$}}\\
+            \K&\overset{i}{\longrightarrow}&\K'
+        \end{matrix}\]
+        \[\begin{matrix}
+            \K[X]/(P_1)&\overset{\cong}{\longrightarrow}&\K'[X]/(i(P_1))\\
+            \text{\rotatebox{90}{$\hookrightarrow$}}&&\text{\rotatebox{90}{$\longrightarrow$}}\\
+            \K&\longrightarrow&\K'
+        \end{matrix}\]
+        $P=(X-\alpha_1)R\in\La_1[X]$, $i(P)=(X-\alpha_1')i(R)\in\La_1'[X]$ cela permet de conclure par réccurence sur le degré de $P$
+    \end{proof}
+
+    \begin{re}{}{}
+        Pour $\La_1$, $\La_2$ corps de décomposition de $P\in \K[X]$ \\
+        \begin{tikzpicture}
+            [line width=.5pt, node distance = .5cm and 1.5cm,
+block/.style = {inner sep=3pt,rectangle split, draw, rectangle split parts=2,
+     text centered, rounded corners, minimum height=4em,rectangle split part fill={blue!20,white},font=\fontsize{10}{0}
+     \selectfont},line/.style={draw, -{Latex[length=2.5mm,width=1.75mm]}}
+                     ]
+            \draw (1,1)node (A) [draw, aspect=5]{$\La_2$};
+            \draw (-1,1)node (B) [draw, aspect=5]{$\La_1$};
+            \draw (0,0)node (C) [draw, aspect=5]{$\K$};
+            \draw[->,>=latex] (B)--(A) node[etiquette]{$\sigma$};
+            \draw (C) -- (A);
+            \draw (B) -- (C);
+        \end{tikzpicture}
+        $\sigma_{|\K}=\id_{|\K}$\\
+        Exemple pour $\La_1=\La_2=\C$ et $\K=\R$
+    \end{re}
+    
+    \section{Cloture algébrique}
+
+    \begin{tm}{}{}
+        Soit $\K$ corps
+        \begin{enumerate}
+            \item Il existe une extension algébrique de $\K$ qui est un corps algébriquement clos.
+            \item Ce corps est unique à isomorphisme près.
+        \end{enumerate}
+        On l'appelle cloture algébrique de $\K$ et on la note $\overline{\K}$
+    \end{tm}
+
+    \begin{ex}{}{}
+        Pour $\overline{\R}=\C$, $\K[X]/(X^2+1)\cong \R[X]/(X^2+X+1)$\\
+        $\overline{\Fa_p}\cong\bigcup_{n\ge 1}\Fa_{p^n}$
+    \end{ex}
+
+    \begin{proof}
+        On commence par construire une extension $\K_1$ de $\K$ dans laquelle tout polynôme ???? admet une racine.\\
+        Soit $P=P_\K$ l'ensemble des polynômes unitaires irréductibles de $\K[X]$. On pose $A=\K[X_P,P\in P_\K]$. Pour un polynôme $Q\in A$ ?????????\\
+        Soit $I$ l'idéal de $A$ engendré par les $P(X_P)$ ($I\neq\{0\}$). Montrons que $I\subsetneqq A$. Sinon $\exists P_1,\ldots,P_n\in I$ et $A_1,\ldots,A_n \in A$ tels que $\sum_{i=1}^{n}A_i P_i=1$. C'est impossible en prennant $X_{P_i}=\alpha_i$ racine de $P_i$ dans une extension finie de $\K$ et on aurait $0=1$ contradiction. $I$ est contenu dans un idéal maximal $\eta$ tel que $\K_1=A/\eta$ corps.
+    \end{proof}
+
+    \begin{lm}{}{}
+        Voir Photo
+    \end{lm}
+
+    \begin{proof}
+        On a construit un corps $\K_1$ dans lequel tous les polynômes irréductibles unitaires de $\K[X]$ avaient une racine $\begin{matrix}
+            \K_1\\
+            |\\
+            \K
+        \end{matrix}$.\\
+        Par réccurence, on construit une autre suite de corps $(\K_n)_\nN$
+        tels que $\forall \nN$, tous les polynômes irréductibles unitaires $\K_n[X]$, ont une racine dans $\K_{n+1}$ et $\K_0=\K$. On pose $\La=\bigcup_{k\ge 0}\K_n$. $\La$ est un corps car $x,y\in \La$, il existe $n$ tel que $x,y\in\K_n$ et tel que tous les $x+y,xy,\frac{x}{y}\in \K_n\implies x+y,xy,\frac{x}{y}\in\La$. De plus $\begin{matrix}
+            \La\\
+            |\\
+            \K
+        \end{matrix}$ est algébrique, car $x\in \La,x\in\K_n$ pour un certain $n$, donc $x$ algébrique sur $\K_{n-1}$ qui par réccurence est aussi une extension algébrique de $\K$. Soit $P\in\La[X]$. Il existe $n$ tel que $P\in\K_n[X]$ et $P$ admet une racine dans $\K_{n+1}$ donc dans $\La$ et $\La$ est algébriquement clos. Pour l'unicité, on applique le lemme précédent à $\K_1=\K_2=\K$ et $f=\Id_\K$ et on suppose ici aussi que $\Fa_1$ est algébriquement clos. On en déduit un morphisme $\funtoinj{\tilde{f}}{\Fa_1}{\Fa_2}$ et $\tilde{f}_{|\K}=\id_\K$ et $\tilde{f}(F_1)\subset F_2$. Si $\tilde{P}\in\tilde{f}(F_1)[X],\exists P\in \Fa_1[X]$ tel que $\tilde{f}(P)=\tilde{P}$. $P$ a une racine dans $\Fa_1$ car $\Fa_1$ est algébrique alors $\tilde{f}(a)$ est une racine de $\tilde{P}$. $\implies \tilde{f}(\Fa_1)$ est algébriquement clos, $\tilde{f}(a)\in\tilde{f}(\Fa_1)$. De même, $\tilde{f}(\Fa_1)$ est algébrique sur $\K$. Soit $\alpha\in \Fa_2$, $\alpha$ est algébrique sur $\K$ donc $\alpha$ est algébrique sur $\tilde{f}(\Fa_1)$ qui est algébriquement clos donc $\alpha\in\tilde{f}(\Fa_1)$
+    \end{proof}
+
+    \begin{re}{}{}
+        \begin{itemize}
+            \item $\overline{\Q}=\{z\in\C,z\text{ est algébrique sur $\Q$}\}$ est une cloture algébrique de $\Q$
+            \item $X^n-2$ est irréductible sur $\Q[X]\forall n\ge 1\implies \overline{\Q}$ n'est pas de dimension finie $[\Q(\sqrt[n]{2}):\Q]=n$.
+            \item $\forall p$ premier, $\Z/p\Z$ a des polynômes irréductibles de tout degré
+        \end{itemize}
+    \end{re}
+
+    \section{Corps finis}
+    
+    Si $\K$ est un corps fini tel que car($\K$)$=p$, alors $\K$ est un $\Z/p\Z$-\ev de dimension fini $n$ $\implies |K|=p^n$
+
+    \begin{tm}{}{}
+        Soit $p$ premier, $n\ge 1$ alors il existe un corps $\Fa_{p^n}$ à $p^n$ éléments, unique à isomorphisme près
+    \end{tm}
+
+    \begin{re}{}{}
+        \begin{enumerate}
+        \item $(\Z/p\Z)^n,\Z/p^n\Z,\Fa_{p^n}$ sont des anneaux distincts de cardinal $p^n$
+        \item Si $\Fa_{p^n}=\Fa_q=\K$ existe $|\K^*|=q-1$ or $\K^*$ est un groupe fini multiplicatif. $\K^*\cong\Z/(q-1)\Z$. $\forall x\in \K^*,x^{q-1}=1$ donc $\forall x\in \K,x^q-x=0$. $P=X^q-X\in \Fa_p[X]\subset \K[X]$. Dans $\K[X]$, $P$ est scindé à racines simples,
+        \[P=\prod_{\alpha\in \K}(X-\alpha)\]
+        \end{enumerate}
+    \end{re}
+
+    \begin{tm}{}{}
+        Soit $q=p^n,n\ge 1,p$ premier et $\K$ le corps de décomposition de $X^q-X$ sur $\Fa_p$. C'est un corps de cardinal $q$ et tout corps fini de cardinal $p^n$ lui est isomorphe.
+    \end{tm}
+
+    \begin{proof}
+        Si $\K$ est un corps fini de cardinal $q$, alors le polynôme $P=X^q-X$ est scindé à racines simples dans $\K$. Montrons que le corps de décomposition de $P=X^q-X$ est de cardinal $q$. Soit $\K$ un corps de décomposition de $X^q-X$ sur $\Fa_p$. Posons $S=\{\alpha\in \K,\alpha^q-\alpha=0\}$.\\
+        L'ensemble $S$ a pour cardinal $q$ car $X^q-X$ est scindé sur $\K$ à racines simples.\\
+        Montrons que $S$ est un sous-corps de $\K$. Pour $(\alpha,\beta)\in S^2,\alpha^q=\alpha$ et $\beta^q=\beta$\\
+        \[(\alpha+\beta)^q-(\alpha+\beta)=\alpha^q+\beta^q-\alpha-\beta=0\qquad (\alpha\beta)^q=\alpha\beta\]
+        \[(-\alpha)^q-(-\alpha)=-\alpha^q+\alpha=-\alpha+\alpha=0\qquad (\alpha^{-1})^q=\alpha^{-1}\]
+        $S$ est un sous-corps de $K\implies S=K\text{ et }|\K|=q$
+    \end{proof}
+
+    \begin{re}{}{}
+        Soit $p$ premier\\\\
+        \begin{tikzpicture}[line width=.5pt, node distance = .5cm and 1.5cm,
+block/.style = {inner sep=3pt,rectangle split, draw, rectangle split parts=2,
+     text centered, rounded corners, minimum height=4em,rectangle split part fill={blue!20,white},font=\fontsize{10}{0}
+     \selectfont},line/.style={draw, -{Latex[length=2.5mm,width=1.75mm]}}
+                     ]
+            \draw (0,0)node (A) [draw, aspect=5]{$\Fa_p$};
+            \draw (-1,1)node (B) [draw, aspect=5]{$\Fa_{p^2}$};
+            \draw (1,1)node (C) [draw, aspect=5]{$\Fa_{p^3}$};
+            \draw (-2,3)node (D) [draw, aspect=5]{$\Fa_{p^4}$};
+            \draw (0,3)node (E) [draw, aspect=5]{$\Fa_{p^6}$};
+            \draw (A) -- (B);
+            \draw (A) -- (C);
+            \draw (B) -- (E);
+            \draw (C) -- (E);
+            \draw (B) -- (D);
+        \end{tikzpicture}
+    \end{re}
+
+    \section{Homomorphismes, extensions normales et séparables}
+
+    \begin{df}{}{}
+        $\begin{matrix}
+            \La\\
+            |\\
+            \K
+        \end{matrix}$ et $\begin{matrix}
+            \Fa\\
+            |\\
+            \K
+        \end{matrix}$ deux extensions de corps. Un $\K$ homomorphisme $f$ de $\La$ vers $\Fa$ est un morphisme de corps $\funto{f}{\La}{\Fa}$ tel que $f_{|\K}=\id_\K$. On note 
+        \[\Hom_\K(\La,\Fa)=\{\funto{f}{\La}{\Fa}\text{ morpshisme de corps, }f_{|\K}=\id_\K\}\]
+    \end{df}
+
+    \begin{lm}{}{}
+        Soit $\funto{\sigma_1,\ldots,\sigma_n}{\La}{\Fa}$ tous non nuls des $\K$-homomorphismes distincts. Alors ils sont linéairement indépendants sur $\Fa$
+    \end{lm}
+
+    \begin{proof}
+        de l'indépendance linéaire: Par réccurence sur $n$\\
+        Initialisation $n=1$, trivial\\
+        Hérédité: Supposons que $\forall x\in \La, (\sum_{i=1}^{n}\lambda_i\sigma_i)(x)=0,\lambda_i\in \Fa$.\\
+        $\sum_{i=1}^{n}\lambda_i\sigma_i(x)=0 \quad(*)\quad ,\forall x\in \La$. On remplace $x$ par $b x,\forall b\in \La\wt\{0\}$. $\sum_{i=1}^{n}\lambda_i\sigma_i(bx)=0\implies \sum_{i=1}^{n}\lambda_i\sigma_i(b)\sigma_i(x)=0 \quad (**)$\\
+        Par $(**)-\sigma_n(b)(*)$. On obtient $\sum_{i=1}^{n-1}\underset{\mu_i}{\lambda_i(\sigma_i(b)-\sigma_n(b))}\sigma_i(x),\forall x\in \La,\forall b\in \La$. Par hérédité, $\mu_i=0,\forall i=1,\ldots,n-1$. Comme $\sigma_i\neq\sigma_n,\forall i=1,\ldots,n-1$. On en déduit que $\lambda_i=0\forall i=1,\ldots,n-1$ et donc $\lambda_i=0,\forall i=1,\ldots,n$.
+    \end{proof}
+
+    \begin{lm}{}{}
+        Soit $\begin{matrix}
+            \La\\
+            |\\
+            \K
+        \end{matrix}$ finie,
+        \[|\Hom_\K(\La,\Fa)|\le \left[ \La:\K\right]\]
+    \end{lm}
+
+    \begin{ex}{}{}
+        $\La=\C,\Fa=\C,\K=\R$,
+        \[|\Hom_\R(\C,\C)|\le 2\]
+    \end{ex}
+
+    \begin{proof}
+        $e_1,\ldots,e_n$ base de $\La$ comme $\K$-\ev. Un $\K$-homomorphisme $\funto{\sigma}{\La}{\Fa}$ est déterminé par $\{\sigma(e_1),\ldots,\sigma(e_n)\}$. donc $\sigma$ peut être vu élément de l'espace vectoriel des applications $\Fa$-linéaire de $\{e_1,\ldots,e_n\}$ dans $\Fa$. ??????????? .On en déduit que $|\Hom_\K(\La,\Fa)|\le n=[\La:\K]$.
+    \end{proof}
+
+    \begin{lm}{}{}
+        $\begin{matrix}
+            \La\\
+            |\\
+            \K
+        \end{matrix}$ algébrique et $\funto{f}{\K}{\Fa}$ où $\Fa$ est algébriquement clos. Alors $\exists \funto{\overline{f}}{\La}{\Fa}$ tel que $\overline{f}_{|\K}=f$
+    \end{lm}
+
+    \begin{proof}
+        $\La=\K(\alpha)$, $P_\alpha$ polynôme minimal de $\alpha$ sur $\K$. On pose $\funto{\text{ev}_\alpha}{\K[X]/(P\alpha)}{\La}$.\\ 
+        Pour $\funto{f}{\K}{\Fa}$, on pose $\K'=f(\K)$. On étend $f$ à $\fundf{\K[X]}{\K'[X]}{\sum a_i x^i}{\sum f(a_i)x^i}$. Comme $\Fa$ est algébriquement clos, il contient une racine $\beta$ de $f(P_\alpha)$.\\
+        $\funto{\text{ev}_{\alpha}}{\K'[X]}{\Fa}$, $\ker(\text{ev}_\beta)$ est $(f(P_\alpha))$ dans $\K'[X]$. De plus: $\funto{\iota}{\K[X]/(P_\alpha)}{\K'[X]/f(P_\alpha)}$ avec $\K[X]/(P_\alpha)\cong \K'[X]/f(P_\alpha)$.\\
+        On veut un morphisme de corps $\fun{\La}{\Fa}$. Or $\La\cong\K[X]/(P_\alpha)\cong \K'[X]/f(P_\alpha)$. Donc ce morphisme est $\funto{\text{ev}_\beta\circ\La\circ\text{ev}_{\alpha}^{-1}}{\La}{\Fa}$. On finit la preuve par réccurence $i$, $[\La:\K]<+\infty$ et sinon on utilise le lemme de Zorn.
+    \end{proof}
+
+    \begin{tm}{}{}
+    On suppose $\begin{matrix}
+        \La\\
+        |\\
+        \K
+    \end{matrix}$ algébrique et $\Fa$ algébriquement clos. Alors $\Hom_\K(\La,\Fa)\neq \emptyset$
+    \end{tm}
+
+    \begin{proof}
+        En prennant les notations de la preuve du lemme, si $f_{|\K}=\id$, dans la preuve précédente $\begin{matrix}
+            \K(\alpha)&\overset{\overline{f}}{\longrightarrow}&\Fa\\
+            |&\text{\rotatebox{45}{$\hookrightarrow$}}& \\
+            \K&&
+        \end{matrix}$\\
+        $\overline{f}(\alpha)=\beta$ où $\beta$ est racine de $P_\alpha$ dans $\Fa$\\
+        Réciproquement, $\forall \beta$ racine de $P_\alpha$ dans $\Fa$ détermine un tel $\overline{f}$. $|\{\funto{f}{\K(\alpha)}{\Fa}\}|=|\{\beta\in \Fa,P_\alpha(\beta)=0\}|$
+    \end{proof}
+
+    \begin{re}{}{}
+        \begin{itemize}
+            \item Les racines de $P_\alpha$ peuvent ne pas appartenir à $F$ (Ici $F$ n'est pas algébriquement clos)
+            \item $P_\alpha$ a des racines multiples. (ne peut arriver que si $ \text{car}(\K)=p>0$)
+        \end{itemize}
+    \end{re}
+
+    \begin{df}{}{}
+        $\begin{matrix}
+            \La\\
+            |\\
+            \K
+        \end{matrix}$ algébrique est normale si pour $\alpha\in \La$, toutes les racines de $P_\alpha$ (Polynôme minimal de $\alpha$ dans $\K$) sont dans $\La$
+    \end{df}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item $\begin{matrix}
+                \Q(\sqrt[3]{2})\\
+                |\\
+                \Q
+            \end{matrix}$, $P_{\sqrt[3]{2}}=X^3-2=(X-\sqrt[3]{2})(X-j\sqrt[3]{2})(X-j^2\sqrt[3]{2})$ n'est pas normale.
+            \item une extension de degré 2 est toujours normale. En effet, si $\alpha$ est une racine de $X^2+bX+c$ son autre racine est $b-\alpha$
+            \item Si $P$ est scindé (dans une certaine extension) et a pour racines $\alpha_0,\ldots,\alpha_n$ alors $\La=\K(\alpha_1,\ldots,\alpha_n)$ est normale
+        \end{enumerate}
+    \end{ex}
+
+    \begin{prop}{}{}
+        $\begin{matrix}
+            \La\\
+            |\\
+            \K
+        \end{matrix}$ est normale \ssi $\Hom_\K(\La,\overline{\K})=\Hom_\K(\La,\La)$.\\
+        De plus, si $\La/\K$ est finie, on a équivalence entre les 3 propriétés suivantes:
+        \begin{enumerate}
+            \item $\La/\K$ normale
+            \item $|\Hom_\K(\La,\K)|=|\Hom_\K(\La,\La)|$
+            \item $\La/\K$ est le corps de décomposition d'un certain $P\in \K[X]$
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        $\Hom_\K(\La,\La)\subset \Hom_\K(\La,\overline{\K})$\\
+        Si $\La/\K$ est normale, $\sigma\in \Hom_\K(\La,\overline{\K})$, $\alpha\in \La,\sigma(\alpha)$ est aussi une racine du polynôme minimale de $\alpha$ sur $\La$. Comme $\La$ est normale, $\sigma(\alpha)\in \La$, donc $\sigma\in\Hom_\K(\La,\La)$ et $\Hom_\K(\La,\La)=\Hom_\K(\La,\overline{\K})$.\\
+        Réciproquement: $\Hom_\K(\La,\La)=\Hom_\K(\La,\overline{\K})$. Soit $\alpha\in \La$ et $\alpha'\in \overline{\K}$ une autre racine du polynôme minimal de $\alpha$. Il existe $\sigma\in \Hom_\K(\La,\overline{\K})$ tel que $\sigma(\alpha)=\alpha'\implies \alpha'\in \La$. Si $[\La:\K]$ est fini, alors comme $\Hom_\K(\La,\La)\subset \Hom_\K(\La,\overline{\K})$ l'égalité des ensembles équivaut à l'égalité des cardinaux.\\
+        $(1)\implies (2)$ Si $\La$ est le corps de décomposition de $P\in \K[X]$, $\La=\K(\alpha_1,\ldots,\alpha_n)$. Si $\sigma\in \Hom_\K(\La,\overline{\K})$, $\sigma(\alpha_i)$ est encore une racine de $P$ et donc $\sigma(\alpha_i)\in \La$ et donc $\sigma(\La)\subset \La$ et $\La/\K$ normale. Si $\La/\K$ est normale et finie alors $\La=\K(\alpha_1,\ldots,\alpha_n)$.\\
+        $P_i=P_{\alpha_i}, P=\prod_{i=1}^{n}P_i$ alors $\La$ est le corps de décomposition de $P$.
+    \end{proof}
+
+    \begin{ex}{}{}
+        $\nN,k\ge 2$, $\alpha_k=e^{\frac{2i\pi k}{n}},k=0,\ldots,n-1$\\
+        $\Q(\alpha_1,\ldots,\alpha_{n-1})=\Q(\alpha_1)$
+    \end{ex}
+
+    \begin{prop}{}{}
+        $\K\subset\Fa\subset \La$ extension de corps
+        \begin{itemize}
+            \item Si $\La/\K$ est normale, alors $\La/\Fa$ est normale
+            \item \begin{tikzpicture}[line width=.5pt, node distance = .5cm and 1.5cm,
+block/.style = {inner sep=3pt,rectangle split, draw, rectangle split parts=2,
+     text centered, rounded corners, minimum height=4em,rectangle split part fill={blue!20,white},font=\fontsize{10}{0}
+     \selectfont},line/.style={draw, -{Latex[length=2.5mm,width=1.75mm]}}
+                     ]
+            \draw (-1,0)node (A) [draw, aspect=5]{$\La_1$};
+            \draw (1,0)node (B) [draw, aspect=5]{$\La_2$};
+            \draw (0,2)node (C) [draw, aspect=5]{$\overline{\K}$};
+            \draw (0,1)node (D) [draw, aspect=5]{$\La_1\La_2$};
+            \draw (0,-1)node (E) [draw, aspect=5]{$\K$};
+            \draw (A) -- (C);
+            \draw (A) -- (D);
+            \draw (A) -- (E);
+            \draw (B) -- (C);
+            \draw (B) -- (D);
+            \draw (B) -- (E);
+            \draw (C) -- (D);
+        \end{tikzpicture}\\
+            Si $\begin{matrix}
+                \La_1\\
+                |\\
+                \K
+            \end{matrix}$ est normale, alors $\begin{matrix}
+                \La_1\La_2\\
+                |\\
+                \K
+            \end{matrix}$ est normale\\
+            Si $\La_1/\K$ et $\La_2/K$ est normale alors $\La_1\La_2/\K$ est normale.
+        \end{itemize}
+    \end{prop}
+
+    \begin{ex}{}{}
+        \begin{tikzpicture}[line width=.5pt, node distance = .5cm and 1.5cm,
+block/.style = {inner sep=3pt,rectangle split, draw, rectangle split parts=2,
+     text centered, rounded corners, minimum height=4em,rectangle split part fill={blue!20,white},font=\fontsize{10}{0}
+     \selectfont},line/.style={draw, -{Latex[length=2.5mm,width=1.75mm]}}
+                     ]
+            \draw (0,2)node (A) [draw, aspect=5]{$\Q(\sqrt[3]{2},j)$};
+            \draw (0,1)node (B) [draw, aspect=5]{$\Q(\sqrt[3]{2})$};
+            \draw (0,0)node (C) [draw, aspect=5]{$\Q$};
+            \draw (B) -- (A);
+            \draw (B) -- (C);
+            \draw[-] (A) to[bend right=90] (C);
+        \end{tikzpicture}
+    \end{ex}
+
+    \begin{proof}
+        $\alpha\in \La, \beta(\in\overline{\Fa})$, racines du polynôme de $\alpha$ sur $\Fa$ est aussi une racine du polynôme minimal de $\alpha$ sur $\K$ donc on a $\La/\K$ normal, $\beta \in \La$.\\
+        Si $\La_1/\K$ normale, $\sigma\in \Hom_{\La_2}(\La_1\La_2,\overline{\K})$. Soit $\alpha\in \La_1$, alors $\sigma(\alpha)\in \La_1$. On en déduit $\sigma(\La_1\La_2)\subset \La_1\La_2$ donc $\sigma\in \Hom_{\La_2}(\La_1\La_2,\La_1\La_2)$ et $\La_1\La_2/\La_2$ normale.\\
+        $\begin{matrix}
+            \La_1\\
+            |\\
+            \K
+        \end{matrix}$, $\begin{matrix}
+            \La_2\\
+            |\\
+            \K
+        \end{matrix}$, $\sigma\in \Hom_\K(\La_1\La_2,\overline{\K})$\\
+        $\cho{\forall \alpha \in \La_1,\sigma(\alpha)\in \La_1\\\forall \beta\in \La_2,\sigma(\beta)\in \La_2}\implies \sigma(\La_1\La_2)\subset \La_1\La_2$
+    \end{proof}
+
+    \begin{re}{}{}
+        $\Hom_\K(\La,\overline{\K})$. Le plus petit sous-corps de $\K$ qui contient tous les $\sigma(\La),\forall \sigma$ est une extension normale de $\K$, $\sigma_i^2(\La)=$ plus petite extension normale de $\K$ qui contient $\La$. On appelera cela la cloture normale de $\La$ dans $\overline{\K}$
+    \end{re}
+
+    \begin{df}{}{}
+        Une extension $\begin{matrix}
+            \La\\
+            |\\
+            \K
+        \end{matrix}$ est dite séparable si $\forall \alpha\in \La$, le polynôme de $\alpha$ sur $\K$ est à racines simples.
+    \end{df}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item Une extension $\begin{matrix}
+                \La\\
+                |\\
+                \K
+            \end{matrix}$ de caractéristique 0 est toujours séparable. En effet, $P\in \K[X]$ est irréductible et $\alpha$ une racine au moins double. donc $P'(\alpha)=0$ on aurait $P|P'$ ($P$ irréductible et polynôme minimal de $\alpha$). Pour des raisons de degré, on a $P'=0$, impossible si $\car(\K)=0$, contradiction. Donc $P$ n'a pas de racine double.
+            \item Une extension de $\ext{\La}{\K}$ de corps fini est toujours séparable. $\car(\K)=\car(\La)=p$. Par le même argument que précédemment, si $P$ est irréductible et $\alpha$ est une racine (au moins double) on a toujours $P'=0$ donc $P$ est de la forme $\sum_{k=0}^{n}a_k (X^p)^k$. On a que $\fundf{\K}{\K}{x}{x^p}$. $\forall k=0,\ldots,n$, $\exists b_k\in \K, a_k=(b_k)^p$.\\
+            $P=\sum_{k=0}^{n}b_k^p(X^p)^k=\sum_{k=0}^{n}(b_k X^k)^p=(\sum_{k=0}^{n}b_kX^k)^p$, contradiction car $P$ est irréductible.
+            \item $\ext{\Fa_p(X)}{\Fa_p(X^p)}$ n'est pas séparable
+        \end{enumerate}
+    \end{ex}
+
+    \begin{df}{}{}
+        Un corps $\K$ est dit parfait si sa caractéristique est nulle ou sinon si $\fundf{\K}{\K}{X}{X^p}$ est surjective
+    \end{df}
+
+    \begin{lm}{}{}
+        Un corps $\K$ est parfait \ssi toute extension algébrique de $\K$ est séparable.
+    \end{lm}
+
+    \begin{proof}
+        L'argument précédent s'adapte et montre $\implies$\\
+        $\impliedby$ Par contraposée: Si $\K$ n'est pas parfait, $\car(\K)=p$ et il existe $t\in \K\wt\phi(K)$(l'image du morphisme de Frobenius)\\
+        $P=X^p-t\in \K[X]$ irréductible. Si $\alpha$ est une racine de $P$, $t=\alpha^p$, $P=X^p-\alpha^p=(X-\alpha)^p$, contradiction
+    \end{proof}
+
+    \begin{prop}{}{}
+        $\ext{\La}{\K}$ extension finie. L'extension $\ext{\La}{\K}$ est séparable \ssi
+        \[\left| \Hom_\K(\La,\overline{\K})\right|=\left[\La:\overline{\K}\right]\]
+    \end{prop}
+
+    \begin{lm}{}{}
+        $\K\subset\Fa\subset \La$ extension finie
+        \[\left|\Hom_\K(\La,\overline{\K})\right|=\left|\Hom_\Fa(\La,\overline{\K})\right|\left|\Hom_\K(\Fa,\overline{\K})\right|\]
+    \end{lm}
+
+    \begin{proof}
+        $\funto{r_\Fa}{\Hom_\K(\La,\overline{\K})}{\Hom_\K(\Fa,\overline{\K})}$ restriction à $\Fa$. L'application $r_\Fa$ est surjective.\\
+        \begin{center}
+            $\begin{matrix}
+                \La&\longrightarrow&\overline{\K}\\
+                \text{\rotatebox{90}{$\hookrightarrow$}}&&\text{\rotatebox{90}{$=$}}\\
+                \Fa&\Longrightarrow&\overline{\K}
+            \end{matrix}$\\
+            $\id_\Fa\in \Hom_\K(\Fa,\overline{\K})$, et $r_\Fa^{-1}(\id_\Fa)=\Hom_\Fa(\La,\overline{\K})$. Soit $\sigma\in \Hom_\K(\Fa,\overline{\K})$. $r_\Fa^{-1}(\sigma)=\Hom_{\sigma(\Fa)}(\La,\overline{\K})=\{\funto{f}{\La}{\K},f_{|\Fa}=0\}$.\\
+            $\forall \sigma,\sigma',|\Hom_{\sigma^{-1}(\Fa)}(\La,\overline{\K})|=\left|\Hom_{\sigma^{-1}(\Fa)}(\La,\overline{\K})\right|$
+        \end{center}
+    \end{proof}
+
+    \begin{proof}{Preuve de la proposition}{}\\
+        $\La=\K(\alpha)=\K[X]/(P_\alpha)$ où $P_\alpha$ est le polynôme minimal de $\alpha$, on sait que 
+        \[\left|\Hom_\K(\K(\alpha),\overline{\K})\right|\le \deg (P_\alpha)\]
+        On a déjà vu que
+        \[\left|\Hom_\K(\K(\alpha),\overline{\K})\right|=\left|\{\beta\in \overline{\K},P_\alpha(\beta)=0\}\right|(=\deg (P_\alpha\iff\K(\alpha)\text{ est séparable}))\]
+        Le cas général suit par réccurence sur le degré de l'extension en utilisant le lemme.
+    \end{proof}
+
+    \begin{cor}{}{}
+        Une extension est séparable \ssi elle est engendrée par les éléments séparables. En particulier, en corps décomposition est séparable d'un polynôme séparable.
+    \end{cor}
+
+    \begin{proof}
+        Laisser en exercice
+    \end{proof}
+
+    \begin{ex}{}{}
+        $P=X^3-2$ séparable sur $\Q$.\\
+        \begin{itemize}
+            \item $\Q(\sqrt[3]{2},j)$ séparable et normale
+            \item $\Q(\sqrt[3]{2})$ pas normale et séparable
+        \end{itemize}
+    \end{ex}
+
+    \begin{prop}{}{}
+        \begin{enumerate}
+            \item $\ext{\ext{\La}{\Fa}}{\K}$ $\La/\K$ est séparable \ssi $\La/\Fa$ et $\Fa/\K$ sont séparable.
+            \item \begin{tikzpicture}[line width=.5pt, node distance = .5cm and 1.5cm,
+block/.style = {inner sep=3pt,rectangle split, draw, rectangle split parts=2,
+     text centered, rounded corners, minimum height=4em,rectangle split part fill={blue!20,white},font=\fontsize{10}{0}
+     \selectfont},line/.style={draw, -{Latex[length=2.5mm,width=1.75mm]}}
+                     ]
+            \draw (-1,0)node (A) [draw, aspect=5]{$\La_1$};
+            \draw (1,0)node (B) [draw, aspect=5]{$\La_2$};
+            \draw (0,2)node (C) [draw, aspect=5]{$\overline{\K}$};
+            \draw (0,1)node (D) [draw, aspect=5]{$\La_1\La_2$};
+            \draw (0,-1)node (E) [draw, aspect=5]{$\K$};
+            \draw (A) -- (C);
+            \draw (A) -- (D);
+            \draw (A) -- (E);
+            \draw (B) -- (C);
+            \draw (B) -- (D);
+            \draw (B) -- (E);
+            \draw (C) -- (D);
+        \end{tikzpicture}\\
+            Si $\La_1/\K$ séparable, alors $\La_1 \La_2/\La_2$ est séparable. Si $\La_1/\K$ et $\La_2/\K$ séparable, alors $\La_1 \La_2/\K$ est séparable
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item On se place dans le cas d'extension finie. \\
+            $\implies \La/\K$ séparable, $P_\alpha$ racine simple, $P_\alpha$ polynôme minimal de $\alpha$ sur $\K$, alors le polynôme minimal de $\alpha$ sur $\Fa$ est aussi à racines simples. $\La/\Fa$ séparable\\
+            $\alpha \in \Fa\subset \La$, son polynôme minimal sur $\K$ est à racines simples $\implies \Fa/\K$ est séparable.\\
+            Si $\ext{\ext{\La}{\Fa}}{\K}$ finie, $\cho{\left|\Hom_\K(\Fa,\overline{\K})\right|=[\Fa:\K]\\\left|\Hom_\Fa(\La,\overline{\K})\right|=[\La:\K]}\implies \left|\left|\Hom_\K(\La,\overline{\K})\right|=[\La:\Fa][\Fa:\K]=[\La:\K]\right|$ et $\La/\K$ séparable.\\
+            Pour le cas finie, on peut toujours se ramener au cas fini.
+            \item Si $\La_1/\K$ et $\La_2/\K$ sont séparables, ils sont engendrés par des éléments séparables et donc $\La_1\La_2$ aussi et donc $\La_1\La_2/\K$ séparable.
+        \end{enumerate}
+    \end{proof}
+
+    \begin{tm}{Théorème de l'élément primitif}{}
+        $\ext{\La}{\K}$ finie, les propriétés suivantes sont équivalentes:
+        \begin{enumerate}
+            \item $\exists \alpha\in \La,\La\cong\K(\alpha)$
+            \item Il existe un nombre fini d'extensions intermédiaires entre $\K$ et $\La$
+        \end{enumerate}
+        De plus, si $\La/\K$ est séparable, c'est toujours satisfait.
+    \end{tm}
+
+    \begin{ex}{}{}
+        $\ext{\Q(\sqrt[3]{2},j)}{\Q}$ avec $\Q$ séparable montrer que $\Q(\sqrt[3]{2},j)=\Q(j+\sqrt[3]{2})$ par le polynôme minimal
+    \end{ex}
+
+    \begin{re}{}{}
+        Si $G$ est un sous-groupe fini de $\K^*$, alors $G$ est cyclique. \\
+        Pour $\K=\Fa_{p^n}, \K^*=G\cong \Z/(p^n-1)\Z$.
+    \end{re}
+
+    \begin{proof}
+        $(1)\implies (2)$ Si $\La=\ext{\Fa}{\ext{\K(\alpha)}{\K}}$, on pose $P_\alpha$ polynôme minimal de $\alpha$ sur $\K$ et $P_\Fa$ polynôme minimal de $\alpha$ sur $\Fa$.\\
+        $P_\Fa$ divise $P_\alpha$, $P_\Fa=\sum_{i=0}^{n}a_i X^i$, $a_i\in \Fa$. $\Fa_0$ l'extension de $\K$ contenant les $a_i$, $\Fa_0=\K(a_0,\ldots ,a_n)$.\\
+        $\ext{\La=\K(\alpha)}{\ext{\Fa}{\ext{\Fa_0}{\K}}}$, $\Fa_0\subset \Fa$. $P_{\Fa_0}$ le polynôme minimal de $\alpha$ sur $\Fa_0$. $P_{\Fa_0}=P_\Fa$. $[\La:\Fa_0]=\deg P_{\Fa_0}=\deg P_{\Fa}=[\La:\Fa]$, $\Fa=\Fa_0$.\\
+        $\Fa$ est caractérisé par $P_\Fa$ donc on a un nombre fini de possibilités.\\
+        $(2)\implies (1)$, $\La=\K(\alpha_1,\ldots,\alpha_n)$. Par réccurence, il suffit de considérer le cas $\La=\K(\alpha,\beta)$. On veut montrer que si $\ext{\K(\alpha,\beta)}{\K}$ n'a qu'un nombre fini d'extensions intermédiaires, il existe $\gamma\in \K(\alpha,\beta),\K(\alpha,\beta)=\K(\gamma)$. Si $\K$ est fini, $\ext{\La=\K(\alpha,\beta)}{\K}$, $\La^*$ est cyclique pour $\La$ corps fini. $\gamma$ est générateur de $G=\La^*$. $\La^*=\{\gamma^k,k\in \Z\}$.
+        \begin{itemize}
+            \item Si $\K$ est infini, $\K(\alpha+c\beta)$ lorsque $c$ parcourt $\K$ infini.\\
+            Voir schéma photo donc $\exists c_1\neq c_2, \K(\alpha+ c_1 \beta)=\K(\alpha+c_2 \beta)$.\\
+            $\alpha+c_1\beta\in \K(\alpha+c_1\beta)$. Montrons que $\alpha$ et $\beta$ appartiennent à $\K(\alpha+c_2\beta)$, $\alpha=\frac{c_2(\alpha+c_1\beta)-c_1(\alpha+c_2\beta)}{c_2-c_1}$, $\beta=\frac{(\alpha+c_1\beta)-(\alpha +c_2\beta)}{c_2-c_1}$ donc $\K(\alpha+c_2\beta)=\K(\alpha,\beta)$.\\
+            $\ext{\La}{\K}$ extension de degré $n$ séparable. $|\Hom_{\K}(\La,\overline{\K})|=n$, $\sigma_1,\ldots,\sigma_n$ $n$ homomorphismes distincts de $\La$ dans $\overline{\K}$. Supposons qu'il existe $\alpha\in \La,\sigma_i(\alpha)\neq \sigma_j(\alpha),\forall i\neq j$. $P_\alpha$ polynôme minimal de $\alpha$ sur $\K$.\\
+            $[\K(\alpha),\K]=\deg P_\alpha \ge n$. Par ailleurs, $[\K(\alpha):\K]\le [\La:\K]=n\implies \La=\K(\alpha)$.\\
+            \begin{tikzpicture}[line width=.5pt, node distance = .5cm and 1.5cm,
+block/.style = {inner sep=3pt,rectangle split, draw, rectangle split parts=2,
+     text centered, rounded corners, minimum height=4em,rectangle split part fill={blue!20,white},font=\fontsize{10}{0}
+     \selectfont},line/.style={draw, -{Latex[length=2.5mm,width=1.75mm]}}
+                     ]
+            \draw (0,2)node (A) [draw, aspect=5]{$\La$};
+            \draw (0,1)node (B) [draw, aspect=5]{$\K(\alpha)$};
+            \draw (0,0)node (C) [draw, aspect=5]{$\K$};
+            \draw (B) -- (A);
+            \draw (B) -- (C);
+            \draw[-] (A) to[bend right=90] (C);
+        \end{tikzpicture} Voir Photo
+        \item Si $\K$ est fini, $\La /\K$ est séparable et $\La=\K(\alpha)$
+        \item Si $\K$ est infini, $\La_{i,j}=\{x\in \La, \sigma_i(x)=\sigma_j(x)\}$ est un $\K$-\ev, $\La\wt (\bigcup_{1\le i< j\le n}L_{i,j})\neq \emptyset$, ceci est du au lemme suivant.
+        \end{itemize}
+    \end{proof}
+
+    \begin{lm}{}{}
+        $\K$ corps infini, $V$ un $\K$-\ev, $V_j$ sous-groupe de $V$, $V_j\neq V$ pour $j=1\ldots m$, alors $\bigcup_{j=1}^m V_j\neq V$
+    \end{lm}
+
+    \begin{proof}
+        Par réccurence sur $m$, évident pour $m=1$, supposons le lemme vraie pour $m=1$.\\
+        $\exists \omega \in V\wt \bigcup_{j=1}^{m-1}V_j$. Soit $v\in V\wt V_m$.\\
+        Considérons $\omega+av,a\in \K$. On veut montrer qu'ils ne peuvent pas tous appartenir à $\bigcup_{j=1}^m V_j$.\\
+        En effet, sinon ils existent $a_1\neq a_2$ et $j\in \llbracket 1,m \rrbracket, \omega+a_1 v\in V_j$ et $\omega+a_2v\in V_j$
+        \begin{enumerate}
+            \item Si $j=m$, $v=\frac{(\omega+a_1 v)-(\omega +a_2 v)}{a_1-a_2}\in V_m$
+            \item Si $1\le j <m,\omega \in V_j$, contradiction. Soit $\omega =\frac{a_2(\omega+a_1v)-a_1(\omega+a_2 v)}{a_1-a_2}$
+        \end{enumerate}
+    \end{proof}
+
+    \begin{lm}{}{}
+        Soit $P\in \K[X_1,\ldots,X_m]\cong \K[X_1 \ldots X_{i-1}X_{i+1} \ldots X_n][X_i]$. $S_i\subset \K$. $|S_i|>\deg_{X_i}P$, alors il existe $x=(x_1,\ldots ,x_m)\in S_1\times \ldots \times S_m$ avec $P(x)\neq 0$.
+    \end{lm}
+
+    \begin{re}{}{}
+        On retient le lemme précédent en considérant
+        \[P=\prod_{j=1}^{n}l_j\]        
+    \end{re}
+    
+    \begin{tm}{}{}
+        $\K$ corps, $G$ sous-groupe fini de $\K^*$, alors $G$ est cyclique.
+    \end{tm}
+
+    \begin{proof}
+        On pose $|G|=n$, si $d$ divise $n$, on note $\Psi(d)$ le nombre d'éléments d'ordre $d$ dans $G$. On rappelle que si $G=\Z/n\Z$, $d$ divise $n$, alors $\phi(d)$ est l'indicatrice d'Euleur.
+        \[\sum_{d|n}\Psi(d)=n=\sum_{d|n} \phi(d)\]
+        Soit $d$ un diviseur de $n$, soit $\Psi(d)=0$, sinon il existe $x\in G$ d'ordre $d$ et le sous-groupe engendré par $x$ est isomorphe à $\Z/d\Z$\\
+        Tous les éléments $g\in H\subset \K^*$ vérifie $g^d=1$. Tous les éléments de $H$ sont donc racines de $X^d-1$ car un polynôme de degré $d$ a au plus $d$ racines.
+        \[\{x\in \K^*,x^d=1\}=H=\{x\in H, x^d=1\}\]
+        \[\{x\in \K^*, \text{ordre($x$)}=d\}=\{x\in H, \text{ordre($x$)}=d\}\]
+        Conclusion: Soit $\Psi(d)=0$, soit $\Psi(d)=\varphi(d)$. On en déduit que $\varphi(n)=\Psi(n),\forall n$ mais $\varphi(n)>0$ et donc $\Psi(n)>0$ et $G$ est cyclique.
+    \end{proof}
+
+    \begin{ex}{}{}
+        $\K=\Q$, $G$ sous groupe de $\K^*$, $G=\{-1,1\}$
+    \end{ex}
+
+    \chapter{Théorie de Galois}
+
+    $\La$ corps, $\Aut(\La)=$automorphismes de corps de $\La$ (qui est un groupe). $\ext{\La}{\K}$, $\Aut(\La/\K)=\{f\in \Aut(\La),f_{|\K}=\id_\K\}$ groupe. Si $G$ est un sous-groupe de $\Aut(\La)$, 
+    \[\La^G=\{x\in \La,\forall \sigma\in G,\sigma(x)=x\}\text{ sous-corps de $\La$ (à vérifier)}\]
+
+    \begin{prop}{}{}
+        Soit $\ext{\La}{\K}$ extension de degré fini $n$
+        \[\left| \Aut(\La/\K)\right|\le n\]
+        \[|\Aut(\La/\K)|=n \iff \ext{\La}{\K}\text{ séparable et normale}\]
+    \end{prop}
+
+    \begin{proof}
+        Par réccurence sur $n$, en utilisant le cas $\La=\K(\alpha)$, le point clef est le suivant:
+        \[\left\|\Hom_{\K}(\K(\alpha,\overline{\K}))\right\|=\left\|\{\text{Racines de $P_\alpha$}\}\right\|\]
+        Si $\La/ \K$ est séparable, il y a exactement $[\La:\K]$ racines.\\
+        De plus, $\left\|\Hom_{\K}(\K(\alpha),\overline{\K})\right\|=\left\|\Aut(\K(\alpha)/\K)\right\|$ \ssi $\K(\alpha)$ est normale.
+    \end{proof}
+
+    \begin{df}{}{}
+        Une extension $\ext{\La}{\K}$ est dite galoisienne si elle est normale et séparable.\\
+        On a appelle groupe de Galois $\Aut(\La/\K)=\Gal(\La/\K)$
+    \end{df}
+
+    \begin{re}{}{}
+        \begin{enumerate}
+            \item Si $\La/\K$ est galoisienne, $\ext{\La}{\ext{\Fa}{\K}}$, alors $\La/\Fa$ est galoisienne.
+            \item \begin{tikzpicture}[line width=.5pt, node distance = .5cm and 1.5cm,
+block/.style = {inner sep=3pt,rectangle split, draw, rectangle split parts=2,
+     text centered, rounded corners, minimum height=4em,rectangle split part fill={blue!20,white},font=\fontsize{10}{0}
+     \selectfont},line/.style={draw, -{Latex[length=2.5mm,width=1.75mm]}}
+                     ]
+            \draw (-1,0)node (A) [draw, aspect=5]{$\La_1$};
+            \draw (1,0)node (B) [draw, aspect=5]{$\La_2$};
+            \draw (0,2)node (C) [draw, aspect=5]{$\overline{\K}$};
+            \draw (0,1)node (D) [draw, aspect=5]{$\La_1\La_2$};
+            \draw (0,-1)node (E) [draw, aspect=5]{$\K$};
+            \draw (A) -- (C);
+            \draw (A) -- (D);
+            \draw (A) -- (E);
+            \draw (B) -- (C);
+            \draw (B) -- (D);
+            \draw (B) -- (E);
+            \draw (C) -- (D);
+        \end{tikzpicture}\\
+        Si $\La_1/\K$ galoisienne alors $\La_1\La_2/\La_2$ est galoisienne. Si $\La_1/\K$ et $\La_2/\K$ galoisienne, alors $\La_1\La_2/\K$ galoisienne
+        \end{enumerate}
+    \end{re}
+
+    \begin{tm}{Correspondance de Galois}{}
+        $\ext{\La}{\K}$ galoisienne, $G=\Gal(\La/\K)$
+        \[\{\text{Sous-groupe de $G$}\} \left\{\text{Extension intermédiaire }\ext{\La}{\ext{\Fa}{\K}}\right\}\] VOIR Photo
+        Cette correspondance vérifie:
+        \begin{enumerate}
+            \item $\ext{\La}{\ext{\Fa}{\K}}, \sigma\in \Gal(\La/\K)$
+            \[\Gal(\La/\sigma(\Fa))=\sigma \Gal(\La/\Fa)\sigma^{-1}\]
+            En particulier, $\Fa/\K$ galoisienne \ssi $\Gal(\La/\Fa)$ normal dans $\Gal(\La/\K)$\\
+            Dans ce cas,
+            \[\funto{\varphi}{\Gal(\La/\K)}{\Gal(\Fa/\K)}\]
+            $\ker \varphi=\Gal(\La/\Fa)$ et de plus, $\Gal(\La/\K)/\Gal(\La/\Fa)\cong\Gal(\Fa/\K)$
+            \item $H_1\subset H_2$ \ssi $\La^{H_2}\subset \La^{H_2}$
+            \item Lorsque $\Fa_1=\La^{H_1}$ et $\Fa_2=\La^{H_2}$
+            \[\Fa_1\cap\Fa_2=\La^{<H_1,H_2>}\qquad \Fa_1\Fa_2=\La^{H_1\cap H_2}\]
+            \item \begin{tikzpicture}[line width=.5pt, node distance = .5cm and 1.5cm,
+block/.style = {inner sep=3pt,rectangle split, draw, rectangle split parts=2,
+     text centered, rounded corners, minimum height=4em,rectangle split part fill={blue!20,white},font=\fontsize{10}{0}
+     \selectfont},line/.style={draw, -{Latex[length=2.5mm,width=1.75mm]}}
+                     ]
+            \draw (-1,0)node (A) [draw, aspect=5]{$\La$};
+            \draw (1,0)node (B) [draw, aspect=5]{$\Fa$};
+            \draw (0,2)node (C) [draw, aspect=5]{$\overline{\K}$};
+            \draw (0,1)node (D) [draw, aspect=5]{$\La\Fa$};
+            \draw (0,-1)node (E) [draw, aspect=5]{$\K$};
+            \draw (A) -- (C);
+            \draw (A) -- (D);
+            \draw (A) -- (E);
+            \draw (B) -- (C);
+            \draw (B) -- (D);
+            \draw (B) -- (E);
+            \draw (C) -- (D);
+        \end{tikzpicture}\\
+        Si $\La/\K$ est galoisienne, alors $\La\Fa/\Fa$ galoisienne, et $\Gal (\La\Fa/\Fa)\cong \Gal(\La/\La\cap \Fa)$ est un sous-groupe de $\Gal(\La/\K)$.
+        \item \begin{tikzpicture}[line width=.5pt, node distance = .5cm and 1.5cm,
+block/.style = {inner sep=3pt,rectangle split, draw, rectangle split parts=2,
+     text centered, rounded corners, minimum height=4em,rectangle split part fill={blue!20,white},font=\fontsize{10}{0}
+     \selectfont},line/.style={draw, -{Latex[length=2.5mm,width=1.75mm]}}
+                     ]
+            \draw (-1,0)node (A) [draw, aspect=5]{$\La_1$};
+            \draw (1,0)node (B) [draw, aspect=5]{$\La_2$};
+            \draw (0,2)node (C) [draw, aspect=5]{$\overline{\K}$};
+            \draw (0,1)node (D) [draw, aspect=5]{$\La_1\La_2$};
+            \draw (0,-2)node (E) [draw, aspect=5]{$\K$};
+            \draw (0,-1)node (F) [draw, aspect=5]{$\La_1\cap \La_2$};
+            \draw (A) -- (C);
+            \draw (A) -- (D);
+            \draw (A) -- (E);
+            \draw (B) -- (C);
+            \draw (B) -- (D);
+            \draw (B) -- (E);
+            \draw (C) -- (D);
+            \draw (A) -- (F);
+            \draw (B) -- (F);
+            \draw (E) -- (F);
+        \end{tikzpicture}\\
+        $\ext{\La_1}{\K}, \ext{\La_2}{\K}$ galoisiennes, on pose $G_1=\Gal(\La_1/\K)$ et $G_2=\Gal(\La_2/\K)$ dans $\La_1\La_2/\K$ galoisienne. $\Gal(\La_1\La_2/\K)$ est un sous groupe de $G_1\times G_2$ et 
+        \[\Gal(\La_1\La_2/\K)=G_1\times G_2\text{ \ssi }\La_1\cap \La_2=\K\]
+        \end{enumerate}
+    \end{tm}
+
+    \begin{proof}
+        Montrons que :$(1)$ $\forall H$ sous-groupe de $G$, $\Aut(L/L^H)=H$\\
+        $(2)$ $\forall F,\ext{\La}{\ext{\Fa}{\K}},L^{\Gal(\La/\Fa)}=\Fa$\\
+        $(1)$:On sait que $H\subset \Aut(\La/\La^H)\quad (*)$, montrons que $\Aut(\La/\La^H)\subset H$. On choisit $\alpha\in \La$ tel que $\La=\K(\alpha)$
+        \[Q=\prod_{\sigma\in H}(X-\sigma(\alpha))\in \La[X]\]
+        De plus, $\tau\in H$
+        \begin{align*}
+            \tau\cdot Q&=\prod_{\sigma\in H}(X-\tau \cdot \sigma(\alpha))\\
+            &=\prod_{\sigma\in H}(X-\tilde{\sigma}(\alpha))\\
+            &= Q
+        \end{align*}
+        Donc $Q\in \La^H[X]$.\\
+        Le polynôme minimal $P_\alpha$ de $\alpha$ sur $\La^H$ divise $Q$.
+        \[(**)\qquad|\Gal(\La/\La^H)|=[\La,\La^H]=\deg P_\alpha\le \deg Q=|H|\]
+        On déduit de $(*)$ et $(**)$ que $H=\Aut(\La/\La^H)$.\\
+        Pour $(2)$, on a $\Fa\subset \La^{\Gal(\La/\Fa)}$
+        \[[\La:\Fa]=|\Gal(\La/\Fa)|=[\La:\La^{\Gal(\La/\Fa)}]\]
+        car $\ext{\La}{\Fa}$ est galoisienne et $\ext{\La}{\La^{\Gal(\La/\Fa)}}$.\\
+        On en déduit que $\Fa=\La^{\Gal(\La/\Fa)}$\\
+        $(2)$ $H_1\subset H_2\iff \La^{H_2}\subset \La^{H_1}$\\
+        Si $H_1\subset H_2,\La^{H_2}=\{x\in \La,\sigma\in H_2,\sigma(x)=x\}\subset \{x\in \La,\forall \sigma \in H_1,\sigma(x)=x\}=\La^{H_1}$\\
+        Réciproquement, si $\La^{H_2}\subset \La^{H_1}$, alors $H_1=\Gal(\La/\La^{H_1})$\\
+        $\sigma\in H_1, \forall x\in \La^{H_1}, \sigma(x)=x$ donc $\forall \sigma\in H_1, \forall x\in \La^{H_2}, \sigma(x)=x$, donc si $\sigma\in H_1,\sigma\in H_2$ et $H_1\subset H_2$.\\
+        $(3)$ $\Fa_1=\La^{H_1}, F_2=\La^{H_2}$
+        \begin{enumerate}
+            \item $\Fa_1\Fa_2=\La^{H_1\cap H_2}$
+            \item $\Fa_1\cap \Fa_2=\La^{\sca{H_1,H_2}}$
+        \end{enumerate}
+        Montrons $(2)$, si $x\in \Fa_1\cap \Fa_2$, alors $x$ est fixé par $H_1$ et $H_2$ donc $x\in \La^{\sca{H_1,H_2}}$.\\
+        D'après ce qui précède,
+        \begin{align*}
+            \La^{\sca{H_1,H_2}}&\subset \La^{H_1}\\
+            &\subset \La^{H_2}
+        \end{align*}
+        et donc $\La^{\sca{H_1,H_2}}\subset \Fa_1\cap \Fa_2$ et on a $\Fa_1\cap \Fa_2=\La^{\sca{H_1,H_2}}$.\\
+        Si $g\in H_1\cap H_2$, $g$ fixe $\Fa_1$ et $\Fa_2$ donc $g$ fixe $\Fa_1\Fa_2$\\
+        $\Fa_1\Fa_2\subset \La^{H_1\cap H_2}$, si $g\in \Gal(\La/\K)$ est fixe $\Fa_1\Fa_2$, il fixe $\Fa_1$ et $\Fa_2$, donc $g\in H_1\cap H_2$\\
+        $\Gal(\La/\Fa_1\Fa_2)\subset H_1\cap H_2$ et $\La^{H_1\cap H_2}\subset \La^{\Gal(\La/\Fa_1\Fa_2)}=\Fa_1\Fa_2$.
+        $\ext{\La}{\ext{\Fa}{\K}}, \forall \sigma\in \Gal(\La/\K),\Gal(\La/\sigma(\Fa))=\sigma(\Gal(\La/\Fa))\sigma^{-1}$\\
+        $\ext{\Fa}{\K}$ galoisienne \ssi $\Gal(\La/\Fa)$ sous-groupe de $\Gal (\La/\K)$ \ssi $\forall \sigma\in \Gal(\La/\K)$, $\sigma\Gal(\La/\Fa)\sigma^{-1}=\Gal(\La/\Fa)$\\
+        Dans ce cas, $\funtosurj{\rho}{\Gal(\La/\K)}{\Gal(\Fa/\K)}$ et $\ker(\rho)=\Gal(\La/\Fa)$,\\
+        Preuve: 
+        \begin{align*}
+            \tau\in \Gal(\La/\K), \tau\in \Gal(\La/\sigma(\Fa))&\iff \forall x\in \Fa,\tau(\sigma(x))=\sigma(x)\\
+            &\iff \forall x\in \Fa,(\sigma^{-1}\circ\tau\circ\sigma)(x)=x\\
+            &\iff \sigma^{-1}\circ \tau \circ \sigma\in \Gal(\La/\Fa)\\
+            &\iff \tau\in \sigma\Gal(\La/\Fa)\sigma^{-1}
+        \end{align*}
+        On a bien $\Gal(\La/\sigma(\Fa))=\sigma\Gal(\La/\Fa)\sigma^{-1},\forall \sigma\in \Gal(\La/\K)$\\
+        $\ext{\Fa}{\K}$ normale \ssi $\Hom_{\K}(\Fa,\overline{\K})=\Hom_{\K}(\Fa,\Fa)$\\
+        Si $\ext{\Fa}{\K}$ est normale, $\sigma\in \Hom_{\K}(\Fa,\overline{\K})=\Hom_{\K}(\Fa,\Fa)$, $\sigma$ s'étend à $\Hom_\K(\La,\overline{\K})=\Hom_\K(\La,\La)$. Si $\sigma\in \Gal(\La/\K)$, alors $\sigma(\Fa)=\Fa$\\
+        Réciproquement, si $\sigma\in \Gal(\La/\K), \sigma(\Fa)=\Fa$, alors la clôture normale de $\Fa$ dans $\La$ est égal à $\Fa=$le plus petit sous-corps contenant tous les $\sigma(\Fa),\sigma\in \Gal(\La/\K)$.\\
+        $(4)$ \begin{tikzpicture}[line width=.5pt, node distance = .5cm and 1.5cm,
+block/.style = {inner sep=3pt,rectangle split, draw, rectangle split parts=2,
+     text centered, rounded corners, minimum height=4em,rectangle split part fill={blue!20,white},font=\fontsize{10}{0}
+     \selectfont},line/.style={draw, -{Latex[length=2.5mm,width=1.75mm]}}
+                     ]
+            \draw (-1,0)node (A) [draw, aspect=5]{$\La$};
+            \draw (1,0)node (B) [draw, aspect=5]{$\Fa$};
+            \draw (0,2)node (C) [draw, aspect=5]{$\overline{\K}$};
+            \draw (0,1)node (D) [draw, aspect=5]{$\La\Fa$};
+            \draw (0,-2)node (E) [draw, aspect=5]{$\K$};
+            \draw (0,-1)node (F) [draw, aspect=5]{$\La\cap \Fa$};
+            \draw (A) -- (C);
+            \draw (A) -- (D);
+            \draw (A) -- (E);
+            \draw (B) -- (C);
+            \draw (B) -- (D);
+            \draw (B) -- (E);
+            \draw (C) -- (D);
+            \draw (A) -- (F);
+            \draw (B) -- (F);
+            \draw (E) -- (F);
+        \end{tikzpicture}\\
+        $\La/\K$ galoisienne, $\La\Fa/\Fa$ galoisienne,
+        \[\Gal(\La\Fa/\Fa)\cong \Gal(\La/\La\cap \Fa)\text{ sous-groupe de }\Gal(\La/\K)\]
+        \[\funto{r_L}{\Gal(\La\Fa/\Fa)}{\Gal(\La/\K)}\]
+        $r_L$ est un homomorphisme injectif. $\sigma\in \ker (r_L)$, alors $\sigma_{|\La}=\id_\La$ et $\sigma_{|\Fa}=\id_{\Fa}$ donc $\sigma=\id$. Notons $H$ l'image de $r_L$, on veut montrer que $H=\Gal(\La/\La\cap \Fa)$. On a que $H\subset \Gal(\La/\La\cap \Fa)$ et donc $\La\cap \Fa\subset \La^H$
+        \[\La^H\{x\in \La,\forall \sigma\in \Gal(\La\Fa/\Fa),\sigma(x)=x\}\]
+        En particulier, $\La^H\subset \Fa$ d'où $\La^H\subset \La\cap \Fa$\\
+        $\implies \Gal(\La/\La\cap \Fa)\subset \Gal(\La/\La^H)=H$ donc $H=\Gal(\La/\La\cap\Fa)$\\
+        $(5)$ $G_1=\Gal(\La_1/\K)$ et $G_2=\Gal(\La_2/\K)$ et $\La_1 \La_2/\K$ galoisienne.\\
+        $\Gal(\La_1\La_2/\K)$ est un sous-groupe de $G_1\times G_2$ est un groupe.\\
+        $\Gal(\La_1\La_2/\K)= G_1\times G_2$ \ssi $\La_1\cap \La_2=\K$\\
+        Preuve: $\Gal(\La_1\La_2/\K)\hookrightarrow G_1\times G_2$.\\
+        VOIR PHOTO.
+    \end{proof}
+
+    \subsection*{Intermède}
+
+    VOIR PHOTO
+
+    \begin{ex}{}{}
+        $\K$ corps, $P\in \K[X]$, $P=X^2+6X+c=(X-\alpha_1)(X-\alpha_2)$\\
+        $K(\alpha_1)=\K(\alpha_2)$ et $[\K(\alpha_1):\K]=2$ ou $1$.
+    \end{ex}
+
+    \begin{ex}{}{}
+        $P=X^3+pX+q=(X-\alpha_1)(X-\alpha_2)(X-\alpha_3)$ avec $\alpha_i\neq \alpha_j$.\\
+        $[\K(\alpha_1,\alpha_2,\alpha_3):\K]=6$ ou $3$.
+    \end{ex}
+
+    \begin{ex}{Exemple explicite}{}
+        \begin{enumerate}
+            \item $X^3-2X+2$, $\Delta=-4p^3-27q=-4\times 19$ qui n'est pas un carré
+            \item $P=(X-\alpha_1)(X-\alpha_2)(X-\alpha_3)(X-\alpha_4)\in \K[X]$ irréductible séparable. $\La=\K(\alpha_1,\alpha_2,\alpha_3,\alpha_4)$. $\Gal(\La/\K)$ est un sous-groupe de $S_4$. On suppose que $\Gal(\La/\K)\cong A_4$
+            \item $P=X^5-2\in \Q[X]$. $\K=$Corps de décomposition de $P$ et on pose $\zeta=e^{\frac{2i\pi}{5}}$ racine primitive 5-ième de l'unité. On a $\Q(\sqrt[5]{2},\zeta)$
+        \end{enumerate}
+    \end{ex}
+
+    \begin{prop}{}{}
+        Soit $G=\Gal(\La/\K)$ groupe de Galois d'une extension séparable $\La/\K$. Supposons qu'il existe $\funto{\rho}{G}{S_n}$, action fidèle et transitive (Fidèle=action injective, transitive=$|\{\sigma(k),\sigma\in G,k\in \llbracket 1,m\rrbracket\}|=m$)\\
+        Alors $\La$ est le corps de décomposition d'un polynôme $P$ irréductible sur $\K$ de degré $m$.
+    \end{prop}
+
+    \begin{proof}
+        $G_i=\{g\in G,g(i)=i\}$
+        \[\bigcap_{i=1}^n G_i=\{e\}\qquad \left| G/G_i\right|=m\]
+        Si $j=g(i)$, $gG_i g^{-1}=G_j$, $L_i=L^{G_i}$
+    \end{proof}
+
+    VOIR LE COURS PROPOSE PAR MARC HINDRY SUR LE ONE DRIVE
+\end{document}

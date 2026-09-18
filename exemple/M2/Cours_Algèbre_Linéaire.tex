@@ -1,0 +1,214 @@
+\documentclass[]{report}
+
+\usepackage{import}
+
+\import{../}{settings.tex}
+
+\title{Cours d'intégration pour l'agrégation}
+
+\author{Cours de David GERARD-VARET, transcrit par SADR TAHOURI Luca}
+\date{}
+
+\begin{document}
+
+    \maketitle
+    \tableofcontents
+
+\chapter{Espaces vectoriels de dimension finie}
+
+\section{Dimension des $\K$-espace vectioriel de dimension finie}
+
+Soit $\K$ un corps commutatif. Soit $E$ un $\K$-espace vectoriel.
+
+\begin{df}{Espace vectoriel de dimension finie}{}
+    Un $\K$-espace vectoriel de dimension finie est un $\K$-espace vectoriel dont au moins une partie génératrice est finie.
+\end{df}
+
+\begin{ex}{}{}
+    $\K^n,\K[X]$ pour $n\in \N$.\\
+    $\K[X]$ n'est pas un espace vectoriel de dimension finie
+\end{ex}
+
+\begin{tm}{}{}
+    Si $E$ est de dimension finie, alors il existe au moins une base de $E$.
+\end{tm}
+
+\begin{proof}
+    Soit $(e_i)_{i\in I}$ une famille génératrice finie.\\
+    Soit $J\subseteq I$ tel que $(e_j)_{j\in J}$ soit génératrice et telle que $J$ soit minimal au sens de l'inclusion. Alors $(e_j)_{j\in J}$ est une base
+\end{proof}
+
+\begin{lm}{}{}
+    Soient $n\in \N$, $e_1,\ldots,e_n \in E$. On suppose que $E=\text{Vect}(e_1,\ldots,e_n)$.\\
+    Toute famille de $E$ ayant au moins $n+1$ vecteurs est liée.
+\end{lm}
+
+\begin{proof}
+    On procède par reccurence sur $n$ : Soient $a_1,\ldots,a_{n+1}\in E$. $\forall j\in {1,\ldots,n,n+1}$, il existe $\lambda_{1,j},\lambda_{2,j},\ldots,\lambda_{n,j}\in \K$ tels que
+    \[a_j=\sum_{i=1}^{n}\lambda_{ij} e_i\]
+    Si $\left(\lambda_{ij}\right)_{(i,j)\in \{1,\ldots,n\}\times \{1,\ldots,n+1\}}$ est non nulle, par exemple, $\lambda_{n,n+1}\neq 0$, alors pour $j\in \{1,\ldots,n\}$, on note $b_j$ pour:
+    \[a_j-\frac{\lambda_{n,j}}{\lambda_{n,n+1}} a_{n+1}\]
+    \begin{align*}
+        b_j&=\sum_{i=1}^{n}\lambda_{i,j}e_i-\frac{ \lambda_{n,j}}{\lambda_{n,n+1}}\sum_{i=1}^{n}\lambda_{i,n+1} e_i\\
+        &=\sum_{i=1}^{n}\left(\lambda_{i,j}-\frac{\lambda_{n,j}}{\lambda_{n,n+1} }\lambda_{i,n+1}\right) e_i\\
+        &=\sum_{i=1}^{n-1}\left(\lambda_{i,j}-\frac{\lambda_{n,j}}{\lambda_{n,n+1} }\lambda_{i,n+1}\right) e_i\in \text{Vect}(e_1,\ldots,e_{n-1})
+    \end{align*}
+    Par hypothèse de récurrence, $(b_1,\ldots,b_n)$ est liée.\\
+    Donc il existe $t_1,\ldots, t_n\in \K$ non tous nuls tels que
+    \[t_1 b_1+\ldots+ t_n b_n=0_E\]
+    Donc
+    \begin{align*}
+        t_1 a_1+\ldots+t_n a_n -\sum_{j=1}^{n}\frac{\lambda_{n,j}}{\lambda_{n,n+1}} t_j a_{n+1}=0
+    \end{align*}
+    Donc $(a_1,\ldots,a_{n+1})$ est liée.
+\end{proof}
+
+\begin{cor}{}{}
+    Dans un $\K$- espace vectoriel de dimension finie, deux bases sont de mêmes cardinal.
+\end{cor}
+
+\begin{df}{}{}
+    Pour $E$ de dimension finie, la dimension de $E$ est le cardinal d'une base quelconque de $E$.
+\end{df}
+
+\begin{re}{}{}
+    $E=\{0_E\}\implies \dim(E)=0$. \\
+    Si $E$ est de dimension finie et si $E$ est isomorphe à un $\K$-espace vectoriel $F$, alors $F$ est de dimension finie et $\dim(E)=\dim (F)$
+\end{re}
+
+\begin{tm}{Théorème de la base incomplète pour les espaces vectoriels de dimension finie}{}
+    
+\end{tm}
+
+\begin{proof}
+    On suppose que $E$ est de dimension finie. Soit $(e_i)_{i\in I}$ une famille génératrice de $E$. Soit $J\in \Par (I)$ tq $(e_i)_{i\in J}$ sont libres. $E$ est de dimension finie donc $\text{Card} (J)\le \dim (E)$ donc
+    \[\{l\in \N,\text{il existe $K\in \Par(I)$ tel que $\text{Card}(K)=l$},J\subseteq K,(e_i)_{i \in K}\text{ est libre}\}\]
+    est une partie de $\N$, est non vide (on y trouve Card$(J)$) et est bornée par $\dim (E)$. On note $d$ son plus grand élément. Il existe $K\subseteq I$ tel que
+    \[\cho{(e_i)_{i\in K}\text{ est libre}\\ \text{Card}(K)=d\\ J\subseteq K}\]
+\end{proof}
+
+\begin{cor}{}{}
+    On suppose que $E$ est de dimension finie. Soit $(e_1,\ldots,e_p)$ une famille finie de $E$. Sont équivalents:
+    \begin{enumerate}
+        \item $(e_1,\ldots,e_p)$ est une base
+        \item $(e_1,\ldots,e_p)$ est libre et $p=\dim (E)$
+        \item $(e_1,\ldots,e_p)$ est génératrice et $p=\dim(E)$
+    \end{enumerate}
+\end{cor}
+
+\section{Sous-Espaces vectoriels des $\K$ espaces vectoriels de diemnsion finie}
+
+\begin{prop}{}{}
+    On suppose que $E$ est de dimension finie. Soit $F$ un sous-espace vectoriel de $E$.
+    \begin{enumerate}
+        \item $F$ est de dimension finie
+        \item $\dim(F)\le \dim(E)$
+        \item $F=E\iff \dim F=\dim E$
+        \item $E/F$ est de dimension finie, et $\dim(E/F)=\dim (E)-\dim (F)$
+    \end{enumerate}
+\end{prop}
+
+\begin{proof}
+    (1), (2) et (3): Par l'absurde, on suppose que $F$ n'est pas de dimension finie. Pour tout $n\in \N$, on note $\Hr_n$ l'assertion: il existe une famille libre de $F$ ayant $n$ vecteurs.\\
+    $\Hr_0$ est vraie. Soit $n\in \N$. On suppose $\Hr_n$. Il existe $f_1,\ldots,f_n\in F$ tels que $(f_i)_{i\in \llbracket 1,n\rrbracket}$ soit libre.\\
+    $F$ n'est pas de dimension finie, cette famille n'est pas génératrice,
+    \[F\wt \text{Vect} (f_1,\ldots, f_n)\neq \{0_E\}\]
+    Soit $f_{n+1}\in F\wt \text{Vect} (f_1,\ldots, f_n)$ donc $(f_1,\ldots,f_{n+1})$ est libre. Donc $\Hr_{n+1}$. Donc $\Hr_{1+\dim(E)}$ d'où une famille libre de $F$ (et donc de $E$) ayant $1+\dim(E)$ vecteurs. Absurde\\
+    (4)D'après le théorème de la base incomplète, il existe $n\le p$ dans $\N$, $e_1,\ldots,e_p \in E$ tels que  $(e_1,\ldots,e_p)$ est une base de $E$ et $(e_1,\ldots,e_n)$ est une base de $F$. Mon montre que $(e_{n+1}+F,\ldots, e_p+F)$ est une base de $E/F$
+\end{proof}
+
+\begin{tm}{}{}
+    Si $E$ est de dimension finie, alors tout sous-espace vectoriel de $E$ admet au moins un supplémentaire.
+\end{tm}
+
+\begin{proof}
+    Idée de démonstration: Soit $F$ un sev de $E$, il existe une base $(e_1,\ldots,e_n)$ de $E$ telle que $\dim(F)\le n$ et $(e_1,\ldots,e_{\dim F})$ soit une base de $F$
+\end{proof}
+
+\begin{tm}{Relation de Grassman}{}
+    On suppose que $E$ est de dimension finie. Soient $F,G$ des sous-espaces vectoriels.
+    \begin{enumerate}
+        \item $\dim(F)+\dim (G)=\dim(F\cap G)+\dim(F+G)$. En particulier, si $F$ et $G$ sont en somme directe, alors $\dim(F+G)=\dim F+ \dim G$
+        \item Sont équivalents:
+        \begin{enumerate}
+            \item $F$ et $G$ sont supplémentaires.
+            \item $F$ et $G$ sont en somme directe et $\dim (E)=\dim F+\dim G$.
+            \item $E=F+G$
+        \end{enumerate}
+    \end{enumerate}
+\end{tm}
+
+\section{Matrices}
+
+Soit $\K$ un corps commutatif
+
+\subsection{Rappel sur le calcul matriciel}
+
+\begin{df}{Matrices de $M_{n,p}(\K)$, opérations sur les matrices, $GL_n(\K)$}{}
+    Soit $n,p\in \N$\\
+    $M_{n,p}(\K)$ désigne l'ensemble des matrices $n\times p$ à coefficients dans $\K$.\\
+    \begin{itemize}
+        \item $\forall M,N\in M_{n,p}(_\K),\lambda \in \K$,
+        \[M+N=\left(M_{ij}+N_{ij}\right)_{(i,j)\in \llbracket 1,n\rrbracket\times  \llbracket 1,p\rrbracket}\]
+        \[\lambda \cdot M = \left( \lambda M_{ij}\right)_{(i,j)}\]
+        Soit $m\in \N$
+        \[(\forall M\in M_{(m,n)(\K)}),(\forall N\in M_{n,p} (\K)), M\cdot N= \left(\sum_{k=1}^{n} M_{ik} N_{kj}\right)_{i,j}\]
+        Le produit des matrices est associatif et unitaire.\\
+        \item $\forall \lambda\in \K,\forall M\in M_{m,n}(\K),\forall N\in M_{n,p}$
+        \[\lambda \cdot (MN)=(\lambda M) N= M(\lambda N)\]
+        \item Soit $M\in M_{n,p}(\K)$. $M$ est inversible lorsqu'il existe $N\in M_{p,n}(\K)$ telle que
+        \[\cho{MN=I_n\\ NM=I_p}\]
+        \item L'ensemble $\{M\in M_n (\K),M\text{ est inversible}\}$  est un groupe pour le produit de matrice. C'est le n-ième groupe linéaire sur $\K$, noté $GL_n(\K)$.
+    \end{itemize}
+\end{df}
+
+\subsection{Matrices représentatives d'applications linéaires (Rappels)}
+
+Soient $E,F$ des $\K$-espaces vectoriels de dimension finie. On note $n=\dim (F)$ et $p=\dim(E)$.Soient $\underline{e}=(e_1,\ldots,e_p)$ base de $E$ et $\underline{f}=(f_1,\ldots,f_n)$ une base de $F$. Soit $\varphi\in \Lr(E,F)$.\\
+La matrice représentative de $\varphi$ pour $\underline{e},\underline{f}$, notée$\text{Mat}_{\underline{e},\underline{f}}(\varphi)$ est la matrice $M\in M_{n,p}(\K)$ telle que
+\[\forall j\in \llbracket 1,p \rrbracket\]
+
+\subsection{Matrices échelonnées réduites}
+
+Soient $n,p\in \N^*$
+
+\begin{df}{Matrice échelonnée réduite}{}
+    Une matrice $M\in M_{n,p}(\K)$ est échelonée réduite lorsqu'il existe:
+    \[r\in \llbracket1,p\rrbracket,j_1,\ldots,j_r\in\llbracket1,p\rrbracket,\text{ tq }j_1 < j_2 < \ldots <j_r\]
+    \begin{itemize}
+        \item Les lignes d'indices $1$ à $r$ sont non nulles et les autres lignes sont nulles
+        \item En posant $j_i:= \min \{k\in \llbracket 1,p\rrbracket M_{ik}\neq 0\},\forall i\in \llbracket 1,r\rrbracket$
+        \[M_{i j_i}=1,\forall i\]
+    \end{itemize}
+\end{df}
+
+\begin{lm}{}{}
+    Soit $M\in M_{n,p}(\K)$. Soient $r\in \llbracket 0,p\rrbracket$ et $j_1<\ldots < j_r$ parmis $\llbracket 1,p\rrbracket$.\\
+    On note $\varphi$ l'application linéaire $\fun{\K^p}{\K^n}$ de matrice $M$ par les bases canoniques $\underline{\epsilon}$ de $\K^p$ et $\underline{\eta}$ de $\K^n$. Sont équivalents
+    \begin{enumerate}
+        \item $M$ est échelonnée réduite et $j_1,\ldots,j_r$ sont ses indices d'échelonnement
+        \item A voir
+    \end{enumerate}
+\end{lm}
+
+\begin{prop}{}{}
+    Soient $E,F$ des $\K$-espaces vectoriels de dimensions respectives $p$ et $n$. Soit $\varphi\in \Lr(E,F)$.\\
+    Soient $\underline{e},\underline{f}$ des bases respectives de $E$ et $F$. On note $M$ pour $\text{Mat}_{\underline{e},\underline{f}}(\varphi)$. On suppose que $M$ est échelonnée réduite. On note $j_1,\ldots, j_r$ sa suite d'indices d'échelonnement
+    \begin{itemize}
+        \item A VOIR PHOTO
+    \end{itemize}
+\end{prop}
+
+\begin{tm}{}{}
+    \begin{enumerate}
+        \item Soit $M\in M_{n,p}$
+        \[\left\{ U\cdot M,U\in GL_n(\K)\right\}\]
+        contient une et une seule matrice échelonnée réduite.
+        \item Soient $M,N\in M_{n,p(\K)}$. On note $\varphi_M,\varphi_N$ les applications linéaires des matrices ayant pour matrices représentatives $M$ et $N$ dans les bases canoniques. Sont équivalents:
+        \begin{enumerate}
+            \item $\exists U\in GL_n(\K),N=UM$
+            \item $\ker(\varphi_M)=\ker (\varphi_N)$
+        \end{enumerate}
+    \end{enumerate}
+\end{tm}
+\end{document}

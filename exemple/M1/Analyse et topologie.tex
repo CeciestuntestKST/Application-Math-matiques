@@ -1,0 +1,2747 @@
+\documentclass[]{report}
+
+\usepackage{import}
+
+\import{../}{settings.tex}
+
+\title{Analyse et topologie}
+
+\author{Cours de Claire Debord, transcrit par SADR TAHOURI Luca}
+\date{}
+
+\begin{document}
+
+    \maketitle
+    \tableofcontents
+
+    \chapter{Espaces Topologiques}
+
+    \section{Définition d'une topologie}
+
+    \subsection{Espaces à produits sclalaires, espaces normés, espaces métriques, espaces topologiques}
+
+    \begin{df}{}{}
+        Un produit scalaire sur un $\K$-\ev($\K=\R$ ou $\C$) est une application \[\funto{\langle\cdot , \cdot \rangle}{E^2}{\K}\]
+        qui vérifie: \begin{itemize}
+            \item Symétrie: $\forall x,y\in E, \overline{\sca{y,x}}=\sca{x,y}$
+            \item Homogénéité:$\forall x,y,z\in E,\forall \lambda\in \K, \sca{x+\lambda y,z}=\sca{x,z}+\lambda\sca{y,z}$
+            \item Définie positive: $\forall x\in E, \sca{x,x}\ge 0$ et $\sca{x,x}=0\iff x=0$
+        \end{itemize}
+        On dit que $(E,\sca{\cdot,\cdot})$ est un espace à produit scalaire.\\
+        On dit que $\fun{(x,y)}{\sca{x,y}}$ est une forme bilinéaire lorsque $\K=\R$ et une forme sesquilinéaire lorsque $\K=\C$
+    \end{df}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item sur $\K^n, \sca{x,y}=x_1 y_1+\cdots +x_n y_n$ où $x=(x_1,\cdots,x_n),y=(y_1,\cdots,y_n)$
+            \item Sur $\mathcal{C}([0,1],\K)=\{\funto{f}{[0,1]}{\K},f \text{ continue} \}$ muni de $\sca{f,g}=\int_{0}^{1} f(x)\overline{g(x)}\, dx$
+        \end{enumerate}
+    \end{ex}
+
+    \begin{re}{}{}
+        Soit $(E,\sca{\cdot,\cdot})$ un espace à produit scalaire. Notons pour $x\in E : \norme{x}=\sqrt{\sca{x,x}}$ la longueur ou la norme de x.
+    \end{re}
+
+    \begin{prop}{Propriété de Pythagore et identité du parallélogramme}{}
+        \[\forall x,y\in E^2,\norme{x+y}^2=\norme{x}^2+\norme{y}^2+2\Re (\sca{x,y})\]
+        C'est une conséquence de la linéarité et de la symétrie et on en déduit l'identité du parallélogramme :
+        \[\norme{x+y}^2+\norme{x-y}^2=2\norme{x}^2+2\norme{y}^2\]
+        Si $\sca{x,y}=0$, on dit que x et y sont orthogonnaux et on a $\norme{x+y}^2=\norme{x}^2+\norme{y}^2$
+    \end{prop}
+
+    \begin{prop}{Inégalité de Cauchy-Schwartz}{}
+        \[\forall x,y\in E^2, |\sca{x,y}|^2\le \sca{x,x}\sca{y,y}\]
+        \begin{center}
+            avec égalité \ssi x et y sont colinéaires
+        \end{center}
+    \end{prop}
+
+    \begin{df}{}{}
+        Une norme sur un $\K$-\ev E est une application $\funto{\norme{\cdot}}{E}{\R^+}$ qui vérifie :
+        \begin{itemize}
+            \item Séparation: $\forall x\in E, \norme{x}=0$ \ssi $x=0$
+            \item Homogénéité: $\forall x \in E,\forall \lambda\in \K, \norme{\lambda x}=|\lambda|\norme{x}$
+            \item Sous-additivité: $\forall x,y\in E, \norme{x+y}\le \norme{x}+\norme{y}$
+        \end{itemize}
+        On dit alors que $(E,\norme{\cdot})$ est un \evn. La distance induite entre x et y est $d(x,y)=\norme{x-y}$
+    \end{df}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item L'inégalité de Cauchy-Schwartz garantie que la norme issue du produit scalaire est sous-additive et est bien une norme
+            \item Il existe des normes qui ne sont pas issues de produits scalaires. Par exemple $\norme{\cdot}_p$ sur $\K^n$ pour $p\neq 2$ qui ne vérifie pas l'identité du parallélogramme
+        \end{enumerate}
+    \end{ex}
+
+    On rennonce maintenant à la structure d'\ev.
+
+    \begin{df}{}{}
+        Une distance ou métrique sur un ensemble X  est une application $\funto{d}{X^2}{\R^+}$ qui vérifie :
+        \begin{itemize}
+            \item Séparation: $\forall x,y \in X, d(x,y)=0 \iff x=y$
+            \item Symétrie: $\forall x,y\in X, d(x,y)=d(y,x)$
+            \item Inégalité triangulaire : $\forall x,y,z \in X, d(x,z)\le d(x,y)+d(y,z)$
+        \end{itemize}
+        On dit alors que $(X,d)$ est un espace métrique.
+    \end{df}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item Si $(E,\norme{\cdot})$ est un \evn, $d(x,y)=\norme{x-y}$ est une métrique sur $E$.
+            \item Il existe des espaces métriques qui ne sont pas des \evs. Par exemple, 
+            \[S^1=\{z_\theta=(\cos(\theta),\sin(\theta)),\theta\in [0,2\pi[\}\] 
+            pour la distance d'arc:
+            \[ d(z_\theta,z_\alpha)=\min \{|\alpha-\theta|,2\pi-|\alpha-\theta|\}\in [0,\pi]\] 
+        \end{enumerate}
+    \end{ex}
+
+    \begin{df}{}{}
+        Si $(X,d)$ est un espace métrique, pour $x\in X$ et $r>0$, la boule ouverte de centre x et de rayon r est définie par:
+        \[B(x,r)=\{y\in X, d(x,y)<r\}\]
+        On dira que $O\subset X$ est ouvert si $O=\emptyset$ ou $O$ est réunion (finie ou infinie) de boules ouvertes. En particulier, une boule ouverte est ouverte.
+    \end{df}
+
+    \begin{re}{}{}
+        Une intersection finie de boules ouvertes est toujours ouverte.
+    \end{re}
+
+    On renonce à la notion de métrique pour ne garder que la notion d'ouvert.
+
+    \begin{df}{}{}
+        Soit $X$ un ensemble. On appelle topologie sur $X$ la donnée d'un sous-ensemble $\Or \in \Par(X)$ vérifiant:
+        \begin{itemize}
+            \item $\emptyset\in \Or, X\in \Or$
+            \item Stabilité par réunion quelconque: pour toute famille $(O_i)_{i\in I}$ d'éléments de $\Or$, $\bigcup_{i\in I} O_i\in \Or$
+            \item Stabilité par intersection finie: Pour toute famille finie $(O_n)_{1\le n\le N}$ d'éléments de $\Or$, $\bigcap_{n=1}^{N}O_n\in \Or$
+        \end{itemize}
+        On dit alors que $(X,\Or)$ est un espace topologique.\\
+        Les éléments de $\Or$ sont appelés les ouverts et le complémentaire d'un ouvert dans $X$ est un fermé.
+    \end{df}
+
+    \begin{re}{}{}
+        La condition de stabilité par intersection finie peut être remplacée par: Si $O_1,O_2\in \Or$, alors $O_1\cap O_2\in \Or$.
+    \end{re}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item Si $(X,d)$ est un espace métrique, la topologie métrique est celle pour laquelle $O\subset X$ est ouvert \ssi $O=\emptyset$ ou $O$ est réunion de boules ouvertes. Cette condition est équivalente à:
+            \[\forall x\in O,\exists \epsilon_x>0, B(x,\epsilon_x)\subset O\]
+            \item $\Or=\{\emptyset,X\}$ est appelée la topologie grossière.
+            \item $\Or=\Par(X)$ est appelée la topologie discrète. Notons que c'est la topologie métrique pour la distance donnée par $d(x,y)=1\iff x\neq y$
+        \end{enumerate}
+    \end{ex}
+    
+    \begin{re}{}{}
+        Soit $(X,\Or)$ un espace topologique $F\subset X$ est fermé \ssi $X\wt F\in \Or$.\\
+        On en déduit, en passant au complémentaire, qu'une réunion finie de fermés est fermée, et qu'une intersection quelconque de fermés est un fermé de $X$. Enfin $\emptyset$ et $X$ sont fermés.
+    \end{re}
+
+    \begin{prop}{}{}
+        Soit $(X,\Or)$ un espace topologique et $A\subset X$. Notons $\Or_A=\{O\cap A, O\in \Or\}\subset \Par(A)$.\\
+        On définit une topologie sur A dite topologie induite par $(X,\Or)$ sur A et $(A,\Or_A)$ est un sous-espace topologique de $(X,\Or)$
+    \end{prop}
+
+    \begin{proof}
+        $\emptyset=\emptyset\cap A$ et $A=A\cap X$ sont dans $\Or_A$. Pour une famille $(O_i)_{i\in I}$ d'éléments de $\Or$: $\bigcup_{i\in I} (O_i\cap A)=(\bigcup_{i\in I} O_i)\cap A \in \Or_A$
+    \end{proof}
+
+    \begin{dfprop}{}{}
+        Soient $(X,\Or_X)$ et $(Y,\Or_Y)$ deux espaces topologiques. Une application $\funto{f}{X}{Y}$ est continue si elle vérifie l'une des conditions équivalentes suivantes:
+        \begin{enumerate}
+            \item L'image réciproque par $f$ de tout ouvert de $Y$ est un ouvert de $X$: $\forall O\in \Or, f^{-1}(O)\in\Or_X$
+            \item L'image réciproque par $f$ de tout fermé de $Y$ est un fermé de $X$.
+        \end{enumerate}
+    \end{dfprop}
+
+    \begin{proof}
+        \begin{align*}
+            A\subset Y, f^{-1}(Y\wt A)&=\{x\in X, f(x)\in Y\wt A\}\\
+            &=\{x\in X, f(x)\notin A \}\\
+            &=X\wt f^{-1}(A)
+        \end{align*}
+    \end{proof}
+
+    \begin{ex}{}{}
+        Si $(X,d)$ est un espace métrique, la définition de continuité coïncide avec la définition de continuité entre espace métrique.
+    \end{ex}
+
+    \begin{re}{}{}
+        \begin{itemize}
+            \item Si $\Or$ et $\Tr$ sont deux topologies sur $X$, on dit que $\Or$ est moins fine que $\Tr$ si $\Or\subset \Tr$
+            \item La topologie grossière est la topologie la moins fine sur $X$
+            \item La topologie discrète est la topologie la plus fine sur $X$
+        \end{itemize}
+    \end{re}
+
+    \begin{ex}{}{}
+        Soit $(X,\Or)$ un espace topologique et $A$ une partie de $X$. La topologie induite sur A $\Or_A=\{O\cap A,\forall O\in\Or\}$ est la topologie la moins fine rendant l'injection $A\hookrightarrow X$ continue
+    \end{ex}
+
+    \begin{prop}{}{}
+        \begin{enumerate}
+            \item Soient $(X,\Or_X)$ et $(Y,\Or_Y)$ deux espaces topologiques et $\funto{f}{X}{Y}$ une application:
+            \begin{enumerate}
+                \item Si $(X,\Or_X)$ est un espace direct, $f$ est toujours continue
+                \item Si $\Or_Y=\{\emptyset,Y\},f$ est toujours continue
+            \end{enumerate}
+            \item La composée de deux applications continues est continue
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item \begin{enumerate}
+                \item Si $O$ est un ouvert de $Y$, alors $f^{-1}(O)\in\Par(X)=\Or_X$
+                \item $\Or_Y=\{\emptyset,Y\}$ et $f^{-1}(\emptyset)=\emptyset\in\Or_X$ et $f^{-1}(Y)=X\in\Or_X$. Donc $f$ est continue
+            \end{enumerate}
+            \item Soient $(X,\Or_X),(Y,\Or_Y)$ et $(Z,\Or_Z)$ 3 espaces topologiques et soient $\funto{f}{X}{Y}$ et $\funto{g}{Y}{Z}$ 2 applications continues. Soit $O\in\Or_Z$. $g$ est continue, donc $g^{-1}(O)\in\Or_Y$ et donc $f^{-1}(g^{-1}(O))\in\Or_X$, donc $g\circ f$ est bien continue
+        \end{enumerate}
+    \end{proof}
+
+    \begin{re}{}{}
+        Si $A\subset X$ muni de la topologie induite par $\Or_X$ et $\funto{f}{X}{Y}$ est continue, alors $\funto{f_{|A}}{A}{Y}$ est continue.\\
+        De façon analogue, $f(X)\subset B\subset Y$, notons $\fundfto{g}{X}{B}{x}{f(x)}$ alors $g$ est continue $\iff f$ est continue
+    \end{re}
+
+    \begin{df}{}{}
+        Soient $(X,\Or_X),(Y,\Or_Y)$ deux espaces topologiques. Une application $\funto{f}{X}{Y}$ est un homéomorphisme si $f$ est continue, bijective et $f^{-1}$ est continue.\\
+        Deux espaces sont homéomorphes s'il existe un homéomorphisme entre eux
+    \end{df}
+
+    \begin{re}{}{}
+        Dire que $\funto{f}{X}{Y}$ est un homéomorphisme c'est dire que $f$ est bijective et que cette bijection induit, au niveau des sous-ensembles, une bijection de $\Or_X$ vers $\Or_Y$
+    \end{re}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item Pour $d\in\N^*$, la boule unité $B(0,1)=\{x\in\R^d,\norme{x}<1\}$ est homéomorphe à $\R^d$ par l'application $\mfun{x}{\frac{x}{1-\norme{x}}}$
+            \item On regarde les sous espaces de $\R$: $X=[0,1]$ et $[0,1[\cup \{2\}$.\\
+            Soit $\begin{array}{ccccc}
+                f : & & Y & \to & X \\
+                & & x\in[0,1[ & \mapsto & x \\
+                & &  2  & \mapsto & 1
+\end{array}$ $f$ continue, bijective mais $f^{-1}$ n'est pas continue car $f(\{2\})=(f^{-1})^{-1}(\{2\})=\{1\}$ alors que $\{2\}$ est un ouvert de $Y$ et $\{1\}$ n'est pas un ouvert de $X$
+        \end{enumerate}
+    \end{ex}
+
+    \subsection{Adhérence, intérieur et frontière}
+
+    Dans toute la section, $(X,\Or_X)$ est un espace topologique et $A$ est une partie de $X$.
+
+    \begin{df}{}{}
+        \begin{enumerate}
+            \item La fermeture (ou adhérence) de $A$, noté $\overline{A}$ est le plus petit fermé contenant $A$:
+            \[\overline{A}=\bigcap_{\substack{F\text{ fermé}\\ A\subset F}}F=\{x\in X,\forall O\in\Or,x\in O\implies O\cap A\neq \emptyset\}\]
+            \item L'intérieur de $A$, noté $\mathring{A}$ est le plus grand ouvert de $X$ contenu dans $A$:
+            \[\mathring{A}=\bigcup_{\substack{O\subset A\\ O\text{ ouvert}}}O=\{x\in X,\exists O\in \Or,x\in O\subset A\}\]
+            \item La frontière de $A$, noté $\partial A$, est donnée par:
+            \[\partial A=\overline{A}\wt \mathring{A}\qquad \text{Elle est fermée}\]
+            \item On dit que $A$ est dense dans $X$ si $\overline{A}=X$
+        \end{enumerate}
+    \end{df}
+
+    \begin{proof}{Démonstration de l'égalité}{}
+        Pour la 1, $F$ est un fermé de $X$ signifie qu'il existe $O\in\Or$ tel que $F=X\wt O=O^C$.\\
+        Dire de plus que $F$ contient $A$ revient à dire que $A\cap O=\emptyset$ donc
+        \[\bigcap_{\substack{F\text{ fermé}\\ A\subset F}}F=\bigcap_{\substack{O\in\Or\\ A\cap O=\emptyset}}O^C=X\wt \bigcup_{\substack{O\in\Or\\ A\cap O=\emptyset}}O=\{x\in X,\forall O\in \Or,x\in O\implies O\cap A\neq \emptyset\}\]
+    \end{proof}
+
+    \begin{re}{}{}
+        En particulier:
+        \[A\text{ est ouvert}\iff \mathring{A}=A\qquad A\text{ est fermé}\iff \overline{A}=A\]
+    \end{re}
+
+    \begin{prop}{}{}
+        \begin{enumerate}
+            \item L'adhérence du complémentaire de $A$ est le complémentaire de l'intérieur de $A$:
+            \[\overline{X\wt A}=\overline{A^C}=X\wt\mathring{A}=(\mathring{A})^C\]
+            \item L'intérieur du complémentaire de $A$ est le complémentaire de l'adhérence:
+            \[\mathring{A^C}=(\overline{A})^C\]
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}{}{}
+        Soit $A \subset X$,
+        \begin{align*}
+            \overline{X\wt A}&=\bigcap_{\substack{X\wt A\subset F\\ F\text{ fermé}}}F\\
+            &=\left(\bigcup_{\substack{X\wt A\subset F\\ F\text{ fermé}}}X\wt F\right)^C\\
+            &=\left(\bigcup_{\substack{A\subset X\wt F\\ F\text{ fermé}}}X\wt F\right)^C\\
+            &=\left(\bigcup_{\substack{A\subset O\\ O\text{ ouvert}}}O\right)^C\\
+            &=\left(\mathring{A}\right)^C
+        \end{align*}
+        Même manipulation pour la deuxième égalité
+    \end{proof}
+
+    \begin{cor}{}{}
+        Pour que $A$ soit dense dans $X$, il faut et il suffit que son intersection avec tout ouvert non-vide de $X$ soit non-vide.
+    \end{cor}
+
+    \begin{proof}{}{}
+        Découle de l'égalité de la définition de l'adhérence.\\
+        Autre démonstration: Posons $B=X\wt A=A^C$\\
+        \[\overline{A}=X\iff\mathring{B}=\emptyset\iff\Or\cap\Par(B)=\{\emptyset\}\iff\forall O\in\Or\wt\{\emptyset\},O\not\subset B=X\wt A\iff\forall O\in\Or\wt\{\emptyset\},O\cap A\neq \emptyset\]
+    \end{proof}
+
+    \begin{ex}{}{}
+        On munit $\R$ de la topologie usuelle, $\Q$ est dense dans $\R$
+    \end{ex}
+
+    \subsection{Voisinages, convergence de suites et continuité de fonctions}
+
+    Dans toute la section, $(X,\Or_X)$ est un espace topologique
+
+    \subsubsection*{Voisinages}
+
+    \begin{df}{}{}
+        Soit $x\in X$. Une partie $X$ de $X$ est un voisinage de $x$, s'il existe un ouvert $O$ tel que $x\in O\subset V$. On note $\mathcal{V}(x)$ l'ensemble des voisinages de $x$. On parle de voisinage de $x$ pour désigner un ouvert qui contient $x$.
+    \end{df}
+
+    \begin{re}{}{}
+        Une partie de $X$ est ouverte \ssi elle est voisinage de tous ses points
+    \end{re}
+
+    \begin{proof}{}{}
+        Si $O$ est ouverte, $\forall x\in O,x\in O\subset O$, donc $O$ est un voisinage.\\
+        ment, si $V$ est un voisinage de chacun de ses points, alors $\forall x\in V,\exists O_x\in\Or$ tel que $x\in O_x\subset V$. Donc $V=\bigcup_{x\in V}O_x$ est un ouvert.
+    \end{proof}
+
+    \begin{prop}{}{}
+        Soit $x\in X$:
+        \begin{enumerate}
+            \item $X$ est un voisinage de $x$
+            \item $\forall V\in\Vr(x),x\in V$
+            \item Si $V\in\Vr(x)$, toute partie de $X$ qui contient $V$ est un voisinage de $x$
+            \item L'intersection de deux voisinages de $x$ est un voisinage de $x$
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}{}{}
+        Exercice
+    \end{proof}
+
+    \begin{prop}{}{}
+        $x\in X$, $A\subset X$
+        \begin{enumerate}
+            \item $A\in \Vr(x)\iff x\in \mathring{A}$
+            \item $x\in \overline{A}\iff \forall V\in\Vr(x),V\cap A\neq \emptyset$
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}{}{}
+        On a les équivalences:
+        \begin{enumerate}
+            \item \[x\in\mathring{A}\iff\exists O\in\Or,x\in O\text{ et }O\subset A\iff A\in \Vr(x)\]
+            \item \begin{align*}
+                x\in \overline{A}&\iff \forall O\in\Or,(x\in O\implies O\cap A\neq \emptyset)\\
+                &\forall O\in\Or,\forall V\in \Par(X),(x\in O\subset V\implies V\cap A\neq \emptyset) \\
+                &\forall V\in\Vr(x),V\cap A\neq \emptyset \\
+            \end{align*}
+        \end{enumerate}
+    \end{proof}
+
+    \begin{ex}{}{}
+        On considère $\R$ munit de la topologie usuelle et $A\subset \R,A\neq\emptyset$ et $A$ majorée. La borne supérieure de $A$ est adhérente à $A$. (Exercice)
+    \end{ex}
+
+    \subsubsection*{Convergence de suite}
+
+    \begin{df}{}{}
+        Une suite $(x_n)_{n\in\N}$ d'éléments de $X$ converge vers $x\in X$(pour la topologie $\Or$), lorsque:$\forall V\in\Vr(x),\exists n_V\in\R,\forall n\ge n_V,x_n\in V$.\\
+        On note $x_n\longrightarrow x$
+    \end{df}
+
+    \begin{prop}{}{}
+        Soit $A\subset X$ et $(x_n)$ une suite d'éléments de $A$. Si $(x_n)$ converge x, alors $x\in\overline{A}$
+    \end{prop}
+
+    \begin{proof}{}{}
+        Si $x_n$ converge vers $x$. $\forall V\in \Vr(x),\exists n_V\in\N:\forall n\ge n_V,x_n\in V$. En particulier, $x_{n_V}\in V\cap A$ et $V\in A\neq \emptyset$. Donc $x\in\overline{A}$
+    \end{proof}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item Pour $X\neq\emptyset$ muni de la topologie grossière, alors pour $x\in X,\Vr(x)=\{X\}$. Donc toute suite $(x_n)$ converge vers tout point de $X$.\\
+            Pour $X\neq \emptyset$ muni de la topologie discrète, alors pour $x\in X,\{x\}\in\Vr(x)$. Donc une suite $(x_n)$ converge vers $x$ \ssi elle est stationnaire, $\exists N\in\N,\forall n\ge N,x_n=x$
+            \item Si $X$ est munit de la topologie cofinie (Voir TD1-Exo7), si une suite ne prend qu'une et une seule fois chaque point de $X$ pour valeur, alors elle converge vers tout point de $X$.(Exercice)
+        \end{enumerate}
+    \end{ex}
+
+    \begin{tm}{Convergence dans les espaces métriques}{}
+        Soit $(X,d)$ un espace métrique.
+        \begin{enumerate}
+            \item Une suite $(x_n)$ d'éléments de $X$ converge vers $x\in X$ \ssi $d(x_n,x)\to 0$. Il y a unicité de la limite.
+            \item Si $A\subset X$ et $x\in \overline{A}$, alors il existe une suite d'éléments de $A$ convergent vers $x$.
+            \item Une partie $A$ de $X$ est fermée \ssi toute suite d'éléments de $A$ convergente a sa limite dans $A$.
+        \end{enumerate}
+    \end{tm}
+
+    \begin{proof}{}{}
+        Soit $\epsilon>0$, notons que $\cho{y\in B(x,\epsilon)\iff d(x,y)<\epsilon\\ B(x,\epsilon)\text{ est un voisinage de $x$}\\ \forall V\in\Vr(x),\exists\epsilon_{x,V},B(x,\epsilon_{x,V})\subset V}$
+        \begin{enumerate}
+            \item Exercice
+            \item Soit $x\in \overline{A}$, alors $\forall n\in \N^*,B(x,\frac{1}{n})\cap A\neq \emptyset$. Choisissons pour chaque $n\in\N^*$, un point $x_n\in B(x,\frac{1}{n})\cap A$. La suite $(x_n)$ converge vers $x$.
+        \end{enumerate}
+    \end{proof}
+
+    \subsubsection*{Continuité en un point, séquentielle et globale}
+
+    \begin{df}{}{}
+        Soient $X,Y$ deux espaces topologiques et $\funto{f}{X}{Y}$ une application.
+        \begin{enumerate}
+            \item La fonction $f$ est continue en $x\in X$ lorsque $\forall V\in\Vr(f(x)),\exists W\in \Vr(x),f(W)\subset V$
+            \item La fonction est séquentiellement continue en $x$ lorsque pour toute suite $(x_n)$ de $X$ telle que $x_n\to x$, on a $f(x_n)\to f(x)$
+        \end{enumerate}
+    \end{df}
+
+    \begin{re}{}{}
+        La continuité (séquentielle) en un point est une propriété locale: Si $A\in\Vr(x)$ et $B\in\Vr(f(x))$ tel que $f(A)\subset B,\funto{f_{|A,B}}{A}{B}$ est (séquentiellement) continue en $x$ \ssi $f$ est (séquentiellement) continue en $x$.
+    \end{re}
+
+    \begin{tm}{}{}
+        Si $\funto{f}{X}{Y}$ est continue en $x\in X$ alors $f$ est séquentiellement contine en $x$.
+    \end{tm}
+
+    \begin{proof}{}{}
+        Soit $(x_n)$ une suite de $X$ telle que $x_n\to x$:$\forall U\in \Vr(x),\exists n_V\in\N,\forall n\ge n_V,x_n\in U$. Soit $V\in\Vr (f(x))$.\\
+        Puisque $f$  est continue en $x$, il existe $W\in\Vr(x)$ telle que $f(W)\subset V$. Soit $n_W\in\N$:$\forall n\ge n_W,x_n\in W$. En particulier $f(x_n)\in f(W)\subset V,\forall n\ge n_W$. Donc $f(x_n)\to f(x)$.
+    \end{proof}
+
+    \begin{re}{}{}
+        La réciproque n'est pas vraie en général
+    \end{re}
+
+    \begin{ex}{}{}
+        On munit $X=\R$ de la topologie co-dénombrable dont les fermés sont $\R$ et les parties (au plus) dénombrables de $\R$.
+        \begin{enumerate}
+            \item On montre que les suites convergentes sont stationnaires
+            \item On en déduit que toute application $\fun{X}{X}$ est séquentiellement continue en tout $x\in X$.
+            \item On vérifie que $\funto{f}{X}{X}$ n'est nulle part continue: $f(x)=\cho{1\text{ si }x\ge 0\\ -1\text{ si }x<0}$
+        \end{enumerate}
+    \end{ex}
+
+    \begin{tm}{Continuité et continuité séquentielle dans un espace métrique}{}
+        Si la topologie de $X$ provient d'une métrique alors $\funto{f}{X}{Y}$ est continue en $x$ \ssi elle est séquentiellement continue en $x$.
+    \end{tm}
+
+    \begin{proof}{}{}
+        Montrons par contraposée que séquentiellement continue $\implies$ continue.\\
+        Supposons que $f$ n'est pas continue en $x$:
+        \[\exists V\in\Vr(f(x)):\forall W\in\Vr(x),f(W)\not\subset V\]
+        En particulier, $f^{-1}(V)$ n'est pas un voisinage de $x$, $x\not\in f^{-1}(V)$, on a alors $x\in\overline{A}=X\wt f^{-1}(V)$. Donc d'après le théorème sur la convergence dans les espaces métriques, il existe $(y_n)$ une suite de $A$ telle que $y_n\to x$. Mais $\forall n,f(y_n)\not\subset V$, donc la suite $(f(y_n))$ ne peut pas admettre $f(x)$ pour limite.
+    \end{proof}
+
+    \begin{re}{}{}
+        Le point essentiel ici est qu'un ensemble $F$ de $(X,d)$ métrique est fermé \ssi $F=\{x,\exists(x_n)\in F^{\N},x_n\to x\}$. On parle alors d'espaces séquentiels.
+    \end{re}
+
+    \begin{tm}{Continuité en tout point et continuité}{}
+        La fonction $\funto{f}{X}{Y}$ est continue \ssi elle est continue en tout point de $X$.
+    \end{tm}
+
+    \begin{proof}{}{}
+        Supposons $f$ continue et soit $V$ un voisinage ouvert de $f(x)$. Alors $W=f^{-1}(V)$ est un ouvert contenant $x$, c'est donc un voisinage de $x$ qui vérifie $f(W)\subset V$.\\
+        ment, si $f$ est continue en tout point de $X$. Soit $O_Y$ un ouvert de $Y$ et $x\in f^{-1}(O_Y)$. Puisque $f$ est continue en $x$ et que $O_Y$ est un voisinage de $f(x)$, il existe un voisinage $W$ de $x$ tel que $f(W)\subset O_Y$.\\
+        Donc $W\subset f^{-1}(O_Y)$. On en déduit que $f^{-1}(O_Y)$ est un voisinage de chacun de ses points, c'est donc un ouvert, donc $f$ est continue.
+    \end{proof}
+
+    \begin{prop}{}{}
+        Soit $X$ et $Y$ deux espaces topologiques et $\funto{f}{X}{Y}$ une application.
+        \begin{enumerate}
+            \item Soit $A\subset X$ et $x\in\overline{A}$. Si $f$ est continue en $x$, $f(x)\in f(\overline{A})$
+            \item Si $f$ est continue pour tout $A\subset X$, on a $f(\overline{A})\subset \overline{f(A)}$
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}{}{}
+        \begin{enumerate}
+            \item Soit $V$ un voisinage de $f(x)$, alors $f^{-1}(V)$ est un voisinage de $x$ et puisque $x\in\overline{A}$, $f^{-1}\cap A\neq \emptyset$. Donc $V\cap f(A)\neq \emptyset$. Donc $f(x)\in\overline{f(A)}$
+            \item Découle de 1.
+        \end{enumerate}
+    \end{proof}
+
+    \subsubsection*{Limites d'applications}
+
+    \begin{dfprop}{}{}
+        Soient $X$ et $Y$ deux espaces topologiques, $A\subset X$ et $\funto{f}{A}{Y}$ une application. Soit $x\in\overline{A}$ et $l\in Y$. On dit que $l$ est limite de $f$ en $x$ si, pour tout voisinage $V$ de $l$ dans $Y$, il existe un voisinage $W$ de $x$ dans $X$ tel que $f(W\cap A)\subset V$.\\
+        Dans ce cas, $l\in \overline{f(A)}$
+    \end{dfprop}
+
+    \begin{proof}{}{}
+        Analogue au 1. précédent, laisser en exercice
+    \end{proof}
+
+    \begin{re}{}{}
+        Dire que $l$ est limite de $f$ en $x$, c'est dire:
+        \begin{itemize}
+            \item Pour $x\in A$ et $f(x)=l$, que $f$ est continue en $x$
+            \item Pour $x\notin A$, la fonction $\fundfto{g}{A\cup\{x\}}{Y}{y}{\cho{l\text{ si }y=x\\ f(y)\text{ si }y\neq x}}$ est continue en $x$
+        \end{itemize}
+    \end{re}
+
+    \begin{re}{}{}
+        Il n'y a pas unicité de la limite en général. Par exemple, si $Y$ est muni de la topologie grossière, $\forall y\in Y,\forall X,\forall A\subset X,A\neq \emptyset,\forall \funto{f}{A}{Y}$, $\forall x\in \overline{A}$, $y$ est limite de $f$ en $x$.
+    \end{re}
+
+    \begin{prop}{}{}
+        Soient $X,Y,Z$ des espaces topologiques, $A\subset X,\funto{f}{A}{Y}$ une application, $B\subset Y$ contenant $f(A)$ et $\funto{g}{B}{Z},x\in \overline{A},y\in Y$ et $l\in Z$.\\
+        Notons $\funto{f=g\circ f}{A}{Z}$. Si $y$ est limite de $f$ en $x$ et $l$ est limite de $g$ en $y$, alors $l$ est limite de $h$ en $x$.
+    \end{prop}
+
+    \begin{re}{}{}
+        \begin{itemize}
+            \item On a $\overline{f(A)}\subset \overline{B}$ donc on peut parler de limite de $g$ en $y$.
+            \item En particulier, si $\funto{g}{Y}{Z}$ est continue et $y$ est limite de $f$ en $x$, alors $g(y)$ est limite de $h$ en $x$. Notamment, si $C\subset A\subset X,x\in \overline{C}\subset \overline{A}$, alors si $f$ admet $l$ pour limite en $x$, la restriction de $f$ à $C$ aussi.
+        \end{itemize}
+    \end{re}
+
+    \begin{proof}{}{}
+        Exercice
+    \end{proof}
+
+    \section{Espaces topologiques séparés}
+
+    \begin{df}{}{}
+        L'espace topologique $(X,\Or)$ est séparé ou de Hausdorff si pour toute paire de points $x,y$ de $X$ distincts, il existe un voisinage $V$ de $x$ et un voisinage $W$ de $y$ tels que $V\cap W=\emptyset$
+    \end{df}
+
+    \begin{ex}{}{}
+        $\R$ muni de la topologie usuelle est séparé. Pour $x,y\in\R,x\neq y$, le plus petit des deux est dans $]-\infty,\frac{x+y}{2}[$ et le plus grand dans $]\frac{x+y}{2},+\infty[$
+    \end{ex}
+
+    \begin{prop}{}{}
+        Dans un espace séparé, les singletons sont fermés. Plus généralement, toute partie finie est fermée.
+    \end{prop}
+
+    \begin{proof}{}{}
+        On suppose $X$ séparé, $x\in X$, montrons que $\{x\}$ est fermé. Soit $y\in X\wt\{x\}$, il existe un voisinage $V$ de $y$ tel que $X\wt V$ contient un voisinage de $x$. En particulier, $x\in X\wt V$, c'est à dire $V\subset X\wt \{x\}$ et $X\wt \{x\}$ est un voisinage de $y$. Ainsi $X\wt \{x\}$ est un voisinage de chacun de ses points, c'est donc un ouvert, donc $\{x\}$ est fermé.
+    \end{proof}
+
+    \begin{prop}{}{}
+        Soient $X$ et $Y$ deux espaces topologiques, $A\subset X$, $x\in A$. Si $Y$ est séparé, alors toute application $\funto{f}{A}{Y}$ admet au plus une limite en $x$. Si $f$ admet une limite en $x$, on note $\underset{z\to x}{\lim} f(z)=l$
+    \end{prop}
+
+    \begin{re}{}{}
+        La proposition ne dit rien sur l'existence d'une limite
+    \end{re}
+
+    \begin{proof}{}{}
+        Supposons que $\funto{f}{A}{Y}$ admet une limite $l$ en $x$ et soit $y\in Y,y\neq l$. Montrons que $y$ n'est pas limite de $f$ en $x$. Puisque $Y$ est séparé, il existe $V$ voisinage de $l$ et $W$ voisinage de $y$ dans $Y$ tels que $V\cap W=\emptyset$. Puisque $l$ est limite de $f$ en $x$, il existe un voisinage $U$ de $x$ dans $X$ tel que $f(U\cap A)\subset V$. Pour tout voisinage $U'$ de $x$, $U\cap U'$ est un voisinage de $x$ et $x\in A$ donc $U\cap U'\cap A\neq \emptyset$.\\
+        En particulier, $\emptyset\neq f(U\cap U'\cap A)\subset f(U'\cap A)\cap V$. Puisque $V\cap W=\emptyset, f(U'\cap A)\not\subset W$.\\
+        Donc $y$ n'est pas limite de $f$ en $x$.
+    \end{proof}
+
+    \begin{re}{}{}
+        Sous les mêmes hypothèses, si $x\in A$ et $f$ admet $l$ pour limite en $x$ alors nécessairement $f(x)=l$: la preuve est analogue
+    \end{re}
+
+    \begin{prop}{}{}
+        Tout espace métrique est Hausdorff.
+    \end{prop}
+
+    \begin{proof}{}{}
+        Soit $(X,d)$ un espace métrique et $x,y\in X,x\neq y$. Pour tout $z\in X,d(x,y)\le d(x,z)+d(y,z)$ donc au moins un des deux nombres $d(x,z)$ ou $d(y,z)$ est supérieur ou égal à $\frac{1}{2}d(x,y)$.\\
+        Donc $B(x,\frac{1}{2}d(x,y))\cap B(y,\frac{1}{2}d(x,y))=\emptyset$
+    \end{proof}
+
+    \begin{re}{}{}
+        Ces espaces métriques satisfont une propriété de séparation plus forte dite axiome de séparation des espaces parfaitement normaux de Hausdorff.
+    \end{re}
+
+    \begin{re}{}{}
+        Dans un espace métrique, les points sont fermés et pour tout fermés $F_0$ et $F_1$ tels que $F_0\cap F_1=\emptyset$, $\funto{f}{X}{[0,1]}$ telle que $f^{-1}(\{O\})$
+    \end{re}
+
+    \section{Topologie engendrée, topologie produit, topologie quotient}
+
+    \subsubsection*{Topologie engendrée}
+
+    \begin{dfprop}{}{}
+        Soit $X$ un ensemble et $\Sigma\subset\Par(X)$:
+        \begin{enumerate}
+            \item Il existe une topologie $\Or_\Sigma$ sur $X$ pour laquelle tous les éléments de $\Sigma$ sont des ouverts et qui est moins fine que toute topologie ayant cette propriété.
+            \item Notons $\Br=\{\bigcap_{i\in I}X_i,\text{$I$ fini et }X_i\in\Sigma\}\cup\{\emptyset,X\}$. Un sous-ensemble $O$ de $X$ est un ouvert pour la topologie $\Or_\Sigma$ \ssi il est réunion (éventuellement infinie) d'éléments de $\Br$
+        \end{enumerate}
+    \end{dfprop}
+
+    \begin{proof}{}{}
+        Notons $\tau$ l'ensemble des réunions d'éléments de $\Br$. Par construction, $\tau$ contient $\emptyset$ et $X$ et est stable par réunion quelconque. Notons que l'intersection de deux éléments de $\Br$ est encore un élément de $\Br$. Pour deux familles (éventuellement infinies) d'éléments de $\Br$, $(U_j)_{j\in J},(V_k)_{k\in K}$, on a
+        \[\left(\bigcup_{j\in J} U_j\right)\cap\left(\bigcup_{k\in K} V_k\right)=\bigcup_{j,k}\left(U_j\cap V_k\right)\in \tau\]
+        Donc $\tau$ est stable par intersection finie. Finalement $\tau$ est une topologie sur $X$. Soit $\Or$ une topologie sur $X$ pour laquelle tous les éléments de $\Sigma$ sont des ouverts. Par définition d'une topologie on a $\Br\subset \Or$ puis $\tau\subset \Or$. Donc $\tau$ est moins fine que $\Or$ et $\tau=\Or_{\Sigma}$ 
+    \end{proof}
+
+    \begin{re}{}{}
+        L'ensemble $\Br$ constitue une base de la topologie $\Or_\Sigma$(à comprendre comme "Famille génératrice")
+    \end{re}
+
+    \begin{df}{}{}
+        Soit $(X,\Or)$ un espace topologique et $\Br\subset \Or$ une famille d'ouverts. On dit que $\Br$ est une base de la topologie $\Or$ lorsque:
+        \[\forall O\in \Or,\exists (B_i)_{i\in I}\subset \Br,O=\bigcup_{i\in I}B_i\]
+    \end{df}
+
+    \begin{ex}{}{}
+        Pour $(X,d)$ espace métrique, $(\Br(x,\frac{1}{n}))_{\substack{x\in X\\ n\in\N^*}}$ est une base de la topologie métrique sur $X$, pour laquelle tout point possède une base dénombrable de voisinage. On dit alors que $X$ est à base dénombrable de voisinage
+    \end{ex}
+
+    \subsubsection*{Topologie engendrée par une famille finie d'applications}
+
+    \begin{df}{Topologie initiale}{}
+        Soit $X$ un ensemble, $(Y_i,\Or_i)_{i\in I}$ une famille d'espaces topologiques et $(\funto{f_i}{X}{Y_i})_{i\in I}$ une famille d'applications. La topologie engendrée par la famille $(f_i)_{i\in I}$ est la gendrée par $\Sigma=\{f_i^{-1}(O),i\in I,O\in \Or_i\}$. On l'appelle la topologie initiale de $X$.
+    \end{df}
+
+    \begin{ex}{}{}
+        Si $(X,\Or)$ est un espace topologique et $A\subset X$ la topologie induite par $\Or$ sur $A$ est la topologie engendrée par l'injection $\funtoinj{i}{A}{X}$
+    \end{ex}
+
+    \begin{prop}{}{}
+        \begin{enumerate}
+            \item La topologie $\Or$ engendrée par la famille des fonctions $\funtoinj{f_i}{X}{Y_i}$ est la topologie la moins fine rendant les $f_i$ continues.
+            \item Considérons $X$ muni de la topologie $\Or$: Une application $\funto{g}{Z}{X}$ est continue \ssi $\funto{f_i\circ g}{Z}{Y_i}$ est continue pour tout $i\in I$
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}{}{}
+        \begin{enumerate}
+            \item Evident
+            \item La composée de deux applications continues est continue donc si $\funto{g}{Z}{X}$ est continue alors $\funto{f_i\circ g}{Z}{Y_i}$ l'est aussi pour tout $i\in I$.\\
+            Réciproquement, supposons que $\funto{f\circ g}{Z}{Y_i}$ continues pour tout $i\in I$. Soit $U$ un ouvert de $X$, il est de la forme 
+            \[U=\bigcup_{k\in K}\bigcap_{j\in J}{A_k}_j,{A_k}_j\in\Sigma, J\text{ finie}\]
+            \[g^{-1}(U)=\bigcup_{k\in K}\bigcap_{j\in J}g^{-1}({A_k}_j)\]
+            \begin{align*}
+                g^{-1}(U)&=\bigcup_{k\in K}\bigcap_{j\in J} g^{-1}({A_k}_j)\\
+                &=\bigcup_{k\in K}\bigcap_{j\in J}g^{-1}(f_{kj}^{-1}(O))\text{ car $\funinj{I}{J\times K}$ car $K$ queconque}
+            \end{align*}
+            Or $\forall (k,j)\in K\times J,({f_k}_j\circ g)^{-1}(O)\in \Or_\Sigma$ par hypothèse donc $g^{-1}(U)\in \Or_\Sigma$ comme intersection finie et union d'éléments de $\Or_\Sigma$
+        \end{enumerate}
+    \end{proof}
+
+    \subsubsection*{Applications: Topologie produit}
+
+    \begin{df}{}{}
+        Soit $(X_i,\Or_i)_{i\in I}$ une famille d'espaces topologies et $X=\prod_{i\in I} X_i$ et $\funto{\pi_i}{X}{X_i}$ la projection canonique. La topologie produit est la topologie engendrée par les $\pi_i$
+    \end{df}
+
+    \begin{ex}{}{}
+        La topologie usuelle sur $\R^n$ est la topologie produit des topologies usuelles sur chaque facteur $\R$
+    \end{ex}
+
+    \begin{prop}{}{}
+        Soit $(X_i,\Or_i)_{i\in I}$ une famille d'espaces topologiques, $X=\prod_{i\in I} X_i$ muni de la topologie produit.
+        \begin{enumerate}
+            \item Une base de la topologie produit est donnée par les $\prod_{i\in I}O_i$ où il existe un sous-ensemble fini $J$ de $I$ tels que $O_i\in\Or_i$ pour $i\in J$ et $O_i=X_i$ pour $i\notin J$
+            \item Les projections $\funto{\pi_i}{X}{X_i}$ sont ouvertes, c'est à dire que l'image d'un ouvert de $X$ est ouvert
+            \item Si $a=(a_i)_{i\in I}\in \prod_{i\in I}X_i=X$ pour tout $n\in \N$, $a_n=(a_{n,i})\in \prod_{i\in I} X_i=X$, alors $a_n\to a$ \ssi pour tout $i\in I, a_{n,i}\to a_i$ dans $X_i$
+            \item $X$ est séparé \ssi tous les $X_i$ sont séparés
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}{}{}
+        \begin{enumerate}
+            \item Pour $O_j\in\Or_j,U_j=\pi_j^{-1}(\Or_j)=O_j\times\prod_{\substack{i\in I\\ i\neq j}}X_i$. Pour $J\subset I$ fini, $\bigcap_{j\in J}U_j=\prod_{i\in I}O_i$ où $O_i\in \Or_i$ pour $i\in J$ et $O_i=X_i$ pour $i\neq j$
+            \item On a $\pi_i(\bigcap_{j\in J}U_j)=O\in\Or_i$. Pour toute famille $(A_k)$ de parties de $X$ et $\funto{f_i}{X}{Y}$ une application. $f(\bigcup A_k)=\bigcup f(A_k)$. Tout ouvert $O$ de $X$ est réunion d'ouverts de la forme $\bigcap_{j\in J} U_j$ ($J$ finie) donc $\pi_i(O)$ est ouvert comme réunion d'ouverts.
+            \item Puisque $\pi_i$ est continue, elle est séquentiellement continue donc si $a_n\to a,\pi_i(a_i)=a_{n,i}\to\pi_i(a)=a_i$. ment, supposons que pour tout $i, a_{n,i}\to a_i$ dans $X_i$.\\
+            Soit $\Vr_j=\prod O_i$ un élément de la base de topologie produit associé à un $J\subset I$ fini, contenant $a$: $a_i\in O_i\in \Or_i$ pour $i\notin J,O_i=X_i$. On a $\forall j\in J, n_J,n\ge n_J,{a_n}_j\in O_j$.\\
+            Si $n_{\Vr_j}=\max{n_j,j\in J}$, alors $a_n\in \Vr_j$ pour tout $n\ge n_{\Vr_j}$ donc $a_n\to a$
+            \item Soit $x=(x_i)_{i\in I},y=(y_i)_{i\in I}$ dans $X$, si $x\neq y$, il existe $i\in I$ tel que $x_i\neq y_i$\\
+            $\impliedby$ Si $X_i$ est séparé, $\exists U,O\in\Or_i$ tels que $O\cap U=\emptyset$, $x_i\in O$ et $y_i\in U$ alors $\prod_{i\neq j}X_j\times U$ et $\prod_{j\neq i}X_j\times O$ sont des voisinages ouverts respectivement de $x$ et $y$ qui sont disjoints.\\
+            $\implies$ Supposons $X$ séparé. Soit $i\in I, a,b\in X_i$ tels que $a\neq b$. Soit $x=(x_i)_{i\in I},y=(y_i)_{i\in I}$ dans $X$ tel que $x_j=y_j$ pour $j\neq i$ et $x_i=a,y_i=b$. Alors $x\neq y$, $X$ est séparé donc il existe deux ouverts $V$ et $W$ de $X$ tel que $V\cap W=\emptyset,x\in V$ et $y\in W$.\\
+            $\pi_i(V)$ est un ouvert de $X_i$ tel que $a\in\pi_i(V)$ et $\pi_i(W)$ est un ouvert de $X_i$ tel que $b\in \pi(W)$ car $\pi_i$ est ouverte. Si $\pi_i(V)\cap\pi_i(W)\neq \emptyset$, Soit $c\in\pi(V)\cap \pi_i(W)$, alors $z=(z_k)_{k\in I}$ tel que $z_k=x_k=y_k$ pour $k\neq i$ et $z_i=c$. $z$ est dans $V\cap W$, ce qui contredit le fait que $V\cap W=\emptyset$ donc $X_i$ est séparé
+        \end{enumerate}
+    \end{proof}
+
+    \begin{prop}{}{}
+        Un espace topologique est séparé \ssi sa diagonale $\Delta_X=\{(x,x),x\in X\}$ est fermée dans $X\times X$
+    \end{prop}
+
+    \begin{proof}
+        On considère $\Delta_X^C=(X\times X)\wt \Delta_X$.
+        \begin{align*}
+            X\text{ est séparé }&\iff\forall (x,y)\in \Delta_X^C,\exists U,V \text{ deux ouverts de $X$ tel que }U\cap V=\emptyset,(x,y)\in U,V\\
+            &\iff\forall(x,y)\in\Delta_x,\exists U,V\text{ ouverts de $X$ tel que }(x,y)\in U\times V\text{ et }U\times V\subset \Delta_X^C\\
+            &\iff\Delta_X^C\text{ est ouvert}\\
+            &\iff \Delta_X\text{ est fermé}
+        \end{align*}
+    \end{proof}
+
+    \begin{cor}{}{}
+        Soient $f,g$ deux applications continues de $X$ dans $Y$ où $Y$ est séparé:
+        \begin{enumerate}
+            \item L'ensemble $\{x\in X,f(x)=g(x)\}$ est fermé dans $X$
+            \item Le graphe de $f, G_G=\{(x,f(x)),x\in X\}$ est fermé dans $X\times Y$
+        \end{enumerate}
+    \end{cor}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item On pose $A=\{x\in X,f(x)=g(x)\}$. $f=g$ \ssi $A=X$.\\
+            Si $f\neq g$, $A\neq X$. Soit $x\in A^C,f(x)\neq g(x)$\\
+            $\exists O_f\in \Or_Y,\exists O_g\in \Or_Y,f(x)\in O_f,g(x)\in O_g,O_f\cap O_g=0$ ($Y$ séparé).\\
+            \[x\in f^{-1}(O_f)\Or_X\text{ et }x\in g^{-1}(O_g)\in \Or_X\text{ et }O_f\cap O_g=\emptyset\text{ ($f$ et $f$ continue)}\]
+            donc $x\in f^{-1}(O_f)\cap g^{-1}(O_g)\in \Or_X$. Il faut montrer que $f^{-1}(O_f)\cap g^{-1}(O_g)\cap A=\emptyset$, or
+            \begin{align*}
+                f^{-1}(O_f)\cap g^{-1}(O_g)\cap A&=\{x\in X,f(x)\in O_f,g(x)\in O_g,f(x)=g(x)\}\\
+                &=\{x\in X,f(x)=g(x)\in O_f\cap O_g\}\\
+                &=\{x\in X,f(x)=g(x)=\emptyset\}=\emptyset
+            \end{align*} 
+            Donc $\forall x\in A^C$, il existe un ouvert $O_x$ tel que $x\in O_x$ et $O_x\cap A=\emptyset$ donc $A^C=\bigcup_{x\in X}O_x\in \Or_X$ donc $A$ est fermé.
+        \end{enumerate}
+    \end{proof}
+
+    \begin{prop}{Produit dénombrable d'espaces métriques}{}
+        Soit $(X_i,d_i)_{i\in I}$ une famille dénombrable d'espaces métriques dans la topologie produit sur $X=\prod_{i\in}X_i$ provient d'une métrique ($X$ est métrisable)
+    \end{prop}
+
+    \begin{proof}
+        Pour $I$ fini, posons $d(x,y)=\max\{d(x_i,y_i),i\in I\}$. C'est une métrique sur $X$ dont la topologie associée coincide avec la topologie produit (Exercice).\\
+        Pour $I=\N$, posons $d(x,y)=\underset{i\in I}{\max}(\min d_i(x_i,y_i),\frac{1}{2^i})$. On vérifie que $d$ est une métrique sur $X$ dont la topologie coincide avec la topologie produit (Exercice).\\
+        Remarque: Notons $V_n=\min(d_n(x_n,y_n),\frac{1}{2^n})$, la suite $V_n$ de $\R_+^*$ converge vers $O$. Il existe donc $N\in\N$ tel que $d(x,y)=\underset{n\in\llbracket 0,N\rrbracket}{\max}(V_n)$.\\
+        Donc pour mesurer $d(x,y)$, on ne considère que ce qu'il se passe sur le produit finie $\prod_{n\in\llbracket 0,N\rrbracket}X_n$
+    \end{proof}
+
+    \subsubsection*{Topologie finale}
+
+    \begin{df}{}{}
+        Soit $X$ un ensemble, $(Y_i,\Or_i)_{i\in I}$ une famille d'espaces topologiques et $(\funto{f_i}{Y_i}{X})_{i\in I}$ une famille d'applications. L'ensemble des $O\subset X$ tels que $f_i^{-1}(O)$ est ouvert dans $Y_i$, pour tout $i\in I$, constitue une topologie sur $X$ appelée topologie finale. On note $\Or_f$ cette topologie
+    \end{df}
+
+    \begin{prop}{}{}
+        \begin{enumerate}
+            \item $\Or_f$ est la topologie la plus fine qui rend les $f_i$ continues.
+            \item Si $X$ est muni de la topologie $\Or_f$, une application $\funto{g}{X}{Z}$ est continue \ssi $\funto{g\circ f_i}{Y_i}{Z}$ est continue $\forall i\in I$ 
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        Exercice
+    \end{proof}
+
+    \subsubsection*{Topologie quotient}
+
+    \begin{df}{}{}
+        Soit $(X,\Or)$ un espace topologique et $\Rr$ une relation d'équivalence sur $X$. La topologie quotient sur $X/\Rr$ est la topologie finale associée à la projection canonique $\fun{X}{X/\Rr}$
+    \end{df}
+
+    \begin{ex}{}{}
+        $X=\R\times\{1,2\}$ muni de la topologie usuelle dont une base est donnée par $\{]a,b[\times \{1\},(a,b)\in\R,a\le b\}\cup\{]a,b[\times \{2\},(a,b)\in\R,a\le b\}$. Soit $\Rr$ la relation d'équivalence sur $X$ donnée par:
+        \[\forall x,y\in \R,(i,j)\in\{1,2\}^2,(x,i)\Rr (u,j)\iff x=y<0\text{ ou }(x=y\ge 0\text{ et }i=j)\]
+        Une base de la topologie quotient est donnée par:
+        \begin{itemize}
+            \item $]a,b[,a\le b<0$
+            \item $]a,b[\times \{i\}$ avec $i\in\{1,2\}$ et $0\le a\le b$
+            \item $]-c,0[\cup [0,d[\times\{1,2\}$ avec $c>0$ et $d>0$
+        \end{itemize}
+        Tout voisinage de $(0,1)$ rencontre tout voisinage de $(0,2)$ donc $X/\Rr$ n'est pas séparé
+    \end{ex}
+
+    \begin{re}{Séparé d'un espace topologique}{}
+        Soit $X$ espace topologique et $\Rr$ la relation d'équivalence sur $X$ donnée par $\forall(x,y)\in X,x\Rr y\iff \forall Y$ séparé et toute application continue $\funto{f}{X}{Y}$, on a $f(x)=f(y)$.\\
+        Alors $X/\Rr$ est séparé et pour tout espace topologique séparé $Y$ et toute application continue $\funto{f}{X}{Y}$, il existe une application continue $\funto{g}{X/\Rr}{Y}$ tel que (Voir Diagramme p.24)
+    \end{re}
+
+    \chapter{Compacité}
+
+    Dans toute la suite $(X,\Or)$ est un espace topologique
+
+    \section{Espace Quasi-compact, espaces compacts}
+
+    \begin{df}{}{}
+        Une famille $A=(A_i)_{i\in I}$ de parties de $X$ est un recouvrement de $X$ si $X=\bigcup_{i\in I}A_i$.\\
+        Si $J\subset I$ et $\bigcup_{j\in J} A_j=X$, on dit que $(A_j)_{j\in J}$ est un sous-recouvrement de $A$, si de plus $J$ est fini on parle de sous-recouvrement fini.
+    \end{df}
+
+    \begin{df}{}{}
+        On dit que $X$ est quasi-compact si de tout recouvrement d'ouverts, on peut extraire un sous-recouvrement fini (Propriété de Borel-Lebesgue).\\
+        Une partie $K$ de $X$ est quasi-compact si elle est quasi-compacte pour la topologie induite, pour toute famille $(O_i)_{i\in I}$ d'ouverts de $X$ tel que $K\subset \bigcup_{i\in I}$, il existe $J\subset I$ fini tel que $K\subset \bigcup_{j\in J}O_j$
+    \end{df}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item Tout ensemble fini est quasi-compact. Un ensemble discret est quasi-compact \ssi il est fini
+            \item Soit $(x_n)_{n\in N}$ une suite de $X$ admettant une limite $l$, alors $K=\{x_n,n\in \N\}\cup \{l\}$ est quasi compact. En effet, si $(O_i)_{i\in I}$ est une famille d'ouverts tel que $K\subset \bigcup_{i\in I}O_i$. Soit $i_0\in I$ tel que $l\in O_{i_0}$, puisque $l$ est une limite de $(x_n)_n$, il existe $N\in \N$ tel que si $n\ge N$, $x_n\in O_{i_0}$. Il ne reste plus qu'à recouvrir $\{x_0,\ldots,x_n\}$
+        \end{enumerate}
+    \end{ex}
+
+    \begin{prop}{}{}
+        \begin{enumerate}
+            \item L'espace $X$ est quasi-compact \ssi pour toute famille $\Fr$ de fermés de $X$, si $\bigcap_{F\in \Fr}F=\emptyset$, il existe une sous-famille finie $f$ de $\Fr$ telle que $\bigcap_{F\in f}F=\emptyset$
+            \item Si $K_1$ et $K_2$ sont deux sous-espaces quasi-compacts de $X$, alors $K_1\cup K_2$ aussi.
+            \item Si $X$ est quasi-compact et $(F_n)$ est une suite décroissante (pour l'inclusion) de fermés non-vides de $X$, alors $\bigcap_{n\in \N}F_n \neq\emptyset$
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item On passe au complémentaire
+            \item Immédiat
+            \item Soit $J\subset \N$ finie, $J\neq \emptyset$ et $N$ le plus grand élément de $J$. Alors puisque la suite $(F_n)$ est décroissante $\bigcap_{j\in J}F_J=F_N\neq \emptyset$. Donc d'après (1), $\bigcap_{n\in J}F_n\neq\emptyset$
+        \end{enumerate}
+    \end{proof}
+
+    \begin{df}{}{}
+        On dit que $X$ est compact lorsqu'il est quasi-compact et séparé
+    \end{df}
+
+    \begin{ex}{}{}
+        $[0,1]$ est un sous-espace compact de $\R$. (Exercice)
+    \end{ex}
+
+    \begin{re}{}{}
+        Partout dans le monde sauf en France, quasi-compact=compact. On ne demande pas sur les espaces compacts d'être séparés\\
+        Compact et quasi-compact sont synonymes dans les espaces séparés
+    \end{re}
+
+    \section{Propriétés fondamentales}
+
+    \begin{prop}{}{}
+        \begin{enumerate}
+            \item Un sous-espace fermé d'un espace quasi-compact est quasi-compact.
+            \item Une partie quasi-compacte d'un espace topologique séparée et fermée.
+            \item Dans un espace topologique compact, les parties compactes sont les parties fermées
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item Supposons que $X$ est quasi-compact. Soit $F\subset X$ fermé et $(O_i)_{i\in I}$ une famille d'ouverts de $X$ telle que $F\subset \bigcup_{i\in I}O_i$, alors $X=(X\wt F)\cup(\bigcup_{i\in I}O_i)$ est un sous-recouvrement ouvert de $X$ qui est quasi-compact. Donc il existe $J\subset I$ fini tel que $X=(X\wt F)\cup (\bigcup_{j\in J}O_j)$. Par suite $F\subset\bigcup_{j\in J}O_j$
+            \item Supposons $X$ séparé et soit $K\subset X$ quasi-compact. Montrons que $X\wt K$ est ouvert. Soit $x\in X\wt K$, puisque $X$ est séparé.
+            \[\forall y\in X,y\neq x,\exists O_y\in \Or,y\in O_y,\exists O_x^y,x\in O_x^y\text{ et } O_j\cap O_x^y=\emptyset\]
+            Puisque $K$ est quasi-compact, si on peut extraire du recouvrement $(O_y)_{y\in K}$ de $K$ un sous-recouvrement fini $(O_{y_i})_{i\in\llbracket 1,n\rrbracket}$. Alors $\bigcap_{i\in\llbracket1,n\rrbracket}O_x^{y_i}$ est un voisinage ouvert de $x$ contenu dans $X\wt K$. Donc $X\wt K$ est ouvert.
+            \item Est un corollaire de (1) et (2)
+        \end{enumerate}
+    \end{proof}
+
+    \begin{cor}{}{}
+        Soit $X$ un espace topologique séparé, $(K_i)_{i\in I}$ une famille de parties compactes de $X$. L'intersection $\bigcap_{i\in I}K_i$ est compacte
+    \end{cor}
+
+    \begin{proof}
+        On suppose que $I\neq \emptyset$. Soit $i_0\in I$, $X$ étant séparé, chaque $K_i$ est fermé donc $\bigcap_{i\in I}K_i$ est fermée et $\bigcap_{i\in I}K_i\subset K_{i_0}$ qui est compact. Donc $\bigcap_{i\in I}K_i$ est compact
+    \end{proof}
+
+    \begin{cor}{}{}
+        Une partie $K\subset \R^n$ est compacte \ssi elle est fermée et bornée.
+    \end{cor}
+
+    \begin{proof}
+        On recouvre $\R^n$ par les boules $B(0,m)$, avec $m\in \N^*$. Si $K\subset \R^n$ est comapct, on peut trouver un entier $N$ tel que 
+        \[K\subset \bigcup_{n\in \llbracket 1,N\rrbracket}=B(0,N)\]
+        Donc $K$ est borné. Puisque $\R^n$  est séparé, si $K$ est compact, il est fermé d'après le (2) de la proposition.\\
+        ment, si $K$ est borné dans $\R^n$, il existe $N>0$ tel que $K\subset {\left[-N,N\right]}^n$. Or $\left[-N,N\right]$ est compact dans $\R$ et (Voir plus loin) un produit fini d'espaces compacts est compact. Donc si $K$ est de plus fermé, il est compact comme fermé dans le compact ${\left[-N,N\right]}^n$
+    \end{proof}
+
+    \begin{tm}{}{}
+        On suppose que $X$ et $Y$ sont des espaces topologiques et $\funto{f}{X}{Y}$ une application continue
+        \begin{enumerate}
+            \item Si $X$ est quasi-compact alors $f(x)$ est quasi compact dans $Y$
+            \item Si $f$ est bijective, $X$ est quasi-compact et $Y$ séparé, alors $f$ est un homéomorphisme.
+            \item Si $Y=\R$ ($\funto{f}{X}{\R}$ continue) et $X\neq \emptyset$ est quasi-compact, alors $f$ est bornée et atteint ses bornes,
+            \[\exists x_0,x_1\in X,\forall x\in X, f(x_0)\subset f(x)\subset f(x_1)\]
+        \end{enumerate}
+    \end{tm}
+
+    \begin{re}{}{}
+        On utilise souvent:\\
+        1bis. L'image d'un compact, par une application continue à valeurs dans un espace séparé est un compact
+    \end{re}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item Soit $(U_i)_{i\in I}$, une famille  d'ouverts de $Y$ telle que $f(x)\subset \bigcup_{i\in I}U_i$. Puisque $f$ est continue, pour tout $i\in I$, $f^{-1}(U_i)$ est un ovuert de $X$. Donc $(f^{-1}(U_i))_{i\in I}$ est un recouvrement ouvert de $X$ qui est quasi-compact donc il existe $J\subset I$ fini tel que $X=\bigcup_{j\in J}f^{-1}(U_j)$. Donc $f(X)\subset \bigcup_{j\in J} U_j$
+            \item Il suffit de montrer que $f^{-1}$ est continue ou que pour tout $F$ fermé de $X$, $f(F)$ est fermé dans $Y$. Soit $F\subset X$ un fermé, puisque $X$ est quasi-compact, $F$ est quasi-compact et donc $f(F)$ est quasi-compact dans $Y$ qui est séparé donc fermé.
+            \item Puisque $f(X)$ est un quasi-compact de $\R$ qui est séparé, $f(X)$ est compact dans $\R$ et donc fermé et borné. De plus $f(X)\neq \emptyset$ puisque $X\neq \emptyset$. Donc $f(X)=\overline{f(X)}$, il contient sa borne sup et sa borne inf
+        \end{enumerate}
+    \end{proof}
+
+    \begin{tm}{Bolzano-Weierstrass}{}
+        Dans un espace topologique compact $X$, toute partie infinie $A$ admet des points d'accumulation.
+        \[\exists x\in X,x\in \overline{A\wt\{x\}}\]
+    \end{tm}
+
+    \begin{proof}
+        Supposons que $A$ ne possède pas de point d'accumulation et montrons que $A$ est finie. Soit $x\in A^C=X\wt A$, alors $x$ n'est pas un point d'accumulation de $A$, donc il existe $V\in\Vr_x,V\cap(A\wt\{x\})=V\cap A=\emptyset$. Donc $V\subset X\wt A$. Donc $A^C$ est ouvert et par suite $A$ est fermé. Donc $A$ est fermée dans $X$ compact, donc $A$ est compact. De plus, $A$ est discret. Si $x\in A,x\notin A\wt \{x\}$, donc il existe $V\in \Vr_x,V\cap A=\{x\}$. Or un ensemble discret est quasi-compact \ssi il est fini. Donc $A$ est fini
+    \end{proof}
+
+    \begin{tm}{}{}
+        Soit $(X_i)_{i\in \llbracket 1,n\rrbracket}$ une famille finie d'espaces topologiques (quasi)-compacts, alors leur produit $\displaystyle{\prod_{i\in\llbracket 1,n\rrbracket}X_i}$ est (quasi)-compact
+    \end{tm}
+
+    \begin{proof}
+        Rappellons qu'un produit d'espaces séparés est séparé. Il suffit de montrer le théorème pour le produit $X\times Y$ de deux espaces $X$ et $Y$ quasi-compacts.
+    \end{proof}
+
+    \begin{tm}{}{}
+        $(X_i)_{i\in I}$ est une famille dénombrable d'espace topologiques (quasi)-compact alors $X=\prod_{i\in I} X_i$ est (quasi)-compact
+    \end{tm}
+
+    \begin{proof}
+        Soient $X,Y$ deux espaces quasi compacts. Soit $(O_i)_{i\in I}$ un recouvrement ouvert $X\times Y$. Pour tout $(x,y)\in X\times Y$. Il existe $k(x,y)\in I$ tel que $(x,y)\in O_{k(x,y)}$ et des ouverts $U_{x,y}$ de $X$ et $V_{x,y}$ de $Y$ tels que $(x,y)\in U_{x,y}\times V_{x,y}\subset O_{k(x,y)}$. Pour $x$ finie, on obtient un recouvrement $(X_{x,y})_{y\in Y}$ de $Y$. $Y$ étant compact, on extrait un sous-recouvrement fini $(V_{x,y|s})_{s\in\llbracket 1,N(x)\rrbracket}$ de $(V_{x,y})_{y\in Y}$. Alors $\bigcup x=\bigcap_{s\in \llbracket 1,N\rrbracket} U_{x,y|s}$ est un ouvert de $X$ qui contient x et qui vérifie $U_x\times V_{x,y|s}\subset O_{k(x,y)}$ pour tout $s\in\llbracket 1,N\rrbracket$ (Voir diagramme Antoine Pioche) et $\{x\}\times Y\subset U_x\times (\bigcup_{s\in \llbracket 1,N(x)\rrbracket} V_{x,y|s})$\\
+        La famille $(U_x)_{x\in X}$ fournit un recouvrement ouvert de $X$ qui quasi-compact est quasi-compact donc on peut en extraire un sous-recouvrement fini $(U_{x,s})_{s\in \llbracket 1,N\rrbracket}$. On obtient alors un sous-recouvrement finis
+    \end{proof}
+
+    \begin{re}{}{}
+        Il existe un théorème beaucoup plus difficile, le théorème de Tikhonov, qui implique que le produit d'une famille quelconque d'espaces (quasi)-compact est (quasi)-compact.
+    \end{re}
+
+    \section{Espaces localement compacts}
+
+    \begin{df}{}{}
+        Un espace topologique est dit localement compact s'il est séparé et si chacun de ses points admet un voisinage compact.
+    \end{df}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item Un espace topologique compact est localement compact 
+            \item $\R,\C,\R^n,\C^n$ sont localement compacts car les boules fermées sont compacts
+            \item Un espace topologique discret est localement compact
+            \item $\Q$ sous-espace topologique de $\R$ n'est pas localement compact (exercice)
+        \end{enumerate}
+    \end{ex}
+
+    \begin{prop}{}{}
+        \begin{enumerate}
+            \item Une partie fermée (??? ouverte) d'un espace localement compact est localement compact.
+            \item Un produit fini d'espaces localement compacts est localement compact
+            \item L'intersection de deux sous-espaces localement compacts d'un espace topologique séparé est localement compact
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        (Exercice)
+    \end{proof}
+
+    \begin{re}{}{}
+        La réunion de deux parties localement compactes n'est pas toujours localement compacte. Idem pour une intersection quelconque ou un produit quelconque.
+    \end{re}
+
+    \begin{ex}{}{}
+        Dans $\R$, $A=\R\wt\left(\{0\}\cup\{\frac{1}{n},n\in \N^*\}\right)$ et $B=\{0\}$
+        $A$ et $B$ sont localement compacts et $A\cup B=\R\wt\left( \{\frac{1}{n},n\in \N^*\}\right)$ ne l'est pas car $0$ n'a pas de voisinage compact dans $A\cup B$
+    \end{ex}
+
+    \subsection*{Compactification}
+
+    \begin{tm}{Compactification d'Alexandrov}{}
+        Soit $X$ un espace localement compact, il existe un espace topologique compact $\tilde{X}$ possédant un point noté $\infty$ tel que $X$ est homéomorphe à $\tilde{X}\wt\{\infty\}$
+    \end{tm}
+
+    \begin{proof}
+        Idée de preuve: Notons $\Or_X$ la topologie sur $X$. On considère un élément noté $\infty$ et on pose $\tilde{X}=X\cup\{\infty\}$. Soit $\Or=\Or_X\cup \{\tilde{X}\wt K,K\text{ compact de }X\}\subset \Pr(X)$. On montre alors:
+        \begin{enumerate}
+            \item $\Or$ est une topologie sur $\tilde{X}$
+            \item La topologie induite par $\Or$ sur $X$ est la topologie $\Or_X$
+            \item $\tilde{X}$ est séparé: Si $x\in X$, on se donne un voisinage compact $K$ de $x$, $\mathring{K}$ et $\tilde{X}\wt K$ sont deux ouverts de $\tilde{X}$ disjoints, $\mathring{K}$ est un voisinage de $x$ et $\tilde{X}\wt K$ un voisinage de $\infty$
+            \item $\tilde{X}$ est quasi-compact. Si $(O_i)_{i\in I}$ est un recouvrement ouvert de $\tilde{X}$. Soit $i_0\in I$ tel que $\infty\in O_{i_0}$ et $K$ compact de $X$ tel que $O_{i_0}=\tilde{X\wt K}$. Alors $(O_i\cap K)_{i\in I}$ donne un recouvrement ouvert de $K$ qui est compact, il existe $\delta\subset I$ fini tel que $K\subset \bigcup_{j\in J}O_j$. Finalement, $\tilde{X}=O_{i_0}\cup(\bigcup_{j\in J}O_j)$
+        \end{enumerate}
+    \end{proof}
+
+    \chapter{Connexité}
+
+    \begin{dfprop}{}{}
+        Un espace topologique $X$ est connexe s'il vérifie l'une des conditions suivantes:
+        \begin{enumerate}
+            \item Les seules parties de $X$ à la fois ouvertes et fermées sont $X$ et $\emptyset$
+            \item Il n'existe par de partition de $X$ en deux ouverts non-vides
+            \item Il n'existe pas de partition de $X$ en deux fermés non-vides
+            \item Toute application continue de $X$ à valeurs dans $\{0,1\}$ est constante
+        \end{enumerate}
+    \end{dfprop}
+
+    \begin{proof}
+        On a les équivalences suivantes:
+        \begin{align*}
+            A\in\Pr(X)\wt\{X,\emptyset\}\text{ est ouvert et fermé}&\iff\text{$A$ et $A^C$ sont ouvert et fermés non-vide}\\
+            &\iff X=A\sqcup A^C\text{ est une partition de $X$ en deux ouverts non-vides}\\
+            &\iff X=A\sqcup A^C\text{ est une partition de $X$ en deux fermés non-vides}\\
+            &\iff \funto{f}{X}{\{0,1\}}\text{ telle que }f^{-1}(\{0\})=A\text{ et }f^{-1}(\{1\})=A^C\text{ est continue et non-constante}
+        \end{align*}
+    \end{proof}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item Tout espaces grossier est connexe
+            \item Un espace topologique discret est connexe \ssi il est réduit à un point
+            \item Tout espace homéomorphe à un espace connexe est connexe
+            \item Les parties connexes de $\R$ sont les intervalles (exercice).
+        \end{enumerate}
+    \end{ex}
+
+    \begin{prop}{}{}
+        \begin{enumerate}
+            \item Si une partie $A$ d'un espace topologique est connexe (pour la topologie induite), alors $\overline{A}$ aussi
+            \item Si $\funto{f}{X}{Y}$ est continue et $X$ est connexe alors $f(X)$ aussi
+            \item Si $(A_i)_{i\in I}$ est une famille de parties connexes de $X$ telle que $\bigcap_{i\in I}A_i\neq \emptyset$, alors $\bigcup_{i\in I} A_i$ est connexe
+            \item Si $(X_i)_{i\in I}$ est une famille d'espaces topologiques connexes, alors $\prod_{i\in I}X_i$ est connexe (pour la topologie produit)
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item Soit $A$ une partie connexe de $X$ et soit $B$ et $C$ deux parties fermées disjointes de $\overline{A}$ telles que $\overline{A}=B\sqcup C$. Alors $A=(A\cap B)\sqcup(A\cap C)$ est une partition de $A$ en deux fermés et puisque $A$ est connexe, $A\cap B=A$ ou $A\cap C=A$, c'est à dire $A\subset B$ ou $A\subset C$ et donc $\overline{A}\subset \overline{B}=B$ ou $\overline{A}\subset \overline{C}=C$ donc $\overline{A}=B$ ou $\overline{A}=C$
+            \item Soit $A$ une partie ouverte et fermée de $f(X)\subset Y$. Puisque $f$ est continue, $f^{-1}(A)$ est une partie ouverte et fermée de $X$ qui est connexe. Donc soit $f^{-1}(A)=\emptyset$, soit $f^{-1}(A)=X$, c'est à dire $A=\emptyset$ ou $A=f(X)$
+            \item Soit $A=\bigcup_{i\in I}A_i$, on suppose que $A=(O\cup O')\cap A$ où $O\cap A$ et $O'\cap A$ sont des ouverts disjoints de $A$. Soit $x\in \bigcap_{i\in I}A_i \subset A$, et supposons que $x\in O\cap A$, puisque $A_i$ est connexe et que $x\in A_i$ pour un $i\in I$, on a $A_i\subset O\cap A_i$, d'où $A\subset O\cap A$. On a alors $A=O\cap A$ et $O'\cap A=\emptyset$
+            \item Puisque $\funto{\pi_i}{X=\prod_{i\in I}}{X_i}$ la projection canonique est continue si $X$ est connexe, $\pi(X)=X_i$ aussi d'après 2..\\
+            $\implies$ Le produit de deux espaces topologiques non-vides connexes est connexe: Soit $Y$ et $Z$ connexe, soit $\funto{f}{Y\times Z}{\{0,1\}}$ continue, soit $(y_0,z_0)$ et $(y_1,z_1)$ dans $Y\times Z$. (Voir schema sur photo)\\
+            Pour tout $y\in Y$, l'application $\fundfto{g_y}{Z}{Y\times Z}{z}{(y,z)}$ est continue, donc $\funto{f\circ g_y}{Z}{\{0,1\}}$ est continue et puisque $Z$ est connexe, elle est constante. Pour tout $z\in Z$, $f\circ g_{y_0}=f(y_0,z)=f(y_0,z_0)=f(y_0,z_1)$. De même pour tout $y\in Y$, $f(y,z_1)=f(y_0,z_1)=f(y_1,z_1)$.\\
+            Finalement $f$ est nécessairement constante. Donc $Y\times Z$ est connexe. Donc lorsque $I$ est fini, si les $X_i$ sont connexes, $\prod_{i\in I}X_i$ aussi. Soit $(X_i)_{i\in I}$ une famille (pas nécessairement fini) d'espaces connexes et soit $X=\prod_{i\in I}X_i$ et $U,V$ deux ouverts tels que $X=U\cup V$\\
+            Il existe $J\subset I$ fini tel que pour tout $i\in I\wt J$, $\pi_i(U)=\pi_i(V)=X_i$. On peut donc trouver $x\in U$ et $y\in V$ telle que $\pi_i(x)=\pi_i(y)=a_i$ pour tout $i\in I\wt J$. Soit alors $\fundfto{h}{\prod_{j\in J}X_j}{X=\prod_{i\in I}X_i}{z}{\cho{a_i \text{ si $i\in I\wt J$}\\ z_j\text{ si }j\in J}}$ $z=(z_j)_{j\in J}$ et en particulier $h(\pi_j(x))=x$ et $h(\pi_y(y))=y$. L'application $h$ est continue, donc $\prod_{j\in J} X_j=h^{-1}(X)=h^{-1}(U)\cup h^{-1}(V)$ est un recouvrement en deux ouverts non-vides du produit fini $\prod_{j\in J} X_j$ qui est connexe. Ceci n'est possible que si $h^{-1}(U)\cap h^{-1}(V)\neq \emptyset$ ou encore $U\cap V\neq \emptyset$. Donc $X$ est connexe. 
+        \end{enumerate}
+    \end{proof}
+
+    \begin{df}{}{}
+        La composante connexe $C_x$ de $x\in X$ est la plus grande partie connexe de $X$ qui contient $x$: $C_x$ est la réunion de toutes les parties connexes de $X$ qui contiennent $x$.
+    \end{df}
+
+    \begin{re}{}{}
+        Conséquences de la propriété
+        \begin{enumerate}
+            \item Les composantes connexes sont fermées d'après 1.
+            \item Deux composantes connexes sont disjoints ou égales et forment donc une partition de $X$ par des fermés. La relation $y Rx$ lorsque $y\in C_x$ est donc une relation d'équivalence.
+            \item Dire que $X$ est connexe, c'est à dire qu'il a une seule composante connexe
+        \end{enumerate}
+    \end{re}
+
+    \begin{df}{Connexité par arc}{}
+        Un espace topologique est dit connexe par arc lorsque pour tout $x_0,x_1$ de $X$, il existe une application continue $\funto{c}{[0,1]}{X}$ telle que $c(0)=x_0$ et $c(1)=x_1$. On dit alors que $c$ est un chemin ou un arc entre $x_0$ et $x_1$
+    \end{df}
+
+    \begin{prop}{}{}
+        \begin{enumerate}
+            \item Si $\funto{f}{X}{Y}$ est continue et $X$ est connexe par arc alors $f(X)$ aussi.
+            \item Si $(A_i)_{i\in I}$ est une famille de parties connxes par arc de $X$ telle $\bigcap_{i\in I}A_i\neq \emptyset$ alors $\bigcup_{i\in I}$ est connexe par arc.
+            \item Si $(X_i)_{i\in I}$ est une famille d'espaces topologiques connexes par arc, alors $\prod_{i\in I}X_i$ aussi.
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        Exercice
+    \end{proof}
+
+    \begin{prop}{}{}
+        Si $X$ est connexe par arc alors $X$ est connexe.
+    \end{prop}
+
+    \begin{proof}
+        Soit $x,y\in X$ et $\funto{c}{[0,1]}{X}$ continue tels que $c(0)=x$ et $c(1)=y$. Alors $c([0,1])$ est une partie connexe de $X$ qui contient $x$ et $y$ donc $C_x=C_y$. Ceci étant vrai pour tout $x,y$ dans $X$, $X$ n'a qu'une composante connexe. Donc $X$ est connexe
+    \end{proof}
+
+    \begin{re}{}{}
+        La réciproque est fausse
+    \end{re}
+
+    \begin{ex}{}{}
+        On considère dans $\R^2$, $A=\{(x,\sin(\frac{1}{x})),x\in \R_+^*\}$\\
+        Puisque $\fundfto{f}{]0,+\infty[}{A}{x}{(x,\sin(\frac{1}{x}))}$ est un homéomorphisme, $A$ est connexe et connexe par arc. On a donc $\overline{A}=A\cup\{0\}\times[-1,1]$ qui est connexe mais $\overline{A}$ n'est pas connexe par arc.
+    \end{ex}
+
+    \chapter{Propriétés topologiques des espaces métriques}
+
+    Dans toute la suite $(X,d)$ est un espace métrique, et $X$ est muni de la topologie métrique
+    
+    \section{Avant-propos: questions de métriques}
+
+    \begin{dfprop}{}{}
+        Soit $d_1,d_2$ deux métriques sur $X$ et $\fundfto{\Id_{1,2}}{(X,d_1)}{(X,d_2)}{x}{x}$, $\fundfto{\Id_{2,1}}{(X,d_2)}{(X,d_1)}{x}{x}$
+        \begin{enumerate}
+            \item $d_1$ et $d_2$ sont topologiquement équivalentes si elles définissent la même topologie, ce qui équivaut à dire:
+            \[\forall \epsilon>0,\forall x\in X,\exists\alpha>0,\forall y\in X(d_1(x,y)<\alpha\implies d_2(x,y)<\epsilon)\text{ et }(d_2(x,y)<\alpha\implies d_1(x,y)<\epsilon)\]
+            Ce qui équivaut à dire que $\Id_{1,2}$ est un homéomorphisme
+            \item $d_1$ et $d_2$ sont métriquement équivalents Si
+            \[\forall \epsilon>0,\exists\alpha > 0,\forall x,y\in X(d_1(x,y)<\alpha\implies d_2(x,y)<\epsilon)\text{ et }(d_2(x,y)<\alpha\implies d_1(x,y)<\epsilon)\]
+            Ceci équivaut à $\Id_{1,2}$ et $\Id_{2,1}$ sont uniformément continues.
+            \item $d_1$ et $d_2$ sont équivalentes s'il existe des constantes $m$ et $M$ dans $\R_+^*$ telles que
+            \[\forall x,y\in X,md_1(x,y)\le d_2(x,y)\le Md_1(x,y)\]
+            Ceci équivaut à dire que $\Id_{1,2}$ et $\Id_{2,1}$ sont lipschitiennes.
+        \end{enumerate}
+    \end{dfprop}
+
+    \begin{proof}
+        Exercice
+    \end{proof}
+
+    \begin{re}{}{}
+        On a équivalentes $\implies$ métriquelement équivalentes $\implies$ topologiquement équivalentes
+    \end{re}
+
+    \section{Suites de Cauchy et complétude}
+
+    \subsection*{Suites de Cauchy}
+
+    \begin{df}{}{}
+        La suite $(x_n)_{n\in \N}$ de $(X,d)$ est de Cauchy lorsque
+        \[\forall \epsilon >0,\exists N\in \N,\forall n\ge N,m\ge N, d(x_n,x_m)\le \epsilon\]
+    \end{df}
+
+    \begin{prop}{}{}
+        \begin{enumerate}
+            \item Une suite convergente est de Cauchy
+            \item Une suite extraite d'une suite de Cauchy est de Cauchy
+            \item Une suite de Cauchy est bornée
+            \item Une suite de Cauchy a au plus une valeur d'adhérence: Si deux suites extraites d'une suite de Cauchy convergent, elles convergent vers la même limite.
+            \item Une suite de Cauchy converge \ssi elle admet une valeur d'adhérence
+            \item L'image d'une suite de Cauchy par une application: uniformément continue et de Cauchy
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        Exercice
+    \end{proof}
+
+    \begin{re}{}{}
+        En particulier, les suites de Cauchy restent de Cauchy si on remplace la métrique $d$ par une métrique $\delta$ métriquement équivalente à $d$.
+    \end{re}
+
+    \subsection*{Espaces métriques complets}
+
+    \begin{df}{}{}
+        On dit qu'un espace métrique est complet lorsque toute suite de Cauchy converge.
+    \end{df}
+
+    \begin{re}{}{}
+        Ce n'est pas une notion topologique: un espace peut être complet pour une métrique et non complet pour une métrique topologiquement équivalente.
+    \end{re}
+
+    \begin{prop}{}{}
+        L'espace métrique $(X,d)$ est complet \ssi pour toute suite décroissante $(F_n)_{\nN}$ de fermés non-vides de $X$ telle que la suite des diamètres $(\delta(F_n))_\nN$ converge vers $0$, on a $\bigcap_\nN F_n=\{x\}$ où $x\in X$
+    \end{prop}
+
+    \begin{proof}
+        Supposons $(X,d)$ complet, soit $(F_n)_\nN$ une suite décroissante de fermés non-vides telle que $\delta(F_n)\underset{n\to\infty}{\longrightarrow} 0$.\\
+        Pour chaque $\nN$, ssoit $x_n\in F_n$. Pour $m\ge n$, $F_m\subset F_n$. Donc $x_n,x_m\in F_n$ et $d(x_n,x_m)\le \delta (F_n)$. Puisque $\delta(F_n)\underset{n\to\infty}{\longrightarrow} 0$, $(x_n)_\nN$ est de Cauchy et elle converge vers $x$. Puisque $(x_k)_{k\ge n}$ est une suite de $F_n$ qui est fermée donc $x\in F_n$ et ceci pour tout $n$. Donc $x\in \bigcap_{\nN}F_n$ donc $\bigcap_\nN F_n\neq \emptyset$. Si $x$ et $y\in \bigcap_{\nN} F_n$ alors, $d(x,y)\le \delta(F_n)$ pour tout $\nN$ donc $d(x,y)=0$ et $x=y$. ment, supposons que l'intersection de toute suite décroissante de fermés non-vides de $X$ est non-vide. Soit $(x_n)_\nN$ une suite de Cauchy de $X$ et pour $\nN$, $F_n=\overline{\{x_k,k\ge n\}}$. Alors $(F_n)_\nN$ est une suite décroissante de fermés. Si $x\in \bigcap_{\nN}$, pour tout $\nN,d(x,x_n)\le\delta(F_n)$. $\delta(F_n)\Longrightarrow 0$ car $(x_n)_n$ est de Cauchy, donc $x_n\longrightarrow x$
+    \end{proof}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item $\fundfto{h}{]0,+\infty[}{]]0,+\infty[}{x}{\frac{1}{x}}$\\
+            Pour $d_1(x,y)=|x-y|$ et $d_2(x,y)=|\frac{1}{x}-\frac{1}{y}|$ sont topologiquement équivalentes mais non-métriquement équivalentes. Car $h$ n'est pas uniformément continue
+            \item Sur $]0,+\infty[$, soit $d_3(x,y)=\min(1,|x-y|)$. $d_3$ est topologiquement équivalente à $d_1$ et même métriquement équivalente à $d_1$, mais $d_1$ et $d_2$ ne sont pas équivalentes
+        \end{enumerate}
+    \end{ex}
+
+    \begin{tm}{}{}
+        Tout espace métrique compact est complet
+    \end{tm}
+
+    \begin{proof}
+        On psait déjà que si $X$ est quasi-compact et $(F_n)$ une suite décroissantede fermés non-vides de $X$ alors $\bigcap_{n\in \N}F_n\neq \emptyset$. La proposition permet de conclure.
+    \end{proof}
+
+    \begin{tm}{Théorème de Baire}{}
+        Si $X$ est complet alors il est de Baire: Toute intersection dénombrable d'ouverts denses est dense, ou de façon équivalente toute réunion dénombrable de fermés d'intérieur vide est d'interieur vide
+    \end{tm}
+
+    \begin{proof}
+        Soit $(O_n)_{n\in \N}$ une famille d'ouverts denses de $X$, on doit montrer que si $O$ est un ouvert de $X$, alors $O\cap(\bigcap_{\nN})\neq \emptyset$. Puisque $O_0$ est dense, il existe $x\in O\cap O_0$ qui est ouvert, donc il existe $r_0$ tel que $0<r_0<1$ et $\overline{B}(x_0,r_0)\subset O\cap O_0$. On construit par réccurence une suite $(x_n)_{\nN}$ de $X$. On construit $(r_n)_\nN$ de $]0,1[$ telles que:
+        \begin{itemize}
+            \item $0<r_n<2^{-n}$
+            \item $\overline{B}(x_n,r_n)\subset B(x_{n-1},r_{n-1})\cap O_n$
+        \end{itemize}
+        On obtient une suite décroissante de fermés non-vides $(\overline{B}(x_n,r_n))_\nN$ dont le diamètre tend vers $0$ de $X$ qui est complet.\\
+        Donc $\emptyset\neq \bigcap \overline{B}(x_n,r_n)\subset O\cap(\bigcap_{n\in\N} O_n)$
+    \end{proof}
+
+    \subsection*{Complété d'un espace métrique}
+
+    Soit $(X,d)$ un espace métrique, on construit son complété: espace métrique $(\tilde{X},\tilde{d})$ complet qui satisfait:
+    \begin{itemize}
+        \item $X$ est un sous-espace dense de $\tilde{X}$.
+        \item $\forall \funto{f}{X}{Y}$ uniformément continue avec $Y$ complet, il existe une unique $\funto{\tilde{f}}{\tilde{X}}{Y}$ continue telle que $\tilde{f}_{|X}=f$
+    \end{itemize}
+    De plus $\tilde{f}$ est uniformément continue. L'ensemble $\tilde{X}$ est formé des "limites formelles" de suites de Cauchy:
+    \begin{itemize}
+        \item Soit $X^{\N,C}\subset X^\N$ l'ensemble des suites de Cauchy de $X$
+        \item Soit $\Rr$ la relation d'équivalence sur $X^{\N,C}$ donnée par:
+        \[(x_n)\Rr (y_n)\iff d(x_n,y_n)\underset{n\to+\infty}{\longrightarrow}0\]
+        \item Soit $\tilde{X}=X^{\N,C}/\Rr$\\
+        Pour $(x_n),(y_n)$ dans $X^{\N,C}$, la suite réelle $(d(x_n,y_n))_\nN$ est de Cauchy dans $\R^+$, donc elle converge et on pose $\tilde{d}([(x_n)],[(y_n)])=\underset{n\to+\infty}{\lim}d(x_n,y_n)$. On vérifie que $\tilde{d}$ est une métrique sur $\tilde{X}$.
+        \item L'injection qui à $x\in X$ associe la suite constante égale à $x$ induit une isométrie $\funto{\iota}{X}{\tilde{X}}$ qui permet d'identifier $X$ à un sous espace de $\tilde{X}$. De plus pour tout $x=[(x_n)]$ de $\tilde{X}$, où $(x_n)\in X^{\N,C}$ la suite $(\zeta (x_n))_n$ converge dans $\tilde{X}$ vers $a$. Donc $X$ est dense dans $\tilde{X}$.
+        \item $(\tilde{X},\tilde{d})$ est complet. Si $(a_n)$ est une suite de Cauchy de $\tilde{X}$, puisque $X$ est dense dans $\tilde{X}$\\
+        $\forall \nN,\exists x_n\in X$ tel que $\tilde{d}(\iota(x_n),a_n)<2^{-n}$. Pour $n,m\in \N$,
+        \[d(x_n,y_n)=\tilde{d}(\iota(x_n),\iota(x_m))\le \tilde{d}(\iota(x_n),a_n)+\tilde{d}(a_n,a_m)+\tilde{d}(a_m,\iota(x_m))\le 2^{-n}+2^{-n}+\tilde{d}(a_n,a_m)\]
+        Donc on déduit que la suite $(x_n)$ de $X$ est de Cauchy. De plus la suite $(\iota(x_n))$ converge vers $a=[(x_n)]\in \tilde{X}$ et $\tilde{d}(a,a_n)\le \tilde{d}(a,\iota(x_n))+\tilde{d}(\iota(x_n),a_n)$. Donc la suite $(a_n)_\nN$ converge vers $a$. On termine en montrant la propriété sur le prolongement des application continues.
+    \end{itemize}
+
+    \section{Compacité dans les espaces métriques}
+
+    \subsection*{Caractérisation de la compacité dans les espaces métriques}
+
+    \begin{tm}{}{}
+        Soit $(X,d)$ un espace métrique. Les propositions suivantes sont équivalentes:
+        \begin{enumerate}
+            \item $X$ est compact
+            \item Propriété de Bolzano-Weierstrass: Toute suite de $X$ admet une sous-suite convergente.\\
+            Lorsqu'elles ont lieu, elles entraînent la propriété suivante
+            \item Lemme de Lebesgue: Pour tout recouvrement $(O_i)_{i\in I}$ de $X$ par des ouverts, il existe $r>0$ tel que pour tout $x\in X$, il existe $i_x\in I$, $B(x,r)\subset O_{i_x}$        \end{enumerate}
+    \end{tm}
+
+    \begin{proof}
+        $(1)\implies (2)$ Soit $X$ compact et $(x_n)_\nN$ une suite de $X$. Si $(x_n)_\nN$ n'admet pas de sous-suite convergente alors:
+        \begin{itemize}
+            \item $(x_n)_\nN$ prend un nombre infini de valeurs
+            \item $\forall x\in X,\exists r_x>0$ tel que $|B(x,r_n)\cap{x_n,\nN}|$ est fini
+        \end{itemize}
+        On obtient alors un recouvrement ouvert de $X=\bigcup_{x\in X} B(x,r_x)$ dont on peut extraire un sous-recouvrement fini, chacun des éléments de ce recouvrement ne contenant qu'un nombre fini de termes de la suite $(x_n)_\nN$. C'est en contradiction avec $(1)$\\
+        $(2)\implies (3)$ Si le lemme de Lebesgue est en défaut:
+        \[\forall n\in \N,\exists x_n\in X,\forall i\in I,B(x_n,2^{-n})\not\subset O_i\qquad (*)\]
+        On peut extraire une sous-suite convergente $(x_{n_k})_{k\in \N}$ de la suite $(x_n)_\nN$ qui converge vers $x\in X$.\\
+        Si $x\in O_{i_x}$, il existe $n,N\in \N$ tel que
+        \begin{itemize}
+            \item $b(x,2^{-n})\subset O_{i_x}$
+            \item $\forall k\ge N,d(x,x_{n_k})< 2^{-n-1}$
+        \end{itemize}
+        Donc $B(x_N,2^{-n-1})\subset O_{i_x}$ ce qui contredit $(*)$\\
+        $(2)\implies (1)$ Soit $(O_i)_{i\in I}$ un recouvrement ouvert de $X$ et $r>0$ tel que
+        \[\forall x\in X\exists i_x\in I,X(x,r)\subset O_{i_x}\]
+        Supposons qu'il n'existe pas de sous-ensemble fini $J$ de $I$ tel que $\bigcup_{j\in J}O_j=X$. Alors pour toute partie finie $A$ de $X$, comme $\bigcup_{x\in A}B(x,r)$ est contenue dans une réunion finie de $O_i$, il existe $x\in X$ tel que $d(x,a)>r$ pour tout $a\in A$.\\
+        On construit alors une suite de $X$ de la façon suivante:
+        \begin{itemize}
+            \item On choisi $x_0\in X$
+            \item Pour tout $n\in\N$, on choisit $x_{n+1}\notin \bigcup_{k\in\llbracket 0,n}B(x_n,r)$
+        \end{itemize}
+        De sorte que pour tout $p,q\in \N,d(x_q,x_p)>r$. La suite $(x_n)_\nN$ n'admet pas de sous-suite convergente.
+    \end{proof}
+
+    \subsection*{Produits dénombrables d'espaces compactes}
+
+    \begin{tm}{Théorème de Tikhinov métrique dénombrable}{}
+        Soit $(X_n,d_n)_{n\in \N}$ une famille dénombrable d'espaces métriques compacts alors leur produit $X=\prod_{x\in \N}X_n$ est métrisable et compact.
+    \end{tm}
+
+    \begin{proof}
+        Nous savons déjà que $d(x,y)=\max_{\nN}\{\min(d_n(x_n,y_n),2^{-n})\}$ est une métrique sur $X$. Il reste à montrer que $X$ est compact.\\
+        La preuve repose sur le procédé diagonal de Cantor. Notons pour tout $\nN$, $\funto{\pi_n}{X}{X_n}$ la projection canonique (continue)\\
+        Soit $\Xr=(\Xr^n)$ une suite de $X$.\\
+        \begin{center}
+            \begin{tabular}{c|cccc}
+                $n$&$X_0$&$X_1$&$X_2$&$\cdots$\\ \hline
+                $0$&$\Xr_0$&$\Xr_1$&$\Xr_2$&$\cdots$\\
+                $1$&$\Xr_0^1$&$\Xr_1^1$&$\Xr_2^1$&$\cdots$\\
+                $\vdots$&$\vdots$&$\vdots$&$\vdots$&$\ddots$
+            \end{tabular}
+        \end{center}
+        On veut extraire une sous-suite convergente de $\Xr$. Puisque $X_0$ est compact, on peut extraire une sous-suite $\Xr^{(0)}=\left(\Xr^{\varphi_0(c)}\right)_\nN$ de $\Xr$ telle que $\pi_0(X^{(0)})$ converge vers $\Xr_0$.\\
+        Puisque $X_1$ est compact, on peut extraire une suite $\Xr^{(1)}=\left( \Xr^{\varphi_0\circ\varphi_1(n)}\right)_\nN$ de $\Xr^{(0)}$ telle que $\pi_1(\Xr^{(1)})$ converge vers $X_1$ et $\pi_0(\Xr^{(1)})$ converge toujours vers $x_0$ comme suite extraite d'une suite convergente.\\
+        On procède ainsi par réccurence et on obtient une suite $(\Xr^{(k)})_{k\in \N}$ de suites extraites de $\Xr$ où $\Xr^{(k)}=\left( \Xr^{\varphi_0\circ\varphi_1\circ\cdots\circ \varphi_k(n)}\right)_\nN$ est telle que $\pi_j(\Xr^{(k)})$ converge vers $x_j$ pour $j\in\llbracket 0,k\rrbracket$.\\
+        Considérons alors la suite extraite de $\Xr$ suivante $\Xr^{\varphi}=(\Xr^{\varphi(n)})_\nN$ où $\varphi(n)=\varphi_0\circ\varphi_1\circ\cdots\circ \varphi_n(n)$
+        \begin{center}
+            $\Xr^{\varphi}$
+            \begin{tabular}{c|cccc}
+                $n$&$X_0$&$X_1$&$X_2$&$\cdots$\\ \hline
+                $0$&$\Xr_0^{\varphi_0(0)}$&$\Xr_1^{\varphi_0(0)}$&$\Xr_2^{\varphi_0(0)}$&$\cdots$\\
+                $1$&$\Xr_0^{\varphi_0\circ\varphi_1(1)}$&$\Xr_1^{\varphi_0\circ\varphi_1(1)}$&$\Xr_2^{\varphi_0\circ\varphi_1(1)}$&$\cdots$\\
+                $2$&$\Xr_0^{\varphi_0\circ\varphi_1\circ \varphi_2(2)}$&$\Xr_1^{\varphi_0\circ\varphi_1\circ \varphi_2(2)}$&$\Xr_2^{\varphi_0\circ\varphi_1\circ \varphi_2(2)}$&$\cdots$\\
+                $\vdots$&$\vdots$&$\vdots$&$\vdots$&$\ddots$
+            \end{tabular}
+            \qquad
+            $\Xr^{(1)}$
+            \begin{tabular}{c|cccc}
+                $n$&$X_0$&$X_1$&$X_2$&$\cdots$\\ \hline
+                $0$&$\Xr_0^{\varphi_0\circ\varphi_1(0)}$&$\Xr_1^{\varphi_0\circ\varphi_1(0)}$&$\Xr_2^{\varphi_0\circ\varphi_1(0)}$&$\cdots$\\
+                $1$&$\Xr_0^{\varphi_0\circ\varphi_1(0)}$&$\Xr_1^{\varphi_0\circ\varphi_1(0)}$&$\Xr_2^{\varphi_0\circ\varphi_1(0)}$&$\cdots$\\
+                $\vdots$&$\vdots$&$\vdots$&$\vdots$&$\ddots$
+            \end{tabular}
+        \end{center}
+        Pour chaque colonne $n$, on obtient une suite extraite à partir du rang $n$ de la suite $\pi_n(X^{(n)})$ et qui converge donc vers $x_n$
+    \end{proof}
+
+    \subsection*{Compacité et continuité uniforme}
+
+    \begin{tm}{Théorème de Heine}{}
+        Toute application continue d'un espace métrique compact à valeur dans un espace métrique est uniformément continue
+    \end{tm}
+
+    \begin{proof}
+        Soit $(X,d_X)$ un espace métrique compact, $(Y,d_Y)$ un espace métrique et $\funto{f}{X}{Y}$ continue.\\
+        Soit $\epsilon>0$, pour tout $x\in X$,
+        \[O_x=\{z\in X,d_Y(f(x),f(z))<\epsilon\}\]
+        Pour tout $y_0\in Y, \funto{d_Y(y_0,\cdot)}{Y}{\R^+}$ continue, $f$ est continue donc pour $x\in X$, la fonction $\fun{z\in X}{d_Y(f(x),f(z))}$ est continue.\\
+        Donc $O_x$ est un ouvert de $X$ qui contient $x$. La famille $(O_x)_{x\in X}$ est un recouvrement ouvert de $X$ qui est compact, choisissons $r$ un nombre de Lebesgue de ce recouvrement.\\
+        Pour $x,y\in X$ tel que $d(x,y)<r$, il existe $z\in X$ tel que $y\subset B(z,r)\subset O_z$ et donc
+        \begin{align*}
+            d_Y(f(x),f(y))&\le d_Y(f(x),f(z))+d_Y(f(z),f(y))\\
+            &\le 2\epsilon
+        \end{align*}
+    \end{proof}
+
+    \subsection*{Séparabilité des espaces métriques compacts}
+
+    \begin{prop}{}{}
+        Un espace métrique compact est séparable.
+    \end{prop}
+
+    \begin{proof}
+        Soit $(X,d)$ un espace métrique compact. Pour tout $k>0$, il existe une famille finie $(x_s^k)_{s\in\llbracket1,N_k\rrbracket}$ de points de $X$ telle que
+        \[X=\bigcup_{s\in\llbracket 1,N_k\rrbracket} B(x_s^k,\frac{1}{k})\]
+        Alors la famille dénombrable $\{x_0^k,k\in \N^*,s\in \llbracket 1,N_k\rrbracket\}$ est dense dans $X$.
+    \end{proof}
+
+    \chapter{Espaces de fonctions continues sur un espace compacts}
+
+    \section{Espace $C_b(X,Y)$ et $C(X,Y)$}
+
+    Soit $(X,d_X)$ et $(Y,d_Y)$ deux espaces métriques
+
+    \subsubsection*{Avant-propos}
+
+    On désigne par:
+    \begin{itemize}
+        \item $C(X,Y)$ l'espace des fonctions continues de $X$ dans $Y$
+        \item $B(X,Y)$ l'espace des fonctions bornées de $X$ dans $Y$
+        \item $C_b(X,Y)$ l'espace des fonctions continues et bornées de $X$ dans $Y$
+    \end{itemize}
+
+    \begin{re}{}{}
+        \begin{itemize}
+            \item Si $X$ est compact $C_b(X,Y)=C(X,Y)$.
+            \item Ces espaces $B(X,Y)$ et $C_b(X,Y)$ sont des espaces métriques pour 
+            \[d_\infty(f,g)=\sup_{x\in X}d_Y(f(x),g(x))\]
+            \item Si $d_\infty(f_n,f)\underset{n\to +\infty}{\longrightarrow}0$, on dit que la suite $(f_n)_\nN$ converge uniformément vers $f$.
+        \end{itemize}
+    \end{re}
+
+    \begin{prop}{}{}
+        \begin{enumerate}
+            \item La limite uniforme d'une suite de fonctions continues est continue:
+            \[C_b(X,Y)\text{ est fermé dans $B(X,Y)$}\]
+            \item Si $Y$ est complet alors $B(X,Y)$ est complet
+            \item Si $Y$ est complet alors $C_b(X,Y)$ est complet.
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        Si $(f_n)_\nN$ une suite de $B(X,Y)$ et $\funto{f}{X}{Y}$ une application telle que $d_\infty(f_n,f)\to0$.\\
+        Soit $x,x_0\in X$ et $\nN$,
+        \begin{align*}
+            d_Y(f(x),f(x_n))&\le d_Y(f(x),f_n(x))+d_Y((f_n(x),f_n(x_0)))+d_Y(f_n(x_0),f(x_0))\\
+            &\le 2 d_\infty (f_n,f)+\sup_{z,y\in X}d_Y(f_n(z),f_n(y))
+        \end{align*}
+        On en déduit que
+        \begin{enumerate}
+            \item $f$ est bornée puisque $f_n$ l'est
+            \item Si $f_n$ est continue en $x_0$ et à partir d'un certain rang $f$ aussi
+        \end{enumerate}
+        On a donc $(1)$.\\
+        Montrons $(2)$. Soit $(f_n)_{\nN}$ une suite de Cauchy (pour $d_\infty$) de $B(X,Y)$.\\
+        Soit $\epsilon>0$ et $N_\epsilon \in \N$. $\forall n,m\ge N_{\epsilon},d_\infty(f_n,f_m)< \epsilon$.
+        Pour tout $x\in X, d_Y(f_n(x),f_m(x))\le d_\infty (f_n,f_m)<\epsilon$. Donc la suite $(f_n(x))_n$ est de Cauchy dans $Y$ qui est complet donc elle converge et on note $f(x)=\lim_{n\to \infty}f_n(x)$\\
+        En faisant tendre $n$ vers $+\infty$ dans $(*)$, on obtient
+        \[\forall x\in X, d_Y(f_n(x),f(x))\le \epsilon\]
+        Donc $d_\infty(f_n,f)\underset{n\to \infty}{\longrightarrow}$ d'après $(1)$ ci-dessus, $f$ est bornée puisque $f_n$ est bornée pour tout $\nN$.
+        Montrons $(3)$, $C_b(X,Y)$ est complet car fermé dans $B(X,Y)$ qui est complet. 
+    \end{proof}
+
+    On en déduit de la preuve précédente le corollaire suivant
+
+    \begin{cor}{}{}
+        Soit $X$ un ensemble non-vide, $(Y,d_Y)$ un espace métrique et $(g_n)_\nN$ une suite de Cauchy de fonctions de $X$ dans $Y$ (pour $d_\infty$). On suppose que pour tout $x\in X$, la suite $(g_n(x))_\nN$ converge vers une limite que l'on note $g(x)$. Alors la suite $(g_n)_\nN$ converge uniformément vers $g$.\\
+    \end{cor}
+
+    \section{Parties relativement compactes de $C(X,Y)$ et théorème d'Ascoli}
+
+    \begin{df}{}{}
+        Soit $A\subset C_b(X,Y)$ et $x_0\in X$. On dit que $A$ est équicontinue en $x_0$ si:
+        \[\forall \epsilon>0,\exists \delta>0,\forall f\in A,\forall x\in X, d_X(x_0,x)<\delta\implies d_Y(f(x_0),f(x))<\epsilon\]
+        On dit que $A$ est équicontinue si $A$ est équicontinue en tout point de $X$.
+    \end{df}
+    
+    \begin{ex}{}{}
+        Pour $M>0$, l'ensemble $A_M=\{\funto{f}{X}{Y},d_Y(f(x),f(y))\le M d_X(x,y)\}$ des fonctions $M$-lipschitziennes est équicontinue
+    \end{ex}
+
+    \begin{prop}{}{}
+        Lorsque $X$ est un espace métrique compact, une partie $A$ de $C(X,Y)$ est équicontinue \ssi elle est uniformément équicontinue.
+        \[\forall \epsilon>0,\exists \delta>0,\forall f\in A,\forall x,y\in X, d_X(x,y)<\delta\implies d_Y(f(x),f(y))<\epsilon\]
+    \end{prop}
+
+    \begin{proof}
+        Résulte d'une adaptation du théorème de Heine
+    \end{proof}
+
+    \begin{tm}{Théorème de Arzelà-Ascoli}{}
+        Soit $(X,d)$ un espace métrique compact non-vide, $(Y,d)$ un espace métrique et $A$ une partie de $C(X,Y)$. Les assertions suivantes sont équivalentes:
+        \begin{enumerate}
+            \item $A$ est relativement compacte dans $(C(X,Y),d_\infty)$: $\overline{A}$ est compact $C(X,Y)$
+            \item $A$ est (uniformément) équicontinue et pour tout $x\in X,\{ f(x),f\in A\}$ est relativement compact dans $Y$ (ie $\overline{\{f(x),f\in A\}}$ est compact)
+        \end{enumerate}
+    \end{tm}
+
+    \begin{proof}
+        $(1)\implies (2)$ Pour tout $x\in X, \fundfto{\varphi_x}{C(X,Y)}{Y}{f}{f(x)}$ est $1$-lipschitzienne donc continue.\\
+        Donc si $\overline{A}$ est compact, $\varphi_x(\overline{A})=\{f(x),f\in \overline{A}\}$ est compact dans $Y$. De plus $\{f(x),f\in A\}\subset \{f(x),f\in \overline{A}\}$ donc $\overline{\{f(x),f\in A\}}$ est un fermé dans un compact, donc est compact.\\
+        Montrons que $A$ est uniformément équicontinue. Soit $\epsilon>0,x_0\in X$ et $r>0$, \\
+        on définie $O_{x_0,r}^\epsilon=\{f\in C(X,Y),\sup_{x\in B(x_0,r)} d_Y(f(x),f(x_0))<\epsilon\}$\\
+        Objectif: Montrer que $A$ est continue dans un des $O_{x_0,r}^\epsilon$ ce qui donne l'équicontinuité en $x_0$. Pour cela, on montre que les $O_{x_0,r}^\epsilon$ forment un recouvrement ouvert de $C(X,Y)$ puis on utilise $\overline{A}$ compact.\\
+        Si $f\in O_{x_0,r}^\epsilon$ alors soit $\rho:=\sup_{x\in B(x_0,r)}\epsilon -d_Y(f(x),f(x_0))>0$.\\
+        Si $g\in B_{C(X,Y)}(f,\frac{1}{2}\rho)$ alors pour tout $x\in B_X(x_0,r)$
+        \[d_Y(g(x),g(x_0))\le \underset{\le \frac{1}{2}\rho}{d_Y(g(x),f(x))}+d_Y(f(x),f(x_0))+\underset{\le \frac{1}{2}\rho}{d_Y(f(x_0),g(x_0))}\le \epsilon\]
+        Donc $B_{C(X,Y)}\subset O_{x_0,r}^\epsilon$ et $O_{x_0,r}^\epsilon$ est ouvert dans $C(X,Y)$.\\
+        On a évidemment que $\bigcup_{r>0}O_{x_0,r}^\epsilon=C(X,Y)$ et comme $\overline{A}$ est compact, il existe $r_{x_0}>0$ (par le lemme de Lebesgue) tel que $A\subset O_{x_0,r_{x_0}}^\epsilon$ (car les ouverts sont emboîtés lorsque $r$ vraie). Donc $A$ est équicontinue en $x_0$ et ceci pour tout $x_0$.\\
+        $(2)\implies (1)$ Soit $(f_n)_\nN$ une suite de $\overline{A}$, montrons qu'elle admet une sous-suite convergente dans $C(X,Y)$
+        \begin{itemize}
+            \item On peut considérer les $f_n$ sont dans $A$. En effet par définition de $\overline{A}$, il existe $(g_n)_\nN$ une suite de $A$ telle que $d_\infty(f_n,g_n)\underset{n\to\infty}{\longrightarrow}0$. Donc $(f_n)_\nN$ admet une sous-suite $(f_{\varphi(n)})_\nN$ convergente vers $f$ \ssi $(g_{\varphi(n)})_\nN$ converge vers $f$. On suppose que $(f_n)_\nN\in A^\N$
+            \item Puisque $X$ est compact, il est réparable. Soit $D=\{x_k,k\in \N\}\subset X$ telle que $\overline{D}=X$. On va construire une suite extraite de $(f_n)_\nN$ ponctuellement sur $D$.
+        \end{itemize}
+        Par hypothèse, $\overline{\{f(x_k),f\in A\}}$ est compact dans $Y$ pour tout $k\in \N$. La suite $(f_n(x_k))_\nN$ de $\overline{\{f(x_k),f\in A\}}$ admet donc une sous-suite convergente.\\
+        On construit alors par réccurence, pour tout $j\in \N$ une suite d'extractices $\funto{\varphi_j}{\N}{\N}$ telle que la suite $(f_{\varphi_0\circ\varphi_1\circ\ldots\circ\varphi_k(n)}(x_k))_n$ converge pour tout $k\in \N$ (comme dans la preuve de Tikhinov métrique dénombrable)\\
+        On obtient une sous-suite $(f_{\varphi(n)})_n$ de $(f_n)_\nN$ où $\varphi(n)=\varphi_0\circ \ldots\circ \varphi_n(n)$ (Procédé diagonal de Cantor) qui est telle que pour tout $k\in \N$, $f_{\varphi(n)}(x_k)$ converge lorsque $n$ tend vers $\infty$ vers une limite que l'on note $f(x_k)$.\\
+        Il reste à montrer que $A$ est relativement compacte dans $C(X,Y)$
+    \end{proof}
+
+    \begin{re}{}{}
+        \begin{enumerate}
+            \item Si $X=\{1,\ldots,n\}$ avec la métrique discrète $d(x,y)=1$ pour $x\neq y$, alors $\Cr(X,\R)=\R^n\qquad (*)$.\\
+            La condition $\overline{\{f(x),f\in A\}}$ est compact signifie la bornitude et l'uniforme équi-continuité est toujours vérifiée.
+        \end{enumerate}
+    \end{re}
+
+    \section{Théorème de Stone-Weierstrass}
+
+    Soit $X$ un espace compact et $\K=\R$ ou $\C$. On considère l'algèbre $\Cr(X,\K)$
+
+    \subsection*{Structure de $\Cr(X,\K)$}
+
+    $\Cr(X,\K)$ est une algèbre sur $\K$ de Banach unitaire. C'est à dire que:
+    \begin{itemize}
+        \item $\Cr(X,\K)$ est un espace métrique pour $d_\infty$
+        \item $\Cr(X,\K)$ est un $\K$-\ev et la norme $d_\infty$ est associée à la norme $\norme{f}_\infty=\sup \{|f(x)|,x\in X\}$
+        \item $\Cr(X,\K)$ est muni d'un produit $\fun{(f,g)}{f\times g}$ où $f\times g(x)=f(x)\times g(x),\forall x\in X$.\\
+        Compatible avec la structure d'espace vectoriel : $f(g+\lambda h)=f g+\lambda f h$
+        \item $\norme{fg}_\infty\le \norme{f}_\infty\norme{g}_\infty$ ce qui implique que le produit est continue,
+        \item $\Cr(X,\K)$ est complet donc de Banach
+        \item La fonction $\fundfto{\1}{X}{\R}{x}{1}$ est dans $\Cr(X,\K)$ et $\1$ est l'unité pour $\Cr(X,\K)$
+    \end{itemize}
+
+    \begin{df}{}{}
+        Une sous-algèbre $A$ de $\Cr(X,\K)$ est un sous-espace vectoriel stable par produit. Elle est dite unitaire si $\1\in A$.
+    \end{df}
+
+    \begin{re}{}{}
+        Si $A$ est une sous-algèbre de $\Cr(X,\K)$, par continuité des opérations $\overline{A}$ aussi.
+    \end{re}
+
+    \begin{df}{}{}
+        Une partie $A$ de $\Cr(X,\K)$ est séparante si
+        \[\forall x,y\in X,\exists f\in A, x\neq y\implies f(x)\neq f(y)\]
+    \end{df}
+
+    \begin{tm}{Théorème de Stone-Weierstrass(Cas réel)}{}
+        Soit $X$ un espace topologique compact. Toute sous-algèbre unitaire séparante $A$ de $\Cr(X,\R)$ est dense pour la topologie de la convergence uniforme $(d_\infty)$
+    \end{tm}
+
+    \begin{lm}{}{}
+        Si $A\subset C(X,\R)$ est une sous-algèbre unitaire qui sépare les points:
+        \[\forall x,y\in X,\forall a,b\in \R,\exists f\in A, f(x)=a\text{ et }f(y)=b\]
+    \end{lm}
+
+    \begin{proof}
+        Soit $g\in A$ tel que $g(x)\neq g(y)$, alors puisque $A$ est une sous-algèbre unitaire:
+        \[f=a+\frac{b-a}{g(y)-g(x)}(g-g(x))\text{ convient}\]
+        La condition $A$ unitaire peut être remplacée par la condition:
+        \[\forall x\in X,\exists f\in A,f(x)\neq 0\]
+        On remplace alors "$a$" par "$a\frac{f}{f(x)}$" dans cette preuve
+    \end{proof}
+
+    \begin{lm}{}{}
+        La fonction sur $[0,1]$ $t \mapsto \sqrt{t}$ est limite uniforme de polynômes réels en $t$.
+    \end{lm}
+
+    \begin{proof}
+        On construit par réccurence une suite de polynômes $(P_n)_\nN$ en posant:
+        $\cho{P_0(t)=0\\P_{n+1}(t)=P_n(t)=\frac{1}{2}(t-(P_n(t))^2)\quad (*)}$\\
+        On montre par réccurence que (Laisser en exercice)
+        \begin{enumerate}
+            \item $\forall t\in [0,1],(P_n(t))_\nN$ est croissante
+            \item $\forall t\in [0,1],\forall \nN, 0<\sqrt{t}-P_n(t)\le (1-t)^n(\sqrt{t}-t)$\\
+        \end{enumerate}
+        Pour $t\in [0,1]$, la suite croissante majorée $(P_n(t))_\nN$ dans $[0,\sqrt{t}]$ converge vers une limite notée $f(t)$. Par passage à la limite dans $(*)$, $f(t)=f(t)+\frac{1}{2}(t-(f(t))^2)$ d'où $f(t)=\sqrt{t}$\\
+        L'inégalité $\sqrt{t}-P_n(t)\le (1-t)^n(\sqrt{t}-t)$ permet d'obtenir que la convergence est uniforme.
+    \end{proof}
+
+    \begin{lm}{}{}
+        Soit $A$ une sous-algèbre unitaire fermée de $C(X,\R)$ où $X$ est compact.
+        \begin{enumerate}
+            \item Si $f\in A$, $|f|\in A$
+            \item Pour $f,g$ dans $A$, les applications
+            \[\fundfto{\min(f,g)}{X}{\R}{x}{\min(f(x),g(x))}\text{ et }\fundfto{\max (f,g)}{X}{\R}{x}{\max(f(x),g(x))}\text{ sont dans $A$}\]
+        \end{enumerate}
+    \end{lm}
+
+    \begin{re}{}{}
+        \begin{itemize}
+            \item Si $A$ est une sous-algèbre unitaire de $C(X,\R)$, alors $\overline{A}$ est une sous-algèbre unitaire fermée de $C(X,\R)$ et on pourra lui appliquer le lemme
+            \item Si $A$ est une $\K$-algèbre unitaire, pour tout $P\in \K[X]$ et tout $f\in A$, $P(f)\in A$
+        \end{itemize}
+    \end{re}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item Si $f\in A$ est à valeurs dans $\R_+$, soit $a\in \R_+^*$ tel que $a\norme{f}_\infty\le 1$ et $\fundfto{h}{X}{[0,1]}{x}{af(x)}$. On note $\fundfto{g}{[0,1]}{\R}{t}{\sqrt{t}}$\\
+            D'après le lemme 2, $g\circ f$ est limite uniforme de la suite $(P_n\circ h)_\nN$, donc pour tout $x\in \N, P_n\circ f\in A$ et sa limite $g\circ h\in \overline{A}=A$ où $g\circ h(x)=\sqrt{af(x)}$. Comme $\sqrt{a}\neq 0,\sqrt f\in A$.\\
+            Enfin pour $f\in A$ (quelconque), $f^{2}\in A$ est à valeurs dans $\R_+$ et $|f|=\sqrt{f^2}\in A$
+            \item On a $\min(f,g)=\frac{f+g-|f-g|}{2}$ et $\max(f,g)=\frac{f+g+|f-g|}{2}$ 
+        \end{enumerate}
+    \end{proof}
+
+    \begin{re}{}{}
+        Une réccurence immédiate montre que sous les hypothèses du lemme 3, si $J=\{f_1,\ldots,f_n\}$ est une partie finie de $A$, $\min(J)$ et $\max(J)$ sont dans $A$
+    \end{re}
+
+    \begin{lm}{}{}
+        Soit $A$ une sous-algèbre unitaire fermée de $C(X,\R)$ qui sépare les points, où $X$ est compact. On a
+        \[\forall f\in C(X,\R),\forall \epsilon>0,\exists g\in A \norme{g-f}_\infty <\epsilon\]
+    \end{lm}
+
+    \begin{proof}
+        Soit $f\in C(X,\R),\epsilon>0$ et $I=\{h\in A,\forall y\in X,h(y)>f(y)-\epsilon\}$. Pour $h\in I$, on pose $V_n=\{x\in X,h(x)<f(x)+\epsilon\}$ de sorte que pour $h\in I$ et $x\in V_n,|h(x)|<\epsilon$. Le sous-ensemble $V_n$ est un ouvert de $X$ car $h$ et $f$ sont continues.\\
+        Montrons que les $V_n$ forment un recouvrement ouvert de $X$. Soit $x\in X$, on va montrer qu'il existe $g_x\in I$ tel que $x\in V_{g_x}$. Notons $I_x=\{g\in A,g(x)=f(x)\}$ et pour $g\in I_x$, $U_g=\{y\in X,g(y)>f(y)-\epsilon\}$ qui est ouvert dans $X$. D'après le lemme 1
+        \[\forall y\in X,\exists g\in A:f(x)=g(x)\text{ et }f(y)=g(y)\]
+        Alors $g\in I_x,y\in U_g$ (donc $I_x$ et $U_g$ sont non-vides).\\
+        Donc $(U_g)_{g\in I_x}$ forme un recouvrement ouvert de $X$ dont on peut extraire un sous-recouvrement fini $(U_g)_{g\in J_x}$ où $J_x\subset I_x$ est fini. Posons $g_x=\max(J_x)$, alors $g_x\in A$ d'après le lemme 3. On a évidemment $g_x(x)=f(x)$.\\
+        Pour tout $z\in X, g_x(z)=\max_{h\in J_x} h(z)$ donc:\\
+        $\forall y\in X,\exists g\in J_x$, tel que $y\in U_g$ et $f(y)-\epsilon<g(y)\le g_x(y)$. Autrement dit: $g_x\in I, g_x(x)=f(x)$ et donc $x\in V_{g_x}$. Donc $(V_n)_{n\in I}$ forme un recouvrement ouvert de $X$ qui est compact et dont on extrait un sous-recouvrement fini: $(V_n)_{n\in J}$ où $J\subset I$ est fini.\\
+        Soit $g=\min (J)$ qui est dans $A$ par le lemme 3. Soit $x\in X$, on a:
+        \begin{itemize}
+            \item $\forall h\in J: h(x)>f(x)-\epsilon$ donc $g(x)>f(x)-\epsilon$
+            \item $\exists h\in J, x\in V_n$ c'est à dire $h(x)<f(x)+\epsilon$ et donc $g(x)\le h(x)<f(x)+\epsilon$. Donc $|f(x)-g(x)|<\epsilon$. Enfin, puisque $X$ est compact, $\sup_{x\in X}\{|f(x)-g(x)|\}$ est atteint d'où $\norme{f-g}_\infty<\epsilon$
+        \end{itemize}
+    \end{proof}
+
+    \begin{proof}{Preuve du théorème de Stone-Weierstrass (cas réel)}{}
+        Soit $A$ une sous-algèbre unitaire qui répare les points de $C(X,\R)$ où $X$ est compact et $f\in C(X,\R)$, alors d'après le lemme 4,
+        \[\forall n\in N,\exists f_n\in \overline{A}:\norme{f-f_n}_\infty<\frac{1}{n+1}\]
+        Donc la suite $(f_n)_\nN$ converge vers $f$ et comme $\overline{A}$ est fermée $f\in \overline{A}$ donc $\overline{A}=C(X,\R)$
+    \end{proof}
+
+    \begin{re}{}{}
+        Le théorème de Stone-Weierstrass ci-dessus ne peut pas s'étendre tel quel à $C(X,\C)$. En effet, si $A=\C[Z]$ et $X=\{z\in \C,|z|\le 1\}$, pour tout $P\in C(X,\C)$
+        \[\int_{|z|=1}P(z)\, dz=i\int_{0}^{2\pi} P(e^{i\theta})e^{i\theta}\, d\theta=0\]
+        Si $\C[Z]$ était dense dans $C(X,\C)$, par continuité de l'intégrale, on aurait $\int_{|z|=1}f(z)\, dz=0$ pour tout $f\in C(X,\C)$. Ce qui est faux, par exemple: $\int_{|z|=1}\overline{z}\, dz=2\pi i$
+    \end{re}
+
+    \begin{tm}{Théorème de Stone-Weierstrass (Cas complexe)}{}
+        Soit $X$ un espace topologique compact. Toute sous-algèbre unitaire $A$ de $C(X,\C)$ qui sépare les points et qui est stable par conjugaison complexe est dense pour la topologie de la convergence uniforme.
+    \end{tm}
+
+    \begin{proof}
+        Soit $f\in C(X,\C)$, si $f\in A$, puisque $A$ est stable par conjugaison complexe, alors $\Re(f)=\frac{1}{2}(f+\overline{f})$ et $\Im(f)=\Re(-if)$ sont dans $A$. Soit $x,y$ dans $X$, $x\neq y$ et $f\in A$ tel que $f(x)\neq f(y)$ alors nécessairement $\Re(f(x))\neq \Re (f(y))$ ou $\Im(f(x))\neq \Im (f(y))$. Ainsi $A_\R=\{\Re(f),f\in A\}=A\cap C(X,\R)$ est une sous-algèbre unitaire séparante de $C(X,\R)$, elle est donc dense dans $C(X,\R)$ par Stone-Weierstrass réel.\\
+        Si $f\in C(X,\C),f=\Re(f)+ i \Im(f)$, si $\epsilon >0$, $h$ et $g$ dans $A_\R$ tel que $d_\infty(\Re(f),h)<\epsilon$ et $d_\infty (\Im(f),g)<\epsilon$ alors $h+ig\in A$ et $d_\infty(f,h+ig)<\sqrt{2}\epsilon$
+    \end{proof}
+
+    \begin{cor}{}{}
+        Soit $X$ compacte de $\R$, l'ensemble des fonctions polynomiales est dense dans $C(X,\R)$
+    \end{cor}
+
+    \begin{proof}
+        L'ensemble des fonctions polynomiales de $X\subset \R$ dans $\R$ est une algèbre unitaire qui sépare les points.
+    \end{proof}
+
+    \begin{re}{}{}
+        Autrement dit, $\forall \funto{f}{X}{\R}$ continue, $\exists$ suite de polynôme qui converge vers $f$
+    \end{re}
+
+    \begin{cor}{Théorème de Weierstrass trigonométrique}{}
+        Toute fonction continue $2\pi$-périodique de $\R$ dans $\C$ est limité uniforme sur $\R$ d'une suite de polynômes trigonométriques.
+    \end{cor}
+
+    \begin{re}{}{}
+        Un polynôme trigonométrique est une fonction de $\R$ dans $\C$ de la forme:
+        \[T(\theta)=\sum_{k=-n}^{n}a_n e^{ik\theta},n\in \N\]
+    \end{re}
+
+    \begin{proof}
+        On identifie les fonctions $2\pi$-périodique continue de $\R$ dans $\C$ aux fonctions continues de $S_1$ dans $\C$ via $F(e^{i\theta})=f(\theta)$ puis on applique Stone-Weierstrass complexe
+    \end{proof}
+
+    \chapter{Espaces vectoriels normés}
+
+    Dans tout ce chapitre, $\K=\R$ ou $\C$ et $E$ et $F$ sont des $\K$-\evs
+
+    \section{Propriétés des normes}
+
+    \begin{ra}{}{}
+        \begin{itemize}
+            \item Une norme est une application $\funto{N}{E}{\R_+}$ telle que
+            \begin{itemize}
+                \item $N(x)=0\iff x=0$
+                \item $\forall \lambda\in \R,\forall x\in E, N(\lambda x)=|\lambda| N(x)$
+                \item $\forall x,y\in E, N(x,y)\le N(x)+N(y)$
+            \end{itemize}
+            \item Un \evn est un couple $(E,N)$ où $E$ \ev et $N$ est une norme sur $E$.
+            \item Lorsque $(E,N)$ \evn, $\fundfto{d_N}{E\times E}{\R_+}{(x,y)}{N(x-y)}$ est la métrique associée à $N$
+        \end{itemize}
+    \end{ra}
+
+    \begin{ex}{}{}
+        \begin{enumerate}
+            \item $(\K^p,\norme{\cdot}_p)$ pour $p\in[1,+\infty]$ où pour $x=(x_1,\ldots x_n)\in \K^n$
+            \begin{itemize}
+                \item Si $p\in [1,+\infty[, \norme{x}_p=(|x_1|^p+\ldots+|x_n|^p)^{\frac{1}{p}}$
+                \item Si $p=+\infty, \norme{x}_\infty=\max_{i\in \llbracket 1,n \rrbracket}|x_i|$
+            \end{itemize}
+            \item Ces normes s'étendent aux suites à valeurs dans $\K$ pour $x=(x_n)_\nN\in \K^\N$
+            \begin{itemize}
+                \item $p\in [1,+\infty[\implies \norme{x}_p=(\sum_{i\in \N}|x_i|^p)^{\frac{1}{p}}$
+                \item $p=+\infty\implies \norme{x}_\infty=\sup_{i\in \N}|x_i|$.
+            \end{itemize}
+            On désigne par $l^p(\N,\K)$ l'espace des suites $(x_n)_\nN$ telles que $\norme{x}_p< +\infty$
+            \item Ces normes s'étendent à l'espace des fonctions continues $\funto{f}{[0,1]}{\K}$
+            $\norme{f}_p=(\int_{0}^{1}|f(t)|^p\, dt)^{\frac{1}{p}}$ et $\norme{f}_\infty=\sup_{t\in [0,1]}|f(t)|$ puis avec espaces mesurables...
+            \item L'ensemble $C^k([0,1],\K)$ des fonctions $k$-fois dérivables et dont la k-ième dérivée est continue avec:
+            \[\norme{f}=\max_{i\in \llbracket 0,k\rrbracket}\norme{f^{(i)}}_\infty\]
+        \end{enumerate}
+    \end{ex}
+
+    \begin{re}{}{}
+        La difficulté pincipale principale est de montrer que l'on a bien des normes dans les exemples 1 à 3 est de vérifier l'inégalité triangulaire. Cela passe par l'inégalité de Hölder (qui généralise Cauchy-Schwartz):\\
+        Soient $p,q\in [0,\infty]$ tels que $\frac{1}{p}+\frac{1}{q}=1$, pour $x=(x_1,\ldots,x_n)$ et $y=(y_1,\ldots,y_n)$ dans $\K^n$, on a:
+        \[\left|\sum_{i=1}^{n} x_i y_i\right|< \norme{x}_p\norme{y}_q\text{ (Inégalité de Hölder)}\]
+        Dont on déduit (avec un peu de travail) $\norme{x}_p=\sup\left\{|\sum_{i=1}^{n}x_i y_i|,y\in \K^n\text{ et }\norme{y}_q\le 1\right\}$. Puis $\norme{x+y}_p\le \norme{x}_p+\norme{y}_p$ (Inégalité de Minkowski)
+    \end{re}
+
+    \begin{prop}{}{}
+        Soit $(E,N)$ un espace vectoriel normé.
+        \begin{enumerate}
+            \item L'application $\funto{N}{(E,d_N)}{\R_+}$ est $1$-lipschitienne (donc continue)
+            \item La topologie induite par $d_N$ sur $E$ est compatible avec les opérations d'espaces vectoriels.
+            \[\fundf{E\times E}{E}{(x,y)}{x+y}\text{ et }\fundf{\K\times E}{E}{(\lambda,x)}{\lambda x}\text{ sont continues}\]
+            \item Contrairement à ce qu'il se passe dans un espace métrique en général,
+            \begin{enumerate}
+                \item Si $x\in E$ et $r\in \R_+^*, \overline{B(x,r)}=\overline{B}(x,r)$
+                \item Si $x\in E$ et $r\in \R_+^*, \ring{\overline{B}(x,r)}=B(x,r)$
+            \end{enumerate}
+            \item L'adhérence d'un sous-espace vectoriel est un sous-espace vectoriel
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        Laisser en exercice
+    \end{proof}
+
+    \begin{df}{}{}
+        Un espace vectoriel complet est un espace de Banach
+    \end{df}
+
+    \begin{re}{}{}
+        La notion de métriques équivalentes induit la notion de normes équivalentes. Deux normes $N_1$ et $N_2$ sur $E$ sont équivalentes, si il existe $a,b\in \R_+^*$ tels que
+        \[\forall x\in E, aN_1(x)\le N_2(x)\le bN_1(x)\]
+        Donc pour $N_1$ équivalente à $N_2$, on a que $(E,N_1)$ est un Banach si et seulement si $(E,N_2)$ est un Banach.
+    \end{re}
+
+    \subsection*{Convergence des séries dans un Banach}
+
+    \begin{df}{}{}
+        Soit $(E,\norme{\cdot}_E)$ un \evn et $(x_n)_\nN \in E^\N$
+        \begin{enumerate}
+            \item La série $\sum_{\nN} x_n$ converge lorsque la suite $(S_n)_\nN$ de $E^\N$ converge où $S_n=\sum_{i=0}^{n} x_i$
+            \item La série $\sum_{\nN} x_n$ est normalement convergente lorsque la suite $(T_n)_\nN\in \R^\N$ converge où $T_n=\sum_{i=0}^{n}\norme{x_i}_E$
+        \end{enumerate}
+    \end{df}
+
+    \begin{re}{}{}
+        La suite $(T_n)_\nN$ est croissante donc $\sum_{n\in \N}x_n$ est normalement convergente $\iff \exists M>0$ tel que $\forall n\in \N, \sum_{i=0}^{n}\norme{x_i}_E<M$
+    \end{re}
+
+    \begin{prop}{}{}
+        Dans un espace de Banach, une série normalement convergente est convergente
+    \end{prop}
+
+    \begin{proof}
+        On suppose que la suite $(T_n)_\nN$ converge où $T_n=\sum_{i=0}^{n}\norme{x_i}_E$. Soit $S_n=\sum_{i=0}^{n}x_i$, alors pour $p,q\in \N$, $p\le q$:
+        \[\norme{S_p-S_q}_E=\norme{\sum_{i=p}^{q-1}}_E\le \sum_{i=p}^{q-1}\norme{x_i}_E=T_q-T_p\]
+        Puisque $(T_n)_\nN$ converge, c'est une suite de Cauchy donc $(S_n)_\nN$ est de Cauchy dans un Banach, donc elle converge.
+    \end{proof}
+
+    \begin{re}{}{}
+        Dans un \evn non-complet, il existe des séries normalement convergentes, mais non-convergentes. Il suffit de considérer une suite de Cauchy $(x_n)_\nN$ qui ne converge pas. Quitte à considérer une suite extraite, on peut supposer que $\norme{x_{n+1}-x_n}\le 2^{-n}$. Alors la série $\sum (x_{n+1}-x_n)$ est normalement convergente mais non-convergente.
+    \end{re}
+
+    \section{Applications linéaires continues}
+
+    \begin{tm}{}{}
+        Soit $(E,\norme{\cdot}_E)$ et $(F,\norme{\cdot}_F)$ deux $\K$-espaces vectoriels normés et $\funto{f}{E}{F}$ une application linéaire, sont équivalentes:
+        \begin{enumerate}
+            \item $f$ est continue en $0_E$
+            \item $f$ est continue
+            \item $f$ est uniformément continue
+            \item $f$ est lipschitzienne
+            \item $\exists k\in \R_+$ tel que $\forall x\in E, \norme{f(x)}_F\le k\norme{x}_E$
+        \end{enumerate}
+    \end{tm}
+
+    \begin{proof}
+        En notant que pour $x,y\in E$, la linéarité de $f$ donne:
+        \[f(x-y)=f(x)-f(y)\text{, on a évidemment }5\implies 4\implies 3\implies 2\implies 1\]
+        Il suffit de montrer que $1\implies 5$. Si $f$ est continue en $0_E$, il existe $\eta>0$ tel que:
+        \[\forall x\in E, \norme{x}_E<\eta,\text{ alors, }\norme{f(x)}_F\le 1\]
+        Donc pour $x\in E\wt\{0_E\},\norme{\frac{\eta x}{\norme{x}_E}}_E=\eta$ et
+        \[\norme{f(\frac{\eta x}{\norme{x}_E})}_F=\frac{\eta}{\norme{x}_E}\norme{f(x)}_E\le 1\]
+        D'où $\norme{f(x)}_F\le \frac{1}{\eta}\norme{x}_E$. Pour $x=0_E$, l'inégalité est encore vérifiée.
+    \end{proof}
+
+    \begin{cor}{}{}
+        Deux normes sur $E$ sont équivalentes si et seulement si elles définissent la même topologie
+    \end{cor}
+
+    \begin{proof}
+        Les normes $N_1$ et $N_2$ sur $E$ sont équivalentes s'il existe $a,b\in \R_+^*$ tels que
+        \[\forall x\in E, aN_1(x)\underset{(*)}{\le} N_2(x)\underset{(**)}{\le} bN_1(x)\]
+        $(*)$ signifie que $\funto{Id}{(E,d_{N_2})}{(E,d_{N_1})}$ est continue et $(**)$ signifie que $\funto{Id}{(E,d_{N_1})}{(E,d_{N_2})}$ est continue.
+    \end{proof}
+
+    \begin{df}{}{}
+        Soit $(E,\norme{\cdot}_E)$ et $(F,\norme{\cdot}_F)$ deux $\K$-\evn. On note $L(E,F)$ l'espace vectoriel des applications linéaires et continues de $E$ dans $F$.\\
+        Pour $f\in L(E,F)$, la norme (d'opérateurs) de $f$, notée $\norme{f}_{L(E,F)}$ est
+        \[\norme{f}_{L(E,F)}=\inf\{k\in \R_+^*,\forall x\in E, \norme{f(x)}_F\le k\norme{x}_E\}\]
+        Ainsi $(L(E,F),\norme{\cdot}_{L(E,F)})$ est un \evn.
+    \end{df}
+
+    \begin{prop}{}{}
+        Soit $(E,\norme{\cdot}_E), (F,\norme{\cdot}_F)$ deux $\K$-\evn et $f\in L(E,F)$. On a:
+        \begin{enumerate}
+            \item $\forall x\in E, \norme{f(x)}_F\le \norme{f}_{L(E,F)}\norme{x}_E$
+            \item \begin{align*}\norme{f}_{L(E,F)}&=\sup_{\norme{x}_E<1}\\
+                &=\sup_{\norme{x}_E\le 1} \norme{f(x)}_F\\
+                &=\sup_{x\neq 0_E}\frac{\norme{f(x)}_F}{\norme{x}_E}\\
+                &=\sup_{\norme{x}_E=1}\norme{f(x)}_F
+                \end{align*}
+            \item Si $(G,\norme{\cdot}_G)$ est un $\K$-\evn et $g\in L(F,G)$
+            \[\norme{g\circ f}_{L(E,F)}\le \norme{g}_{L(E,F)}\norme{f}_{L(E,F)}\]
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item Immédiat dès que l'on note
+            \[A=\{\forall k\in \R_+,\norme{f(x)}_F\le k\norme{x}_E\}=\bigcap_{x\in E} \phi_x^{-1}([0,+\infty[)\]
+            où $\fundfto{\phi_x}{\R_+}{\R}{k}{k\norme{x}_E -\norme{f(x)}_F}$\\
+            $A$ est fermé, non-vide dans $\R$, minoré par $0$ donc $A$ contient une borne inférieure.
+            \item Puisque $f(0_E)=0_F$, la condition $\norme{f(x)}_F\le k\norme{x}_E$ est toujours vraie pour $x=0_E$. Donc
+            \begin{align*}
+                \norme{f}_{L(E,F)}&=\inf \{k\in \R_+, \forall x\in E\wt \{0_E\},\norme{f(x)}_F\le k\norme{x}_E\}\\
+                &=\inf \{k\in \R_+,\forall x\in E\wt \{0_E\},\frac{\norme{f(x)}_F}{\norme{x}_E}\le k\}\\
+                &=\sup_{x\neq 0_E}\frac{\norme{f(x)}_F}{\norme{x}_E}
+            \end{align*}
+            On remarque que pour $x_0\neq 0$ fixé et $\lambda\in [0,1]$,
+            \[\norme{f(\lambda x)}_F=|\lambda|\norme{f(x_0)}_F\le \norme{f(x_0)}_F\]
+            Donc $\sup_{\norme{x}_E\le 1}\norme{f(x)}_F=\sup_{\norme{x}_E=1}\norme{f(x_0)}_F$.\\
+            De plus, $\frac{\norme{f(x_0)}_F}{\norme{x_0}_E}=\norme{\frac{f(x_0)}{\norme{x_0}_E}}_F=\norme{f\left( \frac{x_0}{\norme{x_0}_E}\right)}_F$ et $\norme{\frac{x_0}{\norme{x_0}_E}}_E=1$ donc
+            \[\sup_{\norme{x}_E=1}\norme{f(x_0)}_F=\sup_{x\neq 0_E}\frac{\norme{f(x)}_F}{\norme{x}_E}\]
+            On a de plus, pour $\funto{g}{X}{\R}$, continue et $X$ métrique, si $A\subset X$ est tel que $g(A)$ est borné, alors
+            \[\sup_{x\in A}g(x)=\sup_{x\in \overline{A}}g(x)\text{ (Laisser en exercice)}\]
+            On applique ceci à $\fundfto{g}{E}{\R}{x}{\norme{g(x)}_F}$ et $A=B(0_E,A),\overline{A}=\overline{B}(0_E,1)$
+            \item Laisser en exercice
+        \end{enumerate}
+    \end{proof}
+
+    \begin{tm}{}{}
+        Si $F$ est un espace de Banach, $L(E,F)$ aussi
+    \end{tm}
+
+    \begin{proof}
+        Soit $(f_n)_\nN$ une suite de Cauchy de $L(E,F)$. Pour $p,q\in \N$ et $x\in E$
+        \[\norme{f_p(x)-f_q(x)}_F\le \norme{f_p-f_q}_{L(E,F)}\norme{x}_E\]
+        Donc si $(f_n)_\nN$ est de Cauchy dans $L(E,F)$, $(f_n(x))_\nN$ est de Cauchy dans $F$.\\
+        Puisque $F$ est complet, la suite $(f_n(x))_\nN$ converge, on note $f(x)$ sa limite. Il reste à vérifier que $f\in L(E,F)$ et que $(f_n)_\nN$ converge vers $f$ pour la norme $\norme{\cdot}_{L(E,F)}$.\\
+        $f$ linéaire: Soit $x,y\in E,\lambda \in \K$ et $\nN$,
+        \begin{align*}
+            f_n(x+y)&=f_n(x)+f_n(y)\\
+            f_n(\lambda x)=\lambda f_n(x)
+        \end{align*}
+        Par continuité de la somme et du produit extérieur, on trouve à la limite:
+        \[f(x+y)=f(x)+f(y)\text{ et }f(\lambda x)=\lambda f(x)\]
+        Donc $f$ est linéaire\\
+        $f$ est continue et limite de $(f_n)_\nN$ dans $L(E,F)$.\\
+        Soit $\epsilon>0$ et $N\in \N$ tels que si $p,q\ge \N, \norme{f_p-f_q}_{L(E,F)}\le \epsilon$\\
+        Pour $x\in E, \norme{f_p(x)-f_q(x)}_F\le \epsilon \norme{x}_E$. On fixe $q$ et on fait tendre $p$ vers $+\infty$:
+        \[\norme{f(x)-f_q(x)}_F\le \epsilon \norme{x}_E\]
+        Donc $f-f_q$ est continue et $\norme{f-f_q}_{L(E,F)}\le \epsilon\qquad (*)$\\
+        Puisque $f_q$ est continue, $f=(f-f_q)+f_q$ est continue.\\
+        D'après $(*)$, $\lim_{n\to +\infty}\norme{f-f_q}=0$ donc la suite $(f_n)_\nN$ converge vers $f$ dans $L(E,F)$
+    \end{proof}
+    
+    \begin{re}{}{}
+        En particulier, $L(E):=L(E,E)$ est une algèbre (Le produit est la composition), unitaire, généralement non commutative qui est une algèbre de Banach lorsque $E$ est de Banach.
+    \end{re}
+
+    \begin{ex}{}{}
+        $M_n(\R)=L(\R^n,\R^n)$
+    \end{ex}
+
+    \begin{re}{}{}
+        En dimension infinie, les applications linéaires ne sont pas toujours continues.\\
+        Par exemple, $\fundfto{\varphi}{C([0,1],\R)}{\R}{f}{f(0)}$ est linéaire mais pas continue lorsque $C([0,1],\R)$ est muni de la topologie de la norme $\norme{\cdot}_p$ pour $p\in [1,+\infty[$
+    \end{re}
+
+    \begin{tm}{Prolongement des applications linéaires continues}{}
+        Soit $F$ un Banach, $D$ un \sev de $E$ un \evn tel que $\overline{D}=E$.\\
+        Soit $f\in L(D,F)$, il existe un unique prolongement $\tilde{f}\in L(E,F)$ de $f$. De plus, $\norme{\tilde{f}}_{L(E,F)}=\norme{f}_{L(D,F)}$
+    \end{tm}
+
+    \begin{proof}
+        Puisque $f\in L(D,F)$, $f$ est uniformément continue. Par le théorème de prolongement des applications uniformément continues (CF Partiel Exo 3), on sait que $f$ se prolonge en une unique application uniformément continue $\funto{\tilde{f}}{E}{F}$.\\
+        Soit $\lambda \in \K$, l'application $\fundf{E\times E}{F}{(x,y)}{\tilde{f}(x+\lambda y)-\tilde{f}(x)-\lambda \tilde{f}(y)}$ est continue et nulle sur $D\times D$ qui est dense dans $E\times E$. Donc elle est nulle et $\tilde{f}$ est linéaire.\\
+        Soit $(x_n)_\nN$ une suite d'éléments de $D$ qui converge vers $x\in E$.\\
+        Pour $\nN$,
+        \[\norme{\tilde{f}(x_n)}_F=\norme{f(x_n)}_F\le \norme{f}_{L(D,F)}\norme{x_n}_E\]
+        En passant à la limite quand $n\to +\infty$
+        \[\norme{\tilde{f}(x)}_F\le \norme{f}_{L(D,F)}\norme{x}_E\]
+        Donc $\norme{\tilde{f}}_{L(E,F)}\le \norme{f}_{L(D,F)}$, puisque $D\subset E$,
+        \[\{k\in \R_+,\forall x\in E,\norme{f(x)}_F\le k\norme{x}_E\}\subset \{k\in \R_+,\forall x\in D, \norme{f(x)}_F\le k\norme{x}_E\}\]
+        Donc $\norme{f}_{L(D,F)}\le \norme{f}_{L(E,F)}$
+    \end{proof}
+
+    \subsection*{Conséquences du théorème de Baire}
+
+    \begin{ra}{}{}
+        $(X,d)$ un espace métrique complet est un espace de Baire, toute réunion dénombrable de fermés d'intérieur vide est d'intérieur vide.
+    \end{ra}
+
+    \begin{cor}{}{}
+        Si un espace métrique non-vide complet est réunion dénombrable de fermés $(F_n)_\nN$, alors
+        \[\exists n\in \N, \mathring{F_n}\neq \emptyset\]
+    \end{cor}
+
+    \begin{tm}{Théorème de l'application ouverte}{}
+        Soit $E,F$ deux espaces de Banach et $T\in L(E,F)$, si $T$ est surjective alors elle est ouverte
+    \end{tm}
+
+    \begin{proof}
+        \begin{enumerate}
+            \item Une bijection $\funto{f}{X}{Y}$ entre deux espaces métriques est un homéomorphisme \ssi:
+            \[\forall A\subset X,f(\overline{A})=\overline{f(A)}\text{ et }f(\mathring{A})=\mathring{f(A)}\]
+            Pour un \evn $E$, $x\in E$ et $\lambda\in \K$, les applications:
+            $\fundfto{\tau_x}{E}{E}{y}{x+y}$ et $\fundfto{m_\lambda}{E}{E}{y}{\lambda y}$. sont des homéomorphismes et on a pour $r\in \R_+^*$,
+            \[B_E(x,r)=\tau_x\circ m_r(B(0,1))\]
+            De plus, si $F$ est un \evn et $\funto{T}{E}{F}$ une application linéaire,
+            \[ T\circ \tau_x\circ m_r=\tau_x\circ m_r\text{ car }T(x+ry)=T(x)+rT(y),\forall y\in E\]
+            Donc $T(B_E(x,r))=\tau_{T(x)}\circ m_r\circ T(B_E(0,1))$
+            \item On a les équivalences:
+            \begin{enumerate}
+                \item $T$ est ouverte
+                \item $\forall U\subset E$ ouvert, $T(U)$ est ouvert.
+                \item $\forall x\in E,\forall r\in \R_+^*,\exists \varphi>0, B_F(T(x),\varphi)\subset T(B_E(x,r))$
+                \item $\exists R>0$, $B_F(0,1)\subset T(B_E(0,R))$
+            \end{enumerate}
+            \item Puisque $T$ est surjective, $F=\bigcup_\nN F_n$ où
+            \[F_n:= \overline{T(B_E(0,n))}\]
+            Puisque $F$ est complet, il est de Baire. Donc il existe $n\in \N$ tel que $F_n\neq \emptyset$. Donc il existe $y\in F_N$ et $\eta>0$ tel que
+            \[B(y,\eta)\subset T_N=\overline{T(B_E(0,N))}\]
+            Pour $n$ assez grand, si on note $M=mN$, on a:
+            \[B_F(0,1)\subset B_F(y,m\eta)\subset \overline{T(B_E(0,M))}=\overline{T(B_E(0,r))}\qquad (*)\]
+            D'après $(*)$,
+            \[\forall n\in\N, B_F(0,\left(\frac{1}{2}\right)^n)\subset \overline{T(B_E(0,\left(\frac{1}{2}\right)^nM))}\]
+            Soit $y_0\in B_F(0,1)\subset \overline{T(B_E(0,M))}$, $B_F(y_0,\frac{1}{2})\cap T(B_E(0,M))\neq \emptyset$ donc il existe $x_0\in B_E(0,M)$ tel que $\norme{y_0-x_0}\le \frac{1}{2}$. On note $y_1=y_0-T(x_0)$.\\
+            On construit par réccurence une suite $(x_n)_{n\in\N}$ de $E$ et une suite $(y_n)_{n\in \N}$ de $F$ telles que:
+            \begin{itemize}
+                \item $x_n\in B_E(0,\left(\frac{1}{2}\right)^nM)$
+                \item $y_{n+1}=y_n-T(x_n)=y_0-T(x_0+\ldots+x_n)\in B_F(0_F,\left(\frac{1}{2}\right)^{n+1})$
+            \end{itemize}
+            La série $\sum x_n$ est normalement convergente et $E$ est un Banach donc elle converge vers une limite que l'on note $X$. De plus,
+            \[\norme{X}_E=\norme{\sum_{n=0}^{\infty}x_n}_E\le \sum_{n=0}^{\infty}\norme{x_n}_E\le \sum_{n=0}^{\infty}2^{-n}M=2M\]
+            Par passage à la limite, $y_0=T(X)\in T(B_E(0,3M))$ donc $B_F(0,1)\subset T(B_E(0,3M))$ et $T$ est ouverte
+        \end{enumerate}
+    \end{proof}
+
+    \begin{cor}{}{}
+        Soient $E$ et $F$ deux Banach. Toute application linéaire continue et bijective est un homéomorphisme.
+    \end{cor}
+
+    \begin{proof}
+        Laisser en exercice
+    \end{proof}
+
+    \begin{tm}{Théorème du graphe fermé}{}
+        Soit $E$ et $F$ deux Banach et $f$ une application linéaire de $E$ dans $F$. Alors $f$ est continue \ssi son graphe est fermé.
+    \end{tm}
+
+    \begin{proof}
+        On sait déjà que si $\funto{T}{E}{F}$ est continue, alors le graphe de $T$ est fermé dans $E\times F$ muni de la norme $\norme{(x,y)}_\infty=\max(\norme{x}_E,\norme{y}_F)$.\\
+        Inversement, puisque $E$ et $F$ sont des Banach, $(E\times F,\norme{\cdot}_\infty)$ est un Banach. Si $\funto{T}{E}{F}$ est linéaire, son graphe $G_T=\{(x,T(x)),x\in E\}$ est un \sev de $E\times F$ que l'on suppose fermé. Donc $G_T$ est un Banach. La projection $\funto{p_E}{E\times F}{E}$ est continue et sa restriction $p_{E|G_T}$ est bijective. C'est donc un homéomorphisme et sa réciproque est continue. Alors $T=p_F\circ\left(p_{E|G_T}\right)^{-1}$ est continue.
+    \end{proof}
+
+    \begin{tm}{Théorème de Banach-Steinhaus}{}
+        Soit $E$ un Banach et $F$ un \evn et $A\subset L(E,F)$. Si pour tout $x\in E$, $\{f(x),f\in A\}$ est borné dans $F$, alors $A$ est bornée dans $L(E,F)$.\\
+    \end{tm}
+
+    \begin{proof}
+        On suppose $E\neq \{0_E\}$. Soit $n\in \N$ et 
+        \begin{align*}
+            C_n&=\{x\in E,\forall f\in A,\norme{f(x)}_F\le n\}\\
+            &=\bigcap_{f\in A}\{x\in E,\norme{f(x)}\le n\}\text{ qui est fermé dans $E$ comme intersection de fermés}
+        \end{align*}
+        Puisque $A\subset L(E,F)$, pour tout $x\in \N$,
+        \[C_n=nC_1=\{nx,x\in C_1\}=m_n(C_1)\]
+        Par hypothèse, $E$ est réunion des $C_n$, par le corollaire du théorème de Baire:
+        \[N\in \N,\mathring{C_n}\neq\emptyset\]
+        Où $m_n$ est un homéomorphisme donc $\mathring{C_1}\neq \emptyset$. Soit $x_0\in \mathring{C_1}$:\\
+        \[\exists r>0, B(x_0,r)\subset C_1=\{x\in E,\forall f\in A,\norme{f(x)}\le 1\}\]
+        Soit $x\in B(0_E,1)$, alors $x_0\pm rx\in B(x_0,r)$ et :
+        \[\forall f\in A, f(x)=\frac{1}{2r}(f(x_0+rx)-f(x_0-rx))\text{ d'où}\]
+        \[\norme{f(x)}_F\le \frac{1}{2r}(\norme{f(x_0+rx)}+\norme{f(x_0-rx)})\le \frac{1}{r}\]
+        Donc $\forall f\in A$, $\norme{f}_{L(E,F)}\le \frac{1}{r}$.
+    \end{proof}
+
+    \begin{cor}{}{}
+        Soit $E$ un Banach, $F$ un \evn. Soit $(T_n)_\nN$ une suite de $L(E,F)$ qui converge simplement vers $\funto{T}{E}{F}$. Alors $T\in L(E,F)$
+    \end{cor}
+
+    \begin{proof}
+        Laisser en exercice
+    \end{proof}
+
+    \section{Propriétés liées à la dimension des \evn}
+
+    \subsection*{Le cas des \evn de dimension finie}
+
+    \begin{prop}{}{}
+        Munissons $\K^n$ de la norme $\norme{\cdot}_\infty$:
+        \begin{enumerate}
+            \item Toute application linéaire de $\K^n$ dans un \evn est continue.
+            \item Toute application linéaire bijective de $\K^n$ dans un \evn est un homéomorphisme.
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        Soient $(e_1,\ldots,e_n)$ la base canonique de $\K^n$, $(E,\norme{\cdot}_E)$ un \evn et $\funto{\varphi}{\K^n}{E}$ une application linéaire
+        \begin{enumerate}
+            \item $\forall x=(x_1,\ldots,x_n)\in \K^n$
+            \[\norme{\varphi(x)}_E=\norme{x_1\varphi(e_1)+\ldots+x_n\varphi(e_n)}_E\le \norme{x}_\infty\sum_{i=1}^{n}\norme{\varphi(e_i)}_E\]
+            Donc $\varphi$ est continue et $\norme{\varphi}_{L(\K^n,E)}\le \sum_{i=1}^{n}\norme{\varphi(e_i)}_E$
+            \item Supposons $\varphi$ bijective et notons $S=\{x\in \K^n,\norme{x}_\infty=1\}$. $S$ est un compact de $\K^n$. L'application $\fundfto{\norme{\varphi(\cdot)}_E}{\K^n}{\R_+}{x}{\norme{\varphi(x)}_E}$ est continue (d'après $(1)$, $\varphi$ est continue et $\norme{\cdot}_E$ est continue).\\
+            Puisque $f$ est injective, $\forall x\in S$, $\norme{\varphi(x)}_E>0$ et puisque $S$ est compact, il existe $a\in \R_+^*$ qui minore $\{\norme{\varphi(x)}_E,x\in S\}$\\
+            Soit $x\in \K^n\wt \{0_{\K^n}\}$, alors $\frac{x}{\norme{x}_{\K^n}}\in S$ et $\norme{\varphi(\frac{x}{\norme{x}_\infty})}_E=\frac{\norme{\varphi(x)}_E}{\norme{x}_\infty}\ge a$ ou encore $\norme{\varphi(x)}_E\ge a\norme{x}_\infty\qquad (*)$.\\
+            Cette inégalité est encore vérifiée en $x=0$. Finalement,
+            \[\forall u\in E,u=\varphi(\varphi^{-1}(u))\text{ et }\norme{u}_E\ge a\norme{\varphi^{-1}(u)}_\infty\]
+            Donc $\varphi^{-1}$ est continue et $\norme{\varphi^{-1}}_{L(E,\K^n)}\le a^{-1}$
+        \end{enumerate}
+    \end{proof}
+
+    \begin{tm}{}{}
+        Soit $E$ un \evn de dimension finie:
+        \begin{enumerate}
+            \item Toutes les normes sur $E$ sont équivalentes.
+            \item On muni $E$ d'une norme. Toute application linéaire de $E$ dans un \evn est continue.
+        \end{enumerate}
+    \end{tm}
+
+    \begin{proof}
+        Soit $n=\dim E$ et $\funto{\varphi}{\K^n}{E}$ une application linéaire bijective.
+        \begin{enumerate}
+            \item Soient $N_1,N_2$ deux normes sur $E$. D'après la proposition précédente, les applications
+            \[\varphi_1=\funto{\varphi}{(\K^n,\norme{\cdot}_\infty)}{(E,N_1)}\text{ et }\varphi_2=\funto{\varphi}{(\K^n,\norme{\cdot}_\infty)}{(E,N_2)}\]
+            sont des homéomorphismes linéaires. Donc $\funto{\Id}{(E,N_1)}{(E,N_2)}$ qui vaut $\varphi_2\circ \varphi_1^{-1}$ est un homéomorphisme linéaire. Ce qui équivaut à dire que $N_1$ et $N_2$ sont équivalentes
+            \item Soit $\funto{\Psi}{E}{F}$ une application linéaire où $F$ est un \evn, alors d'après la proposition précédente, $\Psi\circ\varphi$ et $\varphi^{-1}$ sont continues. Donc $\Psi=(\Psi\circ\varphi)\circ\varphi^{-1}$ aussi.
+        \end{enumerate}
+    \end{proof}
+
+    \begin{prop}{}{}
+        Soit $(E,\norme{\cdot}_E)$ un \evn de dimension finie.
+        \begin{enumerate}
+            \item L'espace $E$ est complet
+            \item Une partie $A$ de $E$ est complète \ssi elle est fermée.
+            \item Une partie $A$ de $E$ est compacte \ssi elle est fermée et bornée.
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        Soit $n=\dim E$ et $\funto{\varphi}{\K^n}{E}$ une application linéaire bijective. Puisque toutes les normes sur $E$ sont équivalentes, la norme $\norme{\cdot}_E$ est équivalente à $\norme{\varphi^{-1}(\cdot)}_\infty$.\\
+        De plus, $\varphi$ est une isométrie, $\fun{(\K^n,\norme{\cdot}_\infty)}{(E,\norme{\varphi^{-1}(\cdot)}_\infty)}$.\\
+        Il suffit donc de vérifier les propriétés pour $(\K^n,\norme{\cdot}_\infty)$
+        \[(N(\varphi(x))=\norme{\varphi^{-1}(\varphi(x))}_\infty=\norme{x}_\infty)\]
+    \end{proof}
+
+    \begin{cor}{}{}
+        Tout \sev de dimension finie d'un \evn est fermé
+    \end{cor}
+
+    \begin{proof}
+        Laisser en exercice
+    \end{proof}
+
+    \subsection*{Le cas des \evn de dimension infinie}
+
+    \begin{tm}{Théorème de Riesz}{}
+        La boule unité fermée d'un \evn est compacte \ssi la dimension de $E$ est finie.
+    \end{tm}
+
+    \begin{lm}{}{}
+        Soit $F$ un \sev fermé de $E$ et $y\in E\wt F$. Il existe $z\in \K y\oplus F$ tel que $\norme{z}=1$ et $d(z,F)>\frac{1}{2}$
+    \end{lm}
+
+    \begin{proof}
+        Soit $\delta=d(y,F)=\inf \{\norme{z-y},z\in F\}$. Puisque $y\not \in F$ et $F$ est fermé, $\delta>0$. Soit $x\in F$ tel que $\norme{x-y}\le 2\delta$ et soit $z=\frac{y-x}{\norme{y-x}}$\\
+        Alors pour $z\in S_E=\{e\in E,\norme{e}_E=1\}$ et pour $z'\in F$,
+        \[\norme{z-z'}=\norme{\frac{1}{\norme{y-x}}(y-(x+\norme{y-x}z'))}\ge \frac{1}{\norme{y-x}}d(y,F)>\frac{1}{2}\]
+    \end{proof}
+
+    \begin{proof}
+        Preuve du Théorème de Riesz: Si $\dim E$ est finie, la boule unité fermée étant fermée et bornée, elle est compacte.\\
+        Réciproquement, si $\dim E=+\infty$, montrons que $\overline{B_E}(0,1)$ n'est pas compacte en construisant une suite qui n'admet que pas de sous-suite convergente.\\
+        Soit $S_E=\delta B_E$ la sphère unité. Soit $x_0\in S_E$ et $F_1=\text{Vect}(x_0)$.\\
+        Puisque $\dim F_1<+\infty$, $F_1$ est fermé dans $E$. Puisque $\dim E=+\infty$, il existe $y_1\in E\wt F$.\\
+        D'après le lemme, $\exists x_1\in S_E\cap (\K y_1\oplus F_1)$ tel que $d(x_1,F_1)>\frac{1}{2}$ et donc $\norme{x_1-x_0}>\frac{1}{2}$.\\
+        On construit aussi par réccurence une suite $(x_n)_n$ de $S_E$ une suite de \sev emboités $F_n=\text{Vect}(x_0,\ldots,x_{n-1}),\forall n\in \N$, une suite $(y_n)_{n\in\N^*}$ de parties de $E$ où $y_n\in E\wt F_n$ tels $x_n\in S_E\cap (\K y_n\oplus F_n)$ et $d(x_n,F_n)>\frac{1}{2}$. En particulier, $\norme{x_n-x_k}>\frac{1}{2}$ pour $k\le n-1$. Finalement, la suite $(x_n)_\nN$ de $S_E\subset \overline{B_E}$ est telle que
+        \[p,q\in \N,p\neq q\implies \norme{x_p-x_q}\ge \frac{1}{2}\]
+        Donc la suite $(x_n)_\nN$ n'admet pas de sous-suite convergente et $B_E$ n'est pas compact.
+    \end{proof}
+
+    \chapter{Formes linéaires continues}
+
+    Dans toute la suite, $E$ est un $\K$-\evn, $\K=\R$ ou $\C$.
+
+    \section{Dual d'un espace vectoriel normé}
+
+    \subsection*{Dual topologique}
+
+    Puisque $\R$ et $\C$ sont des espaces de Banach, $L(E,\K)$ est un espace de Banach
+
+    \begin{df}{}{}
+        Le dual topologique de $E$, que l'on note $E'$ est l'espace de Banach $L(E,\K)$.
+    \end{df}
+
+    \begin{ra}{}{}
+        Pour $E$ un $\K$-\ev, une forme linéaire sur $E$ est une application linéaire de $E$ dans $\K$. On note $E^*$ l'ensemble des formes linéaires de $E$, c'est le dual algébrique.
+    \end{ra}
+
+    \begin{re}{}{}
+        Si $\K=\C$, $E$ est aussi un $\R$-\evn, on peut alors considérer:
+        \[E_\R'=L(E,\R)\text{ et }E_\C'=L(E,\C)\]
+        Notons $\funto{\Re}{\C}{\R}$ qui à $z\in \C$ associe la partie réelle de $z$.
+    \end{re}
+
+    \begin{prop}{}{}
+        L'application linéaire $\Re$ est une bijection isométrique
+    \end{prop}
+
+    \begin{proof}
+        Notons que $\norme{\Re}=1$. Soit $l\in E_\C'$, on a:
+        \[\norme{\Re-l}\le \norme{\Re}\norme{l}_{E_C'}=\norme{l}_{E_\C'}\]
+        Soit $x\in \overline{B_E(0,1)}, \lambda\in \C$ telle que $\lambda l(x)=|l(x)|$ et $|\lambda|=1$. On a
+        \begin{align*}
+            \left|l(x)\right|&=\lambda l(x)\\
+            &= l(\lambda x)\\
+            &=\Re\circ l(\lambda x)\\
+            &\le \norme{\Re\circ l}_{E'_\R}\norme{x}_E\\
+            &\le \norme{\Re\circ l}_{E'_\R}
+        \end{align*}
+        Donc
+        \begin{align*}
+            \norme{l}_{E'_\C}&=\sup\{\left| l(x)\right|,x\in \overline{B_\epsilon}(0,1)\}\\
+            &\le \norme{\Re\circ l}_{E'_\R}
+        \end{align*}
+        Finalement $\norme{\Re\circ l}_{E'_\R}=\norme{l}_{E'_\C}$. Donc $\Re$ est isométrique. En particulier, $\Re$ est injective. Soit $f \in E'_\R$ et $\funto{g_f}{x\in E}{f(x)-i f(ix)}$
+    \end{proof}
+
+    \subsection*{Hyperplans}
+
+    \begin{prop}{}{}
+        Soit $E$ un $\K$-\ev et $H$ un \sev de $E$. Sont équivalents:
+        \begin{enumerate}
+            \item $\exists e\in E,e\neq 0$ tel que $E=\K e\oplus H$
+            \item $E\neq H$ et $\forall e\in E\wt H$, $E=\K e\oplus H$
+            \item $\exists f\in E^*$ non nulle telle que $H=\ker f$.
+        \end{enumerate}
+        Un hyperplan de $E$ est un \sev de $E$ qui satisfait ces propositions
+    \end{prop}
+
+    \begin{prop}{}{}
+        Soit $E$ un \evn. Un hyperplan $H$ de $E$ est fermé \ssi il existe $f\in E'=L(E,\K)$ non nulle telle que $H=\ker f$ 
+    \end{prop}
+
+    \begin{proof}
+        Si $f\in E'$ alors $f$ est continue, $\{0\}$ est fermé dans $\K$ donc $\ker f\in f^{-1}(\{0\})$ est fermé dans $E$.\\
+        Inversement, soit $\Hr$ un hyperplan fermé de $E, f\in E^*$ non-nulle telle que $\Hr=\ker f$ et $e\in E\wt \Hr$ tel que $f(e)=1$.\\
+        Alors $E=\Hr\oplus \K e$ et pour $y\in \Hr$ et $\lambda \in \K$, $f(y+\lambda e)=\lambda$. Montrons que $f$ est continue. Soit $\delta=d(e,\Hr)=\inf\{\norme{e-y}_E,y\in \Hr\}$. Puisque $\Hr$ est fermée et $e\notin \Hr,\delta>0$. Soit $x\in E$:\\
+        Si $x\notin \Hr$, soit $\lambda\in \K^*$ et $y\in \Hr,x=y+\lambda e$
+        \[\norme{x}_E=\norme{y+\lambda e}_E =\left|\lambda\right|\norme{e-\left(\frac{-1}{\lambda}y\right)}_E\ge \left|\lambda\right|\delta=\left|f(x)\right|\delta\]
+    \end{proof}
+
+    \begin{dfprop}{}{}
+        Soit $E$ un $\K$-\ev et $\Hr\subset E$. $\Hr$ est un hyperplan affine s'il satisfait une des condtions équivalentes suivantes:
+        \begin{enumerate} 
+            \item $\exists H$ un hyperplan vectoriel et $x\in E$,
+            \[\Hr=x+H=\{x+y,y\in H\}\]
+            \item $\exists f\in E^*$ et $\alpha\in \K$ telle que: $\Hr=\{z\in E, f(z)=\alpha\}=f^{-1}(\alpha)$
+        \end{enumerate}
+        Si $E$ est un \evn et $\Hr$ un hyperplan affine de $E$ alors:
+        \begin{enumerate}
+            \item Si $\Hr$ n'est pas fermé dans $E$, alors il est dense.
+            \item $\Hr$ est fermé $\iff \exists f\in E',\alpha\in \K, \Hr=f^{-1}(\alpha)$
+        \end{enumerate}
+    \end{dfprop}
+
+    \begin{proof}
+        Laisser en exercice
+    \end{proof}
+
+    \section{Théorème de Hahn-Banach}
+
+    \subsection*{Les formes géométriques}
+    
+    Dans cette partie $E$ est un espace vectoriel normé sur $\R$.
+
+    \begin{lm}{Connexité et hyperplan}{}
+        Soit $H$ un \sev fermé de $E$. La partie $E\wt H$ est connexe \ssi $H$ n'est pas un hyperplan et dans ce cas $E\wt H$ est connexe par arc.
+    \end{lm}
+
+    \begin{proof}
+        Si $H$ est un hyperplan fermé, soit $f\in E'$ une forme linéaire continue de noyau $H$. Comme $f(E\wt H)=\R^*$ n'est pas connexe, il en résulte que $E\wt H$ n'est pas connexe.\\
+        Inversement, supposons que $H$ n'est pas un hyperplan fermé et soient $x,y$ dans $E\wt H$.
+        \begin{itemize}
+            \item Si $y\not\in \R x\oplus H$, le segment $[x,y]=\{(1-t)x+ty,t\in [0,1]\}$ est un arc qui joint $x$ à $y$ dans $E\wt H$.
+            \item Si $y\in \R x\oplus H$, puisque $y\not \in H$, il existe $\lambda \in \R^+$ et $h\in H$ tel que $y=\lambda x+ h$ et donc $\R x\oplus H= \R y\oplus H$. Comme $H$ n'est pas un hyperplan fermé, il existe $y\in E\wt \R x\oplus H$.\\
+            la ligne brisée fermée des segments $[x,z]$ et $[z,y]$ dans $E\wt H$ et joint $x$ à $y$.
+        \end{itemize}
+    \end{proof}
+
+    \begin{tm}{Théorème de Hahn-Banach géométrique}{}
+        Soit $C\subset E$ un ouvert convexe non-vide avec $0_E\not\in C$. Il existe un hyperplan (vectoriel) fermé $H$ de $E$ tel que $C\cap H=\emptyset$.
+    \end{tm}
+
+    \begin{ra}{}{}
+        $A\subset E$ est convexe $\iff \\forall x,y\in A,[x,y]=\{tx+(1-t)y,t\in [0,1]\}\subset A$
+    \end{ra}
+
+    \begin{re}{}{}
+        Le théorème de $Hahn-Banach$ géométrique dit que l'on peut séparé $E$ en deux parties par un hyperplan fermé. $E=\R e \oplus H=E^+\Cup H\Cup E^-$ où $E^+=\{\lambda e+h,\lambda\in \R_+^*\text{ et }h\in H\}$ et $E^-=\{\lambda e+h,\lambda\in \R_-^*,h\in H\}$ et $C\subset E^+$ ou $C\subset E^-$.
+    \end{re}
+
+    \begin{lm}{Point clé du théorème de Hahn-Banach géométrique}{}
+        Soit $C\subset E$ un ouvert convexe non-vide, avec $0_E\not\in C$ et $F$ un \sev de $E$ tel que $F\cap C=\emptyset$.\\
+        Si $F$ n'est pas un hyperplan fermé, il existe un \sev $G$ de $E$ tel que $G\cap C=\emptyset$ et $F\subsetneq G$.
+    \end{lm}
+
+    \begin{re}{}{}
+        Notons $\Fr$ l'ensemble des \sev $F$ de $E$ tel que $F\cap C=\emptyset$, et on a $\{0\}\in \Fr$. Montrer le théorème de Hahn-Banach revient à montrer que $\Fr$ contient un hyperplan.\\
+        L'ensemble $\Fr$ est ordonné par l'inclusion. Le lemme dit précisemment que pour que $F$ soit un élément maximal de $\Fr$ (i.e. $F\in \Fr$ est maxiaml si $\forall G\in \Fr$, $F\subset G\implies F=G$). Il est nécessaire que $F$ soit un hyperplan fermé. Une fois le lemme montré, il n'y aura plus qu'à montrer que $\Fr$ admet (au moins) un élément maximal.
+    \end{re}
+
+    \begin{proof}
+        Preuve du lemme: Puisque $C$ est ouvert, si $F\cap C=\emptyset$, alors $\overline{F}\cap C=\emptyset$.\\
+        En effet, si $x\in \overline{F}\cap C$, alors $C$ est un voisinage ouvert de $x$ et puisque $x\in \overline{F}$, $C\cap F\neq \emptyset$.\\
+        Donc si $F$ n'est pas fermé, il suffit de prendre $G=\overline{F}$ et le lemme est montré. Supposons $F$ fermé et que $F$ n'est pas un hyperplan. En particulier; $E\wt F$ est connexe. On cherche $G$ sous la forme $G=F\oplus \R^x$ où $x\not\in F$ et tel que $(F\oplus \R x)\cap C=\emptyset$. Notons $C+F=\{c+y,c\in C,y\in F\}$. On a:
+        \[x\not\in F\qquad (F\oplus \R x)\cap C=\emptyset\iff x\not\in F\text{ et }\forall t\in \R, tx\not \in C+F(*)\]
+        On va montrer que l'ensembles des $x\in E\wt F$ qui ne satisfont pas les propriétés équivalentes $(*)$, c'est à dire:
+        \[A=\{x\in E\wt F,\exists t\in \R, tx\in C+F\}\neq E\wt F\]
+        Puisque $C\cap F=\emptyset, 0 x=0_E\oplus C+F$ donc $A=\{x\in E\wt F,\exists t\in \R^*, tx\in C+F\}$. Soit
+        \begin{align*}
+            W_+&=\{x\not \in F, \exists t>0,tx\in C+F\}\\
+            &=\{sc+y,s\in \R_+^*,c\in C, y\in F\}\\
+            &=\bigcup_{s\in \R_+^*,y\in F} (sC+y)
+        \end{align*}
+        où $sC+y=\{sc+y,c\in C\}=\tau_y\cdot n_s(C)$ est un ouvert donc $W_+$ est un ouvert. De même,
+        \begin{align*}
+            W_-&= \{x\not\in F,\exists t<0,tx\in C+F\}\\
+            &=\{sc+y,s\in \R_-^*,c\in C,y\in F\}=\bigcup_{s\in \R_-^*,y\in F}(sC+y)
+        \end{align*}
+        On a deux ouverts $W_+$ et $W_-$ contenus dans $E\wt F$ qui sont tels que $A=W_+\cup W_-$.\\
+        De plus, $W_+\cup W_-=\emptyset$. Si $s,t\in \R_+^*,b,c\in C$ et $y,z\in F$ sont tels que $sb+y=-(tc+z)\in W_+\cup W_-$
+        \[\frac{s}{s+t}b+\frac{t}{s+t}c=\frac{-1}{s+t}(y+z)\in C\cap F \text{(Exclu par hypothèse)}\]
+        Puisque $E\wt F$ est connexe, il n'admet pas de partition par deux ouverts non vides, donc $W_+\cup W_-\subsetneq E\wt F$, il existe donc $x\in E\wt F$ et tel que $tx\notin C+F$ pour tout $t\in \R$
+    \end{proof}
+
+    \begin{lm}{Lemme de Zorn}{}
+        Tout ensemble inductif admet nécessairement un élément maximal.
+    \end{lm}
+
+    \begin{proof}
+        Preuve du théorème de Hahn-Banach géométrique:
+        \begin{enumerate}
+            \item Cas où $\dim E$ est finie. Soit $\Hr\in \Fr$ de dimension maximale. D'après le lemme précédent c'est un hyperplan fermé.
+            \item Cas général. L'ensemble $\Fr$ est inductif pour l'inclusion
+            \begin{itemize}
+                \item $\{0_E\}\in \Fr$ et donc $\Fr$ est non vide.
+                \item Si $T$ est un sous-ensemble non-vide totalement ordonné pour l'inclusion de \sevs de $E$ ne contenant pas $C$, alors $\bigcup_{F\in T}F$ est un majorant de $T$ dans $\Fr$.\\
+                "Tout sous-ensemble totalement ordonné de $\Fr$ possède un majorant". Donc $\Fr$ admet un élément maximal qui d'après le lemme précédent est un hyperflan.
+            \end{itemize}
+        \end{enumerate}
+    \end{proof}
+
+    \begin{cor}{Théorème de Hahn-Banach géomégtrique avec les formes linéaires continues}{}
+        Soit $C\subset E$ un ouvert convexe non-vide, $0_E\notin C$. Il existe $f\in E'$ telle que $\forall x\in C,f(x)>0$.
+    \end{cor}
+
+    \begin{proof}
+        Par le théorème de Hahn-Banach, il existe $\Hr$ hyperplan fermé de $E$ tel que $\Hr\cap C=\emptyset$. Soit $f\in E'$ tel que $\Hr=\ker f$.\\
+        L'image d'un convexe par une application affine est un convexe. Donc $f(X)$ est un convexe de $\R$ et les convexes de $\R$ sont les intervalles.\\
+        Puisque $C\cap \Hr=\emptyset, 0\notin f(C)$. Finalement $f(C)\subset \R^*_+$ ou $f(C)\subset \R_-^*$. Quitte à changer $f$ en $-f$, on a le résultat.
+    \end{proof}
+
+    \begin{cor}{Théorème de séparation de Hahn-Banach version fermée}{}
+        Soient $A$ et $B$ deux ensembles convexes disjoints non-vides de $E$, avec $A$ fermé et $B$ compact.\\
+        Il existe une forme linéaire continue $f\in E'$ et $a,b$ dans $\R$ tels que:
+        \[\forall x\in A,\forall y\in B,f(x)\le a<b\le f(y)\]
+        Ou de façon équivalente, si $c\in \R$ est tel que $a<c<b$, l'hyperplan affine $\Hr=f^{-1}({c})$ sépare $A$ et $B$
+    \end{cor}
+
+    \begin{proof}
+        Exercice
+    \end{proof}
+
+    \begin{cor}{Théorème de séparation de Hahn-Banach version ouverts}{}
+        Soit $A$ et $B$ deux ensembles convexes disjoints non-vides de $E$ avec $A$ ouvert.\\
+        Il existe une forme linéaire $f\in E'$ et $a\in \R$ tel que
+        \[\forall x\in A,f(x)>a\text{ et }\forall y\in B, f(y)\le a\]
+        De façon équivalente, l'hyperplan affine fermé $f^{-1}\left(\{a\}\right)$ sépare $A$ et $B$
+    \end{cor}
+
+    \begin{proof}
+        Pour tout $y\in B$, notons $V_y=\{x-y,x\in A\}=\tau_y(A)$, c'est un ouvert.\\
+        On considère
+        \[C=A-B=\{x-y,x\in A,y\in B\}=\bigcup_{y\in B}V_y\]
+        Alors
+        \begin{itemize}
+            \item $0_E\notin C$ car $A\cap B=\emptyset$
+            \item $C$ est ouvert comme réunion d'ouverts
+            \item $C$ est convexe: pour $x_1,x_2\in A$ et $y_1,y_2\in B$ et $t\in [0,1]$
+            \[t(x_1-y_1)+(1-t)(x_2-y_2)=tx_1+(1-t)x_2 -(ty_1+(1-t)y_2)\in A-B=C\]
+        \end{itemize}
+        Par le corollaire précédent, il existe $f\in E'$ tel que $f(C)\subset \R_+^*$. Donc $\forall x\in A,\forall y\in B, f(y)<f(x)$.\\
+        Ainsi $f(A)$ et $f(B)$ sont deux intervalles de $\R$ disjoints tels que $\forall \alpha \in f(A),\forall \beta \in f(B), \beta<\alpha$. En particulier $f(A)$ est minoré et $f(B)$ est majoré et $\sup(f(B))\le \inf (f(A))$.\\
+        Soit $a=\sup(f(B))$, on a $\forall y\in B,f(y)\le a$. De plus, $A\subset \{x\in E,f(x)\ge a\}=D$ et puisque $A$ est ouvert
+        \[\mathring{A}=A\subset \mathring{D}=\{x\in E,f(x)>a\}\] 
+    \end{proof}
+
+    \subsection*{Les formes analytiques}
+
+    On suppose ici que $E$ est un $\K$-espace vectoriel normé, $\K=\R$ ou $\K=\C$
+
+    \begin{tm}{Théorème de prolongement de Hahn-Banach}{}
+        Soit $E$ un $\K$-\evn et $F$ un \sev de $E$.\\
+        Pour tout $l\in F'$, il existe $\tilde{l}\in E'$ qui prolonge $l$ et telle que $\norme{\tilde{l}}_{E'}=\norme{l}_{F}$
+    \end{tm}
+
+    \begin{proof}
+        Si $l$ est nulle, c'est trivial. De plus, on a vu que si $\K=\C$, les duaux réels (i.e. où $E$ est considéré comme un $\R$-\ev) et complexes sont isométriques. Il suffit donc de traiter le cas réel.\\
+        On suppose donc que $\K=\R$ et que $l$ n'est pas réelle. Soit $A=B_E(0_E,1)$ la boule ouverte de $E$ et $B=\{x\in F, l(x)=\norme{l}_{F'}\}$. On a:
+        \begin{itemize}
+            \item $A$ est un convexe ouvert non-vide de $E$.
+            \item Puisque $l\neq 0_{F'}$, elle est surjective, $B$ est non-vide et $0_E\notin B$. Pour $x_0\in B$, elle est surjective, $B$ est non-vide et $0_E\notin B$. Pour $x_0\in B,B=l^{-1}\left( \norme{l}_{F'}\right)=\{x_0+y,y\in \ker l\}$ est un hyperplan affine de $F$ et en particulier convexe. De plus, $F=\ker l\oplus x_0 \R=\text{Vect}(B)$
+            \item Pour $x\in A\cap B$, on a $\left|l(x)\right|\le \norme{l}_{F'}\norme{x}_E<\norme{l}_{F'}$. Donc $A\cap B=\emptyset$.\\
+        \end{itemize}
+        On peut appliquer le théorème de séparation de Hahn-Banach version ouverte qui assure qu'il existe $f\in E'$ et $a\in \R$ tel que $f(A)\subset ]-\infty,a[$ et $f(B)\subset [a,+\infty[$.\\
+        Puisque $0_E\in A$ et $f(0_E)=0,a>0$.\\
+        Puisque $B$ est un sous-espace affine de $E$, son image par une application linéaire est un sous-espace affine et donc $f(B)$ est un sous-espace affine sur $\R$. Puisque ce n'est pas $\R$, c'est un point.\\
+        Il existe donc $b\ge a>0$ tel que $f(B)=\{0\}$. Quitte à multiplier $f$ par $b^{-1}\norme{l}_\infty$, on peut supposer $b=\norme{l}_{F'}$. Alors $l$ et $f$ coïncident sur $B$, qui est un hyperplan affine ne contenant pas $0_E$. Mais $B$ engendre $F$, donc $l$ et $f$ coïncident sur $F$. En particulier $\norme{l}_{F'}\le \norme{f}_{E'}$.\\
+        De plus
+        \begin{align*}
+            \norme{f}_{E'}&=\sup\{\left|f(x)\right|,x\in A\}\\
+            &\underset{(*)}{=}\sup \{f(x),x\in A\}\\
+            &\le a \le \norme{l}_{F'}
+        \end{align*}
+        D'où l'égalité ($(*)$ est vraie car si $f(x)\le 0$ alors $f(-x)=-f(x)\ge 0$ et puisque $A$ est une boule ouverte centrée en $0_E$, si $x\in A,-x\in A$)
+    \end{proof}
+
+    \begin{cor}{Corollaire du théorème de prolongement de Hahn Banach}{}
+        Soit $E$ un $\K$-\evn:
+        \begin{enumerate}
+            \item Pour tout $x\in E,x\neq 0_E$, il existe $f\in E'$ telle que $\norme{f}_{E'}=1$ et $f(x)=\norme{x}_E$.
+            \item Pour tout $x\in E,\norme{x}_E=\sup_{\norme{f}_{E'}=1}|f(x)|$
+            \item Soit $G$ un \sev fermé de $E$, $F\neq E$. Il existe $f\in E'$ telle que $\norme{f}_{E'}=1$ et $f(x)=0$ pour tout $x\in G$.
+            \item Soit $G$ un \sev de $E$ alors $\overline{G}=E$ \ssi pour tout $f\in E'$, si $f_{|G}=0$, alors $f=0$
+        \end{enumerate}
+    \end{cor}
+
+    \begin{re}{}{}
+        En particulier, (1) montre que si $E\neq \{0\}$, alors $E'\neq \{0\}$.
+    \end{re}
+
+    \begin{proof}
+        Laisser en exercice\\
+        Indications: 
+        \begin{enumerate}
+            \item Il suffit d'appliquer le théorème de prolongement de Hahn-Banach à $F=\K x$ et $ l(\lambda x)=\lambda \norme{x}_E$
+            \item Découle de $(1)$
+            \item Soit $x_0\notin G,F=G\oplus x_0 \R$ et $\funto{l}{F}{\K}$ donc par $l(y+\lambda x_0)=\lambda$. On vérifie que $l\in F'$ et $l$ est nulle sur $F$.
+            \item Découle de $(3)$
+        \end{enumerate}
+    \end{proof}
+
+    \subsection*{Bidual}
+
+    Si $E$ est un $\K$-\evn, $E'=L(E,\K)$ son dual topologique est lui-même un $\K$-\evn et même un Banach.\\
+    Le dual topologique de $E'$, que l'on note $E''$ est appelé le bidual topologique de $E$.
+
+    \begin{cor}{Injection de $E$ dans un bidual}{}
+        L'espace $E$ s'injecte isométriquement dans son bidual.\\
+        L'application $\fundfto{J}{E}{E''}{x}{\fundfto{J(x)}{E'}{\K}{l}{l(x)}}$ est une isométrie.
+    \end{cor}
+
+    \begin{proof}
+        Pour $x\in E, \fundfto{J(x)}{E'}{\K}{l}{l(x)}$ est bien linéaire et pour $l\in E'$
+        \[\left|J(x)(l)\right|=\left|l(x)\right|\le \norme{l}_{E'}\norme{x}_E\]
+        Donc $J(x)$ est continue. $J(x)\in L(E',\K)$ et $\norme{J(x)}_{E'}\le \norme{x}_{E}$.
+        \begin{itemize}
+            \item Si $x=0_E$, on a $J(x)=0_{E'}$ et donc $\norme{J(0_E)}_{E''}=\norme{0_E}_E=0$
+            \item Si $x\neq 0_E$, par le théorème de prolongement de Hahn-Banach, il existe $f\in E'$ telle que $\norme{f}_{E'}=1$ et $f(x)=\norme{x}_E$. Alors:
+            \[\left|J(x)(l)\right|=\left|f(x)\right|=\norme{x}_E\]
+            Donc $\norme{J(x)}_{E''}=\norme{x}_E$. $J$ est évidemment linéaire, elle est continue de norme $1$ et c'est une isométrie (En particulier $J$ est injective).
+        \end{itemize}
+    \end{proof}
+
+    \begin{df}{}{}
+        Un \evn $E$ est dit reflexif si l'injection $\funto{J}{E}{E''}$ est surjective et donc bijective. Dans ce cas $E$ et $E''$ sont isométriques et $E$ est nécessairement un espace de Banach (puisque $E'$ est un Banach)
+    \end{df}
+
+    \begin{ex}{}{}
+        \begin{itemize}
+            \item Si $\dim E$ est finie, $E$ est reflexif
+            \item Les espaces de Hilbert, les espaces $l^p$ et $L^p$ pour $1<p<+\infty$ sont reflexifs (Voir dans ce chapitre)
+        \end{itemize}
+    \end{ex}
+
+    \section{Convergence faible et faible*}
+    
+    Dans cette section, $E$ est un $\K$-\evn où $\K=\R$ ou $\C$
+
+    \subsection*{Convergence faible}
+
+    \begin{df}{}{}
+        Soit $(x_n)_\nN$ une suite de $E$. On dit que $(x_n)_\nN$ converge faiblement vers $x\in E$ Si
+        \[\forall l\in E',l(x_n)\underset{n\to +\infty}{\longrightarrow}l(x)\]
+        On note $x_n \underset{n\to \infty}{\rightharpoonup} x$
+    \end{df}
+
+    \begin{re}
+        Il y a unicité de la limite faible quand elle existe. En effet, si $l(x-y)=0,\forall l\in E'$, par le $(2)$ du corollaire du théorème de prolongement de Hahn Banach, $\norme{x-y}_E=0$
+    \end{re}
+
+    \begin{re}{}{}
+        On parle parfois de convergence forte pour parler de la convergence usuelle, c'est à dire au sens de la norme $\norme{x_n-x}_E\underset{n\to \infty}{\longrightarrow} 0$.
+    \end{re}
+
+    \begin{prop}{}{}
+        La convergence forte implique la convergence faible. Pour $(x_n)_\nN$ une suite de $E$ et $x\in E$
+        \[\norme{x_n-x}_E \underset{n\to \infty}{\longrightarrow} 0\implies x_n \underset{n\to \infty}{\rightharpoonup} x\]
+    \end{prop}
+
+    \begin{proof}
+        Si $x_n \to x$ dans $E$, pour tout $l\in E$, par continuité de $l$, $l(x_n)\to l(x)$ dans $\K$. Donc $x_n \underset{n\to \infty}{\rightharpoonup}x$.
+    \end{proof}
+
+    \begin{re}{}{}
+        La topologie faible sur $E$, noté $\sigma(E,E')$ est la topologie initiale associée à la famille de toutes les fonctions linéaires continues sur $E$: c'est la topologie la moins fine pour laquelle les éléments de $E'$ sont encore continues. Elle est engendrée par les ouverts de la forme $l^{-1}(U)$ où $U$ est un ouvert de $\K$ et $l\in E'$.\\
+        Une suite de $E$ converge faiblement \ssi elle converge pour la topologie faible.\\
+        La topologie faible sur $E$ est la topologie associée à la famille de semi-norme $|l(\cdot)|$ pour $l\in E'$, elle n'est jamais métrisable.
+    \end{re}
+
+    \begin{prop}{}{}
+        Si $E$ est de dimension finie, la convergence forte et la convergence faible coïncident.
+    \end{prop}
+    
+    \begin{proof}
+        Il faut montrer que si $(x_n)_\nN$ est une suite de $E,x\in E$ et $x_n\underset{n\to \infty}{\longrightarrow} x$ alors $\norme{x_n-x}_E\underset{n\to \infty}{\longrightarrow} 0$. Soit $(e_1,\ldots,e_d)$ une base de $E$ et pour tout $i\in \llbracket 1,d\rrbracket$. Soit $\funto{e_i^*}{E}{\K}$, telle que $e_i^*(\sum_{k=1}^{d}a_k e_k)=a_i$.\\
+        Alors $e_i^*\in E'$. Donc $e_i^*(x_n)\underset{n\to \infty}{\longrightarrow} e_i^*(x)$ pour tout $i\in \llbracket 1,d \rrbracket$. On en déduit
+        \[x_n=\sum_{k=1}^{d}e_i^*(x_n)e_i\underset{n\to \infty}{\longrightarrow} \sum_{i=1}^{d}e_i^*(x)e_i=x\]
+    \end{proof}
+
+    \begin{re}{}{}
+        La réciproque est fausse en dimension infinie. Par exemple pour $E=C^1([0,1],\R)$ muni de la norme $\norme{\cdot}_{2}$, la suite $(c_n)_\nN$ donnée par $c_n(t)=\cos(nt)$ converge faiblement vers $0$ mais sa norme ne converge pas vers $0$.
+    \end{re}
+
+    \begin{prop}{}{}
+        Soit $T\in L(E,F)$, et $(x_n)_\nN$ une suite de $E$ qui converge faiblement vers $x$. Alors $(T(x_n))_\nN$ converge faiblement vers $T(x)$.
+    \end{prop}
+
+    \begin{proof}
+        Soit $l\in F'$ alors $l\circ T\in E'$ donc
+        \[l\circ T(x_n)=l(T(x_n))\underset{n\to\infty}{\longrightarrow}l(T(x))\]
+    \end{proof}
+
+    \begin{prop}{}{}
+        Soit $(x_n)_\nN$ une suite de $E$ qui converge faiblement vers $x$. Alors la suite $(x_n)_\nN$ est (fortement) bornée et:
+        \[\norme{x}_E \le \liminf \norme{x_n}_E\]
+    \end{prop}
+
+    \begin{proof}
+        Pour $E=\{0_E\}$ c'est vrai. On suppose $E\neq \{0_E\}$. Soit l'injection canonique qui est isométrique:
+        \[\fundfto{J}{E}{E''=(E')'}{x}{\fundfto{J(x)}{E'}{\K}{l}{l(x)}}\]
+        On note $T=J(x)$ et pour tout $n\in \N$, $T_n=J(x_n)$, ce sont des applications linéaires continues de $E'$ dans $\K$ qui vérifient:
+        \[\norme{x}_E=\norme{T}_{E''}\text{ et }\norme{x_n}_E =\norme{T_n}_{E''}\]
+        La condition $x_n\rightharpoonup x$ dit précisemment que la suite $(T_n)_\nN$ converge simplement vers $T$.\\
+        Pour $l\in B_{E'}(0_{E'},1)$, on a donc:
+        \[\left|T(l)\right|=\lim_{n\to \infty}\left|T_n(l)\right|\liminf_{n\to \infty} \left|T_n(l)\right|\overset{(1)}{\le} \liminf_{n\to \infty} \norme{T_n}_{E''}\norme{l}_{E'}\le \liminf_{n\to\infty} \norme{T_n}_{E''}\]
+    \end{proof}
+
+    \subsection*{Convergence faible *}
+
+    \begin{df}{}{}
+        Soit $(l_n)_\nN$ une suite de $E'$. On dit que $(l_n)_\nN$ converge faiblement vers $l\in E$ si
+        \[\forall x\in E, l_n(x)\underset{n\to \infty}{\longrightarrow} l(x)\]
+        On note $l_n \underset{n\to \infty}{\rightharpoonup} l$
+    \end{df}
+
+    \begin{re}{}{}
+        Il s'agit juste de la convergence simple.
+    \end{re}
+
+    \begin{prop}{}{}
+        \begin{enumerate}
+            \item Si une suite $(l_n)_\nN$ de $E'$ converge fortement vers $l\in E'$ (i.e. $\norme{l_n-l}_{E'}\to 0$) alors $(l_n)_\nN$ converge faible * vers $l$.
+            \item Soit $E$ un espace de Banach. Si $l_n$(VOIR POUR LA FLECHE) $l$ alors la suite $(l_n)_\nN$ est (fortement) bornée et $\norme{l}_{E'}\le \liminf \norme{l_n}_{E'}.$        
+        \end{enumerate}
+    \end{prop}
+
+    \begin{proof}
+        Pour la $(1)$:
+        \[\forall x\in E,\left|l_n(x)-l(x)\right|=\left|(l_n-l)(x)\right|\le \norme{l_n-l}_{E'}\cdot \norme{x}_E\]
+        Le théorème de Banach-Steinhaus nous assure que la suite $(l_n)_\nN$ est bornée.\\
+        En effet, puisque pour tout $x\in E, (l_n(x))_\nN$ converge en particulier $\{l_n(x),n\in \N\}$ est borné dans $\K$ donc $\{l_n,n\in\N\}$ est borné dans $E'$. Ensuite on procède comme précedemment. Pour $x\in B_E(0_E,1)$, on a:
+        \begin{align*}
+            \left|l(x)\right|=\lim_{n\to \infty}\left|l_n(x)\right|=\liminf_{n\to \infty} \left|l_n(x)\right|&\le \liminf_{n\to \infty}\norme{l_n}_{E'}\norme{x}_E\\
+            &\le \liminf_{n\to \infty} \norme{l_n}_{E'}
+        \end{align*}
+        Le passage au sup permet de conclure.
+    \end{proof}
+
+    \begin{tm}{Théorème de Banach-Alaoglu}{}
+        Soit $E$ un espace vectoriel normé séparable.\\
+        Toute suite bornée de $E'$ admet une sous-suite qui converge faible * dans $E'$.
+    \end{tm}
+
+    \begin{re}{}{}
+        On parle de compacité faible *: La boule unité fermée de $E^*$ est *-faiblement compacte.
+    \end{re}
+
+    \begin{lm}{}{}
+        Soit $E$ un \evn et $D$ une partie dense de $E$.\\
+        Soit $(l_n)_\nN$ une suite bornée de $E'$ qui converge simplement (=faible *) vers $l\in E'$ sur $D$. \\
+        Alors la suite $(l_n)_\nN$ converge simplement vers $l$ sur $E$
+    \end{lm}
+
+    \begin{proof}
+        Soit $x\in E$. Par densité de $D$ dans $E$, pour $\epsilon>0$, il existe $y\in D, \norme{x-y_\epsilon}_E\le \epsilon$.\\
+        Soit $N\in \N$ tel que $\forall n\in \N,n\ge N, \left|l_n(y_\epsilon)-l(y_\epsilon)\right|\le \epsilon$.\\
+        Pour $n\ge N$:\begin{align*}
+            \left|l_n(x)-l(x)\right|&\le \left|l_n(x)-l_n(y_\epsilon)\right|+\left|l_n(y_\epsilon)-l(y_\epsilon)\right|+\left|l(y_\epsilon)-l(x)\right|\\
+            &\le \norme{l_n}_{E'}\norme{x-y_\epsilon}_E+\epsilon+\norme{l}_{E'}\norme{y_\epsilon-x}_{E}\\
+            &\le \left(\norme{l_n}_{E'}+1+\norme{l}_{E'}\right)\epsilon\le C\epsilon
+        \end{align*}
+        où $C=\sup_{\nN}\norme{l_n}_{E'}+1+\norme{l}_{E'}$
+    \end{proof}
+
+    \begin{proof}
+        Preuve du théorème de Banach-Alaoglu: Soit $D=\{x_k,k\in \N\}$ une partie dénombrable et dense de $E$. Soit $(l_n)_\nN$ une suite bornée de $E'$. En particulier: Pour tout $k\in \N, (l_n(x_k))_\nN$ est une suite bornée de $\K$.\\
+        Il existe $M_k>0$ tel que $\{l_n(x_k),n\in \N\}\subset \overline{B_\K}(0,M_k)$ et $\overline{B_k}(0,M_k)$ est un compact de $\K$. D'après le théorème de Tikhinov métrique dénombrable, le produit
+        \[K=\prod_{k\in N} \overline{B_k}(0,M_k)\text{ est compact}\]
+        La suite $(a_n)_{\nN}$ de $K$ où pour tout $n\in\N$, $a_n=(l_n(x_k))_{k\in \N}$ admet une sous-suite convergente $(a_{\varphi(n)})_\nN$. Alors la suite extraite $(l_{\varphi(n)})_\nN$ est simplement convergente sur $D$ vers une application $l$ définit sur $D$.\\
+        Par linéarité, $l$ s'étend en une forme linéaire, encore notée $l$ sur $F=\text{Vect}(x_k,k\in \N)$.\\
+        Par continuité de la somme et de la multiplication extérieure, la suite $(l_n)_\nN$ converge simplement vers $l$ sur $F$. De plus:
+        \[\forall x\in F, n\in \N:\left|l_{\varphi(n)}(x)\right|\le \norme{l_{\varphi(n)}}_{E'}\norme{x}_{E}\le \sup_{n\in \N}\norme{l_n}_{E}\norme{x}_E\]
+        Donc
+        \[\left|l(x)\right|=\lim_{n\to \infty}\left|l_{\varphi(n)}(x)\right|\le \sup_{\nN}\norme{l_n}_{E'}\norme{x}_E\]
+        Donc $l$ est continue sur $F$ qui est un \sev dense de $E$. Par le théorème de prolongement des applications linéaires continues, $l$ peut être étendue à $\tilde{l}\in E'$. Le lemme précédent permet de conclure.
+    \end{proof}
+
+    \section{Application de la dualité}
+
+    Dans le cas des \evn, on s'interesse à la dualité induite par la forme bilinéaire canonique:
+    \[\fundfto{B}{E'\times E}{\K}{(l,x)}{l(x)}\]
+    On note parfois $B(l,x)=\sca{l,x}$\\
+    Remarquons:\begin{itemize}
+        \item Pour $x\in E$, si $\forall l\in E',l(x)=0$ d'après un corollaire du Théorème de prolongement de Hahn-Banach, $x=0$
+        \item Pour $l\in E'$, si $\forall x\in E$, $l(x)=0$ alors $l=0_{E'}$. On dit que $B$ est non-dégénérée. De plus,
+        \[ \forall l\in E',\forall x\in E |l(x)|\le \norme{l}_{E'} \norme{x}_E\]
+        Donc $B$ est continue et de norme $1$ par le corollaire du théorème de Hahn-Banach
+    \end{itemize}
+
+    \subsection*{Les espaces de Hilbert}
+
+    Dans la suite, $\Hr$ est un espace de Hilbert sur $\K=\R$ ou $\C$, c'est à dire que $\Hr$ est un espace de Banach sur $\K$ dont la norme $\norme{\cdot}_{\Hr}$ provient d'un produit scalaire $\sca{\cdot,\cdot}$ (réel ou hermitien).\\
+    On peut penser $l^2(\N,\K)$ et $L^2$
+
+    \begin{prop}{}{}
+        Pour $y\in \Hr$, la forme linéaire $\funto{l_y}{x\in H}{\sca{x,y}\in \K}$ est continue.\\
+        L'application $\fundfto{\tau}{\Hr}{\Hr'}{y}{l_y}$ est antilinéaire et isométrique de $\Hr$ dans $\Hr'$.
+    \end{prop}
+
+    \begin{proof}
+        Pour $x,y$ dans $\Hr$, on a par l'inégalité de Cauchy-Schwarz
+        \[|l_y(x)|=|\sca{x,y}|\le \norme{x}_{\Hr}\norme{y}_{\Hr}\]
+        On a évidemment que $l_y$ est linéaire. Donc $l_y\in \Hr'$ et $\norme{l_y}_{\Hr'}\norme{y}_{\Hr}$. De plus:
+        \[\norme{y}_\Hr^2=\sca{y,y}=l_y(y)\le \norme{l_y}_{\Hr'}\norme{y}_\Hr\]
+        D'où $\norme{y}_\Hr\le \norme{l_y}_{\Hr'}$ et donc $\norme{y}_\Hr=\norme{l_y}_{\Hr'}$\\
+        Pour $y,z\in \Hr$ et $\lambda\in \C$, on a:
+        \begin{align*}
+            \forall x\in \Hr, \tau(y+\lambda z)(x)&=\sca{x,y+\lambda z}=\sca{x,y}+ \overline{\lambda}\sca{x,z}\\
+            &=\tau(y)(x)+\overline{\lambda}\tau(z)(x)\\
+            &=(\tau(y)+\overline{\lambda}\tau(z))(x)
+        \end{align*}
+        Donc $\tau(y+\lambda z)=\tau(y)+\overline{\lambda}\tau (z)$. C'est à dire que $\tau$ est anti-linéaire.
+    \end{proof}
+
+    \begin{df}{}{}
+        \begin{itemize}
+            \item Pour $x,y\in \Hr$ $x$ est orthogonal à $y$ si $\sca{x,y}=0$
+            \item Pour $A,B\in \Pr(\Hr)$, $A$ est orthogonale à $B$ si
+            \[\forall x\in A,\forall y\in B, \sca{x,y}=0\]
+            \item Pour $A\subset \Hr$, l'orthogonal de $A$ est
+            \[A^{\perp}=\{x\in H,\forall y\in A, \sca{x,y}=0\}\]
+        \end{itemize}
+    \end{df}
+
+    \begin{re}{}{}
+        On a:
+        \begin{align*}
+            A^{\perp}&=\{x\in H,\forall y\in A,\sca{x,y}=0\}=\bigcap_{y\in A}\ker l_y\\
+            &=\text{Vect}(A)^{\perp}\overset{(*)}{=}\overline{\text{Vect}}(A)^\perp=\overline{A}^\perp
+        \end{align*}
+        En particulier, $A^\perp$ est un \sev fermé de $\Hr$\\
+        Pour l'égalité $(*)$, puisque $A\subset \overline{A}$, on a clairement $\overline{A}^\perp \subset A^\perp$. Soit $y\in A^\perp,x\in \overline{A}$ et $(x_n)_\nN$, une suite de $A$ qui converge vers $x$. On a:
+        \[\left|\sca{x,y}\right|=\left|\sca{x-x_n,y}+\underset{=0}{\sca{x_n,y}}\right|\le \norme{x-x_n}_\Hr\norme{y}_\Hr\]
+        Par passage à la limite quand $n$ tend vers $+\infty$, $\sca{x,y}=0$. On a donc $A^\perp \subset \overline{A}^\perp$. De plus, $p_F$ est linéaire et continue.
+    \end{re}
+
+    \begin{tm}{Théorème de projection}{}
+        Soit $\Hr$ un espace de Hilbert et $C$ une partie convexe fermée de $\Hr$.
+        \begin{enumerate}
+            \item $\forall x\in \Hr,\exists ! x_0\in C, d(x,C)=\norme{x-x_0}_\Hr$. On dit alors que $x_0$ est la projection orthogonale de $x$ sur $C$
+            \item Le point $x_0$ est caractérisé par:
+            \[ x_0\in C\text{ et }\Re(\sca{x_0-x,x_0-y})\le 0,\forall y\in \Cr\]
+        \end{enumerate}
+    \end{tm}
+
+    \begin{prop}{}{}
+        Soit $\Hr$ un espace de Hilbert, $F$ un \sev fermé de $\Hr$. On a
+        \[\Hr=F\oplus F^{\perp}\]
+        La projection orhogonale $\funto{p_F}{\Hr}{F}$ (Parallèlement à $F$) est la projection orthogonale au sens du théorème de projection.\\
+        De plus, $p_F$ est linéaire et continue
+    \end{prop}
+
+    \begin{re}{}{}
+        Pour $x\in \Hr$, on a:
+        \[x=p_F(x)\iff x\in F\text{ et }x-x_0\in F^\perp\iff d(x,F)=\norme{x-x_0}_\Hr\]
+    \end{re}
+
+    \begin{re}{}{}
+        On en déduit que si $\dim F$ est finie et $(e_1,\ldots,e_n)$ est une base orthonormée de $F$, pour tout $x\in \Hr$: 
+        \[p_F(x)=\sum_{k=0}^{n}\sca{x,e_i}e_i\]
+    \end{re}
+
+    \begin{proof}
+        Preuve de $p_F$ est continue: Pour tout $x\in F$ et $y\in F^\perp$, on a:
+        \[\norme{x+y}_\Hr^2=\norme{x}_\Hr^2+\norme{y}_\Hr^2\ge \norme{x}_\Hr^2=\norme{p_F(x+y)}^2\]
+        Donc $p_F\in L(\Hr,\Hr)$ et $\norme{p_F}_{L(\Hr,\Hr)}\le 1$. De plus pour $x\in F, p_F(x)=x$ donc $\norme{p_F(x)}_\Hr=\norme{x}_\Hr$ donc si $F=\{0_\Hr\},\norme{p_F}_{L(\Hr,\Hr)}=1$
+    \end{proof}
+
+    \begin{cor}{}{}
+        Soit $H$ un espace de Hilbert
+        \begin{enumerate}
+            \item Si $A\subset H,(A^\perp)^\perp$ est le plus petit \sev fermé de $H$ qui contient $A$.
+            \item Si $F$ est un \sev de $H,(F^\perp)^\perp=\overline{F}$
+            \item Si $F$ est un \sev de $H$, $F$ est dense dans $H$ \ssi $F^\perp=\{0_H\}$
+        \end{enumerate}
+    \end{cor}
+
+    \begin{tm}{Théorème de représentation de Riesz}{}
+        Soit $H$ un espace de Hilbert. L'application isométrique antilinéaire
+        \[\fundfto{\tau}{H}{H'}{y}{\left(\fundfto{l_y}{H}{\K}{x}{\sca{x,y}}\right)}\]
+        est une bijection isométrique de $H$ sur $H'$.
+    \end{tm}
+
+    \begin{re}{}{}
+        Puisque $H'$ est isométrique à $H$, la norme de $H'$ est issue d'un produit scalaire. On a $\sca{l_x,l_y}_{H'}=\sca{y,x}_H$. Donc $H'$ est un espace de Hilbert
+    \end{re}
+
+    \begin{proof}
+        On sait déjà que $\tau$ est antilinéaire et isométrique. Donc pour tout $x\in H,\norme{\varphi_x}_{H'}=\norme{x}_H$ donc $\tau $ est injective. Soit $f\in H'$ et $F=\ker f$.\\
+        Si $f\neq 0_{H'}, F\neq H$ et puisque $H=F\oplus F^\perp,F^\perp\neq \{0_H\}$.\\
+        Soit $x\in F^\perp,x\neq 0_H$, on a:
+        \begin{itemize}
+            \item $F$ est un hyperplan et $x\notin F$ dans $H=F\oplus x\K$
+            \item $l_x(x)=\norme{x}_H^2\neq 0$, soit $\lambda \in \K$ tel que $f(x)=\lambda l_x(x)$.
+            \item Comme $x\in F^\perp=\{y\in H,\forall z\in F, \sca{y,z}=0\}$, la forme $l_x$ s'annule sur $F$.
+        \end{itemize}
+        Finalement, $f$ et $\lambda l_x$ coïncident sur $F$ (elles sont nulles) et en $x$, elles sont donc égales. D'où $f=\lambda l_x=\tau(\overline{\lambda}x)$.\\
+        Donc $H'=\Im (\tau)$
+    \end{proof}
+
+    \begin{cor}{}{}
+        Tout espace de Hilbert est réflexif. C'est à dire que
+        \[\fundfto{J}{H}{H''}{x}{\fundfto{J(x)}{H'}{\K}{l}{l(x)}}\]
+        est une bijection isométrique
+    \end{cor}
+
+    \begin{proof}
+        On sait déjà que $J$ est isométrique. Soit $\varphi\in H''$. L'application $\fundf{H}{\K}{x}{\overline{\varphi(l_x)}}$ est une forme linéaire continue sur $H$. Par le théorème de Riesz, il existe un unique $y\in H$ tel que:
+        \[\forall x\in H, \varphi(l_x)=\overline{l_y(x)}=\sca{y,x}=l_x(y)\]
+        Donc:
+        \[\forall f\in H'\text{ on a }\varphi(f)=f(y)\]
+        Donc $\varphi=J(y)$. Donc $J$ est surjective
+    \end{proof}
+
+    \begin{cor}{Convergence faible et faible* dans un Hilbert}{}
+        Soit $H$ un espace de Hilbert, $(x_n)_\nN$ une suite de $H$ et $x\in H$. Sont équivalents:
+        \begin{enumerate}
+            \item $(x_n)_\nN$ converge faiblement vers $x$.
+            \item $(l_{x_n})_\nN$ converge faible* vers $l_x$.
+            \item $\forall y\in H$, la suite $\left(\sca{x_n,y}\right)_\nN$ converge vers $\sca{x,y}$.
+        \end{enumerate}
+    \end{cor}
+
+    \begin{proof}
+        Laisser en exercice
+    \end{proof}
+
+    \begin{cor}{Corollaire de Riesz + Banach-Alaoglu}{}
+        Toute suite bornée dans un espace de Hilbert admet une sous-suite qui converge faiblement.
+    \end{cor}
+
+    \subsection*{Les espaces $l^p$ et $L^p$}
+
+    \subsubsection*{Inégalités de Hôlder et Minkowski}
+
+    Soit $(X,\Ar,\mu)$ un espace mesuré et $p,q\in ]1,+\infty[$ conjugués:
+    \[\frac{1}{q}+\frac{1}{p}=1\]
+    Pour tout $\funto{f,g}{X}{\R_+}$ mesurables, on a: Inégalité de Hölder:
+    \[\int_X fg\,d\mu \le \left(\int_X f^p \,d\mu\right)^{\frac{1}{p}}\left(\int_X g^p\,d\mu\right)^{\frac{1}{q}}\]
+    Inégalité de Minkowski:
+    \[\left(\int_X (f+g)^p\,d\mu\right)^{\frac{1}{p}}\le \left(\int_X f^p\,d\mu\right)^{\frac{1}{p}}\left(\int_X g^p\,d\mu\right)^{\frac{1}{p}}\]
+
+    \begin{proof}
+        cf poly du cours de M1 2024/2025
+    \end{proof}
+
+    \subsubsection*{Les espaces $l^p$}
+
+    Soit $x=(x_n)_n\in \K^\N$ et $p\in [1,\infty]$. On définit $\norme{x}_p\in [0,\infty]$ par:
+    \[\norme{x}_p=\cho{\sup \{|x_n|,n\in \N\}\text{ pour $p=+\infty$}\\ \left(\sum_{k=0}^{n}|x_k|^p\right)^{\frac{1}{p}}\text{ pour $p<+\infty$}}\]
+    On note $l^p(\N,\K)$ ou juste $l^p$ le sous-ensemble des suites $x=(x_n)_\nN$ tel que $\norme{x}_p<+\infty$.\\
+    Les inégalités de Hölder et Minkowski, appliquées à la mesure de comptage (en prolongeant à $p=1$ et $p=\infty$) donne, pour $p,q\in [1,+\infty],\frac{1}{p}+\frac{1}{q}=1$; $x,z\in l^p$ et $y\in l^q$\\
+    Hölder: $x \cdot y\in l^1$ et $\norme{x\cdot y}_{l^1}\le \norme{x}_p \norme{y}_q$\\
+    Minkowski: $\norme{x+z}_p\le \norme{x}_p +\norme{z}_p$
+
+    \begin{tm}{}{}
+        (Rappel) Pour $p\in [0,+\infty]$
+        \begin{enumerate}
+            \item $l^p(\N,\K)$ un \sev de $\K^\N$
+            \item L'application $x\mapsto \norme{x}_p$ est une norme sur $l^p(\N,\K)$
+            \item $l^p(\N,\K)$ muni de la norme $\norme{\cdot}_p$ est un espace de Banach.
+        \end{enumerate}
+    \end{tm}
+
+    \begin{proof}
+        Laisser en exercice
+    \end{proof}
+
+    \begin{prop}{}{}
+        Soit $a,b\in [1,\infty]$ tels que $a<b$ alors $l^a(\N,\K)\subset l^b(\N,\K)$ et pour tout $x\in l^a(\N,\K)$, on a $\norme{x}_b\le \norme{x}_a$. Donc l'inclusion est continue et de norme $1$.
+    \end{prop}
+
+    \begin{proof}
+        C'est vraie dans $\K^n$, ou de façon équivalente pour $x\in \K^\N$ dont tous les termes sont nuls à partir du rang $n-1$. En effet, notons $(l_k)_{k\in \llbracket 1,n\rrbracket}$ la base canonique de $\K^n$:
+        \begin{itemize}
+            \item Si $a=1,x=\sum_{k=1}^{n}x_k l_k,\norme{x}_b\le \sum_{k=1}^{n}|x_k|\norme{l_k}_b=\norme{x}_1$ puisque $\norme{l_k}_b=1$
+            \item En général, soit $c=\frac{b}{a}\in ]1,+\infty[$ et $y=(|x_1|^\frac{1}{k},\ldots,|x_k|^\frac{1}{k})$ de sorte que $\norme{y}_a^a=\norme{x}_1$ et $\norme{y}_b^a=\norme{x}_c$. Le résultat précédent assure que $\norme{x}_c\le \norme{x}_1$ et permet de conclure.
+        \end{itemize}
+        Le cas de $\K^\N$: On considère $\fundfto{p_n}{\K^\N}{\K^n}{(x_k)_{k\in \N}}{(x_0,\ldots,x_{n-1})}$.\\
+        Pour $x\in \K^\N$ et $\nN, \norme{\mu_n(x)}_b\le \norme{p_n(x)}_a$. En passant à la limite quand $n\to \infty$, on trouve $\norme{x}_p\le \norme{x}_a$.\\
+        De plus pour la suite dont tous les termes sont nuls sauf le premier, on a: $\norme{l_0}_a=1=\norme{l_0}_b$. Donc l'inclusion $l^a\subset l^b$ est continue de norme $1$.
+    \end{proof}
+
+    On note $K(\N,\K)$ le \sev de $\K^\N$ constitué des suites dont tous les termes sont nuls à partir d'un certain rang et $\K_0^\N$ le \sev des suites qui convergent vers $0$.
+
+    \begin{prop}{}{}
+        Pour tout $p\in [1,+\infty[,K(\N,\K)$ est dense dans $l^p$ et l'adhérence de $K(\N,\K)$ dans $l^\infty(\N,\K)$ est $\K_0^\N$.
+    \end{prop}
+
+    \begin{proof}
+        Laisser en exercice
+    \end{proof}
+
+    \begin{re}{}{}
+        Une conséquence immédiate de cette proposition est que $l^p(\N,\K)$ est séparable si $p<+\infty$: Le sous-ensemble de $K(\N,\K)$ constitué des suites dont tous les termes sont dans $\Q+i \Q$ (Si $\K=\C$) ou $Q$ (Si $\K=\R$) est dénombrable et dense dans $l^p$.\\
+        On peut montrer que $l^\infty$ n'est pas séparable (Exo 13 TD7)
+    \end{re}
+
+    \begin{re}{}{}
+        Pour $L^p$, on a la séparabilité si $\mu$ est $\sigma$-finie.
+    \end{re}
+
+    \begin{prop}{}{}
+        Soit $1\le p\le +\infty$ et $q$ son exposant conjugué ($\frac{1}{p}+\frac{1}{q}=1$) pour $y=(y_n)_\nN\in l^q$, la forme linéaire $\funto{\varphi_y}{x=(x_n)_\nN\in l^p}{\sum_{n=0}^{+\infty}x_n y_n}$ est continue.\\
+        L'application $\fundfto{\tau}{l^q}{(l^p)'}{y}{\varphi_y}$ est linéaire et isométrique $\norme{\varphi_y}_{(l^p)'}=\norme{y}_q$
+    \end{prop}
+
+    \begin{re}{}{}
+        On a le même théorème dans $L^p(X,\mu)$ où pour $g\in L^q(X)$ et $f\in L^p(X)$,
+        \[\varphi_g(f)=\int_x fg\, d\mu\]
+    \end{re}
+
+    \begin{proof}
+        Soit $y=(y_n)_\nN\in l^q$ et $x=(x_n)_\nN\in l^p$, on a
+        \[\varphi_y(x)=\left|\sum_{n=0}^{+\infty}x_n y_n\right|\le \sum_{n=0}^{+\infty}\left| x_n y_n\right|=\norme{xy}_1\le \norme{x}_p \norme{y}_q\]
+        En particulier, $\sum x_n y_n$ est normalement convergente donc convergente dans $\K$, $\varphi_y$ est continue et $\norme{\varphi_y}_{(l^p)'}\le \norme{y}_q$.\\
+        L'application $\tau$ est évidemment linéaire. Montrons que qu'elle est isométrique.\\
+        On suppose $y\neq 0_A$ et que $p\in ]1,+\infty[$ (Les cas extrêmes se font de façon analogue).\\
+        Soit $z=(z_n)_\nN$ donnée par: $z_n=\cho{\frac{\overline{y_n}}{\left| y_n \right| }\left| y_n\right|^{q-1}\text{ si $y_n\neq 0$}\\ 0\text{ si }y_n =0}$\\
+        Puisque $q=p(q-1)$ pour tout $n\in \N, \left|z_n \right|^p=\left| y_n \right|^q$ donc $z\in l^p$ et $\norme{z}_p=\norme{y}^{\frac{q}{p}_q}$. \\ 
+        De plus, $\left| \varphi_y(z)\right|=\sum_{n=0}^{+\infty} \frac{\overline{y_n}y_n}{\left|y_n\right|}\left|y_n\right|^{q-1}=\sum_{n=0}^{\infty} \left| y_n\right|^q$.\\
+        Comme $\left|\varphi_y (z)\right| =\norme{\varphi_y}_{(l^p)'}=\norme{z}_p$, on a
+        \[\norme{y}_p^q\le \norme{\varphi_y}_{(l^p)'}\norme{y}_q^{\frac{q}{p}}\text{ et donc }\norme{\varphi_y}_{(l^p)'}\ge \norme{y}_q^{q-\frac{q}{p}}=\norme{y}_a\] 
+    \end{proof}
+
+    \begin{tm}{Théorème de Dualité}{}
+        Soit $1\le p<+\infty$ et $q$ l'exposant conjugué $\frac{1}{p}+ \frac{1}{q}=1$. L'application $\fundfto{\tau}{l^q}{(l^p)'}{y}{\varphi_y}$ est un isomorphisme isométrique
+    \end{tm}
+
+    \begin{re}{}{}
+        On a le même résultat dans $L^p(X)$ à condition que $\mu$ soit $\sigma$-finie.
+    \end{re}
+
+    \begin{re}{}{}
+        Le théorème est faux pour $p=+\infty$. Dans ce cas, l'image de $l^1$ par $\tau$ est strictement plus petite que $(l^\infty)'$
+    \end{re}
+
+    \begin{proof}
+        Il reste à voir que $\tau$ est surjective auquel cas elle sera bi-continue. On se place dans le cas $p>1$.\\
+        Soit $(l^k)_{k\in \N}$ la base canonique de $K(\N,\K)$. $l^k=(\delta_n^k)_{\nN}$. Soit $f\in (l^n)'$ non-nulle, si il existe $y\in l^q$ telle que $f=\varphi_y$, alors nécessairement $\forall k\in \N, f(l^k)=\varphi_y(l^k)=y_k$. On considère $y=(y_k)_{k\in \N}$ ainsi définie. Montrons que $y\in l^q$.\\
+        Pour $j\in \N$, soit $z^{j}=(z_n^j)_\nN, K(\N,\K), z^j=\sum_{n=0}^{j}\left| y_n\right|^{q_2}, \overline{y_n}\cdot l^n$.\\
+        On a \begin{align*}
+            \varphi(z^j)&=\varphi (\sum_{n=0}^{+\infty}\left|y_n\right|^{q-2}\overline{y_n}\cdot l^n)\\
+            &=\sum_{n=0}^{+\infty}\left|y_n\right|^{q-2}\overline{y_n}\varphi(l^n)=\sum_{n=0}^{+\infty}\left|y_n\right|^q
+        \end{align*}
+        \[\norme{z}_p= \left(\sum_{n=0}^{p}\left|y_n\right|^{(q-2)}\left|y_n\right|^p\right)^{\frac{1}{p}}=\left(\sum_{n=0}^{+\infty} \left|y_n\right|^q\right)^{\frac{1}{p}}\]
+        On en déduit
+        \[\left|\varphi(z^p)\right|=\sum_{n=0}^{+\infty}\left|y_n\right|\le \norme{\varphi}_p \norme{y^{q}}_p=\norme{\varphi}_p\left(\sum_{n=0}^{+\infty}\left|y_n\right|^q\right)^{\frac{1}{p}}\]
+        D'où
+        \[\norme{\varphi}_{(l^p)'}\le \left( \sum_{n=0}^{+\infty}\right)^{\frac{1}{q}}\]
+        On fait tendre $j\to \infty$ et on obtient $\norme{y}_q\le \norme{\varphi}_{(l^p)'}$ donc $y\in l^q$.\\
+        Puisque $\varphi$ et $\varphi_y$ coïncident sur les $l^k$ pour tout $k\in \N$, par linéarité elles coïncident sur $K(\N,\K)$ qui est dense dans $l^p$ puisque $p\neq \infty$. Par continuité, $\varphi=\varphi_y$
+    \end{proof}
+
+    \begin{cor}{}{}
+        Pour $1<p<+\infty$, $l^p$ est réflexif. Si $q$ est l'exposant conjugué, $1<q<\infty$:
+        \[\fundfto{J}{l^p}{(l^p)''}{x}{\fundfto{J(x)}{(l^p)'\cong l^q}{\K}{y}{\varphi_y(x)=\varphi_x(y)=\sum_{n=0}^{+\infty} x_n y_n}}\]
+        est un isomorphisme isométrique.
+    \end{cor}
+
+    \begin{proof}
+        Laisser en exercice
+    \end{proof}
+
+    \begin{cor}{}{}
+        Toute suite bornée dans $l^p$ pour $1<p<+\infty$ admet une sous-suite qui converge faiblement
+    \end{cor}
+
+    \begin{proof}
+        Laisser en exercice
+    \end{proof}
+
+    \begin{cor}{}{}
+        Soit $1\le p\le +\infty$ et $q$ l'exposant conjugué. Soit $(x^n)_{\nN}$ une suite de $l^p$ et $x\in l^p$. On considère les ennoncés:
+        \begin{enumerate}
+            \item $x_n \rightharpoonup x$
+            \item $\forall y\in l^q, \sum_{k=0}^{n} x_k y_k \underset{k\to \infty}{\longrightarrow} \sum_{k=0}^{\infty} x_k y_k$
+            \item $(\varphi_{x^n})\overset{*}{\longrightarrow} \varphi_x$
+        \end{enumerate}
+        On a:
+        \begin{itemize}
+            \item Pour $1<p<+\infty$: $(1)\iff (2)\iff (3)$
+            \item Pour $p=1$: $(1)\iff (2)$
+            \item Pour $p=+\infty$: $(2)\iff (3)$
+        \end{itemize}
+    \end{cor}
+
+    \begin{proof}
+        Laisser en exercice
+    \end{proof}
+\end{document}
