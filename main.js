@@ -1,8 +1,9 @@
 'use strict';
 
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, protocol, net } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { pathToFileURL } = require('url');
 const { scanFolder } = require('./lib/latex-notions');
 const { readSettings } = require('./lib/settings-parser');
 
@@ -12,6 +13,43 @@ let mainWindow = null;
 const state = {
   folder: null
 };
+
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'pdfview',
+    privileges: {
+      standard: false,
+      supportFetchAPI: true,
+      stream: true
+    }
+  }
+]);
+
+function decodePdfPath(url) {
+  const b64 = url.slice('pdfview:'.length).replace(/^\/+/, '');
+  return Buffer.from(b64, 'base64url').toString('utf8');
+}
+
+function registerPdfProtocol() {
+  protocol.handle('pdfview', async (request) => {
+    let filePath;
+    try {
+      filePath = decodePdfPath(request.url);
+    } catch (err) {
+      return new Response('Chemin invalide', { status: 400 });
+    }
+    if (!state.folder || !path.resolve(filePath).startsWith(path.resolve(state.folder))) {
+      return new Response('Accès refusé', { status: 403 });
+    }
+    try {
+      const response = await net.fetch(pathToFileURL(filePath));
+      const headers = { 'content-type': 'application/pdf' };
+      return new Response(response.body, { status: 200, headers });
+    } catch (err) {
+      return new Response('PDF introuvable', { status: 404 });
+    }
+  });
+}
 
 function getPrefsPath() {
   return path.join(app.getPath('userData'), 'prefs.json');
@@ -47,7 +85,8 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: false
+      sandbox: false,
+      plugins: true
     }
   });
 
@@ -63,6 +102,7 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  registerPdfProtocol();
   const prefs = loadPrefs();
   if (prefs.folder && fs.existsSync(prefs.folder)) {
     state.folder = prefs.folder;
@@ -150,33 +190,13 @@ ipcMain.handle('app:read-settings', async () => {
   };
 });
 
-ipcMain.handle('app:read-tex', async (_event, filePath) => {
+ipcMain.handle('app:pdf-url', async (_event, filePath) => {
   if (!filePath || typeof filePath !== 'string') {
     return { error: 'invalid-path' };
   }
-  if (!filePath.startsWith(state.folder || '')) {
+  if (!path.resolve(filePath).startsWith(path.resolve(state.folder || ''))) {
     return { error: 'path-outside-folder' };
   }
-  try {
-    return { content: fs.readFileSync(filePath, 'utf-8') };
-  } catch (err) {
-    return { error: err.message };
-  }
-});
-
-ipcMain.handle('app:read-pdf', async (_event, filePath) => {
-  if (!filePath || typeof filePath !== 'string') {
-    return { error: 'invalid-path' };
-  }
-  if (!filePath.startsWith(state.folder || '')) {
-    return { error: 'path-outside-folder' };
-  }
-  try {
-    const buffer = fs.readFileSync(filePath);
-    return {
-      data: buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)
-    };
-  } catch (err) {
-    return { error: err.message };
-  }
+  const b64 = Buffer.from(filePath, 'utf8').toString('base64url');
+  return { url: `pdfview:${b64}` };
 });

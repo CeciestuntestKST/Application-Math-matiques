@@ -21,7 +21,6 @@
   --vs-toolbar: #1f1f1f;
   --vs-canvas-bg: #313131;
   --vs-katex-text: #dcdcdc;
-  --zotero-white: #ffffff;
 }
 
 * {
@@ -48,7 +47,7 @@ html, body {
   display: none !important;
 }
 
-/* ---------- Activity bar (icônes de sections) ---------- */
+/* ---------- Activity bar ---------- */
 
 #activity-bar {
   width: 48px;
@@ -175,6 +174,7 @@ html, body {
   text-align: center;
   flex-shrink: 0;
   color: var(--vs-accent);
+  font-size: 10px;
 }
 
 .item .item-label {
@@ -251,7 +251,8 @@ html, body {
   font-weight: normal;
 }
 
-#empty-state code {
+#empty-state code,
+#notions-empty-open code {
   background: var(--vs-input-bg);
   padding: 1px 5px;
   border-radius: 3px;
@@ -260,7 +261,8 @@ html, body {
   color: var(--vs-text-bright);
 }
 
-#empty-state .hint {
+#empty-state .hint,
+#notions-empty-open .hint {
   font-size: 11px;
   max-width: 460px;
 }
@@ -277,29 +279,9 @@ html, body {
   min-height: 36px;
 }
 
-.toolbar button {
-  padding: 4px 9px;
-  border: 1px solid transparent;
-  border-radius: 3px;
-  background: transparent;
-  color: var(--vs-text);
-  cursor: pointer;
-  font-size: 12px;
-  line-height: 1.2;
-}
-
-.toolbar button:hover {
-  background: var(--vs-sidebar-hover);
-}
-
-.toolbar button.toggled {
-  background: var(--vs-selected);
-  color: var(--vs-text-bright);
-}
-
 .toolbar input[type="search"] {
   flex: 1;
-  max-width: 300px;
+  max-width: 400px;
   padding: 4px 8px;
   border: 1px solid var(--vs-border-strong);
   border-radius: 3px;
@@ -323,15 +305,13 @@ html, body {
   flex: 1;
 }
 
-#pdf-title {
+#notions-count {
   font-size: 11px;
   color: var(--vs-text-dim);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-/* ---------- PDF viewer ---------- */
+/* ---------- Lecteur PDF natif ---------- */
 
 .reader {
   flex: 1;
@@ -341,204 +321,112 @@ html, body {
 }
 
 #reader-cours {
-  flex-direction: row;
-}
-
-#pdf-outline-panel {
-  width: 240px;
-  min-width: 240px;
-  background: var(--vs-bg-panel);
-  border-right: 1px solid var(--vs-border);
-  display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
-#pdf-outline-header {
-  padding: 9px 12px 6px;
-  font-size: 11px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: var(--vs-text-bright);
-  border-bottom: 1px solid var(--vs-border);
-}
-
-#pdf-outline-list {
+#pdf-frame {
   flex: 1;
-  overflow-y: auto;
-  list-style: none;
-  padding: 6px 0;
-}
-
-#pdf-outline-list li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 4px 12px;
-  cursor: pointer;
-  color: var(--vs-text);
-  font-size: 12px;
-}
-
-#pdf-outline-list li:hover {
-  background: var(--vs-sidebar-hover);
-  color: var(--vs-text-bright);
-}
-
-#pdf-outline-list li.active {
-  color: var(--vs-text-bright);
-  background: var(--vs-sidebar-active);
-  box-shadow: inset 2px 0 0 var(--vs-accent);
-}
-
-#pdf-outline-list .outline-label {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  flex: 1;
-}
-
-#pdf-outline-list .outline-page {
-  font-size: 10px;
-  color: var(--vs-text-dim);
-  flex-shrink: 0;
-}
-
-#pdf-outline-list .outline-empty {
-  color: var(--vs-text-dim);
-  font-style: italic;
-  cursor: default;
-  padding: 8px 12px;
-}
-
-.pdf-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.pdf-nav-group {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-#pdf-page-input {
-  width: 46px;
-  padding: 3px 4px;
-  border: 1px solid var(--vs-border-strong);
-  border-radius: 3px;
-  background: var(--vs-input-bg);
-  color: var(--vs-text-bright);
-  font-size: 12px;
-  text-align: center;
-  outline: none;
-}
-
-#pdf-page-input:focus {
-  border-color: var(--vs-focus);
-}
-
-#pdf-page-total {
-  font-size: 11px;
-  color: var(--vs-text-dim);
-}
-
-#pdf-zoom-value {
-  font-size: 11px;
-  color: var(--vs-text);
-  min-width: 44px;
-  text-align: center;
-}
-
-#pdf-container {
-  flex: 1;
-  overflow: auto;
-  background: var(--vs-canvas-bg);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 16px;
-  gap: 16px;
-}
-
-#pdf-container .page-wrap {
-  position: relative;
-  background: #ffffff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-#pdf-container .page-wrap canvas {
-  display: block;
+  border: none;
   width: 100%;
-  height: 100%;
+  background: var(--vs-canvas-bg);
 }
 
-#pdf-container .text-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  overflow: hidden;
-  line-height: 1;
-  text-size-adjust: none;
-  forced-color-adjust: none;
-  transform-origin: 0 0;
-  z-index: 2;
-  cursor: text;
-}
-
-#pdf-container .text-layer span {
-  position: absolute;
-  white-space: pre;
-  color: transparent;
-  transform-origin: 0 0;
-  font-family: sans-serif;
-}
-
-#pdf-container .text-layer span::selection {
-  background: rgba(42, 162, 201, 0.45);
-}
-
-#pdf-container .text-layer span:hover {
-  background: rgba(42, 162, 201, 0.15);
-  border-radius: 2px;
-}
-
-#pdf-container .page-wrap {
-  user-select: text;
-}
-
-#pdf-container .pdf-loading,
-#pdf-container .pdf-error {
+#pdf-error {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--vs-text-dim);
   font-style: italic;
   padding: 40px;
+  text-align: center;
 }
 
-/* ---------- Notions view ---------- */
+/* ---------- Notions : onglets ---------- */
 
 #reader-notions {
   flex-direction: column;
 }
 
-#notions-content {
+#notion-tabs {
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  padding: 4px 8px 0;
+  background: var(--vs-toolbar);
+  border-bottom: 1px solid var(--vs-border);
+  overflow-x: auto;
+}
+
+.notion-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 220px;
+  padding: 5px 8px;
+  border: 1px solid var(--vs-border);
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
+  background: var(--vs-bg-deep);
+  color: var(--vs-text-dim);
+  cursor: pointer;
+  user-select: none;
+}
+
+.notion-tab:hover {
+  color: var(--vs-text-bright);
+  background: var(--vs-sidebar-hover);
+}
+
+.notion-tab.active {
+  background: var(--vs-bg);
+  color: var(--vs-text-bright);
+  border-color: var(--vs-border-strong);
+}
+
+.notion-tab-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px;
+}
+
+.notion-tab-close {
+  border: none;
+  background: transparent;
+  color: var(--vs-text-dim);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+
+.notion-tab-close:hover {
+  color: #ff9d9d;
+}
+
+#notion-views {
   flex: 1;
   overflow-y: auto;
+  position: relative;
+}
+
+.notion-view {
+  display: none;
   padding: 20px 30px;
+}
+
+.notion-view.active {
+  display: block;
 }
 
 .notion {
   border: 1px solid var(--vs-border);
   border-radius: 6px;
-  margin-bottom: 14px;
   background: var(--vs-bg-panel);
   overflow: hidden;
+  max-width: 900px;
 }
 
 .notion-header {
@@ -559,11 +447,12 @@ html, body {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  flex-shrink: 0;
 }
 
 .notion-header .notion-title {
   font-weight: bold;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--vs-text-bright);
 }
 
@@ -571,13 +460,17 @@ html, body {
   margin-left: auto;
   font-size: 10px;
   color: var(--vs-text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .notion-body {
-  padding: 12px;
-  line-height: 1.6;
+  padding: 14px 16px;
+  line-height: 1.7;
   overflow-x: auto;
   color: var(--vs-katex-text);
+  font-size: 14px;
 }
 
 .notion-body .katex {
@@ -585,7 +478,7 @@ html, body {
 }
 
 .notion-body .katex-display {
-  margin: 10px 0;
+  margin: 12px 0;
 }
 
 .notion-body code.latex-error {
@@ -594,6 +487,27 @@ html, body {
   padding: 1px 4px;
   border-radius: 3px;
   font-size: 11px;
+}
+
+.notion-actions {
+  display: flex;
+  gap: 8px;
+  padding: 8px 12px;
+  border-top: 1px solid var(--vs-border);
+}
+
+.notion-actions button {
+  padding: 4px 10px;
+  border: 1px solid var(--vs-border-strong);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--vs-text);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.notion-actions button:hover {
+  background: var(--vs-sidebar-hover);
 }
 
 .notion-source-code {
@@ -607,24 +521,24 @@ html, body {
   color: var(--vs-text);
 }
 
-.notions-showing-source .notion-source-code {
+.notion.notions-showing-source .notion-source-code {
   display: block;
 }
 
-.notions-empty {
+#notions-empty-open {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   color: var(--vs-text-dim);
-  font-style: italic;
   text-align: center;
-  padding: 40px 0;
+  padding: 20px;
 }
 
-#notions-content .error {
-  color: #ff9d9d;
-  text-align: center;
-  padding: 30px;
-}
-
-/* ---------- Scrollbars (VS Code style) ---------- */
+/* ---------- Scrollbars ---------- */
 
 ::-webkit-scrollbar {
   width: 10px;

@@ -29,13 +29,13 @@ Voir le dossier [`exemple/`](exemple/) pour un modèle fonctionnel.
 ## Interface
 
 - **Thème sombre** façon VS Code / Zotero : barre d'icônes verticale à gauche (activity bar) pour basculer entre les sections, puis panneau latéral (liste du dossier) et zone de lecture.
-- **Cours** : réservée aux **PDF uniquement** (les fichiers `.tex` non compilés n'y apparaissent pas ; ils servent uniquement à l'extraction des notions). Lecteur PDF complet : sommaire/chapitres cliquable sur le côté (outline du PDF), navigation première/précédente/suivante/dernière page, saisie directe du numéro de page, zoom avant/arrière, ajustement à la largeur (par défaut), page courante suivie au défilement et surlignée dans le sommaire.
-- **Notions** : toutes les notions de tous les cours, regroupées par environnement, compilées en LaTeX (KaTeX) avec les macros de `settings.tex`. Barre de recherche, bouton **Copier le code LaTeX** (copie les notions filtrées) et bascule **Code source** pour voir le LaTeX brut de chaque notion.
+- **Cours** : réservée aux **PDF uniquement** (les fichiers `.tex` non compilés n'y apparaissent pas ; ils servent uniquement à l'extraction des notions). Le lecteur est le **viewer PDF natif de Chromium** embarqué dans Electron : sélection/copie de texte native, zoom, sommaire, recherche dans le document, rotation, impression… Servi via un protocole interne sécurisé (`pdfview:`) qui n'autorise que les fichiers du dossier sélectionné.
+- **Notions** : un **répertoire** de toutes les notions de tous les cours (groupées par cours, filtrables par recherche). Les notions ne s'affichent plus toutes en même temps : on clique sur une notion pour l'ouvrir, plusieurs peuvent être ouvertes simultanément (une par onglet, fermables par ×), chaque onglet affiche la notion compilée en LaTeX (KaTeX) avec les macros de `settings.tex`, un bouton **Copier le code LaTeX** et une bascule **Code source**.
 
 ## Architecture (pensée pour évoluer)
 
 ```
-main.js                 Processus principal Electron : fenêtre, IPC, préférences (userData/prefs.json)
+main.js                 Processus principal : fenêtre, IPC, préférences, protocole pdfview: (PDF natif)
 preload.js              Pont sécurisé contextIsolation (window.api)
 lib/
   settings-parser.js     Lecture/parsing de settings.tex (macros, environnements) — Node pur, testable

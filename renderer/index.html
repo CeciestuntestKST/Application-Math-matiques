@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; script-src 'self'; font-src 'self'; worker-src 'self' blob:; connect-src 'self' blob: data:" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; frame-src pdfview:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; script-src 'self'; font-src 'self'; worker-src 'self' blob:; connect-src 'self' blob: data:" />
   <title>Application Mathématiques</title>
   <link rel="stylesheet" href="../vendor/katex/katex.min.css" />
   <link rel="stylesheet" href="styles.css" />
@@ -43,46 +43,26 @@
         <p class="hint">La section Cours affiche uniquement les PDF. Les notions sont détectées via les environnements <code>\begin{Nom}{Titre}...\end{Nom}</code>.</p>
       </div>
       <div id="reader-cours" class="reader hidden">
-        <div id="pdf-outline-panel">
-          <div id="pdf-outline-header">Sommaire</div>
-          <ul id="pdf-outline-list"></ul>
-        </div>
-        <div class="pdf-main">
-          <div id="pdf-toolbar" class="toolbar">
-            <button id="pdf-first" title="Première page">⏮</button>
-            <button id="pdf-prev" title="Page précédente">◀</button>
-            <span class="pdf-nav-group">
-              <input id="pdf-page-input" type="number" min="1" value="1" />
-              <span id="pdf-page-total">/ 1</span>
-            </span>
-            <button id="pdf-next" title="Page suivante">▶</button>
-            <button id="pdf-last" title="Dernière page">⏭</button>
-            <span class="toolbar-sep"></span>
-            <button id="pdf-zoom-out" title="Zoom arrière">−</button>
-            <span id="pdf-zoom-value" title="Niveau de zoom">100 %</span>
-            <button id="pdf-zoom-in" title="Zoom avant">+</button>
-            <button id="pdf-fit-width" class="toggled" title="Ajuster à la largeur de la page">⇔</button>
-            <span class="toolbar-sep"></span>
-            <button id="pdf-toggle-outline" class="toggled" title="Afficher / masquer le sommaire">☰ Sommaire</button>
-            <span class="toolbar-spacer"></span>
-            <span id="pdf-title"></span>
-          </div>
-          <div id="pdf-container"></div>
-        </div>
+        <iframe id="pdf-frame" title="Lecteur PDF" hidden></iframe>
+        <div id="pdf-error" class="pdf-error hidden"></div>
       </div>
       <div id="reader-notions" class="reader hidden">
         <div id="notions-toolbar" class="toolbar">
-          <input id="notions-search" type="search" placeholder="Rechercher une notion…" />
+          <input id="notions-search" type="search" placeholder="Rechercher une notion (titre, cours, environnement)…" />
           <span class="toolbar-spacer"></span>
-          <button id="btn-copy-latex" title="Copier le code LaTeX">Copier le code LaTeX</button>
-          <button id="btn-toggle-source" title="Afficher / masquer le code source">Code source</button>
+          <span id="notions-count"></span>
         </div>
-        <div id="notions-content"></div>
+        <div id="notion-tabs" class="hidden"></div>
+        <div id="notion-views"></div>
+        <div id="notions-empty-open" class="hidden">
+          <div class="empty-icon">∑</div>
+          <p>Cliquez sur une notion dans la liste à gauche pour l'ouvrir ici.</p>
+          <p class="hint">Plusieurs notions peuvent être ouvertes en même temps, une par onglet.</p>
+        </div>
       </div>
     </main>
   </div>
   <script src="../vendor/katex/katex.min.js"></script>
-  <script src="../vendor/pdfjs/pdf.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

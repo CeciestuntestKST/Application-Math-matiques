@@ -8,6 +8,6 @@ contextBridge.exposeInMainWorld('api', {
   scanFolder: () => ipcRenderer.invoke('app:scan-folder'),
   readSettings: () => ipcRenderer.invoke('app:read-settings'),
   readTex: (filePath) => ipcRenderer.invoke('app:read-tex', filePath),
-  readPdf: (filePath) => ipcRenderer.invoke('app:read-pdf', filePath),
+  getPdfUrl: (filePath) => ipcRenderer.invoke('app:pdf-url', filePath),
   platform: process.platform
 });
