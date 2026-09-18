@@ -1,0 +1,419 @@
+:root {
+  --zotero-bg: #f5f5f5;
+  --zotero-sidebar: #ececec;
+  --zotero-border: #d6d6d6;
+  --zotero-text: #333333;
+  --zotero-text-light: #777777;
+  --zotero-accent: #29a2c9;
+  --zotero-accent-hover: #1e86ab;
+  --zotero-selected: #e2ecf0;
+  --zotero-white: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, "Segoe UI", "Lucida Grande", sans-serif;
+  font-size: 13px;
+  color: var(--zotero-text);
+  background: var(--zotero-white);
+  overflow: hidden;
+}
+
+#app {
+  display: flex;
+  height: 100vh;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ---------- Sidebar ---------- */
+
+#sidebar {
+  width: 240px;
+  min-width: 240px;
+  background: var(--zotero-sidebar);
+  border-right: 1px solid var(--zotero-border);
+  display: flex;
+  flex-direction: column;
+}
+
+#sidebar-header {
+  padding: 10px;
+  border-bottom: 1px solid var(--zotero-border);
+}
+
+#app-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: var(--zotero-text);
+}
+
+.app-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: var(--zotero-accent);
+  color: white;
+  border-radius: 4px;
+  font-size: 15px;
+}
+
+#btn-open-folder,
+#btn-rescan {
+  width: 100%;
+  padding: 5px 8px;
+  border: 1px solid var(--zotero-border);
+  border-radius: 4px;
+  background: var(--zotero-white);
+  color: var(--zotero-text);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+#btn-open-folder:hover,
+#btn-rescan:hover {
+  background: var(--zotero-selected);
+}
+
+#folder-display {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--zotero-text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#sections {
+  display: flex;
+  border-bottom: 1px solid var(--zotero-border);
+}
+
+.section {
+  flex: 1;
+  padding: 7px 0;
+  border: none;
+  background: transparent;
+  color: var(--zotero-text-light);
+  cursor: pointer;
+  font-size: 12px;
+  border-bottom: 2px solid transparent;
+}
+
+.section:hover {
+  color: var(--zotero-text);
+}
+
+.section.active {
+  color: var(--zotero-text);
+  border-bottom-color: var(--zotero-accent);
+  font-weight: bold;
+}
+
+#sidebar-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.list {
+  padding: 4px 0;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.item:hover {
+  background: var(--zotero-selected);
+}
+
+.item.active {
+  background: var(--zotero-selected);
+  font-weight: bold;
+}
+
+.item .item-icon {
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+  color: var(--zotero-accent);
+}
+
+.item .item-count {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--zotero-text-light);
+  padding-left: 8px;
+}
+
+.list-empty {
+  padding: 8px 10px;
+  color: var(--zotero-text-light);
+  font-size: 11px;
+  font-style: italic;
+}
+
+#sidebar-footer {
+  padding: 8px 10px;
+  border-top: 1px solid var(--zotero-border);
+}
+
+/* ---------- Content ---------- */
+
+#content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+#empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--zotero-text-light);
+  text-align: center;
+  padding: 20px;
+}
+
+.empty-icon {
+  font-size: 60px;
+  color: var(--zotero-border);
+  line-height: 1;
+}
+
+#empty-state h1 {
+  font-size: 20px;
+  color: var(--zotero-text);
+}
+
+#empty-state code {
+  background: var(--zotero-bg);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 11px;
+}
+
+#empty-state .hint {
+  font-size: 11px;
+  max-width: 420px;
+}
+
+/* ---------- Toolbar ---------- */
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--zotero-border);
+  background: var(--zotero-bg);
+  min-height: 34px;
+}
+
+.toolbar button {
+  padding: 4px 10px;
+  border: 1px solid var(--zotero-border);
+  border-radius: 4px;
+  background: var(--zotero-white);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.toolbar button:hover {
+  background: var(--zotero-selected);
+}
+
+.toolbar input[type="search"] {
+  flex: 1;
+  max-width: 300px;
+  padding: 4px 8px;
+  border: 1px solid var(--zotero-border);
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.toolbar input[type="range"] {
+  width: 120px;
+}
+
+.toolbar-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--zotero-border);
+}
+
+.toolbar-spacer {
+  flex: 1;
+}
+
+#pdf-title {
+  font-size: 11px;
+  color: var(--zotero-text-light);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- PDF viewer ---------- */
+
+.reader {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#pdf-container {
+  flex: 1;
+  overflow: auto;
+  background: #525659;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  gap: 16px;
+}
+
+#pdf-container canvas {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  background: white;
+}
+
+/* ---------- LaTeX / Notions views ---------- */
+
+.tex-view {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--zotero-white);
+}
+
+#notions-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 30px;
+}
+
+.notion {
+  border: 1px solid var(--zotero-border);
+  border-radius: 6px;
+  margin-bottom: 14px;
+  background: var(--zotero-white);
+  overflow: hidden;
+}
+
+.notion-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--zotero-bg);
+  border-bottom: 1px solid var(--zotero-border);
+}
+
+.notion-header .notion-env {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: var(--zotero-accent);
+  color: white;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.notion-header .notion-title {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.notion-header .notion-source {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--zotero-text-light);
+}
+
+.notion-body {
+  padding: 12px;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+.notion-body .katex-display {
+  margin: 10px 0;
+}
+
+.notion-source-code {
+  display: none;
+  border-top: 1px dashed var(--zotero-border);
+  background: #f8f8f8;
+  padding: 10px 12px;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 11px;
+  white-space: pre-wrap;
+  color: #444;
+}
+
+.notions-showing-source .notion-source-code {
+  display: block;
+}
+
+.notions-empty {
+  color: var(--zotero-text-light);
+  font-style: italic;
+  text-align: center;
+  padding: 40px 0;
+}
+
+#notions-content .error {
+  color: #c0392b;
+  text-align: center;
+  padding: 30px;
+}
+
+/* ---------- Scrollbars ---------- */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c4c4c4;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

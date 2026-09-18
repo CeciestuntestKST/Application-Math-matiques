@@ -1,0 +1,48 @@
+{
+  "name": "application-mathematiques",
+  "productName": "Application Mathématiques",
+  "version": "0.1.0",
+  "description": "Application PC hors-ligne pour la lecture de cours et de notions mathématiques (agrégation externe)",
+  "main": "main.js",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "test": "node test/run-tests.js",
+    "dist": "electron-builder --dir",
+    "dist:installer": "electron-builder",
+    "postinstall": "node scripts/copy-vendor.js"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "dependencies": {
+    "katex": "^0.16.11",
+    "pdfjs-dist": "^3.11.174"
+  },
+  "build": {
+    "appId": "fr.agreg.maths.app",
+    "productName": "Application Mathématiques",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "vendor/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "mac": {
+      "target": "dmg"
+    }
+  }
+}
