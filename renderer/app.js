@@ -48,8 +48,12 @@
     pdfZoomScale: null,
     pdfFitWidth: true,
     pdfOutline: [],
-    pdfRendering: false,
-    pdfScrollTimer: null
+    pdfPages: [],
+    pdfBaseWidth: null,
+    appliedScale: null,
+    pdfScrollTimer: null,
+    pdfResizeTimer: null,
+    notionsDirty: true
   };
 
   function show(el, visible) {
@@ -302,6 +306,10 @@
     } else {
       show(els.readerCours, false);
       show(els.readerNotions, true);
+      if (state.notionsDirty) {
+        renderNotions();
+        state.notionsDirty = false;
+      }
     }
   }
 
@@ -328,6 +336,7 @@
     state.scan = result;
     state.activePdf = null;
     state.notions = flattenNotions(result);
+    state.notionsDirty = true;
     els.folderDisplay.textContent = result.folder;
     els.folderDisplay.title = result.folder;
     renderSidebar();
@@ -380,7 +389,7 @@
       state.pdf = pdf;
       els.pdfPageTotal.textContent = `/ ${pdf.numPages}`;
       await loadOutline(pdf);
-      await renderPdf();
+      await setupPdfPages();
     } catch (err) {
       loading.textContent = `Erreur PDF : ${err.message}`;
       loading.className = 'pdf-error';
@@ -474,48 +483,134 @@
     });
   }
 
-  async function currentScale() {
+  function currentScaleSync() {
     const pdf = state.pdf;
     if (!pdf) {
       return 1;
     }
     if (state.pdfFitWidth) {
-      const page = await pdf.getPage(1);
-      const base = page.getViewport({ scale: 1 });
       const available = els.pdfContainer.clientWidth - 32;
-      return Math.max(0.1, available / base.width);
+      return Math.max(0.1, available / (state.pdfBaseWidth || 1));
     }
-    return state.pdfZoomScale || 1;
+    return state.pdfZoomScale || state.appliedScale || 1;
   }
 
-  async function renderPdf(keepPage = true) {
+  async function setupPdfPages() {
     const pdf = state.pdf;
-    if (!pdf || state.pdfRendering) {
-      return;
-    }
-    state.pdfRendering = true;
-    const scale = await currentScale();
-    const targetPage = state.pdfCurrentPage;
-
     clearElement(els.pdfContainer);
+    state.pdfPages = [];
+    const firstPage = await pdf.getPage(1);
+    state.pdfBaseWidth = firstPage.getViewport({ scale: 1 }).width;
     for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
       const page = await pdf.getPage(pageNum);
+      const base = page.getViewport({ scale: 1 });
+      const wrapper = document.createElement('div');
+      wrapper.className = 'page-wrap';
+      wrapper.dataset.pageNum = String(pageNum);
+      els.pdfContainer.appendChild(wrapper);
+      state.pdfPages.push({
+        pageNum,
+        el: wrapper,
+        baseWidth: base.width,
+        baseHeight: base.height,
+        canvas: null,
+        renderedScale: null,
+        rendering: false
+      });
+    }
+    await applyScale(currentScaleSync(), { keepPage: false });
+  }
+
+  async function applyScale(scale, { keepPage = true } = {}) {
+    const pages = state.pdfPages;
+    const container = els.pdfContainer;
+    const prevRec = pages[state.pdfCurrentPage - 1];
+    let ratio = 0;
+    if (keepPage && prevRec && prevRec.el.offsetHeight > 0) {
+      ratio = (container.scrollTop - prevRec.el.offsetTop) / prevRec.el.offsetHeight;
+    }
+    for (const rec of pages) {
+      rec.el.style.width = `${Math.floor(rec.baseWidth * scale)}px`;
+      rec.el.style.height = `${Math.floor(rec.baseHeight * scale)}px`;
+      if (rec.canvas && rec.renderedScale !== scale) {
+        rec.canvas.remove();
+        rec.canvas = null;
+      }
+    }
+    state.appliedScale = scale;
+    updateZoomLabel(scale);
+    await renderVisiblePages();
+    if (keepPage && prevRec) {
+      const clamped = Math.min(1, Math.max(0, ratio));
+      container.scrollTop = prevRec.el.offsetTop + prevRec.el.offsetHeight * clamped;
+    }
+  }
+
+  function computeVisibleRange() {
+    const container = els.pdfContainer;
+    const top = container.scrollTop;
+    const bottom = top + container.clientHeight;
+    let first = null;
+    let last = null;
+    for (const rec of state.pdfPages) {
+      const recTop = rec.el.offsetTop;
+      const recBottom = recTop + rec.el.offsetHeight;
+      if (recBottom >= top && recTop <= bottom) {
+        if (first === null) {
+          first = rec.pageNum;
+        }
+        last = rec.pageNum;
+      }
+    }
+    if (first === null) {
+      return { first: 1, last: 1 };
+    }
+    return { first, last };
+  }
+
+  async function renderVisiblePages() {
+    const pdf = state.pdf;
+    if (!pdf || state.pdfPages.length === 0) {
+      return;
+    }
+    const scale = state.appliedScale;
+    if (!scale) {
+      return;
+    }
+    const range = computeVisibleRange();
+    const first = Math.max(1, range.first - 1);
+    const last = Math.min(pdf.numPages, range.last + 1);
+    for (const rec of state.pdfPages) {
+      if (rec.canvas && (rec.pageNum < first - 2 || rec.pageNum > last + 2)) {
+        rec.canvas.remove();
+        rec.canvas = null;
+      }
+    }
+    for (let pageNum = first; pageNum <= last; pageNum++) {
+      await renderPage(pageNum, scale);
+    }
+  }
+
+  async function renderPage(pageNum, scale) {
+    const rec = state.pdfPages[pageNum - 1];
+    if (!rec || rec.rendering || (rec.canvas && rec.renderedScale === scale)) {
+      return;
+    }
+    rec.rendering = true;
+    try {
+      const page = await state.pdf.getPage(pageNum);
       const viewport = page.getViewport({ scale });
       const canvas = document.createElement('canvas');
       canvas.className = 'pdf-page-canvas';
-      canvas.dataset.pageNum = String(pageNum);
       canvas.width = Math.floor(viewport.width);
       canvas.height = Math.floor(viewport.height);
-      els.pdfContainer.appendChild(canvas);
-      const context = canvas.getContext('2d');
-      await page.render({ canvasContext: context, viewport }).promise;
+      rec.el.appendChild(canvas);
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+      rec.canvas = canvas;
+      rec.renderedScale = scale;
+    } finally {
+      rec.rendering = false;
     }
-
-    if (keepPage) {
-      goToPdfPage(targetPage, false);
-    }
-    updateZoomLabel(scale);
-    state.pdfRendering = false;
   }
 
   function updateZoomLabel(scale) {
@@ -533,23 +628,23 @@
       els.pdfPageInput.value = String(target);
     }
     els.pdfPageTotal.textContent = `/ ${pdf.numPages}`;
-    const canvas = els.pdfContainer.querySelector(`canvas[data-page-num="${target}"]`);
-    if (canvas) {
-      canvas.scrollIntoView({ block: 'start' });
-      els.pdfContainer.scrollTop -= 8;
+    const rec = state.pdfPages[target - 1];
+    if (rec) {
+      els.pdfContainer.scrollTop = rec.el.offsetTop - 8;
     }
     highlightOutlineEntry();
+    renderVisiblePages();
   }
 
   function updateVisiblePdfPage() {
     const container = els.pdfContainer;
     const center = container.scrollTop + container.clientHeight / 3;
-    const canvases = container.querySelectorAll('canvas.pdf-page-canvas');
-    for (const canvas of canvases) {
-      const top = canvas.offsetTop;
-      const bottom = top + canvas.offsetHeight;
+    const wraps = container.querySelectorAll('.page-wrap');
+    for (const wrap of wraps) {
+      const top = wrap.offsetTop;
+      const bottom = top + wrap.offsetHeight;
       if (center >= top && center < bottom) {
-        const pageNum = parseInt(canvas.dataset.pageNum || '1', 10);
+        const pageNum = parseInt(wrap.dataset.pageNum || '1', 10);
         if (pageNum !== state.pdfCurrentPage) {
           state.pdfCurrentPage = pageNum;
           els.pdfPageInput.value = String(pageNum);
@@ -676,19 +771,22 @@
   els.pdfZoomIn.addEventListener('click', () => {
     state.pdfFitWidth = false;
     els.pdfFitWidth.classList.remove('toggled');
-    state.pdfZoomScale = Math.min(4, (state.pdfZoomScale || 1) * 1.2);
-    renderPdf();
+    state.pdfZoomScale = Math.min(4, (state.pdfZoomScale || state.appliedScale || 1) * 1.2);
+    applyScale(state.pdfZoomScale);
   });
   els.pdfZoomOut.addEventListener('click', () => {
     state.pdfFitWidth = false;
     els.pdfFitWidth.classList.remove('toggled');
-    state.pdfZoomScale = Math.max(0.2, (state.pdfZoomScale || 1) / 1.2);
-    renderPdf();
+    state.pdfZoomScale = Math.max(0.2, (state.pdfZoomScale || state.appliedScale || 1) / 1.2);
+    applyScale(state.pdfZoomScale);
   });
   els.pdfFitWidth.addEventListener('click', () => {
     state.pdfFitWidth = !state.pdfFitWidth;
     els.pdfFitWidth.classList.toggle('toggled', state.pdfFitWidth);
-    renderPdf();
+    if (state.pdfFitWidth) {
+      state.pdfZoomScale = null;
+    }
+    applyScale(state.pdfFitWidth ? currentScaleSync() : state.pdfZoomScale);
   });
 
   els.pdfToggleOutline.addEventListener('click', () => {
@@ -701,17 +799,43 @@
     if (state.pdfScrollTimer) {
       clearTimeout(state.pdfScrollTimer);
     }
-    state.pdfScrollTimer = setTimeout(updateVisiblePdfPage, 80);
+    state.pdfScrollTimer = setTimeout(() => {
+      updateVisiblePdfPage();
+      renderVisiblePages();
+    }, 120);
   });
 
-  els.notionsSearch.addEventListener('input', renderNotions);
+  let notionsSearchTimer = null;
+  els.notionsSearch.addEventListener('input', () => {
+    state.notionsDirty = true;
+    if (state.section !== 'notions') {
+      return;
+    }
+    if (notionsSearchTimer) {
+      clearTimeout(notionsSearchTimer);
+    }
+    notionsSearchTimer = setTimeout(() => {
+      renderNotions();
+      state.notionsDirty = false;
+    }, 150);
+  });
   els.copyLatexBtn.addEventListener('click', copyNotionsLatex);
   els.toggleSourceBtn.addEventListener('click', toggleSource);
 
   window.addEventListener('resize', () => {
-    if (state.pdf && state.pdfFitWidth && state.section === 'cours') {
-      renderPdf();
+    if (!state.pdf || state.section !== 'cours') {
+      return;
     }
+    if (state.pdfResizeTimer) {
+      clearTimeout(state.pdfResizeTimer);
+    }
+    state.pdfResizeTimer = setTimeout(() => {
+      if (state.pdfFitWidth) {
+        applyScale(currentScaleSync());
+      } else {
+        renderVisiblePages();
+      }
+    }, 200);
   });
 
   /* ---------- Init ---------- */
@@ -725,7 +849,6 @@
     } else {
       renderSidebar();
     }
-    renderNotions();
   }
 
   init();
