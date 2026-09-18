@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; script-src 'self'; font-src 'self'; worker-src 'self' blob:; connect-src 'self' blob: data:" />
+  <title>Application Mathématiques</title>
+  <link rel="stylesheet" href="../vendor/katex/katex.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar">
+      <div id="sidebar-header">
+        <div id="app-title">
+          <span class="app-logo">∑</span>
+          <span class="app-name">Maths</span>
+        </div>
+        <button id="btn-open-folder" title="Sélectionner le dossier des cours">Ouvrir un dossier</button>
+        <div id="folder-display" title="">Aucun dossier sélectionné</div>
+      </div>
+      <nav id="sections">
+        <button class="section active" data-section="cours">Cours</button>
+        <button class="section" data-section="notions">Notions</button>
+      </nav>
+      <div id="sidebar-list">
+        <div id="cours-list" class="list active"></div>
+        <div id="notions-list" class="list"></div>
+      </div>
+      <div id="sidebar-footer">
+        <button id="btn-rescan" title="Re-scanner le dossier">↻ Actualiser</button>
+      </div>
+    </aside>
+    <main id="content">
+      <div id="empty-state">
+        <div class="empty-icon">∑</div>
+        <h1>Bienvenue</h1>
+        <p>Sélectionnez le dossier contenant vos cours (PDF), vos fichiers LaTeX et votre <code>settings.tex</code>.</p>
+        <p class="hint">Les notions sont détectées via les environnements <code>\begin{Nom}{Titre}...\end{Nom}</code>.</p>
+      </div>
+      <div id="reader-cours" class="reader hidden">
+        <div id="pdf-toolbar" class="toolbar hidden">
+          <button id="pdf-prev" title="Page précédente">◀</button>
+          <span id="pdf-page-num">1 / 1</span>
+          <button id="pdf-next" title="Page suivante">▶</button>
+          <span class="toolbar-sep"></span>
+          <label for="pdf-zoom">Zoom</label>
+          <input id="pdf-zoom" type="range" min="50" max="250" value="100" />
+          <span id="pdf-zoom-value">100 %</span>
+          <span class="toolbar-spacer"></span>
+          <span id="pdf-title"></span>
+        </div>
+        <div id="pdf-container"></div>
+        <div id="tex-course-view" class="tex-view hidden"></div>
+      </div>
+      <div id="reader-notions" class="reader hidden">
+        <div id="notions-toolbar" class="toolbar">
+          <input id="notions-search" type="search" placeholder="Rechercher une notion…" />
+          <span class="toolbar-spacer"></span>
+          <button id="btn-copy-latex" title="Copier le code LaTeX">Copier le code LaTeX</button>
+          <button id="btn-toggle-source" title="Afficher / masquer le code source">Code source</button>
+        </div>
+        <div id="notions-content"></div>
+      </div>
+    </main>
+  </div>
+  <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/pdfjs/pdf.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb}
+\input{settings}
+
+\begin{document}
+
+\section{Topologie des espaces vectoriels normés}
+
+\begin{definition}{Norme}{}
+Une application $\norme{\cdot} : E \to \R_+$ est une \textbf{norme} si
+\[
+\forall (x,y) \in E^2, \quad \norme{x+y} \leq \norme{x} + \norme{y}.
+\]
+\end{definition}
+
+\begin{theoreme}{Borel-Lebesgue}{}
+Un espace métrique est compact si et seulement s'il est complet et totalement borné.
+\end{theoreme}
+
+\begin{proposition}{Caractérisation séquentielle}{}
+Un ensemble $F$ est fermé si et seulement si toute suite d'éléments de $F$ convergente
+a sa limite dans $F$.
+\end{proposition}
+
+\begin{remarque}{Attention}{}
+La réciproque est fausse en général : $\ens{n \in \N}$ n'est pas fermé dans $\R$.
+\end{remarque}
+
+\section{Suites et séries}
+
+\begin{theoreme}{Accroissements finis}{}
+Si $f : [a,b] \to \R$ est continue sur $[a,b]$ et dérivable sur $]a,b[$, alors
+\[
+\exists c \in ]a,b[, \quad f'(c) = \frac{f(b)-f(a)}{b-a}.
+\]
+\end{theoreme}
+
+\end{document}
