@@ -516,27 +516,31 @@
         renderOptions.transform = [ratio, 0, 0, ratio, 0, 0];
       }
       await page.render(renderOptions).promise;
-      const textLayerDiv = pageDiv.querySelector('.textLayer');
-      const textContent = await page.getTextContent();
-      const textLayerViewport = page.getViewport({ scale: viewportScale });
-      textLayerDiv.innerHTML = '';
-      for (const item of textContent) {
-        if (!item.str) {
-          continue;
-        }
-        const tx = pdfjsLib.Util.transform(textLayerViewport.transform, item.transform);
-        const angle = Math.atan2(tx[1], tx[0]);
-        const style = `left:${tx[4]}px; top:${tx[5]}px; font-size:${Math.hypot(tx[2], tx[3])}px; font-family:monospace;`;
-        const span = document.createElement('span');
-        span.setAttribute('style', style);
-        if (angle) {
-          span.style.transform = `rotate(${angle}rad)`;
-        }
-        span.textContent = item.str;
-        textLayerDiv.appendChild(span);
-      }
       pageDiv.dataset.rendered = '1';
       pdfViewer.renderedPages.add(pageNum);
+      try {
+        const textLayerDiv = pageDiv.querySelector('.textLayer');
+        const textContent = await page.getTextContent();
+        const textLayerViewport = page.getViewport({ scale: viewportScale });
+        textLayerDiv.innerHTML = '';
+        for (const item of (textContent.items || [])) {
+          if (!item.str) {
+            continue;
+          }
+          const tx = pdfjsLib.Util.transform(textLayerViewport.transform, item.transform);
+          const angle = Math.atan2(tx[1], tx[0]);
+          const style = `left:${tx[4]}px; top:${tx[5]}px; font-size:${Math.hypot(tx[2], tx[3])}px; font-family:monospace;`;
+          const span = document.createElement('span');
+          span.setAttribute('style', style);
+          if (angle) {
+            span.style.transform = `rotate(${angle}rad)`;
+          }
+          span.textContent = item.str;
+          textLayerDiv.appendChild(span);
+        }
+      } catch (err) {
+        /* la couche texte est optionnelle, le canvas reste affiché */
+      }
     })();
     pdfViewer.pageJobs.set(pageNum, job);
     try {
@@ -548,10 +552,14 @@
 
   async function buildPdfPagePlaceholders() {
     clearElement(els.pdfView);
+    const firstPage = await pdfViewer.doc.getPage(1);
+    const baseViewport = firstPage.getViewport({ scale: pdfViewer.scale });
     for (let pageNum = 1; pageNum <= pdfViewer.pageCount; pageNum++) {
       const pageDiv = document.createElement('div');
       pageDiv.className = 'pdf-page';
       pageDiv.dataset.pageNum = String(pageNum);
+      pageDiv.style.width = `${Math.floor(baseViewport.width)}px`;
+      pageDiv.style.height = `${Math.floor(baseViewport.height)}px`;
       const canvas = document.createElement('canvas');
       canvas.width = 0;
       canvas.height = 0;
