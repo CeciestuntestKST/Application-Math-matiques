@@ -295,6 +295,11 @@ html, body {
   border-color: var(--vs-focus);
 }
 
+#notions-toolbar input[type="search"] {
+  flex: 0 0 220px;
+  padding: 3px 8px;
+}
+
 .toolbar-sep {
   width: 1px;
   height: 18px;
