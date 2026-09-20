@@ -4,6 +4,7 @@ const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { scanFolder } = require('./lib/latex-notions');
+const { flattenNotions } = require('./lib/notions-model');
 const { readSettings } = require('./lib/settings-parser');
 
 const isDev = process.argv.includes('--dev');
@@ -115,6 +116,7 @@ ipcMain.handle('app:scan-folder', async () => {
   }
   try {
     const scan = scanFolder(state.folder);
+    const notions = flattenNotions(scan);
     return {
       folder: scan.folder,
       settings: {
@@ -124,6 +126,7 @@ ipcMain.handle('app:scan-folder', async () => {
         environments: scan.settings.settings.environments
       },
       courses: scan.courses,
+      notions,
       pdfFiles: scan.pdfFiles
     };
   } catch (err) {

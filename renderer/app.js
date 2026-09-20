@@ -8,7 +8,6 @@
     rescanBtn: document.getElementById('btn-rescan'),
     folderDisplay: document.getElementById('folder-display'),
     coursList: document.getElementById('cours-list'),
-    notionsList: document.getElementById('notions-list'),
     emptyState: document.getElementById('empty-state'),
     readerCours: document.getElementById('reader-cours'),
     readerNotions: document.getElementById('reader-notions'),
@@ -27,6 +26,10 @@
     pdfOutlineList: document.getElementById('pdf-outline-list'),
     notionsSearch: document.getElementById('notions-search'),
     notionsCount: document.getElementById('notions-count'),
+    notionTitleFilterSel: document.getElementById('notion-title-filter'),
+    notionCourseFilterSel: document.getElementById('notion-course-filter'),
+    notionGrid: document.getElementById('notion-grid'),
+    notionGridMore: document.getElementById('notion-grid-more'),
     notionTabs: document.getElementById('notion-tabs'),
     notionViews: document.getElementById('notion-views'),
     notionsEmptyOpen: document.getElementById('notions-empty-open')
@@ -39,8 +42,13 @@
     notions: [],
     openNotions: [],
     activeNotionId: null,
-    notionFilter: ''
+    notionFilter: '',
+    notionTitleFilter: 'all',
+    notionCourseFilter: 'all',
+    notionsListRendered: 0
   };
+
+  const latexRenderCache = new Map();
 
   function show(el, visible) {
     el.classList.toggle('hidden', !visible);
@@ -273,11 +281,9 @@
 
   function renderSidebar() {
     clearElement(els.coursList);
-    clearElement(els.notionsList);
 
     if (!state.scan) {
       els.coursList.appendChild(buildEmptyItem('Sélectionnez un dossier'));
-      els.notionsList.appendChild(buildEmptyItem('Sélectionnez un dossier'));
       return;
     }
 
@@ -300,70 +306,134 @@
       });
     }
 
-    renderNotionsDirectory();
+    renderNotionsGrid();
   }
 
-  function notionMatchesFilter(notion) {
-    if (!state.notionFilter) {
-      return true;
+  function getFilteredNotions() {
+    const q = state.notionFilter;
+    const titleFilter = state.notionTitleFilter;
+    const courseFilter = state.notionCourseFilter;
+    return state.notions.filter((notion) => {
+      if (titleFilter === 'titled' && !notion.hasTitle) {
+        return false;
+      }
+      if (titleFilter === 'untitled' && notion.hasTitle) {
+        return false;
+      }
+      if (courseFilter !== 'all' && notion.course !== courseFilter) {
+        return false;
+      }
+      if (!q) {
+        return true;
+      }
+      return notion.title.toLowerCase().includes(q)
+        || notion.environmentDisplay.toLowerCase().includes(q)
+        || notion.course.toLowerCase().includes(q);
+    });
+  }
+
+  function getNotionCourses() {
+    const courses = new Set();
+    for (const notion of state.notions) {
+      courses.add(notion.course);
     }
-    const f = state.notionFilter;
-    return (
-      notion.title.toLowerCase().includes(f) ||
-      notion.environment.toLowerCase().includes(f) ||
-      (notion.environmentDisplay || '').toLowerCase().includes(f) ||
-      (notion.course || '').toLowerCase().includes(f)
-    );
+    return Array.from(courses).sort((a, b) => a.localeCompare(b, 'fr'));
   }
 
-  function renderNotionsDirectory() {
-    clearElement(els.notionsList);
-    if (state.notions.length === 0) {
-      els.notionsList.appendChild(buildEmptyItem('Aucune notion détectée'));
-      els.notionsCount.textContent = '';
+  function populateNotionCourseFilter() {
+    if (!els.notionCourseFilterSel) {
       return;
     }
-
-    const filter = state.notionFilter;
-    const courses = new Map();
-    for (const notion of state.notions) {
-      if (!notionMatchesFilter(notion)) {
-        continue;
-      }
-      if (!courses.has(notion.course)) {
-        courses.set(notion.course, []);
-      }
-      courses.get(notion.course).push(notion);
+    const previous = state.notionCourseFilter;
+    clearElement(els.notionCourseFilterSel);
+    const allOption = document.createElement('option');
+    allOption.value = 'all';
+    allOption.textContent = 'Toutes les matières';
+    els.notionCourseFilterSel.appendChild(allOption);
+    for (const course of getNotionCourses()) {
+      const opt = document.createElement('option');
+      opt.value = course;
+      opt.textContent = courseNameToTitle(course);
+      els.notionCourseFilterSel.appendChild(opt);
     }
-
-    let visible = 0;
-    if (courses.size === 0) {
-      els.notionsList.appendChild(buildEmptyItem('Aucun résultat'));
-    } else {
-      for (const [courseName, notions] of courses) {
-        const group = buildGroupHeader(courseName, notions.length);
-        els.notionsList.appendChild(group);
-        for (const notion of notions) {
-          visible++;
-          const isOpen = state.openNotions.some((n) => n.id === notion.id);
-          els.notionsList.appendChild(
-            buildListItem({
-              icon: isOpen ? '◉' : '•',
-              label: notion.title,
-              title: `${notion.environmentDisplay || notion.environment} — ${notion.title}`,
-              active: state.activeNotionId === notion.id,
-              onClick: () => openNotion(notion)
-            })
-          );
-        }
-      }
+    if (previous && Array.from(els.notionCourseFilterSel.options).some((o) => o.value === previous)) {
+      els.notionCourseFilterSel.value = previous;
     }
-    els.notionsCount.textContent = filter
-      ? `${visible} / ${state.notions.length} notions`
-      : `${state.notions.length} notions`;
   }
 
-  /* ---------- Sections ---------- */
+  function buildNotionCard(notion) {
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'notion-card';
+    card.dataset.notionId = notion.id;
+    const env = document.createElement('span');
+    env.className = 'notion-card-env';
+    env.textContent = notion.environmentDisplay;
+    const label = document.createElement('span');
+    label.className = 'notion-card-label';
+    label.textContent = notion.title;
+    const course = document.createElement('span');
+    course.className = 'notion-card-course';
+    course.textContent = courseNameToTitle(notion.course);
+    card.appendChild(env);
+    card.appendChild(label);
+    card.appendChild(course);
+    if (notion.proofs.length > 0) {
+      const proofBadge = document.createElement('span');
+      proofBadge.className = 'notion-card-proof-badge';
+      proofBadge.textContent = '✓';
+      proofBadge.title = 'Avec démonstration';
+      card.appendChild(proofBadge);
+    }
+    card.addEventListener('click', () => openNotion(notion));
+    return card;
+  }
+
+  function getUniqueNotions(notions) {
+    const seen = new Set();
+    const unique = [];
+    for (const notion of notions) {
+      if (seen.has(notion.id)) {
+        continue;
+      }
+      seen.add(notion.id);
+      unique.push(notion);
+    }
+    return unique;
+  }
+
+  function renderNotionsGrid() {
+    if (!els.notionGrid) {
+      return;
+    }
+    const filtered = getUniqueNotions(getFilteredNotions());
+    const visibleNotions = filtered.slice(0, state.notionsListRendered);
+    clearElement(els.notionGrid);
+    const frag = document.createDocumentFragment();
+    for (const notion of visibleNotions) {
+      frag.appendChild(buildNotionCard(notion));
+    }
+    els.notionGrid.appendChild(frag);
+    if (els.notionGridMore) {
+      const remaining = filtered.length - visibleNotions.length;
+      show(els.notionGridMore, remaining > 0);
+      if (remaining > 0) {
+        els.notionGridMore.textContent = `Afficher ${Math.min(200, remaining)} de plus (${remaining} restantes)`;
+      }
+    }
+    if (els.notionsCount) {
+      els.notionsCount.textContent = `${filtered.length} notions`;
+    }
+  }
+
+  function showMoreNotions() {
+    state.notionsListRendered += 200;
+    renderNotionsGrid();
+  }
+
+  function resetNotionsGridPagination() {
+    state.notionsListRendered = 200;
+  }
 
   function switchSection(section) {
     state.section = section;
@@ -371,7 +441,6 @@
       btn.classList.toggle('active', btn.dataset.section === section);
     }
     show(els.coursList, section === 'cours');
-    show(els.notionsList, section === 'notions');
     updateMainView();
   }
 
@@ -414,38 +483,18 @@
     }
     state.scan = result;
     state.activePdf = null;
-    state.notions = flattenNotions(result);
+    state.notions = Array.isArray(result.notions) ? result.notions : [];
     state.openNotions = [];
     state.activeNotionId = null;
+    latexRenderCache.clear();
+    populateNotionCourseFilter();
+    resetNotionsGridPagination();
     els.folderDisplay.textContent = result.folder;
     els.folderDisplay.title = result.folder;
     renderSidebar();
     renderNotionTabs();
+    renderNotionViews();
     updateMainView();
-  }
-
-  function flattenNotions(scan) {
-    const notions = [];
-    const displayMap = {};
-    if (scan.settings && Array.isArray(scan.settings.environments)) {
-      for (const env of scan.settings.environments) {
-        displayMap[env.name] = env.display;
-      }
-    }
-    const courses = Array.isArray(scan.courses) ? scan.courses : [];
-    for (const course of courses) {
-      const courseNotions = Array.isArray(course.notions) ? course.notions : [];
-      courseNotions.forEach((notion) => {
-        notions.push({
-          ...notion,
-          environmentDisplay: displayMap[notion.environment] || notion.environment,
-          course: course.name,
-          coursePath: course.path,
-          id: `${course.name}::${notion.environment}::${notion.index}`
-        });
-      });
-    }
-    return notions;
   }
 
   /* ---------- PDF viewer (pdf.js embarqué) ---------- */
@@ -1008,6 +1057,19 @@
 
   /* ---------- Notions : répertoire + onglets ---------- */
 
+  function findNotionsById(id) {
+    return state.notions.filter((n) => n.id === id);
+  }
+
+  function cachedLatexRender(key, render) {
+    if (latexRenderCache.has(key)) {
+      return latexRenderCache.get(key);
+    }
+    const value = render();
+    latexRenderCache.set(key, value);
+    return value;
+  }
+
   function openNotion(notion) {
     if (state.section !== 'notions') {
       switchSection('notions');
@@ -1019,7 +1081,7 @@
     state.activeNotionId = notion.id;
     renderNotionTabs();
     renderNotionViews();
-    renderNotionsDirectory();
+    renderNotionsGrid();
   }
 
   function closeNotion(id, event) {
@@ -1038,7 +1100,7 @@
     }
     renderNotionTabs();
     renderNotionViews();
-    renderNotionsDirectory();
+    renderNotionsGrid();
   }
 
   function renderNotionTabs() {
@@ -1062,10 +1124,108 @@
         state.activeNotionId = notion.id;
         renderNotionTabs();
         renderNotionViews();
-        renderNotionsDirectory();
       });
       els.notionTabs.appendChild(tab);
     }
+  }
+
+  function buildNotionActions(notion, card) {
+    const actions = document.createElement('div');
+    actions.className = 'notion-actions';
+
+    const copyBtn = document.createElement('button');
+    copyBtn.textContent = 'Copier le code LaTeX';
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(notionToLatex(notion));
+        copyBtn.textContent = '✓ Copié !';
+        setTimeout(() => {
+          copyBtn.textContent = 'Copier le code LaTeX';
+        }, 1500);
+      } catch (err) {
+        copyBtn.textContent = 'Échec de la copie';
+        setTimeout(() => {
+          copyBtn.textContent = 'Copier le code LaTeX';
+        }, 1500);
+      }
+    });
+    actions.appendChild(copyBtn);
+
+    const sourceToggle = document.createElement('button');
+    sourceToggle.textContent = 'Code source';
+    sourceToggle.addEventListener('click', () => {
+      card.classList.toggle('notions-showing-source');
+      sourceToggle.textContent = card.classList.contains('notions-showing-source')
+        ? 'Masquer le code'
+        : 'Code source';
+    });
+    actions.appendChild(sourceToggle);
+
+    return actions;
+  }
+
+  function buildNotionViewCard(notion) {
+    const macros = getSettingsMacros();
+    const card = document.createElement('div');
+    card.className = 'notion';
+
+    const header = document.createElement('div');
+    header.className = 'notion-header';
+    const env = document.createElement('span');
+    env.className = 'notion-env';
+    env.textContent = notion.environmentDisplay || notion.environment;
+    const title = document.createElement('span');
+    title.className = 'notion-title';
+    const fallbackTitle = notion.title && notion.title !== notion.environment
+      ? notion.title
+      : (notion.environmentDisplay || notion.environment).toLowerCase();
+    title.innerHTML = cachedLatexRender(`${notion.id}::title`, () => renderLatexText(fallbackTitle, macros));
+    const source = document.createElement('span');
+    source.className = 'notion-source';
+    source.textContent = notion.course || '';
+    header.appendChild(env);
+    header.appendChild(title);
+    header.appendChild(source);
+    card.appendChild(header);
+
+    const body = renderLatexBody(notion.body, macros);
+    card.appendChild(body);
+
+    card.appendChild(buildNotionActions(notion, card));
+
+    const sourceCode = document.createElement('pre');
+    sourceCode.className = 'notion-source-code';
+    sourceCode.textContent = notionToLatex(notion);
+    card.appendChild(sourceCode);
+
+    for (const proof of notion.proofs || []) {
+      card.appendChild(buildProofSection(proof));
+    }
+
+    return card;
+  }
+
+  function buildProofSection(proof) {
+    const macros = getSettingsMacros();
+    const section = document.createElement('details');
+    section.className = 'notion-proof';
+    const summary = document.createElement('summary');
+    summary.className = 'notion-proof-header';
+    const label = document.createElement('span');
+    label.className = 'notion-proof-label';
+    label.textContent = 'Démonstration';
+    summary.appendChild(label);
+    if (proof.hasTitle && proof.title) {
+      const proofTitle = document.createElement('span');
+      proofTitle.className = 'notion-proof-title';
+      proofTitle.textContent = proof.title;
+      summary.appendChild(proofTitle);
+    }
+    section.appendChild(summary);
+    const body = renderLatexBody(proof.body, macros);
+    body.classList.add('notion-proof-body');
+    section.appendChild(body);
+    return section;
   }
 
   function renderNotionViews() {
@@ -1075,76 +1235,18 @@
     if (!hasOpen) {
       return;
     }
-    const macros = getSettingsMacros();
+    const frag = document.createDocumentFragment();
     for (const notion of state.openNotions) {
       const view = document.createElement('div');
       view.className = 'notion-view' + (state.activeNotionId === notion.id ? ' active' : '');
       view.dataset.notionId = notion.id;
-
-      const card = document.createElement('div');
-      card.className = 'notion';
-
-      const header = document.createElement('div');
-      header.className = 'notion-header';
-      const env = document.createElement('span');
-      env.className = 'notion-env';
-      env.textContent = notion.environmentDisplay || notion.environment;
-      const title = document.createElement('span');
-      title.className = 'notion-title';
-      const fallbackTitle = notion.title && notion.title !== notion.environment
-        ? notion.title
-        : (notion.environmentDisplay || notion.environment).toLowerCase();
-      title.innerHTML = renderLatexText(fallbackTitle, macros);
-      const source = document.createElement('span');
-      source.className = 'notion-source';
-      source.textContent = notion.course || '';
-      header.appendChild(env);
-      header.appendChild(title);
-      header.appendChild(source);
-      card.appendChild(header);
-
-      const body = renderLatexBody(notion.body, macros);
-      card.appendChild(body);
-
-      const actions = document.createElement('div');
-      actions.className = 'notion-actions';
-      const copyBtn = document.createElement('button');
-      copyBtn.textContent = 'Copier le code LaTeX';
-      copyBtn.addEventListener('click', async () => {
-        try {
-          await navigator.clipboard.writeText(notionToLatex(notion));
-          copyBtn.textContent = '✓ Copié !';
-          setTimeout(() => {
-            copyBtn.textContent = 'Copier le code LaTeX';
-          }, 1500);
-        } catch (err) {
-          copyBtn.textContent = 'Échec de la copie';
-          setTimeout(() => {
-            copyBtn.textContent = 'Copier le code LaTeX';
-          }, 1500);
-        }
-      });
-      actions.appendChild(copyBtn);
-
-      const sourceToggle = document.createElement('button');
-      sourceToggle.textContent = 'Code source';
-      sourceToggle.addEventListener('click', () => {
-        card.classList.toggle('notions-showing-source');
-        sourceToggle.textContent = card.classList.contains('notions-showing-source')
-          ? 'Masquer le code'
-          : 'Code source';
-      });
-      actions.appendChild(sourceToggle);
-      card.appendChild(actions);
-
-      const sourceCode = document.createElement('pre');
-      sourceCode.className = 'notion-source-code';
-      sourceCode.textContent = notionToLatex(notion);
-      card.appendChild(sourceCode);
-
-      view.appendChild(card);
-      els.notionViews.appendChild(view);
+      const grouped = findNotionsById(notion.id);
+      for (const entry of grouped) {
+        view.appendChild(buildNotionViewCard(entry));
+      }
+      frag.appendChild(view);
     }
+    els.notionViews.appendChild(frag);
   }
 
   /* ---------- Events ---------- */
@@ -1161,8 +1263,31 @@
     if (searchTimer) {
       clearTimeout(searchTimer);
     }
-    searchTimer = setTimeout(renderNotionsDirectory, 120);
+    searchTimer = setTimeout(() => {
+      resetNotionsGridPagination();
+      renderNotionsGrid();
+    }, 120);
   });
+
+  if (els.notionTitleFilterSel) {
+    els.notionTitleFilterSel.addEventListener('change', () => {
+      state.notionTitleFilter = els.notionTitleFilterSel.value;
+      resetNotionsGridPagination();
+      renderNotionsGrid();
+    });
+  }
+
+  if (els.notionCourseFilterSel) {
+    els.notionCourseFilterSel.addEventListener('change', () => {
+      state.notionCourseFilter = els.notionCourseFilterSel.value;
+      resetNotionsGridPagination();
+      renderNotionsGrid();
+    });
+  }
+
+  if (els.notionGridMore) {
+    els.notionGridMore.addEventListener('click', showMoreNotions);
+  }
 
   /* ---------- Init ---------- */
 

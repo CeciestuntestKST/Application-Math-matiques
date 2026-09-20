@@ -15,6 +15,7 @@ const {
   scanFolder,
   listFiles
 } = require('../lib/latex-notions');
+const { flattenNotions } = require('../lib/notions-model');
 
 function makeTempFolder() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'maths-app-test-'));
@@ -221,7 +222,7 @@ test('parseSettings gère newtcbtheorem avec compteur partagé', () => {
   assert.strictEqual(settings.environments.find((e) => e.name === 'df').display, 'Définition');
 });
 
-test('extractAllNotions ignore les environnements non titrés', () => {
+test('extractAllNotions sépare les preuves des notions', () => {
   const source = [
     '\\begin{df}{Vraie notion}{}',
     '\\[ x\\in\\R \\]',
@@ -233,10 +234,11 @@ test('extractAllNotions ignore les environnements non titrés', () => {
     '\\end{proof}'
   ].join('\n');
   const notions = extractAllNotions(source, { environments: [{ name: 'df', display: 'Définition' }] });
-  assert.strictEqual(notions.length, 1);
+  assert.strictEqual(notions.length, 2);
   assert.strictEqual(notions[0].environment, 'df');
   assert.ok(notions[0].body.includes('pmatrix'));
   assert.ok(!notions[0].body.includes('Démonstration'));
+  assert.strictEqual(notions[1].environment, 'proof');
 });
 
 test('extractTitledEnvironments gère les étoiles et titres absents', () => {
@@ -278,6 +280,65 @@ test('stripComments préserve \\% et le texte', () => {
   assert.ok(!cleaned.includes('commentaire'));
 });
 
+test('flattenNotions numérote les notions anonymes et couple les preuves', () => {
+  const scan = {
+    settings: { environments: [{ name: 'df', display: 'Définition' }, { name: 'tm', display: 'Théorème' }] },
+    courses: [{
+      name: 'topologie',
+      path: '/tmp/topologie.tex',
+      notions: [
+        { environment: 'df', title: '', hasTitle: false, body: 'Corps.', position: 0 },
+        { environment: 'proof', title: '', hasTitle: false, body: 'Preuve A.', position: 10 },
+        { environment: 'df', title: 'Ouverts', hasTitle: true, body: 'Les ouverts.', position: 20 },
+        { environment: 'proof', title: 'Ouverts', hasTitle: true, body: 'Preuve B.', position: 30 },
+        { environment: 'df', title: '', hasTitle: false, body: 'Fermeture.', position: 40 }
+      ]
+    }]
+  };
+  const notions = flattenNotions(scan);
+  assert.strictEqual(notions.length, 3);
+  assert.strictEqual(notions[0].title, 'Définition 1');
+  assert.strictEqual(notions[2].title, 'Définition 2');
+  assert.strictEqual(notions[1].title, 'Ouverts');
+  assert.strictEqual(notions[1].hasTitle, true);
+  assert.strictEqual(notions[0].proofs.length, 1);
+  assert.ok(notions[0].proofs[0].body.includes('Preuve A'));
+  assert.strictEqual(notions[1].proofs.length, 1);
+  assert.ok(notions[1].proofs[0].body.includes('Preuve B'));
+  assert.strictEqual(notions[2].proofs.length, 0);
+  assert.ok(notions.every((n) => !n.isProof));
+  assert.ok(notions.every((n) => n.id));
+});
+
+test('flattenNotions fusionne les notions titrées de même nom, même entre matières', () => {
+  const scan = {
+    settings: { environments: [
+      { name: 'df', display: 'Définition' },
+      { name: 'tm', display: 'Théorème' }
+    ] },
+    courses: [
+      {
+        name: 'analyse',
+        path: '/tmp/analyse.tex',
+        notions: [
+          { environment: 'df', title: 'Connexité', hasTitle: true, body: 'V1.', position: 0 }
+        ]
+      },
+      {
+        name: 'topologie',
+        path: '/tmp/topologie.tex',
+        notions: [
+          { environment: 'tm', title: 'Connexité', hasTitle: true, body: 'V2.', position: 0 }
+        ]
+      }
+    ]
+  };
+  const notions = flattenNotions(scan);
+  assert.strictEqual(notions.length, 2);
+  assert.strictEqual(notions[0].id, notions[1].id);
+  assert.strictEqual(notions[0].id, 'titled::Connexité');
+});
+
 test('scanFolder extrait les notions du settings réel de l’exemple', () => {
   const repoExample = path.join(__dirname, '..', 'exemple');
   if (!fs.existsSync(path.join(repoExample, 'settings.tex'))) {
@@ -300,8 +361,15 @@ test('scanFolder extrait les notions du settings réel de l’exemple', () => {
   }
   assert.ok((envCounts.df || 0) > 200);
   assert.strictEqual(envCounts.array, undefined);
-  assert.strictEqual(envCounts.proof, undefined);
+  assert.ok((envCounts.proof || 0) > 100);
   assert.strictEqual(envCounts.tabular, undefined);
+  const notions = flattenNotions(scan);
+  assert.ok(notions.length > 1000);
+  assert.ok(notions.every((n) => n.id));
+  assert.ok(notions.every((n) => typeof n.title === 'string' && n.title.length > 0));
+  const proofCount = notions.reduce((acc, n) => acc + n.proofs.length, 0);
+  assert.ok(proofCount > 100);
+  assert.ok(notions.every((n) => !n.isProof));
 });
 
 console.log(`\n${passed} passed, ${failed} failed`);

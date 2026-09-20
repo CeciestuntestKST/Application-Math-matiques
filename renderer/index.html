@@ -29,7 +29,6 @@
       </div>
       <div id="sidebar-list">
         <div id="cours-list" class="list active"></div>
-        <div id="notions-list" class="list hidden"></div>
       </div>
       <div id="sidebar-footer">
         <button id="btn-rescan" title="Re-scanner le dossier">↻ Actualiser</button>
@@ -65,15 +64,25 @@
       <div id="reader-notions" class="reader hidden">
         <div id="notions-toolbar" class="toolbar">
           <input id="notions-search" type="search" placeholder="Rechercher une notion (titre, cours, environnement)…" />
+          <select id="notion-title-filter" title="Filtrer par nom">
+            <option value="all">Toutes les notions</option>
+            <option value="titled">Nommées</option>
+            <option value="untitled">Anonymes</option>
+          </select>
+          <select id="notion-course-filter" title="Filtrer par matière">
+            <option value="all">Toutes les matières</option>
+          </select>
           <span class="toolbar-spacer"></span>
           <span id="notions-count"></span>
         </div>
+        <div id="notion-grid"></div>
+        <button id="notion-grid-more" class="hidden"></button>
         <div id="notion-tabs" class="hidden"></div>
         <div id="notion-views"></div>
         <div id="notions-empty-open" class="hidden">
           <div class="empty-icon">∑</div>
-          <p>Cliquez sur une notion dans la liste à gauche pour l'ouvrir ici.</p>
-          <p class="hint">Plusieurs notions peuvent être ouvertes en même temps, une par onglet.</p>
+          <p>Cliquez sur une notion ci-dessus pour l'ouvrir ici.</p>
+          <p class="hint">Plusieurs notions peuvent être ouvertes en même temps, une par onglet. Les notions portant le même nom sont réunies dans un même onglet.</p>
         </div>
       </div>
     </main>
