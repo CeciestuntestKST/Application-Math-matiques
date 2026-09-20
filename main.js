@@ -1,6 +1,6 @@
 'use strict';
 
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { scanFolder } = require('./lib/latex-notions');
@@ -178,5 +178,17 @@ ipcMain.handle('app:read-tex', async (_event, filePath) => {
     return { content };
   } catch (err) {
     return { error: err.code || 'read-error' };
+  }
+});
+
+ipcMain.handle('app:open-external', async (_event, url) => {
+  if (typeof url !== 'string' || !/^https?:\/\//i.test(url)) {
+    return { error: 'invalid-url' };
+  }
+  try {
+    await shell.openExternal(url);
+    return { ok: true };
+  } catch (err) {
+    return { error: err.message };
   }
 });

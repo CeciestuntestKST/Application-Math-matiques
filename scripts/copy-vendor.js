@@ -15,6 +15,11 @@ const targets = [
     from: path.join(root, 'node_modules', 'pdfjs-dist', 'build'),
     to: path.join(vendorDir, 'pdfjs'),
     files: ['pdf.min.js', 'pdf.worker.min.js']
+  },
+  {
+    from: path.join(root, 'node_modules', 'pdfjs-dist', 'web'),
+    to: path.join(vendorDir, 'pdfjs'),
+    files: ['pdf_viewer.css']
   }
 ];
 

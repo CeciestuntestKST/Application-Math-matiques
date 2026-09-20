@@ -9,5 +9,6 @@ contextBridge.exposeInMainWorld('api', {
   readSettings: () => ipcRenderer.invoke('app:read-settings'),
   readTex: (filePath) => ipcRenderer.invoke('app:read-tex', filePath),
   readPdf: (filePath) => ipcRenderer.invoke('app:read-pdf', filePath),
+  openExternal: (url) => ipcRenderer.invoke('app:open-external', url),
   platform: process.platform
 });
