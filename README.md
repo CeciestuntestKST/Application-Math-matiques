@@ -55,6 +55,14 @@ Points d'extension prévus :
 - nouveau canal IPC : ajouter le `handle` dans `main.js` et l'exposer dans `preload.js` ;
 - nouvelle règle de détection des notions : tout est centralisé dans `lib/latex-notions.js` (fonctions `extractTitledEnvironments`, `discoverTitledEnvironments`, `extractAllNotions`).
 
+### Robustesse du parsing LaTeX
+
+`lib/settings-parser.js` lit un vrai fichier LaTeX : commentaires `%` (y compris en fin de ligne, `\%` préservé), `\newcommand`/`\renewcommand` (accolées ou non, `[n]` arguments), `\def` multi-lignes avec `#1`, macros numérotées (`\1`), `\DeclareMathOperator` (converti en `\mathop{\mathrm{…}}\nolimits` pour KaTeX), `\newtheorem` (avec compteur partagé `[…]`), `\newtcbtheorem` (avec options), `\newenvironment`.
+
+`lib/latex-notions.js` ignore les environnements non titrés (`array`, `proof`, `itemize`, `align*`, `tikzpicture`… via `NEVER_TITLED_ENVIRONMENTS`), gère les variantes étoilées (`qs*`), les titres absents, l'argument optionnel `\begin{df}[Titre]`, et nettoie les commentaires des cours avant extraction.
+
+`renderer/app.js` adapte les macros pour KaTeX : fallback pour `\Xint`/`\dashint` (TeX primitives `\setbox`/`\mathchoice` non supportées), neutralisation de `\label`/`\notag`, fallbacks `\eqref`/`\ref`/`\qed`. Le rendu des corps de notions gère `$$…$$`, `\[…\]`, `\begin{align*}…\end{align*}` (et `gather`, `equation`, `displaymath`), convertit les sauts `\\`, rend `itemize`/`enumerate` en listes HTML, `\textbf`/`\emph` en HTML, et affiche `tikzpicture`/`tabular`/`figure` en code brut.
+
 ## Empaquetage (plus tard)
 
 `electron-builder` est déjà configuré (`npm run dist` pour un test de dossier, `npm run dist:installer` pour un installateur NSIS / AppImage / dmg).

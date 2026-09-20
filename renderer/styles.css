@@ -480,6 +480,30 @@ html, body {
 .notion-body .katex-display {
   margin: 12px 0;
 }
+.notion-body p {
+  margin: 8px 0;
+}
+.notion-body ul.tex-list,
+.notion-body ol.tex-list {
+  margin: 8px 0 8px 22px;
+  padding: 0;
+}
+.notion-body ul.tex-list > li,
+.notion-body ol.tex-list > li {
+  margin: 4px 0;
+}
+.notion-body pre.tex-raw {
+  background: var(--vs-bg-deep);
+  border: 1px dashed var(--vs-border-strong);
+  border-radius: 4px;
+  padding: 10px 12px;
+  overflow-x: auto;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 11px;
+  color: var(--vs-text);
+  white-space: pre-wrap;
+  margin: 10px 0;
+}
 
 .notion-body code.latex-error {
   background: #5a1d1d;

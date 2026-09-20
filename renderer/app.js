@@ -59,14 +59,44 @@
     return stripExtension(name).replace(/[-_]/g, ' ');
   }
 
+  const KATEX_FALLBACK_MACROS = {
+    '\\Xint': '\\rlap{\\raisebox{0.35em}{\\text{#1}}}\\!\\int',
+    '\\XXint': '',
+    '\\1': '\\mathbb{1}',
+    '\\eqref': '\\text{(#1)}',
+    '\\ref': '\\text{#1}',
+    '\\qed': '\\square',
+    '\\qedhere': ''
+  };
+
+  function adaptMacroBodyForKatex(name, body) {
+    if (name === '\\XXint') {
+      return null;
+    }
+    if (/\\setbox|\\hbox|\\wd0|\\vcenter|\\mathchoice/.test(body)) {
+      if (name === '\\Xint') {
+        return '\\rlap{\\raisebox{0.35em}{\\text{#1}}}\\!\\int';
+      }
+      if (name === '\\dashint') {
+        return '\\rlap{\\raisebox{0.35em}{\\text{-}}}\\!\\int';
+      }
+      return null;
+    }
+    return body;
+  }
+
   function buildKatexMacros(macros) {
-    const katexMacros = {};
+    const katexMacros = Object.assign({}, KATEX_FALLBACK_MACROS);
     if (!Array.isArray(macros)) {
       return katexMacros;
     }
     for (const macro of macros) {
-      if (macro && macro.name && typeof macro.body === 'string') {
-        katexMacros[macro.name] = macro.body;
+      if (!macro || !macro.name || typeof macro.body !== 'string') {
+        continue;
+      }
+      const adapted = adaptMacroBodyForKatex(macro.name, macro.body);
+      if (adapted !== null) {
+        katexMacros[macro.name] = adapted;
       }
     }
     return katexMacros;
@@ -76,77 +106,94 @@
     return buildKatexMacros(state.scan && state.scan.settings ? state.scan.settings.macros : []);
   }
 
+  function preprocessMath(formula, displayMode) {
+    let src = formula;
+    src = src.replace(/\\label\s*\{[^}]*\}/g, '');
+    src = src.replace(/\\(?:notag|nonumber)\b/g, '');
+    if (!displayMode) {
+      return src;
+    }
+    src = src.replace(/\\begin\{displaymath\}([\s\S]*?)\\end\{displaymath\}/g, '$1');
+    src = src.replace(
+      /\\begin\{(multline\*?|flalign\*?|eqnarray\*?)\}([\s\S]*?)\\end\{\1\}/g,
+      (_m, _env, inner) => `\\begin{aligned}${inner}\\end{aligned}`
+    );
+    return src;
+  }
+
+  function renderFormula(formula, displayMode, macros) {
+    try {
+      return katex.renderToString(preprocessMath(formula, displayMode), {
+        displayMode,
+        macros: Object.assign({}, macros),
+        throwOnError: false
+      });
+    } catch (err) {
+      return `<code class="latex-error">${escapeHtml(formula)}</code>`;
+    }
+  }
+
+  function applyTextTransforms(html) {
+    html = html.replace(/\\begin\{itemize\}(\[[^\]]*\])?/g, '<ul class="tex-list">');
+    html = html.replace(/\\end\{itemize\}/g, '</ul>');
+    html = html.replace(/\\begin\{enumerate\}(\[[^\]]*\])?/g, '<ol class="tex-list">');
+    html = html.replace(/\\end\{enumerate\}/g, '</ol>');
+    html = html.replace(/\\item(\[[^\]]*\])?/g, '<li>');
+    html = html.replace(/\\begin\{(?:center|flushleft|flushright)\}/g, '');
+    html = html.replace(/\\end\{(?:center|flushleft|flushright)\}/g, '');
+    html = html.replace(/\\textbf\{([^{}]*)\}/g, '<strong>$1</strong>');
+    html = html.replace(/\\(?:emph|textit)\{([^{}]*)\}/g, '<em>$1</em>');
+    html = html.replace(/\\underline\{([^{}]*)\}/g, '<u>$1</u>');
+    html = html.replace(/\\(?:noindent|hfill|newline|smallskip|medskip|bigskip|strut|clearpage|newpage|centering)\b/g, '');
+    html = html.replace(/\\[vh]space\*?\{[^}]*\}/g, '');
+    html = html.replace(/\\\\(\[[^\]]*\])?/g, '<br>');
+    return html;
+  }
+
   function renderLatexText(text, macros) {
     if (!text) {
       return '';
     }
-    const inlineRe = /\$([^$\n]+)\$/g;
-    let html = '';
-    let lastIndex = 0;
-    let m;
-    while ((m = inlineRe.exec(text)) !== null) {
-      html += escapeHtml(text.slice(lastIndex, m.index));
-      try {
-        html += katex.renderToString(m[1], {
-          displayMode: false,
-          macros: Object.assign({}, macros),
-          throwOnError: false
-        });
-      } catch (err) {
-        html += `<code class="latex-error">${escapeHtml(m[0])}</code>`;
-      }
-      lastIndex = m.index + m[0].length;
-    }
-    html += escapeHtml(text.slice(lastIndex));
+    const mathSpans = [];
+    const protectedText = text.replace(/\$([^$\n]+)\$/g, (_m, inner) => {
+      mathSpans.push(inner);
+      return `\u0000${mathSpans.length - 1}\u0000`;
+    });
+    let html = applyTextTransforms(escapeHtml(protectedText));
+    html = html.replace(/\u0000(\d+)\u0000/g, (_m, i) => renderFormula(mathSpans[Number(i)], false, macros));
     return html;
   }
+
+  const RAW_ENV_RE = /\\begin\{(tikzpicture|tabular\*?|figure\*?|table\*?)\}([\s\S]*?)\\end\{\1\}/g;
+  const DISPLAY_BLOCK_RE = /\$\$([\s\S]*?)\$\$|\\\[([\s\S]*?)\\\]|\\begin\{(align\*?|gather\*?|equation\*?|displaymath)\}([\s\S]*?)\\end\{\3\}/g;
 
   function renderLatexBody(body, macros) {
     const container = document.createElement('div');
     container.className = 'notion-body';
-    const displayRe = /\$\$([\s\S]*?)\$\$|\\\[([\s\S]*?)\\\]/g;
-    const inlineRe = /\$([^$\n]+)\$/g;
-
-    function renderInline(text) {
-      let html = '';
-      let lastIndex = 0;
-      inlineRe.lastIndex = 0;
-      let m;
-      while ((m = inlineRe.exec(text)) !== null) {
-        html += escapeHtml(text.slice(lastIndex, m.index));
-        try {
-          html += katex.renderToString(m[1], {
-            displayMode: false,
-            macros: Object.assign({}, macros),
-            throwOnError: false
-          });
-        } catch (err) {
-          html += `<code class="latex-error">${escapeHtml(m[0])}</code>`;
-        }
-        lastIndex = m.index + m[0].length;
-      }
-      html += escapeHtml(text.slice(lastIndex));
-      return html;
+    if (!body) {
+      return container;
     }
-
-    let html = '';
-    let lastIndex = 0;
-    let dm;
-    while ((dm = displayRe.exec(body)) !== null) {
-      html += renderInline(body.slice(lastIndex, dm.index));
-      const formula = dm[1] !== undefined ? dm[1] : dm[2];
-      try {
-        html += katex.renderToString(formula, {
-          displayMode: true,
-          macros: Object.assign({}, macros),
-          throwOnError: false
-        });
-      } catch (err) {
-        html += `<code class="latex-error">${escapeHtml(dm[0])}</code>`;
-      }
-      lastIndex = dm.index + dm[0].length;
-    }
-    html += renderInline(body.slice(lastIndex));
+    const displayBlocks = [];
+    const rawBlocks = [];
+    let src = body.replace(RAW_ENV_RE, (m) => {
+      rawBlocks.push(m);
+      return `\u0001R${rawBlocks.length - 1}\u0001`;
+    });
+    src = src.replace(DISPLAY_BLOCK_RE, (m, dd, br, env, inner) => {
+      const formula = dd !== undefined ? dd
+        : br !== undefined ? br
+          : env === 'displaymath' ? inner : `\\begin{${env}}${inner}\\end{${env}}`;
+      displayBlocks.push(formula);
+      return `\u0001D${displayBlocks.length - 1}\u0001`;
+    });
+    const paragraphs = src
+      .split(/\n\s*\n/)
+      .map((p) => p.trim())
+      .filter(Boolean)
+      .map((p) => `<p>${renderLatexText(p, macros)}</p>`);
+    let html = paragraphs.join('');
+    html = html.replace(/\u0001D(\d+)\u0001/g, (_m, i) => renderFormula(displayBlocks[Number(i)], true, macros));
+    html = html.replace(/\u0001R(\d+)\u0001/g, (_m, i) => `<pre class="tex-raw">${escapeHtml(rawBlocks[Number(i)])}</pre>`);
     container.innerHTML = html;
     return container;
   }
