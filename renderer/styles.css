@@ -960,6 +960,7 @@ html, body {
   color: var(--vs-text-dim);
   text-align: center;
   padding: 20px;
+  pointer-events: none;
 }
 
 /* ---------- Scrollbars ---------- */

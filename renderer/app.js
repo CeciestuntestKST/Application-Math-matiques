@@ -1277,7 +1277,7 @@
   }
 
   function renderNotionViews() {
-    clearElement(els.notionViews);
+    els.notionViews.querySelectorAll('.notion-view').forEach((v) => v.remove());
     const hasOpen = state.openNotions.length > 0;
     show(els.notionsEmptyOpen, !hasOpen);
     if (!hasOpen) {
