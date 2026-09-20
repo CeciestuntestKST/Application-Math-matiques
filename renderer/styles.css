@@ -440,7 +440,7 @@ html, body {
   box-shadow: 0 0 0 1px rgba(41, 162, 201, 0.6);
 }
 
-/* ---------- PDF : sommaire (outline) ---------- */
+/* ---------- PDF : sommaire interactif (outline) ---------- */
 
 #pdf-container {
   display: flex;
@@ -450,7 +450,7 @@ html, body {
 #pdf-outline-panel {
   position: sticky;
   top: 0;
-  width: 230px;
+  width: 240px;
   flex: none;
   height: 100%;
   overflow-y: auto;
@@ -468,8 +468,7 @@ html, body {
   color: var(--vs-text-dim);
 }
 
-#pdf-outline-list,
-#pdf-outline-list .outline-sublist {
+#pdf-outline-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -478,40 +477,38 @@ html, body {
 #pdf-outline-panel .outline-item {
   display: flex;
   align-items: center;
-  position: relative;
-}
-
-#pdf-outline-panel .outline-toggle {
-  flex: none;
-  width: 18px;
-  height: 18px;
-  margin-right: 2px;
-  background: transparent;
-  border: none;
-  color: var(--vs-text-dim);
-  font-size: 10px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 0;
-}
-
-#pdf-outline-panel .outline-toggle:hover {
-  color: var(--vs-text-bright);
 }
 
 #pdf-outline-panel .outline-link {
   flex: 1;
   min-width: 0;
+  display: block;
   background: transparent;
   border: none;
   color: var(--vs-text);
   font-size: 12px;
+  line-height: 1.3;
   text-align: left;
-  padding: 4px 8px 4px 0;
+  padding: 4px 10px;
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+#pdf-outline-panel .depth-0 > .outline-link {
+  font-weight: 600;
+  margin-top: 6px;
+  color: var(--vs-text-bright);
+}
+
+#pdf-outline-panel .depth-1 > .outline-link {
+  padding-left: 22px;
+}
+
+#pdf-outline-panel .depth-2 > .outline-link {
+  padding-left: 34px;
+  font-size: 11.5px;
 }
 
 #pdf-outline-panel .outline-link:hover {
@@ -519,8 +516,10 @@ html, body {
   background: var(--vs-sidebar-hover);
 }
 
-#pdf-outline-toggle.active {
-  background: var(--vs-button-hover);
+#pdf-outline-panel .outline-link.active {
+  color: var(--vs-text-bright);
+  background: var(--vs-sidebar-active);
+  box-shadow: inset 2px 0 0 var(--vs-accent);
 }
 
 #pdf-view {
