@@ -1,9 +1,8 @@
 'use strict';
 
-const { app, BrowserWindow, ipcMain, dialog, protocol, net } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, protocol } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { pathToFileURL } = require('url');
 const { scanFolder } = require('./lib/latex-notions');
 const { readSettings } = require('./lib/settings-parser');
 
@@ -27,6 +26,25 @@ protocol.registerSchemesAsPrivileged([
   }
 ]);
 
+const MIME_TYPES = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.ico': 'image/x-icon',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+  '.ttf': 'font/ttf',
+  '.otf': 'font/otf',
+  '.map': 'application/json; charset=utf-8'
+};
+
 function registerAppProtocol() {
   const allowedRoots = [
     path.resolve(__dirname, 'renderer'),
@@ -44,11 +62,12 @@ function registerAppProtocol() {
       return new Response('Accès refusé', { status: 403 });
     }
     try {
-      const response = await net.fetch(pathToFileURL(filePath));
-      const headers = {
-        'content-type': response.headers.get('content-type') || 'application/octet-stream'
-      };
-      return new Response(response.body, { status: 200, headers });
+      const data = await fs.promises.readFile(filePath);
+      const contentType = MIME_TYPES[path.extname(filePath).toLowerCase()] || 'application/octet-stream';
+      return new Response(new Uint8Array(data), {
+        status: 200,
+        headers: { 'content-type': contentType }
+      });
     } catch (err) {
       return new Response('Fichier introuvable', { status: 404 });
     }
