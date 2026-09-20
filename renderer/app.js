@@ -49,6 +49,28 @@
   };
 
   const latexRenderCache = new Map();
+  const notionViewCache = new Map();
+
+  const ENV_COLORS = {
+    df: '#4fc1ff',
+    dfprop: '#73c99a',
+    prop: '#c586c0',
+    tm: '#f4a464',
+    lm: '#d7a3f5',
+    cor: '#e2a5c4',
+    ra: '#a3c4e2',
+    re: '#dcdcaa',
+    not: '#9ad5c0',
+    nt: '#9ad5c0',
+    ex: '#ce9178',
+    exo: '#d0a4e8',
+    qs: '#98c379',
+    proof: '#9a9a9a'
+  };
+
+  function notionEnvColor(notion) {
+    return ENV_COLORS[notion.environment] || '#cccccc';
+  }
 
   function show(el, visible) {
     el.classList.toggle('hidden', !visible);
@@ -365,19 +387,16 @@
     const card = document.createElement('button');
     card.type = 'button';
     card.className = 'notion-card';
+    if (state.activeNotionId === notion.id) {
+      card.classList.add('active');
+    }
     card.dataset.notionId = notion.id;
-    const env = document.createElement('span');
-    env.className = 'notion-card-env';
-    env.textContent = notion.environmentDisplay;
     const label = document.createElement('span');
     label.className = 'notion-card-label';
     label.textContent = notion.title;
-    const course = document.createElement('span');
-    course.className = 'notion-card-course';
-    course.textContent = courseNameToTitle(notion.course);
-    card.appendChild(env);
+    label.style.color = notionEnvColor(notion);
+    label.title = `${notion.environmentDisplay} — ${courseNameToTitle(notion.course)}`;
     card.appendChild(label);
-    card.appendChild(course);
     if (notion.proofs.length > 0) {
       const proofBadge = document.createElement('span');
       proofBadge.className = 'notion-card-proof-badge';
@@ -424,6 +443,12 @@
     if (els.notionsCount) {
       els.notionsCount.textContent = `${filtered.length} notions`;
     }
+  }
+
+  function updateNotionCardStates() {
+    els.notionGrid.querySelectorAll('.notion-card').forEach((card) => {
+      card.classList.toggle('active', card.dataset.notionId === state.activeNotionId);
+    });
   }
 
   function showMoreNotions() {
@@ -487,6 +512,7 @@
     state.openNotions = [];
     state.activeNotionId = null;
     latexRenderCache.clear();
+    notionViewCache.clear();
     populateNotionCourseFilter();
     resetNotionsGridPagination();
     els.folderDisplay.textContent = result.folder;
@@ -1061,6 +1087,16 @@
     return state.notions.filter((n) => n.id === id);
   }
 
+  function getNotionCoursesById(id) {
+    const courses = [];
+    for (const n of findNotionsById(id)) {
+      if (!courses.includes(n.course)) {
+        courses.push(n.course);
+      }
+    }
+    return courses;
+  }
+
   function cachedLatexRender(key, render) {
     if (latexRenderCache.has(key)) {
       return latexRenderCache.get(key);
@@ -1081,7 +1117,7 @@
     state.activeNotionId = notion.id;
     renderNotionTabs();
     renderNotionViews();
-    renderNotionsGrid();
+    updateNotionCardStates();
   }
 
   function closeNotion(id, event) {
@@ -1100,7 +1136,7 @@
     }
     renderNotionTabs();
     renderNotionViews();
-    renderNotionsGrid();
+    updateNotionCardStates();
   }
 
   function renderNotionTabs() {
@@ -1109,11 +1145,23 @@
     for (const notion of state.openNotions) {
       const tab = document.createElement('div');
       tab.className = 'notion-tab' + (state.activeNotionId === notion.id ? ' active' : '');
+      const env = document.createElement('span');
+      env.className = 'notion-tab-env';
+      env.textContent = notion.environmentDisplay || notion.environment;
+      env.style.color = notionEnvColor(notion);
+      tab.appendChild(env);
       const label = document.createElement('span');
       label.className = 'notion-tab-label';
       label.textContent = notion.title;
       label.title = `${notion.environmentDisplay || notion.environment} — ${notion.title} (${notion.course})`;
       tab.appendChild(label);
+      const courses = getNotionCoursesById(notion.id);
+      if (courses.length > 0) {
+        const course = document.createElement('span');
+        course.className = 'notion-tab-course';
+        course.textContent = courses.map(courseNameToTitle).join(' · ');
+        tab.appendChild(course);
+      }
       const close = document.createElement('button');
       close.className = 'notion-tab-close';
       close.textContent = '×';
@@ -1237,13 +1285,18 @@
     }
     const frag = document.createDocumentFragment();
     for (const notion of state.openNotions) {
-      const view = document.createElement('div');
-      view.className = 'notion-view' + (state.activeNotionId === notion.id ? ' active' : '');
-      view.dataset.notionId = notion.id;
-      const grouped = findNotionsById(notion.id);
-      for (const entry of grouped) {
-        view.appendChild(buildNotionViewCard(entry));
+      let view = notionViewCache.get(notion.id);
+      if (!view) {
+        view = document.createElement('div');
+        view.className = 'notion-view';
+        view.dataset.notionId = notion.id;
+        const grouped = findNotionsById(notion.id);
+        for (const entry of grouped) {
+          view.appendChild(buildNotionViewCard(entry));
+        }
+        notionViewCache.set(notion.id, view);
       }
+      view.classList.toggle('active', state.activeNotionId === notion.id);
       frag.appendChild(view);
     }
     els.notionViews.appendChild(frag);
