@@ -1,6 +1,6 @@
 'use strict';
 
-const { app, BrowserWindow, ipcMain, dialog, protocol } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { scanFolder } = require('./lib/latex-notions');
@@ -12,67 +12,6 @@ let mainWindow = null;
 const state = {
   folder: null
 };
-
-const APP_SCHEME = 'mathapp';
-
-protocol.registerSchemesAsPrivileged([
-  {
-    scheme: APP_SCHEME,
-    privileges: {
-      standard: true,
-      secure: true,
-      supportFetchAPI: true
-    }
-  }
-]);
-
-const MIME_TYPES = {
-  '.html': 'text/html; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.mjs': 'text/javascript; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.svg': 'image/svg+xml',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.gif': 'image/gif',
-  '.ico': 'image/x-icon',
-  '.woff': 'font/woff',
-  '.woff2': 'font/woff2',
-  '.ttf': 'font/ttf',
-  '.otf': 'font/otf',
-  '.map': 'application/json; charset=utf-8'
-};
-
-function registerAppProtocol() {
-  const allowedRoots = [
-    path.resolve(__dirname, 'renderer'),
-    path.resolve(__dirname, 'vendor')
-  ];
-  protocol.handle(APP_SCHEME, async (request) => {
-    let relative;
-    try {
-      relative = decodeURIComponent(new URL(request.url).pathname).replace(/^\/+/, '');
-    } catch (err) {
-      return new Response('URL invalide', { status: 400 });
-    }
-    const filePath = path.resolve(__dirname, relative);
-    if (!allowedRoots.some((root) => filePath === root || filePath.startsWith(root + path.sep))) {
-      return new Response('Accès refusé', { status: 403 });
-    }
-    try {
-      const data = await fs.promises.readFile(filePath);
-      const contentType = MIME_TYPES[path.extname(filePath).toLowerCase()] || 'application/octet-stream';
-      return new Response(new Uint8Array(data), {
-        status: 200,
-        headers: { 'content-type': contentType }
-      });
-    } catch (err) {
-      return new Response('Fichier introuvable', { status: 404 });
-    }
-  });
-}
 
 function getPrefsPath() {
   return path.join(app.getPath('userData'), 'prefs.json');
@@ -113,7 +52,7 @@ function createWindow() {
     }
   });
 
-  mainWindow.loadURL(`${APP_SCHEME}://bundle/renderer/index.html`);
+  mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 
   if (isDev) {
     mainWindow.webContents.openDevTools({ mode: 'detach' });
@@ -125,7 +64,6 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  registerAppProtocol();
   const prefs = loadPrefs();
   if (prefs.folder && fs.existsSync(prefs.folder)) {
     state.folder = prefs.folder;

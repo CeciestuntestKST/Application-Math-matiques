@@ -1,9 +1,6 @@
 'use strict';
 
 (function () {
-  if (typeof pdfjsLib !== 'undefined' && pdfjsLib.GlobalWorkerOptions) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = '../vendor/pdfjs/pdf.worker.min.js';
-  }
 
   const els = {
     activityIcons: document.querySelectorAll('.activity-icon'),

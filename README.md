@@ -29,13 +29,13 @@ Voir le dossier [`exemple/`](exemple/) pour un modèle fonctionnel.
 ## Interface
 
 - **Thème sombre** façon VS Code / Zotero : barre d'icônes verticale à gauche (activity bar) pour basculer entre les sections, puis panneau latéral (liste du dossier) et zone de lecture.
-- **Cours** : réservée aux **PDF uniquement** (les fichiers `.tex` non compilés n'y apparaissent pas ; ils servent uniquement à l'extraction des notions). Le lecteur est **pdf.js** (rendu canvas + couche texte sélectionnable), embarqué dans l'app : navigation page par page, zoom (boutons et ajustement à la largeur), rendu virtuel (seules les pages visibles sont rendues). Les PDF sont lus via IPC (`app:read-pdf`) avec un contrôle que le fichier est bien dans le dossier sélectionné, et l'UI est servie via le protocole interne sécurisé `mathapp:` (origines `renderer/` et `vendor/` uniquement).
+- **Cours** : réservée aux **PDF uniquement** (les fichiers `.tex` non compilés n'y apparaissent pas ; ils servent uniquement à l'extraction des notions). Le lecteur est **pdf.js** (rendu canvas + couche texte sélectionnable), embarqué dans l'app : navigation page par page, zoom (boutons et ajustement à la largeur), rendu virtuel (seules les pages visibles sont rendues). Les PDF sont lus via IPC (`app:read-pdf`) avec un contrôle que le fichier est bien dans le dossier sélectionné, et l'UI est chargée via `loadFile` (`file://`) et pdf.js tourne en worker intégré (aucune requête réseau).
 - **Notions** : un **répertoire** de toutes les notions de tous les cours (groupées par cours, filtrables par recherche). Les notions ne s'affichent plus toutes en même temps : on clique sur une notion pour l'ouvrir, plusieurs peuvent être ouvertes simultanément (une par onglet, fermables par ×), chaque onglet affiche la notion compilée en LaTeX (KaTeX) avec les macros de `settings.tex`, un bouton **Copier le code LaTeX** et une bascule **Code source**.
 
 ## Architecture (pensée pour évoluer)
 
 ```
-main.js                 Processus principal : fenêtre, IPC, préférences, protocole mathapp: (UI + assets)
+main.js                 Processus principal : fenêtre, IPC, préférences, chargement de l'UI (loadFile)
 preload.js              Pont sécurisé contextIsolation (window.api)
 lib/
   settings-parser.js     Lecture/parsing de settings.tex (macros, environnements) — Node pur, testable
