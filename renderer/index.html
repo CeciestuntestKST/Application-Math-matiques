@@ -43,7 +43,19 @@
         <p class="hint">La section Cours affiche uniquement les PDF. Les notions sont détectées via les environnements <code>\begin{Nom}{Titre}...\end{Nom}</code>.</p>
       </div>
       <div id="reader-cours" class="reader hidden">
-        <iframe id="pdf-frame" title="Lecteur PDF" hidden></iframe>
+        <div id="pdf-toolbar" class="toolbar">
+          <button id="pdf-prev" title="Page précédente">←</button>
+          <span id="pdf-page-info">– / –</span>
+          <button id="pdf-next" title="Page suivante">→</button>
+          <span class="toolbar-spacer"></span>
+          <button id="pdf-zoom-out" title="Zoom arrière">−</button>
+          <span id="pdf-zoom-label">100 %</span>
+          <button id="pdf-zoom-in" title="Zoom avant">+</button>
+          <button id="pdf-fit-width" title="Ajuster à la largeur">⤢</button>
+        </div>
+        <div id="pdf-container">
+          <div id="pdf-view"></div>
+        </div>
         <div id="pdf-error" class="pdf-error hidden"></div>
       </div>
       <div id="reader-notions" class="reader hidden">
@@ -63,6 +75,7 @@
     </main>
   </div>
   <script src="../vendor/katex/katex.min.js"></script>
+  <script src="../vendor/pdfjs/pdf.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

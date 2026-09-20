@@ -14,39 +14,43 @@ const state = {
   folder: null
 };
 
+const APP_SCHEME = 'mathapp';
+
 protocol.registerSchemesAsPrivileged([
   {
-    scheme: 'pdfview',
+    scheme: APP_SCHEME,
     privileges: {
-      standard: false,
-      supportFetchAPI: true,
-      stream: true
+      standard: true,
+      secure: true,
+      supportFetchAPI: true
     }
   }
 ]);
 
-function decodePdfPath(url) {
-  const b64 = url.slice('pdfview:'.length).replace(/^\/+/, '');
-  return Buffer.from(b64, 'base64url').toString('utf8');
-}
-
-function registerPdfProtocol() {
-  protocol.handle('pdfview', async (request) => {
-    let filePath;
+function registerAppProtocol() {
+  const allowedRoots = [
+    path.resolve(__dirname, 'renderer'),
+    path.resolve(__dirname, 'vendor')
+  ];
+  protocol.handle(APP_SCHEME, async (request) => {
+    let relative;
     try {
-      filePath = decodePdfPath(request.url);
+      relative = decodeURIComponent(new URL(request.url).pathname).replace(/^\/+/, '');
     } catch (err) {
-      return new Response('Chemin invalide', { status: 400 });
+      return new Response('URL invalide', { status: 400 });
     }
-    if (!state.folder || !path.resolve(filePath).startsWith(path.resolve(state.folder))) {
+    const filePath = path.resolve(__dirname, relative);
+    if (!allowedRoots.some((root) => filePath === root || filePath.startsWith(root + path.sep))) {
       return new Response('Accès refusé', { status: 403 });
     }
     try {
       const response = await net.fetch(pathToFileURL(filePath));
-      const headers = { 'content-type': 'application/pdf' };
+      const headers = {
+        'content-type': response.headers.get('content-type') || 'application/octet-stream'
+      };
       return new Response(response.body, { status: 200, headers });
     } catch (err) {
-      return new Response('PDF introuvable', { status: 404 });
+      return new Response('Fichier introuvable', { status: 404 });
     }
   });
 }
@@ -90,7 +94,7 @@ function createWindow() {
     }
   });
 
-  mainWindow.loadFile(path.join(__dirname, 'renderer', 'index.html'));
+  mainWindow.loadURL(`${APP_SCHEME}://bundle/renderer/index.html`);
 
   if (isDev) {
     mainWindow.webContents.openDevTools({ mode: 'detach' });
@@ -102,7 +106,7 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  registerPdfProtocol();
+  registerAppProtocol();
   const prefs = loadPrefs();
   if (prefs.folder && fs.existsSync(prefs.folder)) {
     state.folder = prefs.folder;
@@ -190,13 +194,32 @@ ipcMain.handle('app:read-settings', async () => {
   };
 });
 
-ipcMain.handle('app:pdf-url', async (_event, filePath) => {
+ipcMain.handle('app:read-pdf', async (_event, filePath) => {
   if (!filePath || typeof filePath !== 'string') {
     return { error: 'invalid-path' };
   }
-  if (!path.resolve(filePath).startsWith(path.resolve(state.folder || ''))) {
+  if (!state.folder || !path.resolve(filePath).startsWith(path.resolve(state.folder))) {
     return { error: 'path-outside-folder' };
   }
-  const b64 = Buffer.from(filePath, 'utf8').toString('base64url');
-  return { url: `pdfview:${b64}` };
+  try {
+    const data = await fs.promises.readFile(filePath);
+    return { data: data.buffer, byteOffset: data.byteOffset, byteLength: data.byteLength };
+  } catch (err) {
+    return { error: err.code || 'read-error' };
+  }
+});
+
+ipcMain.handle('app:read-tex', async (_event, filePath) => {
+  if (!filePath || typeof filePath !== 'string') {
+    return { error: 'invalid-path' };
+  }
+  if (!state.folder || !path.resolve(filePath).startsWith(path.resolve(state.folder))) {
+    return { error: 'path-outside-folder' };
+  }
+  try {
+    const content = await fs.promises.readFile(filePath, 'utf-8');
+    return { content };
+  } catch (err) {
+    return { error: err.code || 'read-error' };
+  }
 });

@@ -1,6 +1,10 @@
 'use strict';
 
 (function () {
+  if (typeof pdfjsLib !== 'undefined' && pdfjsLib.GlobalWorkerOptions) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '../vendor/pdfjs/pdf.worker.min.js';
+  }
+
   const els = {
     activityIcons: document.querySelectorAll('.activity-icon'),
     openFolderBtn: document.getElementById('btn-open-folder'),
@@ -11,8 +15,17 @@
     emptyState: document.getElementById('empty-state'),
     readerCours: document.getElementById('reader-cours'),
     readerNotions: document.getElementById('reader-notions'),
-    pdfFrame: document.getElementById('pdf-frame'),
+    pdfView: document.getElementById('pdf-view'),
+    pdfContainer: document.getElementById('pdf-container'),
+    pdfToolbar: document.getElementById('pdf-toolbar'),
     pdfError: document.getElementById('pdf-error'),
+    pdfPrevBtn: document.getElementById('pdf-prev'),
+    pdfNextBtn: document.getElementById('pdf-next'),
+    pdfPageInfo: document.getElementById('pdf-page-info'),
+    pdfZoomInBtn: document.getElementById('pdf-zoom-in'),
+    pdfZoomOutBtn: document.getElementById('pdf-zoom-out'),
+    pdfZoomLabel: document.getElementById('pdf-zoom-label'),
+    pdfFitWidthBtn: document.getElementById('pdf-fit-width'),
     notionsSearch: document.getElementById('notions-search'),
     notionsCount: document.getElementById('notions-count'),
     notionTabs: document.getElementById('notion-tabs'),
@@ -436,23 +449,258 @@
     return notions;
   }
 
-  /* ---------- PDF viewer (natif Chromium) ---------- */
+  /* ---------- PDF viewer (pdf.js embarqué) ---------- */
+
+  const pdfViewer = {
+    doc: null,
+    pageCount: 0,
+    scale: null,
+    fitWidth: true,
+    renderedPages: new Set(),
+    pageJobs: new Map(),
+    visiblePages: new Set()
+  };
+
+  function resetPdfViewer() {
+    if (pdfViewer.doc) {
+      try {
+        pdfViewer.doc.destroy();
+      } catch (err) {
+        /* document déjà fermé */
+      }
+    }
+    pdfViewer.doc = null;
+    pdfViewer.pageCount = 0;
+    pdfViewer.scale = null;
+    pdfViewer.renderedPages = new Set();
+    pdfViewer.pageJobs = new Map();
+    pdfViewer.visiblePages = new Set();
+    clearElement(els.pdfView);
+  }
+
+  function updatePdfPageInfo() {
+    const visible = Array.from(pdfViewer.visiblePages).sort((a, b) => a - b);
+    const current = visible.length > 0 ? visible[0] : '–';
+    els.pdfPageInfo.textContent = `${current} / ${pdfViewer.pageCount || '–'}`;
+  }
+
+  function updateZoomLabel() {
+    els.pdfZoomLabel.textContent = pdfViewer.scale
+      ? `${Math.round(pdfViewer.scale * 100)} %`
+      : '–';
+  }
+
+  async function renderPdfPage(pageNum, viewportScale) {
+    const doc = pdfViewer.doc;
+    const pageDiv = els.pdfView.querySelector(`[data-page-num="${pageNum}"]`);
+    if (!doc || !pageDiv || pageDiv.dataset.rendered === '1') {
+      return;
+    }
+    const existing = pdfViewer.pageJobs.get(pageNum);
+    if (existing) {
+      await existing;
+      return;
+    }
+    const job = (async () => {
+      const page = await doc.getPage(pageNum);
+      const viewport = page.getViewport({ scale: viewportScale });
+      const canvas = pageDiv.querySelector('canvas');
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(viewport.width * ratio);
+      canvas.height = Math.floor(viewport.height * ratio);
+      canvas.style.width = `${Math.floor(viewport.width)}px`;
+      canvas.style.height = `${Math.floor(viewport.height)}px`;
+      const context = canvas.getContext('2d');
+      const renderOptions = { canvasContext: context, viewport };
+      if (ratio !== 1) {
+        renderOptions.transform = [ratio, 0, 0, ratio, 0, 0];
+      }
+      await page.render(renderOptions).promise;
+      const textLayerDiv = pageDiv.querySelector('.textLayer');
+      const textContent = await page.getTextContent();
+      const textLayerViewport = page.getViewport({ scale: viewportScale });
+      textLayerDiv.innerHTML = '';
+      for (const item of textContent) {
+        if (!item.str) {
+          continue;
+        }
+        const tx = pdfjsLib.Util.transform(textLayerViewport.transform, item.transform);
+        const angle = Math.atan2(tx[1], tx[0]);
+        const style = `left:${tx[4]}px; top:${tx[5]}px; font-size:${Math.hypot(tx[2], tx[3])}px; font-family:monospace;`;
+        const span = document.createElement('span');
+        span.setAttribute('style', style);
+        if (angle) {
+          span.style.transform = `rotate(${angle}rad)`;
+        }
+        span.textContent = item.str;
+        textLayerDiv.appendChild(span);
+      }
+      pageDiv.dataset.rendered = '1';
+      pdfViewer.renderedPages.add(pageNum);
+    })();
+    pdfViewer.pageJobs.set(pageNum, job);
+    try {
+      await job;
+    } finally {
+      pdfViewer.pageJobs.delete(pageNum);
+    }
+  }
+
+  async function buildPdfPagePlaceholders() {
+    clearElement(els.pdfView);
+    for (let pageNum = 1; pageNum <= pdfViewer.pageCount; pageNum++) {
+      const pageDiv = document.createElement('div');
+      pageDiv.className = 'pdf-page';
+      pageDiv.dataset.pageNum = String(pageNum);
+      const canvas = document.createElement('canvas');
+      canvas.width = 0;
+      canvas.height = 0;
+      pageDiv.appendChild(canvas);
+      const textLayer = document.createElement('div');
+      textLayer.className = 'textLayer';
+      pageDiv.appendChild(textLayer);
+      els.pdfView.appendChild(pageDiv);
+    }
+  }
+
+  async function computeFitWidthScale() {
+    if (!pdfViewer.doc) {
+      return;
+    }
+    const page = await pdfViewer.doc.getPage(1);
+    const baseViewport = page.getViewport({ scale: 1 });
+    const available = Math.max(els.pdfContainer.clientWidth - 32, 200);
+    pdfViewer.scale = available / baseViewport.width;
+    pdfViewer.scale = Math.min(Math.max(pdfViewer.scale, 0.2), 5);
+  }
+
+  function updateVisiblePages() {
+    const containerRect = els.pdfContainer.getBoundingClientRect();
+    const visible = new Set();
+    const toRender = [];
+    els.pdfView.querySelectorAll('.pdf-page').forEach((pageDiv) => {
+      const rect = pageDiv.getBoundingClientRect();
+      if (rect.bottom >= containerRect.top - 400 && rect.top <= containerRect.bottom + 400) {
+        const pageNum = Number(pageDiv.dataset.pageNum);
+        visible.add(pageNum);
+        if (pageDiv.dataset.rendered !== '1') {
+          toRender.push(pageNum);
+        }
+      }
+    });
+    pdfViewer.visiblePages = visible;
+    updatePdfPageInfo();
+    for (const pageNum of toRender) {
+      renderPdfPage(pageNum, pdfViewer.scale);
+    }
+  }
+
+  function scheduleVisibleUpdate() {
+    requestAnimationFrame(updateVisiblePages);
+  }
+
+  async function rerenderAllPages() {
+    els.pdfView.querySelectorAll('.pdf-page').forEach((pageDiv) => {
+      pageDiv.dataset.rendered = '';
+      const canvas = pageDiv.querySelector('canvas');
+      canvas.width = 0;
+      canvas.height = 0;
+      const textLayer = pageDiv.querySelector('.textLayer');
+      textLayer.innerHTML = '';
+    });
+    pdfViewer.renderedPages = new Set();
+    scheduleVisibleUpdate();
+  }
+
+  function goToPdfPage(pageNum) {
+    const pageDiv = els.pdfView.querySelector(`[data-page-num="${pageNum}"]`);
+    if (!pageDiv) {
+      return;
+    }
+    const containerRect = els.pdfContainer.getBoundingClientRect();
+    const pageRect = pageDiv.getBoundingClientRect();
+    els.pdfContainer.scrollTop += pageRect.top - containerRect.top - 8;
+  }
 
   async function openPdf(filePath) {
     state.activePdf = filePath;
-    show(els.pdfFrame, true);
     show(els.pdfError, false);
-    els.pdfFrame.src = 'about:blank';
-    const result = await window.api.getPdfUrl(filePath);
+    show(els.pdfToolbar, true);
+    show(els.pdfContainer, true);
+    resetPdfViewer();
+    const result = await window.api.readPdf(filePath);
+    if (!state.activePdf || state.activePdf !== filePath) {
+      return;
+    }
     if (result.error) {
-      show(els.pdfFrame, false);
+      show(els.pdfToolbar, false);
+      show(els.pdfContainer, false);
       els.pdfError.textContent = `Impossible d'ouvrir le PDF : ${result.error}`;
       show(els.pdfError, true);
       return;
     }
-    els.pdfFrame.src = result.url;
+    const bytes = new Uint8Array(result.data, result.byteOffset || 0, result.byteLength);
+    try {
+      const task = pdfjsLib.getDocument({ data: bytes });
+      pdfViewer.doc = await task.promise;
+    } catch (err) {
+      show(els.pdfToolbar, false);
+      show(els.pdfContainer, false);
+      els.pdfError.textContent = `PDF invalide ou corrompu : ${err.message || err}`;
+      show(els.pdfError, true);
+      return;
+    }
+    pdfViewer.pageCount = pdfViewer.doc.numPages;
+    pdfViewer.fitWidth = true;
+    await computeFitWidthScale();
+    updateZoomLabel();
+    await buildPdfPagePlaceholders();
+    els.pdfContainer.scrollTop = 0;
+    scheduleVisibleUpdate();
     renderSidebar();
   }
+
+  function changePdfZoom(factor) {
+    if (!pdfViewer.doc || !pdfViewer.scale) {
+      return;
+    }
+    pdfViewer.fitWidth = false;
+    pdfViewer.scale = Math.min(Math.max(pdfViewer.scale * factor, 0.2), 5);
+    updateZoomLabel();
+    rerenderAllPages();
+  }
+
+  async function fitWidthZoom() {
+    if (!pdfViewer.doc) {
+      return;
+    }
+    pdfViewer.fitWidth = true;
+    await computeFitWidthScale();
+    updateZoomLabel();
+    await rerenderAllPages();
+  }
+
+  els.pdfContainer.addEventListener('scroll', scheduleVisibleUpdate);
+  window.addEventListener('resize', async () => {
+    if (pdfViewer.doc && pdfViewer.fitWidth) {
+      await computeFitWidthScale();
+      updateZoomLabel();
+      await rerenderAllPages();
+    }
+  });
+  els.pdfZoomInBtn.addEventListener('click', () => changePdfZoom(1.25));
+  els.pdfZoomOutBtn.addEventListener('click', () => changePdfZoom(0.8));
+  els.pdfFitWidthBtn.addEventListener('click', fitWidthZoom);
+  els.pdfPrevBtn.addEventListener('click', () => {
+    const visible = Array.from(pdfViewer.visiblePages).sort((a, b) => a - b);
+    const current = visible.length ? visible[0] : 1;
+    goToPdfPage(Math.max(1, current - 1));
+  });
+  els.pdfNextBtn.addEventListener('click', () => {
+    const visible = Array.from(pdfViewer.visiblePages).sort((a, b) => a - b);
+    const current = visible.length ? visible[visible.length - 1] : 1;
+    goToPdfPage(Math.min(pdfViewer.pageCount, current + 1));
+  });
 
   /* ---------- Notions : répertoire + onglets ---------- */
 
