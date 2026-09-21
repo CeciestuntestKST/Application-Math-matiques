@@ -102,11 +102,6 @@ html, body {
   flex-direction: column;
 }
 
-#sidebar-header {
-  padding: 10px;
-  border-bottom: 1px solid var(--vs-border);
-}
-
 #btn-open-folder,
 #btn-rescan {
   width: 100%;
@@ -134,12 +129,12 @@ html, body {
 }
 
 #folder-display {
-  margin-top: 6px;
   font-size: 11px;
   color: var(--vs-text-dim);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding: 2px 2px 4px;
 }
 
 #sidebar-list {
@@ -255,6 +250,22 @@ html, body {
   flex-shrink: 0;
   color: var(--vs-accent);
   font-size: 12px;
+}
+
+.filter-select {
+  width: calc(100% - 20px);
+  margin: 2px 10px 4px;
+  padding: 3px 6px;
+  background: var(--vs-input-bg);
+  color: var(--vs-text);
+  border: 1px solid var(--vs-border);
+  border-radius: 3px;
+  font-size: 12px;
+  outline: none;
+}
+
+.filter-select:focus {
+  border-color: var(--vs-focus);
 }
 
 /* ---------- Content ---------- */
@@ -625,7 +636,7 @@ html, body {
 
 #notions-top {
   flex: none;
-  height: 34vh;
+  height: 22vh;
   min-height: 60px;
   display: flex;
   flex-direction: column;

@@ -46,6 +46,7 @@
     notionFilter: '',
     notionTitleFilter: 'all',
     notionCourseExcluded: new Set(),
+    notionEnvExcluded: new Set(),
     notionsListRendered: 0
   };
 
@@ -404,6 +405,9 @@
       if (excluded.has(notion.course)) {
         return false;
       }
+      if (state.notionEnvExcluded.size > 0 && state.notionEnvExcluded.has(notion.environment)) {
+        return false;
+      }
       if (!q) {
         return true;
       }
@@ -440,28 +444,69 @@
     return div;
   }
 
+  function buildFilterSelect(value, options, onChange) {
+    const select = document.createElement('select');
+    select.className = 'filter-select';
+    for (const opt of options) {
+      const option = document.createElement('option');
+      option.value = opt.value;
+      option.textContent = opt.label;
+      select.appendChild(option);
+    }
+    select.value = value;
+    select.addEventListener('change', () => onChange(select.value));
+    return select;
+  }
+
+  function getNotionEnvironments() {
+    const map = new Map();
+    for (const notion of state.notions) {
+      if (!map.has(notion.environment)) {
+        map.set(notion.environment, notion.environmentDisplay || notion.environment);
+      }
+    }
+    return Array.from(map.entries())
+      .map(([env, display]) => ({ env, display }))
+      .sort((a, b) => a.display.localeCompare(b.display, 'fr'));
+  }
+
   function renderNotionsFilters() {
     if (!els.notionsFiltersList) {
       return;
     }
     clearElement(els.notionsFiltersList);
 
-    const titleLabels = [
-      { value: 'all', label: 'Toutes les notions' },
-      { value: 'titled', label: 'Nommées' },
-      { value: 'untitled', label: 'Anonymes' }
-    ];
-    els.notionsFiltersList.appendChild(buildGroupHeader('Nom', undefined));
-    for (const entry of titleLabels) {
+    const envs = getNotionEnvironments();
+    els.notionsFiltersList.appendChild(buildGroupHeader('Type de Notions', envs.length));
+    for (const entry of envs) {
+      const included = !state.notionEnvExcluded.has(entry.env);
       els.notionsFiltersList.appendChild(
-        buildFilterCheckItem(entry.label, state.notionTitleFilter === entry.value, () => {
-          state.notionTitleFilter = entry.value;
+        buildFilterCheckItem(entry.display, included, () => {
+          if (state.notionEnvExcluded.has(entry.env)) {
+            state.notionEnvExcluded.delete(entry.env);
+          } else {
+            state.notionEnvExcluded.add(entry.env);
+          }
           resetNotionsGridPagination();
           renderNotionsFilters();
           renderNotionsGrid();
         })
       );
     }
+
+    const titleLabels = [
+      { value: 'all', label: 'Toutes' },
+      { value: 'titled', label: 'Nommées' },
+      { value: 'untitled', label: 'Anonymes' }
+    ];
+    els.notionsFiltersList.appendChild(buildGroupHeader('Nom', undefined));
+    els.notionsFiltersList.appendChild(
+      buildFilterSelect(state.notionTitleFilter, titleLabels, (value) => {
+        state.notionTitleFilter = value;
+        resetNotionsGridPagination();
+        renderNotionsGrid();
+      })
+    );
 
     const courses = getNotionCourses();
     els.notionsFiltersList.appendChild(buildGroupHeader('Matières', courses.length));
@@ -618,6 +663,7 @@
     latexRenderCache.clear();
     notionViewCache.clear();
     state.notionCourseExcluded = new Set();
+    state.notionEnvExcluded = new Set();
     resetNotionsGridPagination();
     els.folderDisplay.textContent = result.folder;
     els.folderDisplay.title = result.folder;
