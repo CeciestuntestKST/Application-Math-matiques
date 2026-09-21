@@ -219,66 +219,42 @@ html, body {
   gap: 6px;
 }
 
-/* ---------- Panneau filtres (barre d'activité) ---------- */
+/* ---------- Panneau filtres (barre d'activitÃ©) ---------- */
 #activity-spacer {
   flex: 1;
 }
 
-#notion-filters-panel {
-  position: fixed;
-  left: 48px;
-  bottom: 46px;
-  width: 210px;
-  padding: 10px 12px;
-  background: var(--vs-bg-panel);
-  border: 1px solid var(--vs-border-strong);
-  border-radius: 6px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  z-index: 50;
+/* Filtres cliquables dans la sidebar (section Notions) */
+
+.filter-item {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-#notion-filters-panel.hidden {
-  display: none;
-}
-
-.filters-panel-title {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--vs-text-dim);
-  margin-bottom: 2px;
-}
-
-.filters-panel-label {
-  font-size: 11px;
-  color: var(--vs-text-dim);
-}
-
-.filters-panel-sep {
-  border-top: 1px solid var(--vs-border);
-  margin: 4px 0;
-}
-
-.filters-panel-hint {
-  font-size: 10px;
-  color: var(--vs-text-dim);
-}
-
-#notion-filters-panel select {
-  padding: 3px 6px;
-  background: var(--vs-input-bg);
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px;
+  cursor: pointer;
+  user-select: none;
+  min-width: 0;
   color: var(--vs-text);
-  border: 1px solid var(--vs-border);
-  border-radius: 3px;
-  font-size: 12px;
-  max-width: 100%;
 }
 
-#notion-size-range {
-  width: 100%;
+.filter-item:hover {
+  background: var(--vs-sidebar-hover);
+}
+
+.filter-item .item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filter-item .item-check {
+  width: 14px;
+  text-align: center;
+  flex-shrink: 0;
+  color: var(--vs-accent);
+  font-size: 12px;
 }
 
 /* ---------- Content ---------- */
@@ -647,27 +623,62 @@ html, body {
   flex-direction: column;
 }
 
-#notions-toolbar select {
-  padding: 3px 6px;
-  background: var(--vs-input-bg);
-  color: var(--vs-text);
-  border: 1px solid var(--vs-border);
-  border-radius: 3px;
-  font-size: 12px;
-  max-width: 220px;
+#notions-top {
+  flex: none;
+  height: 34vh;
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-bottom: 1px solid var(--vs-border);
+  background: var(--vs-bg);
 }
 
 #notion-grid {
+  flex: 1;
+  min-height: 0;
   display: grid;
+  align-content: start;
   grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
   gap: 6px;
   padding: 10px 16px 4px;
   overflow-y: auto;
-  max-height: 34vh;
-  border-bottom: 1px solid var(--vs-border);
   background: var(--vs-bg);
-  flex-shrink: 0;
-  font-size: calc(12.5px * var(--notion-scale, 1));
+  font-size: 12.5px;
+}
+
+#notions-splitter {
+  flex: none;
+  height: 6px;
+  cursor: ns-resize;
+  background: var(--vs-border);
+  position: relative;
+  z-index: 10;
+}
+
+#notions-splitter::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  width: 32px;
+  height: 2px;
+  transform: translateX(-50%);
+  background: var(--vs-text-dim);
+  border-radius: 1px;
+}
+
+#notions-splitter:hover,
+#notions-splitter.dragging {
+  background: var(--vs-accent);
+}
+
+#notions-bottom {
+  flex: 1;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 #notion-grid:empty::after {
@@ -691,7 +702,7 @@ html, body {
   border: 1px solid var(--vs-border);
   border-radius: 5px;
   cursor: pointer;
-  font-size: calc(12px * var(--notion-scale, 1));
+  font-size: 12px;
 }
 
 .notion-card:hover {
@@ -713,7 +724,7 @@ html, body {
 }
 
 .notion-card-label {
-  font-size: calc(12.5px * var(--notion-scale, 1));
+  font-size: 12.5px;
   color: var(--vs-text-bright);
   line-height: 1.25;
   overflow: hidden;
@@ -749,7 +760,7 @@ html, body {
 }
 
 #notion-grid-more {
-  margin: 6px 16px 10px;
+  margin: 6px 16px 8px;
   align-self: flex-start;
   padding: 4px 12px;
   background: var(--vs-button-bg);
@@ -828,15 +839,14 @@ html, body {
 
 #notion-views {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   position: relative;
-  font-size: calc(13px * var(--notion-scale, 1));
 }
 
 .notion-view {
   display: none;
   padding: 16px 24px;
-  font-size: calc(13px * var(--notion-scale, 1));
 }
 
 .notion-view.active {

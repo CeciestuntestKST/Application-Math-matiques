@@ -26,16 +26,14 @@
     pdfOutlineList: document.getElementById('pdf-outline-list'),
     notionsSearch: document.getElementById('notions-search'),
     notionsCount: document.getElementById('notions-count'),
-    notionTitleFilterSel: document.getElementById('notion-title-filter'),
-    notionCourseFilterSel: document.getElementById('notion-course-filter'),
     notionGrid: document.getElementById('notion-grid'),
     notionGridMore: document.getElementById('notion-grid-more'),
     notionTabs: document.getElementById('notion-tabs'),
     notionViews: document.getElementById('notion-views'),
     notionsEmptyOpen: document.getElementById('notions-empty-open'),
-    notionFiltersPanel: document.getElementById('notion-filters-panel'),
-    notionFiltersBtn: document.getElementById('btn-notion-filters'),
-    notionSizeRange: document.getElementById('notion-size-range')
+    notionsFiltersList: document.getElementById('notions-filters-list'),
+    notionsTop: document.getElementById('notions-top'),
+    notionsSplitter: document.getElementById('notions-splitter')
   };
 
   const state = {
@@ -47,9 +45,8 @@
     activeNotionId: null,
     notionFilter: '',
     notionTitleFilter: 'all',
-    notionCourseFilter: 'all',
-    notionsListRendered: 0,
-    notionScale: 0.85
+    notionCourseExcluded: new Set(),
+    notionsListRendered: 0
   };
 
   const latexRenderCache = new Map();
@@ -389,13 +386,14 @@
       });
     }
 
+    renderNotionsFilters();
     renderNotionsGrid();
   }
 
   function getFilteredNotions() {
     const q = state.notionFilter;
     const titleFilter = state.notionTitleFilter;
-    const courseFilter = state.notionCourseFilter;
+    const excluded = state.notionCourseExcluded;
     return state.notions.filter((notion) => {
       if (titleFilter === 'titled' && !notion.hasTitle) {
         return false;
@@ -403,7 +401,7 @@
       if (titleFilter === 'untitled' && notion.hasTitle) {
         return false;
       }
-      if (courseFilter !== 'all' && notion.course !== courseFilter) {
+      if (excluded.has(notion.course)) {
         return false;
       }
       if (!q) {
@@ -423,24 +421,68 @@
     return Array.from(courses).sort((a, b) => a.localeCompare(b, 'fr'));
   }
 
-  function populateNotionCourseFilter() {
-    if (!els.notionCourseFilterSel) {
+  function buildFilterCheckItem(label, checked, onToggle) {
+    const div = document.createElement('div');
+    div.className = 'filter-item';
+    if (!checked) {
+      div.classList.add('filtered');
+      div.style.opacity = '0.55';
+    }
+    const check = document.createElement('span');
+    check.className = 'item-check';
+    check.textContent = checked ? '\u2713' : '';
+    const labelText = document.createElement('span');
+    labelText.className = 'item-label';
+    labelText.textContent = label;
+    div.appendChild(check);
+    div.appendChild(labelText);
+    div.addEventListener('click', onToggle);
+    return div;
+  }
+
+  function renderNotionsFilters() {
+    if (!els.notionsFiltersList) {
       return;
     }
-    const previous = state.notionCourseFilter;
-    clearElement(els.notionCourseFilterSel);
-    const allOption = document.createElement('option');
-    allOption.value = 'all';
-    allOption.textContent = 'Toutes les matières';
-    els.notionCourseFilterSel.appendChild(allOption);
-    for (const course of getNotionCourses()) {
-      const opt = document.createElement('option');
-      opt.value = course;
-      opt.textContent = courseNameToTitle(course);
-      els.notionCourseFilterSel.appendChild(opt);
+    clearElement(els.notionsFiltersList);
+
+    const titleLabels = [
+      { value: 'all', label: 'Toutes les notions' },
+      { value: 'titled', label: 'Nommées' },
+      { value: 'untitled', label: 'Anonymes' }
+    ];
+    els.notionsFiltersList.appendChild(buildGroupHeader('Nom', undefined));
+    for (const entry of titleLabels) {
+      els.notionsFiltersList.appendChild(
+        buildFilterCheckItem(entry.label, state.notionTitleFilter === entry.value, () => {
+          state.notionTitleFilter = entry.value;
+          resetNotionsGridPagination();
+          renderNotionsFilters();
+          renderNotionsGrid();
+        })
+      );
     }
-    if (previous && Array.from(els.notionCourseFilterSel.options).some((o) => o.value === previous)) {
-      els.notionCourseFilterSel.value = previous;
+
+    const courses = getNotionCourses();
+    els.notionsFiltersList.appendChild(buildGroupHeader('Matières', courses.length));
+    if (courses.length === 0) {
+      els.notionsFiltersList.appendChild(buildEmptyItem('Aucune matière'));
+    } else {
+      for (const course of courses) {
+        const included = !state.notionCourseExcluded.has(course);
+        els.notionsFiltersList.appendChild(
+          buildFilterCheckItem(courseNameToTitle(course), included, () => {
+            if (state.notionCourseExcluded.has(course)) {
+              state.notionCourseExcluded.delete(course);
+            } else {
+              state.notionCourseExcluded.add(course);
+            }
+            resetNotionsGridPagination();
+            renderNotionsFilters();
+            renderNotionsGrid();
+          })
+        );
+      }
     }
   }
 
@@ -527,6 +569,7 @@
       btn.classList.toggle('active', btn.dataset.section === section);
     }
     show(els.coursList, section === 'cours');
+    show(els.notionsFiltersList, section === 'notions');
     updateMainView();
   }
 
@@ -574,7 +617,7 @@
     state.activeNotionId = null;
     latexRenderCache.clear();
     notionViewCache.clear();
-    populateNotionCourseFilter();
+    state.notionCourseExcluded = new Set();
     resetNotionsGridPagination();
     els.folderDisplay.textContent = result.folder;
     els.folderDisplay.title = result.folder;
@@ -1383,41 +1426,62 @@
     }, 120);
   });
 
-  if (els.notionTitleFilterSel) {
-    els.notionTitleFilterSel.addEventListener('change', () => {
-      state.notionTitleFilter = els.notionTitleFilterSel.value;
-      resetNotionsGridPagination();
-      renderNotionsGrid();
-    });
-  }
-
-  if (els.notionCourseFilterSel) {
-    els.notionCourseFilterSel.addEventListener('change', () => {
-      state.notionCourseFilter = els.notionCourseFilterSel.value;
-      resetNotionsGridPagination();
-      renderNotionsGrid();
-    });
-  }
-
   if (els.notionGridMore) {
     els.notionGridMore.addEventListener('click', showMoreNotions);
   }
 
-  if (els.notionFiltersBtn && els.notionFiltersPanel) {
-    els.notionFiltersBtn.addEventListener('click', () => {
-      els.notionFiltersPanel.classList.toggle('hidden');
-      els.notionFiltersBtn.classList.toggle('active', !els.notionFiltersPanel.classList.contains('hidden'));
-    });
+  /* ---------- Splitter vertical : réglage du bloc de recherche ---------- */
+
+  function setNotionsTopHeight(height) {
+    const readerRect = els.readerNotions.getBoundingClientRect();
+    const toolbar = els.readerNotions.querySelector('#notions-toolbar');
+    const toolbarHeight = toolbar ? toolbar.getBoundingClientRect().height : 36;
+    const available = readerRect.height - toolbarHeight - 6 - 80;
+    const clamped = Math.min(Math.max(height, 60), Math.max(available, 60));
+    els.notionsTop.style.height = `${clamped}px`;
   }
 
-  if (els.notionSizeRange) {
-    const applyNotionScale = () => {
-      state.notionScale = Number(els.notionSizeRange.value) / 100;
-      document.documentElement.style.setProperty('--notion-scale', String(state.notionScale));
-    };
-    els.notionSizeRange.value = String(Math.round(state.notionScale * 100));
-    els.notionSizeRange.addEventListener('input', applyNotionScale);
-    applyNotionScale();
+  if (els.notionsSplitter && els.notionsTop) {
+    let dragging = false;
+    let startY = 0;
+    let startHeight = 0;
+
+    els.notionsSplitter.addEventListener('mousedown', (event) => {
+      dragging = true;
+      startY = event.clientY;
+      startHeight = els.notionsTop.getBoundingClientRect().height;
+      els.notionsSplitter.classList.add('dragging');
+      document.body.style.cursor = 'ns-resize';
+      document.body.style.userSelect = 'none';
+      event.preventDefault();
+    });
+
+    window.addEventListener('mousemove', (event) => {
+      if (!dragging) {
+        return;
+      }
+      setNotionsTopHeight(startHeight + (event.clientY - startY));
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (!dragging) {
+        return;
+      }
+      dragging = false;
+      els.notionsSplitter.classList.remove('dragging');
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    });
+
+    els.notionsSplitter.addEventListener('dblclick', () => {
+      els.notionsTop.style.height = '';
+    });
+
+    window.addEventListener('resize', () => {
+      if (els.notionsTop.style.height) {
+        setNotionsTopHeight(parseFloat(els.notionsTop.style.height));
+      }
+    });
   }
 
   /* ---------- Init ---------- */
