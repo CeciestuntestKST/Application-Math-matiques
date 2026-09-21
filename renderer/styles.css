@@ -219,6 +219,68 @@ html, body {
   gap: 6px;
 }
 
+/* ---------- Panneau filtres (barre d'activité) ---------- */
+#activity-spacer {
+  flex: 1;
+}
+
+#notion-filters-panel {
+  position: fixed;
+  left: 48px;
+  bottom: 46px;
+  width: 210px;
+  padding: 10px 12px;
+  background: var(--vs-bg-panel);
+  border: 1px solid var(--vs-border-strong);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#notion-filters-panel.hidden {
+  display: none;
+}
+
+.filters-panel-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--vs-text-dim);
+  margin-bottom: 2px;
+}
+
+.filters-panel-label {
+  font-size: 11px;
+  color: var(--vs-text-dim);
+}
+
+.filters-panel-sep {
+  border-top: 1px solid var(--vs-border);
+  margin: 4px 0;
+}
+
+.filters-panel-hint {
+  font-size: 10px;
+  color: var(--vs-text-dim);
+}
+
+#notion-filters-panel select {
+  padding: 3px 6px;
+  background: var(--vs-input-bg);
+  color: var(--vs-text);
+  border: 1px solid var(--vs-border);
+  border-radius: 3px;
+  font-size: 12px;
+  max-width: 100%;
+}
+
+#notion-size-range {
+  width: 100%;
+}
+
 /* ---------- Content ---------- */
 
 #content {
@@ -597,14 +659,15 @@ html, body {
 
 #notion-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 8px;
-  padding: 12px 16px 4px;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 6px;
+  padding: 10px 16px 4px;
   overflow-y: auto;
   max-height: 34vh;
   border-bottom: 1px solid var(--vs-border);
   background: var(--vs-bg);
   flex-shrink: 0;
+  font-size: calc(12.5px * var(--notion-scale, 1));
 }
 
 #notion-grid:empty::after {
@@ -620,15 +683,15 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
-  padding: 8px 10px;
+  gap: 3px;
+  padding: 6px 8px;
   text-align: left;
   background: var(--vs-bg-panel);
   color: var(--vs-text);
   border: 1px solid var(--vs-border);
   border-radius: 5px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: calc(12px * var(--notion-scale, 1));
 }
 
 .notion-card:hover {
@@ -650,9 +713,9 @@ html, body {
 }
 
 .notion-card-label {
-  font-size: 12.5px;
+  font-size: calc(12.5px * var(--notion-scale, 1));
   color: var(--vs-text-bright);
-  line-height: 1.3;
+  line-height: 1.25;
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -767,11 +830,13 @@ html, body {
   flex: 1;
   overflow-y: auto;
   position: relative;
+  font-size: calc(13px * var(--notion-scale, 1));
 }
 
 .notion-view {
   display: none;
-  padding: 20px 30px;
+  padding: 16px 24px;
+  font-size: calc(13px * var(--notion-scale, 1));
 }
 
 .notion-view.active {

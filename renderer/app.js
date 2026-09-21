@@ -32,7 +32,10 @@
     notionGridMore: document.getElementById('notion-grid-more'),
     notionTabs: document.getElementById('notion-tabs'),
     notionViews: document.getElementById('notion-views'),
-    notionsEmptyOpen: document.getElementById('notions-empty-open')
+    notionsEmptyOpen: document.getElementById('notions-empty-open'),
+    notionFiltersPanel: document.getElementById('notion-filters-panel'),
+    notionFiltersBtn: document.getElementById('btn-notion-filters'),
+    notionSizeRange: document.getElementById('notion-size-range')
   };
 
   const state = {
@@ -45,7 +48,8 @@
     notionFilter: '',
     notionTitleFilter: 'all',
     notionCourseFilter: 'all',
-    notionsListRendered: 0
+    notionsListRendered: 0,
+    notionScale: 0.85
   };
 
   const latexRenderCache = new Map();
@@ -108,7 +112,11 @@
     '\\eqref': '\\text{(#1)}',
     '\\ref': '\\text{#1}',
     '\\qed': '\\square',
-    '\\qedhere': ''
+    '\\qedhere': '',
+    '\\cho': '\\left\\{\\begin{array}{ll}#1\\end{array}\\right.',
+    '\\ssi': '\\text{ si et seulement si }',
+    '\\vvvert': '\\lVert\\!\\lVert\\!\\lVert',
+    '\\mathring': '\\check{#1}'
   };
 
   function adaptMacroBodyForKatex(name, body) {
@@ -192,15 +200,68 @@
     return html;
   }
 
+  function extractInlineMathSegments(text) {
+    const segments = [];
+    let current = '';
+    let inMath = false;
+    let braceDepth = 0;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (ch === '\\') {
+        current += ch;
+        if (i + 1 < text.length) {
+          current += text[++i];
+        }
+        continue;
+      }
+      if (ch === '{') {
+        braceDepth++;
+      } else if (ch === '}') {
+        braceDepth = Math.max(0, braceDepth - 1);
+      }
+      if (ch === '$' && braceDepth === 0) {
+        if (!inMath) {
+          if (current.length > 0) {
+            segments.push({ math: false, text: current });
+          }
+          current = '';
+          inMath = true;
+          continue;
+        }
+        if (text[i + 1] === '$') {
+          current += '$';
+          i++;
+          continue;
+        }
+        segments.push({ math: true, text: current });
+        current = '';
+        inMath = false;
+        continue;
+      }
+      if (!inMath && ch === '\n' && current.includes('$')) {
+        continue;
+      }
+      current += ch;
+    }
+    if (current.length > 0) {
+      segments.push({ math: inMath, text: current });
+    }
+    return segments;
+  }
+
   function renderLatexText(text, macros) {
     if (!text) {
       return '';
     }
+    const segments = extractInlineMathSegments(text);
     const mathSpans = [];
-    const protectedText = text.replace(/\$([^$\n]+)\$/g, (_m, inner) => {
-      mathSpans.push(inner);
-      return `\u0000${mathSpans.length - 1}\u0000`;
-    });
+    const protectedText = segments.map((seg) => {
+      if (seg.math) {
+        mathSpans.push(seg.text);
+        return `\u0000${mathSpans.length - 1}\u0000`;
+      }
+      return seg.text;
+    }).join('');
     let html = applyTextTransforms(escapeHtml(protectedText));
     html = html.replace(/\u0000(\d+)\u0000/g, (_m, i) => renderFormula(mathSpans[Number(i)], false, macros));
     return html;
@@ -1340,6 +1401,23 @@
 
   if (els.notionGridMore) {
     els.notionGridMore.addEventListener('click', showMoreNotions);
+  }
+
+  if (els.notionFiltersBtn && els.notionFiltersPanel) {
+    els.notionFiltersBtn.addEventListener('click', () => {
+      els.notionFiltersPanel.classList.toggle('hidden');
+      els.notionFiltersBtn.classList.toggle('active', !els.notionFiltersPanel.classList.contains('hidden'));
+    });
+  }
+
+  if (els.notionSizeRange) {
+    const applyNotionScale = () => {
+      state.notionScale = Number(els.notionSizeRange.value) / 100;
+      document.documentElement.style.setProperty('--notion-scale', String(state.notionScale));
+    };
+    els.notionSizeRange.value = String(Math.round(state.notionScale * 100));
+    els.notionSizeRange.addEventListener('input', applyNotionScale);
+    applyNotionScale();
   }
 
   /* ---------- Init ---------- */
