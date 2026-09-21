@@ -247,6 +247,23 @@
     return segments;
   }
 
+  function getTextMacroReplacements(macros) {
+    const entries = [];
+    if (!macros) {
+      return entries;
+    }
+    for (const [name, body] of Object.entries(macros)) {
+      if (typeof body !== 'string' || body.includes('#')) {
+        continue;
+      }
+      const match = body.match(/^\s*\\text\{([^{}]*)\}\s*$/);
+      if (match) {
+        entries.push({ name, text: match[1] });
+      }
+    }
+    return entries;
+  }
+
   function renderLatexText(text, macros) {
     if (!text) {
       return '';
@@ -260,7 +277,12 @@
       }
       return seg.text;
     }).join('');
-    let html = applyTextTransforms(escapeHtml(protectedText));
+    let plainText = protectedText;
+    for (const { name, text: macroText } of getTextMacroReplacements(macros)) {
+      const re = new RegExp(`${name.replace(/\\/g, '\\\\')}(?![a-zA-Z])`, 'g');
+      plainText = plainText.replace(re, macroText);
+    }
+    let html = applyTextTransforms(escapeHtml(plainText));
     html = html.replace(/\u0000(\d+)\u0000/g, (_m, i) => renderFormula(mathSpans[Number(i)], false, macros));
     return html;
   }
@@ -338,7 +360,7 @@
     return div;
   }
 
-  function buildGroupHeader(labelText, count) {
+  function buildGroupHeader(labelText, count, onToggleAll, allActive) {
     const header = document.createElement('div');
     header.className = 'item-group-header';
     const label = document.createElement('span');
@@ -349,6 +371,18 @@
       countSpan.className = 'item-count';
       countSpan.textContent = count;
       header.appendChild(countSpan);
+    }
+    if (onToggleAll) {
+      const toggleAll = document.createElement('button');
+      toggleAll.className = 'filter-toggle-all' + (allActive ? '' : ' some-off');
+      toggleAll.type = 'button';
+      toggleAll.textContent = allActive ? '\u2713' : '\u2713?';
+      toggleAll.title = allActive ? 'Tout désactiver' : 'Tout activer';
+      toggleAll.addEventListener('click', (event) => {
+        event.stopPropagation();
+        onToggleAll();
+      });
+      header.appendChild(toggleAll);
     }
     return header;
   }
@@ -477,7 +511,20 @@
     clearElement(els.notionsFiltersList);
 
     const envs = getNotionEnvironments();
-    els.notionsFiltersList.appendChild(buildGroupHeader('Type de Notions', envs.length));
+    els.notionsFiltersList.appendChild(
+      buildGroupHeader('Type de Notions', envs.length, () => {
+        if (state.notionEnvExcluded.size > 0) {
+          state.notionEnvExcluded.clear();
+        } else {
+          for (const entry of envs) {
+            state.notionEnvExcluded.add(entry.env);
+          }
+        }
+        resetNotionsGridPagination();
+        renderNotionsFilters();
+        renderNotionsGrid();
+      }, envs.length > 0 && state.notionEnvExcluded.size === 0)
+    );
     for (const entry of envs) {
       const included = !state.notionEnvExcluded.has(entry.env);
       els.notionsFiltersList.appendChild(
@@ -509,7 +556,20 @@
     );
 
     const courses = getNotionCourses();
-    els.notionsFiltersList.appendChild(buildGroupHeader('Matières', courses.length));
+    els.notionsFiltersList.appendChild(
+      buildGroupHeader('Matières', courses.length, () => {
+        if (state.notionCourseExcluded.size > 0) {
+          state.notionCourseExcluded.clear();
+        } else {
+          for (const course of courses) {
+            state.notionCourseExcluded.add(course);
+          }
+        }
+        resetNotionsGridPagination();
+        renderNotionsFilters();
+        renderNotionsGrid();
+      }, courses.length > 0 && state.notionCourseExcluded.size === 0)
+    );
     if (courses.length === 0) {
       els.notionsFiltersList.appendChild(buildEmptyItem('Aucune matière'));
     } else {

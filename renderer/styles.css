@@ -191,6 +191,36 @@ html, body {
   letter-spacing: 0.5px;
 }
 
+.item-group-header .filter-toggle-all {
+  margin-left: auto;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 1px solid var(--vs-border-strong);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--vs-text-dim);
+  font-size: 10px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.item-group-header .filter-toggle-all:hover {
+  background: var(--vs-sidebar-hover);
+  color: var(--vs-text-bright);
+  border-color: var(--vs-accent);
+}
+
+.item-group-header .filter-toggle-all.some-off {
+  color: var(--vs-text-bright);
+  border-color: var(--vs-accent);
+  background: var(--vs-selected);
+}
+
 .item .item-count {
   margin-left: auto;
   font-size: 10px;
