@@ -1349,9 +1349,26 @@
     updateNotionCardStates();
   }
 
+  function closeAllNotions(event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (state.openNotions.length === 0) {
+      return;
+    }
+    state.openNotions = [];
+    state.activeNotionId = null;
+    renderNotionTabs();
+    renderNotionViews();
+    updateNotionCardStates();
+  }
+
   function renderNotionTabs() {
     clearElement(els.notionTabs);
     show(els.notionTabs, state.openNotions.length > 0);
+    if (state.openNotions.length === 0) {
+      return;
+    }
     for (const notion of state.openNotions) {
       const tab = document.createElement('div');
       tab.className = 'notion-tab' + (state.activeNotionId === notion.id ? ' active' : '');
@@ -1385,6 +1402,13 @@
       });
       els.notionTabs.appendChild(tab);
     }
+    const closeAll = document.createElement('button');
+    closeAll.className = 'notion-tab-close-all';
+    closeAll.type = 'button';
+    closeAll.textContent = '\u2715';
+    closeAll.title = 'Fermer tous les onglets';
+    closeAll.addEventListener('click', closeAllNotions);
+    els.notionTabs.appendChild(closeAll);
   }
 
   function buildNotionActions(notion, card) {

@@ -825,6 +825,34 @@ html, body {
   background: var(--vs-toolbar);
   border-bottom: 1px solid var(--vs-border);
   overflow-x: auto;
+  position: relative;
+}
+
+.notion-tab-close-all {
+  position: sticky;
+  right: 0;
+  margin-left: auto;
+  flex-shrink: 0;
+  align-self: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--vs-border-strong);
+  border-radius: 3px;
+  background: var(--vs-toolbar);
+  color: var(--vs-text-dim);
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.notion-tab-close-all:hover {
+  color: #ff9d9d;
+  border-color: #ff9d9d;
+  background: var(--vs-sidebar-hover);
 }
 
 .notion-tab {
