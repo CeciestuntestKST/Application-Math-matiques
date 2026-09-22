@@ -6,6 +6,7 @@ const fs = require('fs');
 const { scanFolder } = require('./lib/latex-notions');
 const { flattenNotions } = require('./lib/notions-model');
 const { readSettings } = require('./lib/settings-parser');
+const { createFolderWatcher } = require('./lib/folder-watcher');
 
 const isDev = process.argv.includes('--dev');
 let mainWindow = null;
@@ -13,6 +14,46 @@ let mainWindow = null;
 const state = {
   folder: null
 };
+
+let folderWatcher = null;
+
+function stopFolderWatcher() {
+  if (folderWatcher) {
+    folderWatcher.stop();
+    folderWatcher = null;
+  }
+}
+
+function startFolderWatcher(folder) {
+  stopFolderWatcher();
+  if (!folder) {
+    return;
+  }
+  folderWatcher = createFolderWatcher({
+    onChange: (changedPaths) => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('app:folder-changed', changedPaths);
+      }
+    },
+    onError: (err) => {
+      if (isDev) {
+        console.error('folder watcher error:', err);
+      }
+    }
+  });
+  if (!folderWatcher.start(folder) && isDev) {
+    console.error('impossible de surveiller le dossier:', folder);
+  }
+}
+
+function setActiveFolder(folder) {
+  state.folder = folder;
+  if (folder) {
+    startFolderWatcher(folder);
+  } else {
+    stopFolderWatcher();
+  }
+}
 
 function getPrefsPath() {
   return path.join(app.getPath('userData'), 'prefs.json');
@@ -67,7 +108,7 @@ function createWindow() {
 app.whenReady().then(() => {
   const prefs = loadPrefs();
   if (prefs.folder && fs.existsSync(prefs.folder)) {
-    state.folder = prefs.folder;
+    setActiveFolder(prefs.folder);
   }
   createWindow();
 
@@ -79,9 +120,14 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
+  stopFolderWatcher();
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+app.on('before-quit', () => {
+  stopFolderWatcher();
 });
 
 ipcMain.handle('app:select-folder', async () => {
@@ -92,7 +138,7 @@ ipcMain.handle('app:select-folder', async () => {
     return { canceled: true, folder: null };
   }
   const folder = result.filePaths[0];
-  state.folder = folder;
+  setActiveFolder(folder);
   savePrefs({ folder });
   return { canceled: false, folder };
 });
@@ -109,7 +155,7 @@ ipcMain.handle('app:scan-folder', async () => {
   if (!state.folder) {
     const prefs = loadPrefs();
     if (prefs.folder && fs.existsSync(prefs.folder)) {
-      state.folder = prefs.folder;
+      setActiveFolder(prefs.folder);
     } else {
       return { error: 'no-folder' };
     }

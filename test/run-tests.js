@@ -16,6 +16,7 @@ const {
   listFiles
 } = require('../lib/latex-notions');
 const { flattenNotions } = require('../lib/notions-model');
+const { createFolderWatcher, isWatchedFile } = require('../lib/folder-watcher');
 
 function makeTempFolder() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'maths-app-test-'));
@@ -34,6 +35,12 @@ function test(name, fn) {
     console.error(`FAIL - ${name}`);
     console.error(err.stack);
   }
+}
+
+const asyncTests = [];
+
+function asyncTest(name, fn) {
+  asyncTests.push({ name, fn });
 }
 
 test('parseSettings extrait newcommand et newtheorem', () => {
@@ -372,7 +379,77 @@ test('scanFolder extrait les notions du settings réel de l’exemple', () => {
   assert.ok(notions.every((n) => !n.isProof));
 });
 
-console.log(`\n${passed} passed, ${failed} failed`);
-if (failed > 0) {
-  process.exit(1);
+test('isWatchedFile filtre les extensions utiles', () => {
+  assert.strictEqual(isWatchedFile('cours/topologie.tex'), true);
+  assert.strictEqual(isWatchedFile('cours/topologie.pdf'), true);
+  assert.strictEqual(isWatchedFile('cours/settings.tex'), true);
+  assert.strictEqual(isWatchedFile('cours/topologie.synctex.gz'), false);
+  assert.strictEqual(isWatchedFile('cours/notes.txt'), false);
+  assert.strictEqual(isWatchedFile('cours/.git/index'), false);
+});
+
+asyncTest('createFolderWatcher signale un .tex modifi\u00e9 (debounce)', async () => {
+  const folder = makeTempFolder();
+  const texPath = path.join(folder, 'cours.tex');
+  fs.writeFileSync(texPath, '\\begin{df}{Test}\nCorps\\end{df}\n');
+
+  const events = [];
+  const watcher = createFolderWatcher({ debounceMs: 60, onChange: (paths) => events.push(paths) });
+  assert.strictEqual(watcher.start(folder), true);
+
+  await new Promise((r) => setTimeout(r, 50));
+  fs.writeFileSync(texPath, '\\begin{df}{Test}\nCorps modifi\\u00e9\\end{df}\n');
+  await new Promise((r) => setTimeout(r, 250));
+  watcher.stop();
+
+  assert.ok(events.length > 0, 'le watcher doit \u00e9mettre au moins un \u00e9v\u00e9nement');
+  const all = events.flat();
+  assert.ok(all.some((p) => p === path.resolve(texPath)));
+  fs.rmSync(folder, { recursive: true, force: true });
+});
+
+asyncTest('createFolderWatcher ignore les fichiers non surveill\u00e9s', async () => {
+  const folder = makeTempFolder();
+  const txtPath = path.join(folder, 'notes.txt');
+  fs.writeFileSync(txtPath, 'hello');
+
+  const events = [];
+  const watcher = createFolderWatcher({ debounceMs: 60, onChange: (paths) => events.push(paths) });
+  assert.strictEqual(watcher.start(folder), true);
+
+  await new Promise((r) => setTimeout(r, 50));
+  fs.writeFileSync(txtPath, 'hello world');
+  await new Promise((r) => setTimeout(r, 250));
+  watcher.stop();
+
+  const all = events.flat();
+  assert.ok(!all.some((p) => p === path.resolve(txtPath)));
+  fs.rmSync(folder, { recursive: true, force: true });
+});
+
+test('createFolderWatcher refuse un dossier inexistant', () => {
+  const watcher = createFolderWatcher({});
+  assert.strictEqual(watcher.start(path.join(os.tmpdir(), 'dossier-qui-n-existe-pas-xyz')), false);
+  watcher.stop();
+});
+
+async function runAsyncTests() {
+  for (const t of asyncTests) {
+    try {
+      await t.fn();
+      passed++;
+      console.log(`ok - ${t.name}`);
+    } catch (err) {
+      failed++;
+      console.error(`FAIL - ${t.name}`);
+      console.error(err.stack);
+    }
+  }
 }
+
+runAsyncTests().then(() => {
+  console.log(`\n${passed} passed, ${failed} failed`);
+  if (failed > 0) {
+    process.exit(1);
+  }
+});

@@ -10,5 +10,10 @@ contextBridge.exposeInMainWorld('api', {
   readTex: (filePath) => ipcRenderer.invoke('app:read-tex', filePath),
   readPdf: (filePath) => ipcRenderer.invoke('app:read-pdf', filePath),
   openExternal: (url) => ipcRenderer.invoke('app:open-external', url),
+  onFolderChanged: (callback) => {
+    const listener = (_event, changedPaths) => callback(changedPaths);
+    ipcRenderer.on('app:folder-changed', listener);
+    return () => ipcRenderer.removeListener('app:folder-changed', listener);
+  },
   platform: process.platform
 });

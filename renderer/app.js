@@ -704,7 +704,8 @@
     }
   }
 
-  async function rescan() {
+  async function rescan(options) {
+    const opts = options || {};
     const result = await window.api.scanFolder();
     if (result.error) {
       if (result.error === 'no-folder') {
@@ -715,15 +716,50 @@
       els.folderDisplay.textContent = `Erreur : ${result.error}`;
       return;
     }
+    const previousNotions = state.notions;
+    const previousOpenIds = state.openNotions.map((n) => n.id);
+    const previousActiveId = state.activeNotionId;
+    const previousPdf = state.activePdf;
+    const previousPdfPage = currentPdfPage();
+
     state.scan = result;
-    state.activePdf = null;
     state.notions = Array.isArray(result.notions) ? result.notions : [];
-    state.openNotions = [];
-    state.activeNotionId = null;
     latexRenderCache.clear();
     notionViewCache.clear();
-    state.notionCourseExcluded = new Set();
-    state.notionEnvExcluded = new Set();
+
+    if (opts.preserve) {
+      const stillExists = (id) => state.notions.some((n) => n.id === id);
+      state.openNotions = previousOpenIds
+        .map((id) => {
+          const updated = state.notions.find((n) => n.id === id);
+          return updated || previousNotions.find((n) => n.id === id);
+        })
+        .filter((n) => n && stillExists(n.id));
+      state.activeNotionId = stillExists(previousActiveId) ? previousActiveId
+        : (state.openNotions[0] ? state.openNotions[0].id : null);
+      if (!Array.isArray(result.pdfFiles) || !result.pdfFiles.includes(previousPdf)) {
+        state.activePdf = null;
+        resetPdfViewer();
+        show(els.pdfToolbar, false);
+        show(els.pdfContainer, false);
+      } else if (opts.reloadPdf && previousPdf) {
+        state.activePdf = null;
+        await openPdf(previousPdf).then(() => {
+          goToPdfPage(previousPdfPage);
+        });
+      } else {
+        state.activePdf = previousPdf;
+      }
+    } else {
+      state.activePdf = null;
+      state.openNotions = [];
+      state.activeNotionId = null;
+      state.notionCourseExcluded = new Set();
+      state.notionEnvExcluded = new Set();
+      resetPdfViewer();
+      show(els.pdfToolbar, false);
+      show(els.pdfContainer, false);
+    }
     resetNotionsGridPagination();
     els.folderDisplay.textContent = result.folder;
     els.folderDisplay.title = result.folder;
@@ -731,6 +767,11 @@
     renderNotionTabs();
     renderNotionViews();
     updateMainView();
+  }
+
+  function currentPdfPage() {
+    const visible = Array.from(pdfViewer.visiblePages).sort((a, b) => a - b);
+    return visible.length > 0 ? visible[0] : 1;
   }
 
   /* ---------- PDF viewer (pdf.js embarqué) ---------- */
@@ -1415,24 +1456,6 @@
     const actions = document.createElement('div');
     actions.className = 'notion-actions';
 
-    const copyBtn = document.createElement('button');
-    copyBtn.textContent = 'Copier le code LaTeX';
-    copyBtn.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(notionToLatex(notion));
-        copyBtn.textContent = '✓ Copié !';
-        setTimeout(() => {
-          copyBtn.textContent = 'Copier le code LaTeX';
-        }, 1500);
-      } catch (err) {
-        copyBtn.textContent = 'Échec de la copie';
-        setTimeout(() => {
-          copyBtn.textContent = 'Copier le code LaTeX';
-        }, 1500);
-      }
-    });
-    actions.appendChild(copyBtn);
-
     const sourceToggle = document.createElement('button');
     sourceToggle.textContent = 'Code source';
     sourceToggle.addEventListener('click', () => {
@@ -1444,6 +1467,49 @@
     actions.appendChild(sourceToggle);
 
     return actions;
+  }
+
+  function buildNotionSourceCode(notion) {
+    const wrap = document.createElement('div');
+    wrap.className = 'notion-source-wrap';
+
+    const header = document.createElement('div');
+    header.className = 'notion-source-header';
+    const label = document.createElement('span');
+    label.className = 'notion-source-label';
+    label.textContent = 'Code LaTeX';
+    header.appendChild(label);
+
+    const copyBtn = document.createElement('button');
+    copyBtn.type = 'button';
+    copyBtn.className = 'notion-source-copy';
+    copyBtn.textContent = 'Copier';
+    copyBtn.title = 'Copier le code LaTeX';
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(notionToLatex(notion));
+        copyBtn.textContent = '✓ Copié';
+        copyBtn.classList.add('copied');
+        setTimeout(() => {
+          copyBtn.textContent = 'Copier';
+          copyBtn.classList.remove('copied');
+        }, 1500);
+      } catch (err) {
+        copyBtn.textContent = 'Échec';
+        setTimeout(() => {
+          copyBtn.textContent = 'Copier';
+        }, 1500);
+      }
+    });
+    header.appendChild(copyBtn);
+    wrap.appendChild(header);
+
+    const sourceCode = document.createElement('pre');
+    sourceCode.className = 'notion-source-code';
+    sourceCode.textContent = notionToLatex(notion);
+    wrap.appendChild(sourceCode);
+
+    return wrap;
   }
 
   function buildNotionViewCard(notion) {
@@ -1475,10 +1541,7 @@
 
     card.appendChild(buildNotionActions(notion, card));
 
-    const sourceCode = document.createElement('pre');
-    sourceCode.className = 'notion-source-code';
-    sourceCode.textContent = notionToLatex(notion);
-    card.appendChild(sourceCode);
+    card.appendChild(buildNotionSourceCode(notion));
 
     for (const proof of notion.proofs || []) {
       card.appendChild(buildProofSection(proof));
@@ -1539,7 +1602,27 @@
   /* ---------- Events ---------- */
 
   els.openFolderBtn.addEventListener('click', openFolderDialog);
-  els.rescanBtn.addEventListener('click', rescan);
+  els.rescanBtn.addEventListener('click', () => rescan({ preserve: true }));
+
+  let autoRescanTimer = null;
+  let lastAutoRescanAt = 0;
+  let pendingPdfReload = false;
+  window.api.onFolderChanged((changedPaths) => {
+    if (state.activePdf && changedPaths.some((p) => p === state.activePdf)) {
+      pendingPdfReload = true;
+    }
+    if (autoRescanTimer) {
+      clearTimeout(autoRescanTimer);
+    }
+    const wait = Math.max(0, 1500 - (Date.now() - lastAutoRescanAt));
+    autoRescanTimer = setTimeout(async () => {
+      autoRescanTimer = null;
+      lastAutoRescanAt = Date.now();
+      const reloadPdf = pendingPdfReload;
+      pendingPdfReload = false;
+      await rescan({ preserve: true, reloadPdf });
+    }, wait + 400);
+  });
   for (const btn of els.activityIcons) {
     btn.addEventListener('click', () => switchSection(btn.dataset.section));
   }
