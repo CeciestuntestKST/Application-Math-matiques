@@ -26,6 +26,7 @@
   "build": {
     "appId": "fr.agreg.maths.app",
     "productName": "Application Mathématiques",
+    "npmRebuild": false,
     "directories": {
       "output": "dist"
     },
