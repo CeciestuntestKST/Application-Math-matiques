@@ -6,6 +6,7 @@
   "main": "main.js",
   "private": true,
   "license": "MIT",
+  "author": "CeciestuntestKST",
   "scripts": {
     "start": "electron .",
     "dev": "electron . --dev",
@@ -31,6 +32,7 @@
     "files": [
       "main.js",
       "preload.js",
+      "lib/**/*",
       "renderer/**/*",
       "vendor/**/*",
       "package.json"

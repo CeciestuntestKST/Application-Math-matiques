@@ -75,9 +75,22 @@ Points d'extension prévus :
 
 `renderer/app.js` adapte les macros pour KaTeX : fallback pour `\Xint`/`\dashint` (TeX primitives `\setbox`/`\mathchoice` non supportées), neutralisation de `\label`/`\notag`, fallbacks `\eqref`/`\ref`/`\qed`, et fallbacks génériques `\cho` (système d'équations), `\ssi` (« si et seulement si »), `\vvvert` (norme triple), `\mathring` (adhérence/intérieur topologique) utilisés dans les cours même si absents du `settings.tex`. L'extraction du mode math inline `$…$` est robuste : les `$` imbriqués dans les accolades (ex. `\cho{…\text{… $n$ …}…}`) ne coupent plus la formule. Le rendu des corps de notions gère `$$…$$`, `\[…\]`, `\begin{align*}…\end{align*}` (et `gather`, `equation`, `displaymath`), convertit les sauts `\\`, rend `itemize`/`enumerate` en listes HTML, `\textbf`/`\emph` en HTML, et affiche `tikzpicture`/`tabular`/`figure` en code brut.
 
-## Empaquetage (plus tard)
+## Installation
 
-`electron-builder` est déjà configuré (`npm run dist` pour un test de dossier, `npm run dist:installer` pour un installateur NSIS / AppImage / dmg).
+### Télécharger l'installateur Windows (recommandé)
+
+1. Sur GitHub, onglet **Actions** → **Build installateurs** → dernier run → **Artifacts** → télécharger `installateur-windows` (contient le `.exe`).
+2. Lancer le `.exe` : l'application s'installe et apparaìt dans le menu Démarrer. Elle fonctionne 100 % hors-ligne.
+
+Vous pouvez aussi la lancer sans l'installer en testant : onglet **Actions** → télécharger l'artefact et exécuter directement.
+
+### Mettre à jour vers une nouvelle version
+
+L'application installée et le développement cohabitent sans conflit : pour essayer une nouvelle version, soit retéléchargez le nouvel installateur et réinstallez par-dessus, soit continuez avec `npm install && npm start` depuis GitHub Desktop. Les deux utilisent le même dossier de cours.
+
+### Construire soi-même
+
+`npm run dist` produit un dossier exécutable (`dist/<plateforme>-unpacked`), `npm run dist:installer` produit l'installateur (NSIS sous Windows, AppImage sous Linux, dmg sous macOS). Le workflow GitHub **Actions** (`.github/workflows/build.yml`) construit automatiquement l'installateur Windows à chaque tag `v*` et le joint à une Release ; il est aussi déclenchable à la main (**Actions → Build installateurs → Run workflow**).
 
 ## Sécurité
 

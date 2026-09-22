@@ -1,0 +1,44 @@
+name: Build installateurs
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Installer les dépendances
+        run: npm install
+
+      - name: Tests
+        run: npm test
+
+      - name: Construire l'installateur Windows
+        run: npm run dist:installer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: installateur-windows
+          path: dist/*.exe
+          if-no-files-found: error
+
+      - name: Attacher à la Release (si tag)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.exe
