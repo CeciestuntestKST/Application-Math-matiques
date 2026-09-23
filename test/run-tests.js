@@ -317,7 +317,7 @@ test('flattenNotions numérote les notions anonymes et couple les preuves', () =
   assert.ok(notions.every((n) => n.id));
 });
 
-test('flattenNotions fusionne les notions titrées de même nom, même entre matières', () => {
+test('flattenNotions fusionne les notions titrées de même nom et de même nature, même entre matières', () => {
   const scan = {
     settings: { environments: [
       { name: 'df', display: 'Définition' },
@@ -328,7 +328,8 @@ test('flattenNotions fusionne les notions titrées de même nom, même entre mat
         name: 'analyse',
         path: '/tmp/analyse.tex',
         notions: [
-          { environment: 'df', title: 'Connexité', hasTitle: true, body: 'V1.', position: 0 }
+          { environment: 'df', title: 'Connexité', hasTitle: true, body: 'V1.', position: 0 },
+          { environment: 'df', title: 'Connexité', hasTitle: true, body: 'V1 bis.', position: 1 }
         ]
       },
       {
@@ -341,9 +342,15 @@ test('flattenNotions fusionne les notions titrées de même nom, même entre mat
     ]
   };
   const notions = flattenNotions(scan);
-  assert.strictEqual(notions.length, 2);
-  assert.strictEqual(notions[0].id, notions[1].id);
-  assert.strictEqual(notions[0].id, 'titled::Connexité');
+  assert.strictEqual(notions.length, 3);
+  const definitions = notions.filter((n) => n.environment === 'df');
+  assert.strictEqual(definitions.length, 2);
+  assert.strictEqual(definitions[0].id, definitions[1].id);
+  assert.strictEqual(definitions[0].id, 'titled::df::Connexité');
+  const theoreme = notions.find((n) => n.environment === 'tm');
+  assert.ok(theoreme);
+  assert.notStrictEqual(theoreme.id, definitions[0].id);
+  assert.strictEqual(theoreme.id, 'titled::tm::Connexité');
 });
 
 test('scanFolder extrait les notions du settings réel de l’exemple', () => {
