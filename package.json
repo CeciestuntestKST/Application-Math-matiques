@@ -20,6 +20,7 @@
     "electron-builder": "^25.1.8"
   },
   "dependencies": {
+    "electron-updater": "^6.8.9",
     "katex": "^0.16.11",
     "pdfjs-dist": "^3.11.174"
   },
@@ -40,7 +41,12 @@
       "vendor/**/*",
       "package.json"
     ],
-    "win": {
+    "publish": {
+    "provider": "github",
+    "owner": "CeciestuntestKST",
+    "repo": "Application-Math-matiques"
+  },
+  "win": {
       "target": "nsis"
     },
     "linux": {

@@ -10,6 +10,14 @@ contextBridge.exposeInMainWorld('api', {
   readTex: (filePath) => ipcRenderer.invoke('app:read-tex', filePath),
   readPdf: (filePath) => ipcRenderer.invoke('app:read-pdf', filePath),
   openExternal: (url) => ipcRenderer.invoke('app:open-external', url),
+  getUpdateStatus: () => ipcRenderer.invoke('app:get-update-status'),
+  checkUpdates: () => ipcRenderer.invoke('app:check-updates'),
+  installUpdate: () => ipcRenderer.invoke('app:install-update'),
+  onUpdateStatus: (callback) => {
+    const listener = (_event, status) => callback(status);
+    ipcRenderer.on('app:update-status', listener);
+    return () => ipcRenderer.removeListener('app:update-status', listener);
+  },
   onFolderChanged: (callback) => {
     const listener = (_event, changedPaths) => callback(changedPaths);
     ipcRenderer.on('app:folder-changed', listener);
