@@ -1727,5 +1727,6 @@
     }
   }
 
+  initUpdateBanner();
   init();
 })();

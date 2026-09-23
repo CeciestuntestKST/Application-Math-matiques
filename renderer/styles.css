@@ -244,6 +244,51 @@ html, body {
   gap: 6px;
 }
 
+#update-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  border: 1px solid var(--vs-border);
+  border-radius: 4px;
+  background: rgba(79, 193, 255, 0.08);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+#update-banner .update-label {
+  flex: 1;
+  color: var(--vs-text);
+  overflow-wrap: anywhere;
+}
+
+#update-banner button {
+  flex-shrink: 0;
+  padding: 4px 9px;
+  font-size: 11px;
+  cursor: pointer;
+  background: #2c7fb8;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+}
+
+#update-banner button:hover {
+  background: #3a93cf;
+}
+
+#update-banner.error {
+  background: rgba(244, 164, 100, 0.1);
+  border-color: rgba(244, 164, 100, 0.4);
+}
+
+#update-banner .update-link {
+  color: #4fc1ff;
+  cursor: pointer;
+  text-decoration: underline;
+  flex-shrink: 0;
+}
+
 /* ---------- Panneau filtres (barre d'activitÃ©) ---------- */
 #activity-spacer {
   flex: 1;

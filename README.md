@@ -56,6 +56,7 @@ lib/
   latex-notions.js       Découverte des notions, scan récursif du dossier — Node pur, testable
   notions-model.js       Nommage générique, couplage des démonstrations, fusion des notions de même nom — Node pur, testable
   folder-watcher.js      Surveillance du dossier de cours (rechargement automatique) — Node pur, testable
+  auto-update.js         Mise à jour automatique via electron-updater + releases GitHub (inactive en dev) — Node pur, testable
 renderer/
   index.html             UI (CSP stricte)
   styles.css             Charte Zotero-like (variables CSS, sidebar, toolbars, cartes de notions)
@@ -90,7 +91,11 @@ Vous pouvez aussi la lancer sans l'installer en testant : onglet **Actions** →
 
 ### Mettre à jour vers une nouvelle version
 
-L'application installée et le développement cohabitent sans conflit : pour essayer une nouvelle version, soit retéléchargez le nouvel installateur et réinstallez par-dessus, soit continuez avec `npm install && npm start` depuis GitHub Desktop. Les deux utilisent le même dossier de cours.
+L'application installée se met à jour **toute seule** : au démarrage (puis toutes les 4 heures), elle interroge les releases GitHub ; si une nouvelle version existe, elle la télécharge en arrière-plan et une **bannière « Mise à jour prête — Redémarrer »** apparaît en bas de la barre latérale. Un clic sur **Redémarrer** installe la mise à jour et relance l'application — **sans passer par GitHub**. En cas d'échec de la vérification, la bannière propose **Réessayer**.
+
+Ce mécanisme (electron-updater) ne fonctionne que sur l'application **installée** : en dev (`npm start` / `npm run dev`), la vérification est désactivée et la bannière reste masquée. Pour essayer une nouvelle version en dev, `npm install && npm start` depuis GitHub Desktop reste la voie ; l'app installée et l'app dev cohabitent sans conflit et utilisent le même dossier de cours.
+
+> Côté GitHub, la release doit contenir à la fois le `.exe` **et** le fichier `latest.yml` (le workflow le joint automatiquement) : c'est lui qui permet à l'app de connaître la dernière version.
 
 ### Construire soi-même
 
@@ -99,5 +104,5 @@ L'application installée et le développement cohabitent sans conflit : pour ess
 ## Sécurité
 
 - `contextIsolation: true`, `nodeIntegration: false`, pont IPC minimal dans `preload.js`.
-- CSP stricte dans `renderer/index.html` ; aucun accès réseau — l'application est 100 % hors-ligne.
+- CSP stricte dans `renderer/index.html` ; la lecture des cours est 100 % hors-ligne, la seule requête réseau est la vérification de mises à jour (releases GitHub, app installée uniquement).
 - Le processus principal vérifie que les chemins demandés appartiennent bien au dossier sélectionné.

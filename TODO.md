@@ -43,7 +43,6 @@ Référentiel des fonctionnalités envisagées. Les statuts : **À faire** (prio
 
 - [ ] **Multi-dossiers** : pouvoir ajouter plusieurs racines de cours (ex. L3/M1/M2 et dossier agrégation) et basculer entre elles.
 - [ ] **Test de compilation** : vérifier qu'une notion compile seule en LaTeX (détection des macros manquantes avant l'oral).
-- [ ] **Mise à jour automatique** de l'app installée (electron-updater, sur la base des releases GitHub déjà en place).
 
 ## Déjà livré (pour mémoire)
 
@@ -53,4 +52,5 @@ Référentiel des fonctionnalités envisagées. Les statuts : **À faire** (prio
 - [x] **Rechargement automatique du dossier** (watch) avec préservation du contexte (onglets, filtres, PDF rechargé à la page courante).
 - [x] Logo (livre ouvert + Σ) : SVG source + icônes PNG/ICO pour la fenêtre, l'installateur et l'écran d'accueil.
 - [x] Installateur Windows automatique via GitHub Actions (tag `v*` → release).
+- [x] **Mise à jour automatique** de l'app installée (electron-updater + releases GitHub) : bannière dans le footer de la sidebar, téléchargement en arrière-plan, bouton « Redémarrer » pour installer ; silence en dev et non-packagé ; `latest.yml` attaché à la release.
 - [x] Raccourcis basiques d'app (recherche, navigation dans la grille).

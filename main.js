@@ -7,6 +7,7 @@ const { scanFolder } = require('./lib/latex-notions');
 const { flattenNotions } = require('./lib/notions-model');
 const { readSettings } = require('./lib/settings-parser');
 const { createFolderWatcher } = require('./lib/folder-watcher');
+const autoUpdate = require('./lib/auto-update');
 
 const isDev = process.argv.includes('--dev');
 let mainWindow = null;
@@ -78,6 +79,12 @@ function savePrefs(prefs) {
   }
 }
 
+function notifyUpdateStatus(status) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('app:update-status', status);
+  }
+}
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1280,
@@ -112,6 +119,7 @@ app.whenReady().then(() => {
     setActiveFolder(prefs.folder);
   }
   createWindow();
+  autoUpdate.initAutoUpdate({ isDev, notify: notifyUpdateStatus });
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -229,6 +237,18 @@ ipcMain.handle('app:read-tex', async (_event, filePath) => {
   } catch (err) {
     return { error: err.code || 'read-error' };
   }
+});
+
+ipcMain.handle('app:get-update-status', async () => {
+  return autoUpdate.getStatus();
+});
+
+ipcMain.handle('app:check-updates', async () => {
+  return autoUpdate.checkNow();
+});
+
+ipcMain.handle('app:install-update', async () => {
+  return autoUpdate.quitAndInstall();
 });
 
 ipcMain.handle('app:open-external', async (_event, url) => {
