@@ -327,6 +327,12 @@ html, body {
   line-height: 1;
 }
 
+.empty-logo {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 8px;
+}
+
 #empty-state h1 {
   font-size: 20px;
   color: var(--vs-text-bright);

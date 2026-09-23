@@ -27,11 +27,13 @@
     "appId": "fr.agreg.maths.app",
     "productName": "Application Mathématiques",
     "npmRebuild": false,
+    "icon": "assets/icons/icon.ico",
     "directories": {
       "output": "dist"
     },
     "files": [
       "main.js",
+      "assets/**/*",
       "preload.js",
       "lib/**/*",
       "renderer/**/*",
