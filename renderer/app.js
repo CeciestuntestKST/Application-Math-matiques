@@ -1921,6 +1921,9 @@
 
   async function init() {
     const stateResult = await window.api.getState();
+    if (stateResult.prefsError) {
+      console.error('prefsError:', stateResult.prefsError);
+    }
     if (stateResult.folder) {
       els.folderDisplay.textContent = stateResult.folder;
       els.folderDisplay.title = stateResult.folder;

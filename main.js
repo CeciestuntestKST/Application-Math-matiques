@@ -69,10 +69,17 @@ function loadPrefs() {
   }
 }
 
+let lastPrefsError = null;
+
 function savePrefs(prefs) {
+  lastPrefsError = null;
+  const target = getPrefsPath();
+  const tmp = target + '.tmp';
   try {
-    fs.writeFileSync(getPrefsPath(), JSON.stringify(prefs, null, 2), 'utf-8');
+    fs.writeFileSync(tmp, JSON.stringify(prefs, null, 2), 'utf-8');
+    fs.renameSync(tmp, target);
   } catch (err) {
+    lastPrefsError = `${err.message} (chemin : ${target})`;
     if (isDev) {
       console.error('savePrefs failed:', err);
     }
@@ -156,7 +163,9 @@ ipcMain.handle('app:get-state', async () => {
   const prefs = loadPrefs();
   return {
     folder: state.folder || (prefs.folder && fs.existsSync(prefs.folder) ? prefs.folder : null),
-    appVersion: app.getVersion()
+    appVersion: app.getVersion(),
+    prefsError: lastPrefsError,
+    userDataPath: app.getPath('userData')
   };
 });
 
