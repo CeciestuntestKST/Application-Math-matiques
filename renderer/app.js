@@ -425,8 +425,25 @@
     renderNotionsGrid();
   }
 
+  const foldedCache = new Map();
+
+  function fold(text) {
+    if (!text) {
+      return '';
+    }
+    let folded = foldedCache.get(text);
+    if (folded === undefined) {
+      folded = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      if (foldedCache.size > 5000) {
+        foldedCache.clear();
+      }
+      foldedCache.set(text, folded);
+    }
+    return folded;
+  }
+
   function getFilteredNotions() {
-    const q = state.notionFilter;
+    const q = fold(state.notionFilter);
     const titleFilter = state.notionTitleFilter;
     const excluded = state.notionCourseExcluded;
     return state.notions.filter((notion) => {
@@ -445,9 +462,9 @@
       if (!q) {
         return true;
       }
-      return notion.title.toLowerCase().includes(q)
-        || notion.environmentDisplay.toLowerCase().includes(q)
-        || notion.course.toLowerCase().includes(q);
+      return fold(notion.title).includes(q)
+        || fold(notion.environmentDisplay).includes(q)
+        || fold(notion.course).includes(q);
     });
   }
 
@@ -1629,7 +1646,7 @@
 
   let searchTimer = null;
   els.notionsSearch.addEventListener('input', () => {
-    state.notionFilter = els.notionsSearch.value.trim().toLowerCase();
+    state.notionFilter = els.notionsSearch.value.trim();
     if (searchTimer) {
       clearTimeout(searchTimer);
     }
