@@ -25,7 +25,7 @@ Référentiel des fonctionnalités envisagées. Les statuts : **À faire** (prio
 ## Priorité 3 — Section Cours (PDF)
 
 - [ ] **Surlignage persistant** : annotations colorées par page, stockées en JSON dans les préférences (jamais dans le PDF), avec palette de couleurs et suppression.
-- [ ] **Recherche texte dans les PDF** : recherche « aller à la page X » en s'appuyant sur la couche texte extraite par pdf.js.
+- [x] **Recherche texte dans les PDF** : champ de recherche dans la toolbar du lecteur, insensible à la casse et aux accents, surlignage des occurrences (courante en orange), navigation Occurrence précédente/suivante (▲▼ ou Entrée / Maj+Entrée), compteur, Échap ou × pour effacer.
 - [ ] **Marque-pages / reprise de lecture** : mémoriser la dernière page consultée de chaque cours et la proposer à la réouverture.
 
 ## Priorité 4 — Graphisme / polish
