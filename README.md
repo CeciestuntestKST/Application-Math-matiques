@@ -30,7 +30,7 @@ Voir le dossier [`exemple/`](exemple/) pour un modèle fonctionnel.
 
 ### Rechargement automatique
 
-Le dossier sélectionné est **surveillé en permanence** : dès qu'un `.tex` ou un `.pdf` est modifi, ajout ou supprimé, l'application se met à jour toute seule :
+Le dossier sélectionné est **surveillé en permanence** : dès qu'un `.tex` ou un `.pdf` est modifié, ajout ou supprimé, l'application se met à jour toute seule :
 
 - la liste des cours et les notions sont re-scanées, **sans perdre votre contexte** (onglets de notions ouverts, notion active, filtres, recherche) ;
 - si le PDF actuellement ouvert a changé sur le disque, il est **rechargé automatiquement sur la page où vous étiez** ;

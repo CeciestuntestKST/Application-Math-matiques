@@ -74,6 +74,6 @@ Référentiel des fonctionnalités envisagées. Les statuts : **À faire** (prio
 - [x] Installateur Windows automatique via GitHub Actions (tag `v*` → release).
 - [x] **Mise à jour automatique** de l'app installée (electron-updater + releases GitHub) : bannière dans le footer de la sidebar, téléchargement en arrière-plan, bouton « Redémarrer » pour installer ; silence en dev et non-packagé ; `latest.yml` attaché à la release.
 - [x] Raccourcis basiques d'app (recherche, navigation dans la grille).
-- [x] **Suite de tests unitaires** (`npm test`) : 25 tests sur le parsing `settings.tex`, l'extraction des notions, le modèle (nommage, preuves, fusion) et le watcher — sans Electron.
+- [x] **Suite de tests unitaires** (`npm test`) : 49 tests sur le parsing `settings.tex`, l'extraction des notions, le modèle (nommage, preuves, fusion), les fichiers de leçons (`lesson-files.js`) et de développements (`dev-files.js`) et le watcher — sans Electron.
 - [x] **Version dans le titre de la fenêtre** : « Application Mathématiques vX.Y.Z », lue dynamiquement depuis `package.json` (aucune mise à jour manuelle à prévoir).
 - [x] **Bannière de mise à jour corrigée** : la fonction `initUpdateBanner` manquante a été implémentée (ReferenceError qui bloquait le renderer) ; bannière en bas de la sidebar — téléchargement avec pourcentage, bouton « Redémarrer » quand la mise à jour est prête, bouton « Réessayer » en cas d'erreur.
