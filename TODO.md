@@ -20,7 +20,7 @@ Référentiel des fonctionnalités envisagées. Les statuts : **À faire** (prio
 
 ## Priorité 2 — Confort quotidien
 
-- [ ] **Raccourcis clavier** : `Ctrl+F` focus recherche, `Ctrl+W` fermer l'onglet, `Ctrl+Tab` onglet suivant, `F11` plein écran lecture.
+- [ ] **Raccourcis clavier globaux** : `Ctrl+F` focus recherche, `Ctrl+W` fermer l'onglet, `Ctrl+Tab` onglet suivant, `F11` plein écran lecture. *(Naviguer entre les onglets et les fermer se fait aujourd'hui uniquement à la souris ; seule la recherche PDF a des raccourcis locaux : Entrée / Maj+Entrée / Échap.)*
 - [ ] **Historique de navigation** dans les notions : précédent / suivant façon navigateur quand on saute de notion en notion.
 - [ ] **Restauration de session** : réouvrir au démarrage les onglets de notions qui étaient ouverts à la fermeture.
 - [ ] **Synchronisation notion ↔ PDF** : bouton « voir dans le cours » depuis une notion, ouvrant le PDF correspondant à la bonne page (via le titre cherché dans la couche texte du PDF ; les `.synctex.gz` du dossier sont aussi exploitables).
@@ -51,11 +51,13 @@ Référentiel des fonctionnalités envisagées. Les statuts : **À faire** (prio
 
 - [x] Lecteur PDF pdf.js embarqué : zoom, ajustement largeur, Ctrl+molette, sommaire interactif avec suivi de lecture, liens cliquables, rendu virtuel.
 - [x] Section Notions : extraction depuis tous les `.tex`, fusion par titre **et nature**, démonstrations couplées et repliées, filtres (nommées/anonymes, matières, natures), code couleur par nature, recherche insensible aux accents/casse.
-- [x] Onglets de notions persistants (cache de rendu), bouton « Code source » avec **Copier** dans le bloc déroulé.
+- [x] Onglets de notions persistants (cache de rendu), bouton « Code source » avec **Copier** dans le bloc déroulé, bouton **« fermer tous les onglets »** (✕ en fin de rangée d'onglets).
+- [x] **Badge « avec démonstration »** (coche ✓) sur les cartes de notions qui ont une démonstration rattachée.
 - [x] **Rechargement automatique du dossier** (watch) avec préservation du contexte (onglets, filtres, PDF rechargé à la page courante).
 - [x] Logo (livre ouvert + Σ) : SVG source + icônes PNG/ICO pour la fenêtre, l'installateur et l'écran d'accueil.
 - [x] Installateur Windows automatique via GitHub Actions (tag `v*` → release).
 - [x] **Mise à jour automatique** de l'app installée (electron-updater + releases GitHub) : bannière dans le footer de la sidebar, téléchargement en arrière-plan, bouton « Redémarrer » pour installer ; silence en dev et non-packagé ; `latest.yml` attaché à la release.
 - [x] Raccourcis basiques d'app (recherche, navigation dans la grille).
+- [x] **Suite de tests unitaires** (`npm test`) : 25 tests sur le parsing `settings.tex`, l'extraction des notions, le modèle (nommage, preuves, fusion) et le watcher — sans Electron.
 - [x] **Version dans le titre de la fenêtre** : « Application Mathématiques vX.Y.Z », lue dynamiquement depuis `package.json` (aucune mise à jour manuelle à prévoir).
 - [x] **Bannière de mise à jour corrigée** : la fonction `initUpdateBanner` manquante a été implémentée (ReferenceError qui bloquait le renderer) ; bannière en bas de la sidebar — téléchargement avec pourcentage, bouton « Redémarrer » quand la mise à jour est prête, bouton « Réessayer » en cas d'erreur.
