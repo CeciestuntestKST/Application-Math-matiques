@@ -776,10 +776,15 @@
     show(els.leconsList, section === 'lecons');
     show(els.devsList, section === 'developpements');
     if (section === 'lecons') {
+      state.activeLessonId = null;
+      hideCreateLessonForm();
       renderLeconsSidebar();
       updateLeconsView();
     }
     if (section === 'developpements') {
+      state.activeDevId = null;
+      state.devShowCode = false;
+      hideCreateDevForm();
       renderDevsSidebar();
       updateDevsView();
     }
@@ -2456,13 +2461,19 @@
     return card;
   }
 
-  function renderDevRenderView() {
+  async function renderDevRenderView() {
     if (!els.devRenderView) {
       return;
     }
     const dev = getActiveDev();
     clearElement(els.devRenderView);
-    const notions = getDevNotions(dev);
+    const notions = await getDevNotions(dev);
+    if (notions === null) {
+      return;
+    }
+    if (state.section !== 'developpements' || state.activeDevId !== (dev && dev.id)) {
+      return;
+    }
     if (notions.length === 0) {
       const empty = document.createElement('div');
       empty.className = 'list-empty';
