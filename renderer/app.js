@@ -58,7 +58,26 @@
     lessonDeleteBtn: document.getElementById('lesson-delete'),
     lessonTexInput: document.getElementById('lesson-tex-input'),
     lessonImportSearch: document.getElementById('lesson-import-search'),
-    lessonImportList: document.getElementById('lesson-import-list')
+    lessonImportList: document.getElementById('lesson-import-list'),
+    devsList: document.getElementById('devs-list'),
+    readerDevs: document.getElementById('reader-devs'),
+    devsHome: document.getElementById('devs-home'),
+    devsCards: document.getElementById('devs-cards'),
+    devsEmptyHint: document.getElementById('devs-empty-hint'),
+    devCreateBtn: document.getElementById('dev-create'),
+    devCreateForm: document.getElementById('devs-create-form'),
+    devCreateTitle: document.getElementById('dev-create-title'),
+    devCreateConfirm: document.getElementById('dev-create-confirm'),
+    devCreateCancel: document.getElementById('dev-create-cancel'),
+    devEdit: document.getElementById('dev-edit'),
+    devBack: document.getElementById('dev-back'),
+    devTitleInput: document.getElementById('dev-title-input'),
+    devSaveStatus: document.getElementById('dev-save-status'),
+    devDeleteBtn: document.getElementById('dev-delete'),
+    devTexInput: document.getElementById('dev-tex-input'),
+    devLessonsList: document.getElementById('dev-lessons-list'),
+    devImportSearch: document.getElementById('dev-import-search'),
+    devImportList: document.getElementById('dev-import-list')
   };
 
   const state = {
@@ -74,7 +93,9 @@
     notionEnvExcluded: new Set(),
     notionsListRendered: 0,
     lessons: [],
-    activeLessonId: null
+    activeLessonId: null,
+    devs: [],
+    activeDevId: null
   };
 
   const latexRenderCache = new Map();
@@ -749,25 +770,33 @@
     show(els.coursList, section === 'cours');
     show(els.notionsFiltersList, section === 'notions');
     show(els.leconsList, section === 'lecons');
+    show(els.devsList, section === 'developpements');
     if (section === 'lecons') {
       renderLeconsSidebar();
       updateLeconsView();
+    }
+    if (section === 'developpements') {
+      renderDevsSidebar();
+      updateDevsView();
     }
     updateMainView();
   }
 
   function updateMainView() {
     if (!state.scan) {
-      show(els.emptyState, state.section !== 'lecons');
+      const showSectionView = state.section === 'lecons' || state.section === 'developpements';
+      show(els.emptyState, !showSectionView);
       show(els.readerCours, false);
       show(els.readerNotions, false);
       show(els.readerLecons, state.section === 'lecons');
+      show(els.readerDevs, state.section === 'developpements');
       return;
     }
     show(els.emptyState, false);
     show(els.readerCours, state.section === 'cours');
     show(els.readerNotions, state.section === 'notions');
     show(els.readerLecons, state.section === 'lecons');
+    show(els.readerDevs, state.section === 'developpements');
   }
 
   /* ---------- Folder & scan ---------- */
@@ -845,6 +874,12 @@
       renderLeconsSidebar();
       if (state.section === 'lecons') {
         updateLeconsView();
+      }
+    });
+    loadDevs().then(() => {
+      renderDevsSidebar();
+      if (state.section === 'developpements') {
+        updateDevsView();
       }
     });
     updateMainView();
@@ -2204,6 +2239,360 @@
     }
   }
 
+  /* ---------- Développements ---------- */
+
+  let devSaveTimer = null;
+  let devSaveSeq = 0;
+
+  function getActiveDev() {
+    return state.devs.find((d) => d.id === state.activeDevId) || null;
+  }
+
+  async function loadDevs() {
+    if (!window.api.listDevs) {
+      return;
+    }
+    const result = await window.api.listDevs();
+    state.devs = Array.isArray(result && result.devs) ? result.devs : [];
+  }
+
+  async function saveActiveDev() {
+    const dev = getActiveDev();
+    if (!dev) {
+      return;
+    }
+    const seq = ++devSaveSeq;
+    if (els.devSaveStatus) {
+      els.devSaveStatus.textContent = 'Sauvegarde…';
+    }
+    const result = await window.api.saveDev({
+      path: dev.path || null,
+      fileName: dev.fileName || null,
+      title: dev.title || '',
+      lessonIds: Array.isArray(dev.lessonIds) ? dev.lessonIds : [],
+      content: dev.content || ''
+    });
+    if (seq !== devSaveSeq) {
+      return;
+    }
+    if (result && result.dev && !result.error) {
+      const idx = state.devs.findIndex((d) => d.id === dev.id);
+      if (idx !== -1) {
+        state.devs[idx] = result.dev;
+      }
+      if (els.devSaveStatus) {
+        els.devSaveStatus.textContent = `Sauvegardé — ${result.dev.fileName}`;
+      }
+    } else if (els.devSaveStatus) {
+      els.devSaveStatus.textContent = `Erreur : ${(result && result.error) || 'sauvegarde impossible'}`;
+    }
+  }
+
+  function scheduleDevSave() {
+    if (devSaveTimer) {
+      clearTimeout(devSaveTimer);
+    }
+    devSaveTimer = setTimeout(() => {
+      devSaveTimer = null;
+      saveActiveDev();
+    }, 600);
+  }
+
+  function renderDevsSidebar() {
+    if (!els.devsList) {
+      return;
+    }
+    clearElement(els.devsList);
+    if (state.devs.length === 0) {
+      els.devsList.appendChild(buildEmptyItem('Aucun développement'));
+      return;
+    }
+    els.devsList.appendChild(buildGroupHeader('Développements', state.devs.length));
+    for (const dev of state.devs) {
+      els.devsList.appendChild(
+        buildListItem({
+          icon: '→',
+          label: dev.title,
+          title: dev.path || dev.title,
+          active: state.activeDevId === dev.id,
+          onClick: () => {
+            state.activeDevId = dev.id;
+            renderDevsSidebar();
+            updateDevsView();
+          }
+        })
+      );
+    }
+  }
+
+  function renderDevsCards() {
+    if (!els.devsCards) {
+      return;
+    }
+    clearElement(els.devsCards);
+    show(els.devsEmptyHint, state.devs.length === 0);
+    for (const dev of state.devs) {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'lesson-card';
+      card.title = dev.path || dev.title;
+      const number = document.createElement('span');
+      number.className = 'lesson-card-number';
+      number.textContent = dev.lessonIds.length > 0
+        ? `${dev.lessonIds.length} leçon${dev.lessonIds.length > 1 ? 's' : ''}`
+        : '–';
+      card.appendChild(number);
+      const title = document.createElement('span');
+      title.className = 'lesson-card-title';
+      title.textContent = dev.title || dev.fileName;
+      card.appendChild(title);
+      const hint = document.createElement('span');
+      hint.className = 'lesson-card-hint';
+      hint.textContent = dev.updatedAt
+        ? `modifié le ${new Date(dev.updatedAt).toLocaleDateString('fr-FR')}`
+        : '';
+      card.appendChild(hint);
+      card.addEventListener('click', () => {
+        state.activeDevId = dev.id;
+        renderDevsSidebar();
+        updateDevsView();
+      });
+      els.devsCards.appendChild(card);
+    }
+  }
+
+  function updateDevsView() {
+    const hasDev = !!getActiveDev();
+    show(els.devsHome, !hasDev);
+    show(els.devEdit, hasDev);
+    if (hasDev) {
+      renderDevEditor();
+    } else {
+      renderDevsCards();
+    }
+  }
+
+  function renderDevEditor() {
+    const dev = getActiveDev();
+    if (!dev) {
+      return;
+    }
+    if (els.devTitleInput && document.activeElement !== els.devTitleInput) {
+      els.devTitleInput.value = dev.title || '';
+    }
+    if (els.devTexInput && document.activeElement !== els.devTexInput) {
+      els.devTexInput.value = dev.content || '';
+    }
+    if (els.devSaveStatus) {
+      els.devSaveStatus.textContent = dev.path ? `Fichier : ${dev.fileName}` : '';
+    }
+    renderDevLessonsList();
+    renderDevImportList();
+  }
+
+  function renderDevLessonsList() {
+    if (!els.devLessonsList) {
+      return;
+    }
+    clearElement(els.devLessonsList);
+    if (state.lessons.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'list-empty';
+      empty.textContent = 'Aucune leçon — créez-en une dans la section Leçons d\u2019oral';
+      els.devLessonsList.appendChild(empty);
+      return;
+    }
+    const frag = document.createDocumentFragment();
+    for (const lesson of state.lessons) {
+      const label = document.createElement('label');
+      label.className = 'dev-lesson-check';
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+      box.checked = devLessonChecked(lesson.id);
+      box.addEventListener('change', () => {
+        toggleDevLesson(lesson.id, box.checked);
+      });
+      label.appendChild(box);
+      const text = document.createElement('span');
+      text.className = 'dev-lesson-label';
+      text.textContent = lesson.number ? `${lesson.number}. ${lesson.title}` : lesson.title;
+      label.appendChild(text);
+      frag.appendChild(label);
+    }
+    els.devLessonsList.appendChild(frag);
+  }
+
+  function devLessonChecked(lessonId) {
+    const dev = getActiveDev();
+    return !!(dev && Array.isArray(dev.lessonIds) && dev.lessonIds.includes(lessonId));
+  }
+
+  function toggleDevLesson(lessonId, checked) {
+    const dev = getActiveDev();
+    if (!dev) {
+      return;
+    }
+    if (!Array.isArray(dev.lessonIds)) {
+      dev.lessonIds = [];
+    }
+    if (checked && !dev.lessonIds.includes(lessonId)) {
+      dev.lessonIds.push(lessonId);
+    }
+    if (!checked) {
+      dev.lessonIds = dev.lessonIds.filter((id) => id !== lessonId);
+    }
+    scheduleDevSave();
+  }
+
+  function renderDevImportList() {
+    if (!els.devImportList) {
+      return;
+    }
+    clearElement(els.devImportList);
+    const q = fold((els.devImportSearch && els.devImportSearch.value) || '');
+    const notions = getImportableNotions();
+    let shown = 0;
+    const frag = document.createDocumentFragment();
+    for (const notion of notions) {
+      if (q && !(
+        fold(notion.title).includes(q)
+        || fold(notion.environmentDisplay).includes(q)
+        || fold(notion.course).includes(q)
+        || fold(notion.body).includes(q)
+      )) {
+        continue;
+      }
+      if (shown >= 200) {
+        break;
+      }
+      shown++;
+      const item = document.createElement('div');
+      item.className = 'lesson-import-item';
+      item.title = `${notion.environmentDisplay} — ${courseNameToTitle(notion.course)} — clic : insérer dans le développement`;
+      const env = document.createElement('span');
+      env.className = 'lesson-import-env';
+      env.textContent = notion.environmentDisplay || notion.environment;
+      env.style.color = notionEnvColor(notion);
+      item.appendChild(env);
+      const label = document.createElement('span');
+      label.className = 'lesson-import-label';
+      label.textContent = notion.title;
+      label.style.color = notionEnvColor(notion);
+      item.appendChild(label);
+      const course = document.createElement('span');
+      course.className = 'lesson-import-course';
+      course.textContent = courseNameToTitle(notion.course);
+      item.appendChild(course);
+      item.addEventListener('click', () => {
+        insertLatexInDev(notionToLatex(notion));
+      });
+      frag.appendChild(item);
+    }
+    els.devImportList.appendChild(frag);
+    if (shown === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'list-empty';
+      empty.textContent = state.notions.length === 0
+        ? 'Aucune notion — sélectionnez un dossier de cours'
+        : 'Aucune notion trouvée';
+      els.devImportList.appendChild(empty);
+    }
+  }
+
+  function insertLatexInDev(latex) {
+    if (!els.devTexInput) {
+      return;
+    }
+    const dev = getActiveDev();
+    if (!dev) {
+      return;
+    }
+    const input = els.devTexInput;
+    const value = input.value;
+    let insert = latex;
+    let start = input.selectionStart;
+    let end = input.selectionEnd;
+    if (start !== end) {
+      insert = value.slice(0, start) + latex + value.slice(end);
+      end = start + latex.length;
+    } else if (value.length > 0 && !/\n$/.test(value.slice(0, start))) {
+      insert = value.slice(0, start) + '\n\n' + latex + value.slice(end);
+      start = start + 2;
+      end = start + latex.length;
+    } else {
+      insert = value.slice(0, start) + latex + value.slice(end);
+      start = start + latex.length;
+      end = start;
+    }
+    input.value = insert;
+    dev.content = insert;
+    input.focus();
+    input.setSelectionRange(Math.min(start, end), Math.max(start, end));
+    scheduleDevSave();
+  }
+
+  function showCreateDevForm() {
+    if (!state.scan) {
+      return;
+    }
+    show(els.devCreateForm, true);
+    if (els.devCreateTitle) {
+      els.devCreateTitle.value = '';
+      els.devCreateTitle.focus();
+    }
+  }
+
+  function hideCreateDevForm() {
+    show(els.devCreateForm, false);
+  }
+
+  async function createNewDev() {
+    const title = els.devCreateTitle && els.devCreateTitle.value
+      ? els.devCreateTitle.value.trim()
+      : '';
+    const dev = {
+      id: `pending::${Date.now()}`,
+      path: null,
+      fileName: null,
+      title: title || 'Nouveau développement',
+      lessonIds: [],
+      content: '% Développement…\n\n',
+      updatedAt: null
+    };
+    const result = await window.api.saveDev(dev);
+    if (result && result.dev && !result.error) {
+      hideCreateDevForm();
+      await loadDevs();
+      state.activeDevId = result.dev.id;
+      renderDevsSidebar();
+      updateDevsView();
+      if (els.devTitleInput) {
+        els.devTitleInput.focus();
+        els.devTitleInput.select();
+      }
+    } else if (els.devSaveStatus) {
+      els.devSaveStatus.textContent = `Erreur : ${(result && result.error) || 'création impossible'}`;
+    }
+  }
+
+  async function deleteActiveDev() {
+    const dev = getActiveDev();
+    if (!dev || !dev.path) {
+      return;
+    }
+    const ok = window.confirm(`Supprimer le développement « ${dev.title || dev.fileName} » ?\nLe fichier ${dev.fileName} sera supprimé du dossier de cours.`);
+    if (!ok) {
+      return;
+    }
+    const result = await window.api.deleteDev(dev.path);
+    if (result && !result.error) {
+      state.activeDevId = null;
+      await loadDevs();
+      renderDevsSidebar();
+      updateDevsView();
+    }
+  }
+
   /* ---------- Events ---------- */
 
   els.openFolderBtn.addEventListener('click', openFolderDialog);
@@ -2282,6 +2671,71 @@
         clearTimeout(importSearchTimer);
       }
       importSearchTimer = setTimeout(renderLessonImportList, 120);
+    });
+  }
+
+  if (els.devBack) {
+    els.devBack.addEventListener('click', async () => {
+      if (devSaveTimer) {
+        clearTimeout(devSaveTimer);
+        devSaveTimer = null;
+      }
+      await saveActiveDev();
+      state.activeDevId = null;
+      renderDevsSidebar();
+      updateDevsView();
+    });
+  }
+  if (els.devCreateBtn) {
+    els.devCreateBtn.addEventListener('click', showCreateDevForm);
+  }
+  if (els.devCreateConfirm) {
+    els.devCreateConfirm.addEventListener('click', createNewDev);
+  }
+  if (els.devCreateCancel) {
+    els.devCreateCancel.addEventListener('click', hideCreateDevForm);
+  }
+  if (els.devCreateTitle) {
+    els.devCreateTitle.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        createNewDev();
+      }
+      if (event.key === 'Escape') {
+        hideCreateDevForm();
+      }
+    });
+  }
+  if (els.devDeleteBtn) {
+    els.devDeleteBtn.addEventListener('click', deleteActiveDev);
+  }
+  if (els.devTitleInput) {
+    els.devTitleInput.addEventListener('input', () => {
+      const dev = getActiveDev();
+      if (!dev) {
+        return;
+      }
+      dev.title = els.devTitleInput.value.trim() || 'Nouveau développement';
+      scheduleDevSave();
+    });
+  }
+  if (els.devTexInput) {
+    els.devTexInput.addEventListener('input', () => {
+      const dev = getActiveDev();
+      if (!dev) {
+        return;
+      }
+      dev.content = els.devTexInput.value;
+      scheduleDevSave();
+    });
+  }
+  if (els.devImportSearch) {
+    let devImportTimer = null;
+    els.devImportSearch.addEventListener('input', () => {
+      if (devImportTimer) {
+        clearTimeout(devImportTimer);
+      }
+      devImportTimer = setTimeout(renderDevImportList, 120);
     });
   }
 
@@ -2484,6 +2938,9 @@
     await loadLessons();
     renderLeconsSidebar();
     updateLeconsView();
+    await loadDevs();
+    renderDevsSidebar();
+    updateDevsView();
   }
 
   initUpdateBanner();
