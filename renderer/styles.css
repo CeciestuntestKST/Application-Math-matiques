@@ -835,6 +835,10 @@ html, body {
   background: var(--vs-sidebar-active);
 }
 
+.notion-card.title-match {
+  border-color: var(--vs-accent);
+}
+
 .notion-card-env {
   font-size: 10px;
   text-transform: uppercase;
