@@ -1917,7 +1917,96 @@
     });
   }
 
+  /* ---------- Mise à jour automatique ---------- */
+
+  const updateBanner = document.getElementById('update-banner');
+
+  function formatBytes(bytes) {
+    if (typeof bytes !== 'number' || !isFinite(bytes) || bytes < 0) {
+      return '';
+    }
+    if (bytes < 1024 * 1024) {
+      return `${Math.max(1, Math.round(bytes / 1024))} Ko`;
+    }
+    return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`;
+  }
+
+  function renderUpdateBanner(status) {
+    if (!updateBanner) {
+      return;
+    }
+    updateBanner.classList.remove('hidden', 'error');
+    updateBanner.textContent = '';
+    if (status.error) {
+      updateBanner.classList.add('error');
+      const label = document.createElement('span');
+      label.className = 'update-label';
+      label.textContent = 'Échec de la mise à jour.';
+      label.title = status.error;
+      updateBanner.appendChild(label);
+      const retry = document.createElement('button');
+      retry.type = 'button';
+      retry.textContent = 'Réessayer';
+      retry.addEventListener('click', async () => {
+        await window.api.checkUpdates();
+      });
+      updateBanner.appendChild(retry);
+      return;
+    }
+    if (status.downloaded) {
+      const label = document.createElement('span');
+      label.className = 'update-label';
+      label.textContent = `v${status.version} prête — redémarrer pour appliquer.`;
+      updateBanner.appendChild(label);
+      const install = document.createElement('button');
+      install.type = 'button';
+      install.textContent = 'Redémarrer';
+      install.addEventListener('click', () => {
+        window.api.installUpdate();
+      });
+      updateBanner.appendChild(install);
+      return;
+    }
+    if (status.available) {
+      const label = document.createElement('span');
+      label.className = 'update-label';
+      if (status.progress && typeof status.progress.percent === 'number') {
+        const transferred = formatBytes(status.progress.transferred);
+        const total = formatBytes(status.progress.total);
+        const detail = transferred && total ? ` (${transferred} / ${total})` : '';
+        label.textContent = `Téléchargement de v${status.version}… ${status.progress.percent} %${detail}`;
+      } else {
+        label.textContent = `Mise à jour v${status.version} disponible…`;
+      }
+      updateBanner.appendChild(label);
+      return;
+    }
+    updateBanner.classList.add('hidden');
+  }
+
+  async function initUpdateBanner() {
+    if (!updateBanner) {
+      return;
+    }
+    window.api.onUpdateStatus(renderUpdateBanner);
+    try {
+      const status = await window.api.getUpdateStatus();
+      renderUpdateBanner(status);
+    } catch (error) {
+      updateBanner.classList.add('hidden');
+    }
+  }
+
   /* ---------- Init ---------- */
+
+  async function applyAppTitle() {
+    try {
+      const version = await window.api.getVersion();
+      document.title = `Application Mathématiques v${version}`;
+    } catch (error) {
+      document.title = 'Application Mathématiques';
+    }
+  }
 
   async function init() {
     const stateResult = await window.api.getState();
@@ -1934,5 +2023,6 @@
   }
 
   initUpdateBanner();
+  applyAppTitle();
   init();
 })();
