@@ -447,11 +447,34 @@
     return folded;
   }
 
+  function notionQueryRank(notion, q) {
+    if (fold(notion.title).includes(q)) {
+      return 0;
+    }
+    if (fold(notion.environmentDisplay).includes(q)) {
+      return 1;
+    }
+    if (fold(notion.course).includes(q)) {
+      return 2;
+    }
+    if (fold(notion.body).includes(q)) {
+      return 3;
+    }
+    if (Array.isArray(notion.proofs)) {
+      for (const proof of notion.proofs) {
+        if (fold(proof.body).includes(q)) {
+          return 3;
+        }
+      }
+    }
+    return -1;
+  }
+
   function getFilteredNotions() {
     const q = fold(state.notionFilter);
     const titleFilter = state.notionTitleFilter;
     const excluded = state.notionCourseExcluded;
-    return state.notions.filter((notion) => {
+    const matched = state.notions.filter((notion) => {
       if (titleFilter === 'titled' && !notion.hasTitle) {
         return false;
       }
@@ -467,10 +490,12 @@
       if (!q) {
         return true;
       }
-      return fold(notion.title).includes(q)
-        || fold(notion.environmentDisplay).includes(q)
-        || fold(notion.course).includes(q);
+      return notionQueryRank(notion, q) >= 0;
     });
+    if (q) {
+      matched.sort((a, b) => notionQueryRank(a, q) - notionQueryRank(b, q));
+    }
+    return matched;
   }
 
   function getNotionCourses() {
@@ -621,6 +646,10 @@
       card.classList.add('active');
     }
     card.dataset.notionId = notion.id;
+    const q = fold(state.notionFilter);
+    if (q && fold(notion.title).includes(q)) {
+      card.classList.add('title-match');
+    }
     const label = document.createElement('span');
     label.className = 'notion-card-label';
     label.textContent = notion.title;

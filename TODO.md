@@ -7,7 +7,10 @@ Référentiel des fonctionnalités envisagées. Les statuts : **À faire** (prio
 ### À faire
 
 - [ ] **Mode « leçon d'oral »** : sélectionner des notions (coches sur les cartes de la grille), puis générer un fichier `.tex` autonome — préambule repris du `settings.tex` + les notions choisies dans l'ordre voulu — exportable et compilable, pour construire les plans de leçons directement depuis la bibliothèque de notions.
-- [ ] **Recherche dans le corps des notions** : la recherche actuelle porte sur titre / nature / matière ; elle doit aussi trouver les notions qui mentionnent le terme dans leur contenu (ex. « compacité » mentionnée dans un théorème).
+
+### Fait
+
+- [x] **Recherche dans le corps des notions** : la recherche porte sur titre / nature / matière / corps (y compris démonstrations), avec priorité aux titres concordants (tri par pertinence : titre, puis nature, puis matière, puis corps ; cartes à titre concordant surlignées).
 
 ### Plus tard (explicitement reportés)
 
@@ -25,7 +28,7 @@ Référentiel des fonctionnalités envisagées. Les statuts : **À faire** (prio
 ## Priorité 3 — Section Cours (PDF)
 
 - [ ] **Surlignage persistant** : annotations colorées par page, stockées en JSON dans les préférences (jamais dans le PDF), avec palette de couleurs et suppression.
-- [x] **Recherche texte dans les PDF** : champ de recherche dans la toolbar du lecteur, insensible à la casse et aux accents, surlignage des occurrences (courante en orange), navigation Occurrence précédente/suivante (▲▼ ou Entrée / Maj+Entrée), compteur, Échap ou × pour effacer.
+- [x] **Recherche texte dans les PDF** : champ de recherche dans la toolbar du lecteur, insensible à la casse et aux accents, surlignage des occurrences (courante en jaune, autres en orange), navigation Occurrence précédente/suivante (▲▼ ou Entrée / Maj+Entrée), compteur, Échap ou × pour effacer.
 - [ ] **Marque-pages / reprise de lecture** : mémoriser la dernière page consultée de chaque cours et la proposer à la réouverture.
 
 ## Priorité 4 — Graphisme / polish
@@ -54,3 +57,5 @@ Référentiel des fonctionnalités envisagées. Les statuts : **À faire** (prio
 - [x] Installateur Windows automatique via GitHub Actions (tag `v*` → release).
 - [x] **Mise à jour automatique** de l'app installée (electron-updater + releases GitHub) : bannière dans le footer de la sidebar, téléchargement en arrière-plan, bouton « Redémarrer » pour installer ; silence en dev et non-packagé ; `latest.yml` attaché à la release.
 - [x] Raccourcis basiques d'app (recherche, navigation dans la grille).
+- [x] **Version dans le titre de la fenêtre** : « Application Mathématiques vX.Y.Z », lue dynamiquement depuis `package.json` (aucune mise à jour manuelle à prévoir).
+- [x] **Bannière de mise à jour corrigée** : la fonction `initUpdateBanner` manquante a été implémentée (ReferenceError qui bloquait le renderer) ; bannière en bas de la sidebar — téléchargement avec pourcentage, bouton « Redémarrer » quand la mise à jour est prête, bouton « Réessayer » en cas d'erreur.
