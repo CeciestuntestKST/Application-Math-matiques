@@ -29,12 +29,21 @@
           <path d="M9 1.5h6"/>
         </svg>
       </button>
+      <button class="activity-icon" data-section="developpements" title="Développements">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 17c4-1 5-4 5-7"/>
+          <path d="M9 10c0-3-1-6-5-7"/>
+          <path d="M4 17h16"/>
+          <path d="M14 3l7 7-7 7"/>
+        </svg>
+      </button>
     </nav>
     <aside id="sidebar">
       <div id="sidebar-list">
         <div id="cours-list" class="list active"></div>
         <div id="notions-filters-list" class="list hidden"></div>
         <div id="lecons-list" class="list hidden"></div>
+        <div id="devs-list" class="list hidden"></div>
       </div>
       <div id="sidebar-footer">
         <div id="update-banner" class="hidden"></div>
@@ -136,6 +145,53 @@
               <div class="lesson-pane-header">Bibliothèque de notions</div>
               <input id="lesson-import-search" type="search" placeholder="Rechercher une notion…" />
               <div id="lesson-import-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="reader-devs" class="reader hidden">
+        <div id="devs-home">
+          <div id="devs-home-header">
+            <h1>Développements</h1>
+            <button id="dev-create" title="Créer un nouveau développement">+ Créer un développement</button>
+          </div>
+          <div id="devs-create-form" class="hidden">
+            <input id="dev-create-title" type="text" placeholder="Titre du développement (ex. Théorème de Kronecker)…" />
+            <button id="dev-create-confirm" title="Créer le développement">Créer</button>
+            <button id="dev-create-cancel" title="Annuler">Annuler</button>
+          </div>
+          <div id="devs-grid">
+            <div id="devs-empty-hint" class="hidden">
+              <p>Aucun développement pour l'instant.</p>
+              <p class="hint">« Créer un développement » pour commencer : donnez-lui un titre, rédigez-le en LaTeX et cochez les leçons avec lesquelles il est compatible.</p>
+            </div>
+            <div id="devs-cards"></div>
+          </div>
+        </div>
+        <div id="dev-edit" class="hidden">
+          <div id="dev-toolbar" class="toolbar">
+            <button id="dev-back" title="Retour à la liste des développements">←</button>
+            <span id="dev-title-label" class="lesson-number-badge">Développement</span>
+            <input id="dev-title-input" type="text" placeholder="Titre du développement…" />
+            <span class="toolbar-spacer"></span>
+            <span id="dev-save-status"></span>
+            <button id="dev-delete" title="Supprimer ce développement">Supprimer</button>
+          </div>
+          <div id="dev-edit-body">
+            <div id="dev-editor-pane">
+              <div class="lesson-pane-header">Développement (LaTeX)</div>
+              <textarea id="dev-tex-input" spellcheck="false" placeholder="% Développement — LaTeX libre&#10;% Importez des notions depuis la bibliothèque à droite…"></textarea>
+            </div>
+            <div id="dev-side-pane">
+              <div id="dev-lessons-pane">
+                <div class="lesson-pane-header">Leçons compatibles</div>
+                <div id="dev-lessons-list"></div>
+              </div>
+              <div id="dev-import-pane">
+                <div class="lesson-pane-header">Bibliothèque de notions</div>
+                <input id="dev-import-search" type="search" placeholder="Rechercher une notion…" />
+                <div id="dev-import-list"></div>
+              </div>
             </div>
           </div>
         </div>

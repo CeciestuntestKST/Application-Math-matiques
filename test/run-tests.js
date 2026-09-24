@@ -20,6 +20,7 @@ const { createFolderWatcher, isWatchedFile } = require('../lib/folder-watcher');
 const {
   slugify,
   buildLessonFileName,
+  makeStableId,
   encodeLessonMeta,
   decodeLessonMeta,
   buildLessonFileContent,
@@ -29,6 +30,17 @@ const {
   deleteLessonFile,
   isPathInLessonsDir
 } = require('../lib/lesson-files');
+const {
+  buildDevFileName,
+  encodeDevMeta,
+  decodeDevMeta,
+  buildDevFileContent,
+  parseDevFile,
+  listDevFiles,
+  writeDevFile,
+  deleteDevFile,
+  isPathInDevsDir
+} = require('../lib/dev-files');
 
 function makeTempFolder() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'maths-app-test-'));
@@ -578,6 +590,151 @@ asyncTest('createFolderWatcher ignore les fichiers du dossier lecons/', async ()
   await new Promise((resolve) => setTimeout(resolve, 250));
   watcher.stop();
   assert.strictEqual(events.length, 0, 'aucun événement attendu pour lecons/');
+});
+
+test('makeStableId est stable pour un couple numéro/titre donné', () => {
+  const a = makeStableId(142, 'Séries de Fourier');
+  const b = makeStableId(142, 'Séries de Fourier');
+  assert.strictEqual(a, b);
+  assert.ok(a.startsWith('lesson-'));
+  assert.notStrictEqual(makeStableId(142, 'Séries de Fourier'), makeStableId(143, 'Séries de Fourier'));
+  assert.notStrictEqual(makeStableId(142, 'Séries de Fourier'), makeStableId(142, 'Espaces complets'));
+  assert.notStrictEqual(makeStableId(null, 'Brouillon'), makeStableId(1, 'Brouillon'));
+});
+
+test('l identifiant de leçon survit au renommage du fichier', () => {
+  const folder = makeTempFolder();
+  const first = writeLessonFile(folder, { number: 5, title: 'Ancien titre', content: 'X' });
+  const second = writeLessonFile(folder, {
+    path: first.path,
+    fileName: first.fileName,
+    number: 5,
+    title: 'Nouveau titre',
+    content: 'XY'
+  });
+  assert.notStrictEqual(first.fileName, second.fileName);
+  const lessons = listLessonFiles(folder);
+  assert.strictEqual(lessons.length, 1);
+  assert.ok(lessons[0].id.startsWith('lesson-'), `id stable attendu, reçu : ${lessons[0].id}`);
+  assert.strictEqual(lessons[0].id, makeStableId(5, 'Nouveau titre'));
+  fs.rmSync(folder, { recursive: true, force: true });
+});
+
+test('buildDevFileName slugifie avec préfixe dev- et évite les collisions', () => {
+  assert.strictEqual(buildDevFileName('Théorème de Kronecker', []), 'dev-theoreme-de-kronecker.tex');
+  const used = ['dev-theoreme-de-kronecker.tex'];
+  assert.strictEqual(buildDevFileName('Théorème de Kronecker', used), 'dev-theoreme-de-kronecker-2.tex');
+  assert.strictEqual(buildDevFileName('???', []), 'dev-developpement.tex');
+});
+
+test('encodeDevMeta / decodeDevMeta font l aller-retour et dédupliquent les leçons', () => {
+  const line = encodeDevMeta({ title: 'Kronecker', lessonIds: ['lesson-a', 'lesson-b', 'lesson-a', 42, null] });
+  assert.ok(line.startsWith('% dev-meta:'));
+  const meta = decodeDevMeta(line);
+  assert.strictEqual(meta.title, 'Kronecker');
+  assert.deepStrictEqual(meta.lessons, ['lesson-a', 'lesson-b']);
+  assert.strictEqual(decodeDevMeta('% dev-meta: pas du json'), null);
+  assert.strictEqual(decodeDevMeta('autre chose'), null);
+});
+
+test('buildDevFileContent puis parseDevFile restituent le développement', () => {
+  const dev = {
+    title: 'Kronecker',
+    lessonIds: ['lesson-1', 'lesson-2'],
+    content: '\\begin{tm}{Kronecker}{}\nSi $\\alpha$…\n\\end{tm}\n'
+  };
+  const content = buildDevFileContent(dev);
+  assert.ok(content.startsWith('% dev-meta:'));
+  const parsed = parseDevFile(content, '/tmp/devs/dev-kronecker.tex');
+  assert.strictEqual(parsed.title, 'Kronecker');
+  assert.deepStrictEqual(parsed.lessonIds, ['lesson-1', 'lesson-2']);
+  assert.ok(parsed.content.includes('\\begin{tm}{Kronecker}{}'));
+  assert.ok(parsed.content.endsWith('\\end{tm}'));
+});
+
+test('parseDevFile gère un fichier sans métadonnées', () => {
+  const parsed = parseDevFile('Corps sans meta\n', '/tmp/devs/perso.tex');
+  assert.strictEqual(parsed.title, 'perso');
+  assert.deepStrictEqual(parsed.lessonIds, []);
+  assert.strictEqual(parsed.content, 'Corps sans meta');
+});
+
+test('writeDevFile écrit dans developpements/ et listDevFiles lit et trie', () => {
+  const folder = makeTempFolder();
+  writeDevFile(folder, { title: 'Zolotarev', lessonIds: [], content: 'B' });
+  writeDevFile(folder, { title: 'Kronecker', lessonIds: ['lesson-k'], content: 'A' });
+  const devs = listDevFiles(folder);
+  assert.strictEqual(devs.length, 2);
+  assert.strictEqual(devs[0].title, 'Kronecker');
+  assert.strictEqual(devs[1].title, 'Zolotarev');
+  assert.ok(devs[0].path.includes('developpements'));
+  assert.deepStrictEqual(devs[0].lessonIds, ['lesson-k']);
+  assert.ok(devs[0].updatedAt);
+  fs.rmSync(folder, { recursive: true, force: true });
+});
+
+test('writeDevFile renomme proprement quand le titre change', () => {
+  const folder = makeTempFolder();
+  const first = writeDevFile(folder, { title: 'Ancien', lessonIds: ['lesson-1'], content: 'X' });
+  assert.strictEqual(first.fileName, 'dev-ancien.tex');
+  const second = writeDevFile(folder, {
+    path: first.path,
+    fileName: first.fileName,
+    title: 'Nouveau',
+    lessonIds: ['lesson-1'],
+    content: 'XY'
+  });
+  assert.strictEqual(second.fileName, 'dev-nouveau.tex');
+  const devs = listDevFiles(folder);
+  assert.strictEqual(devs.length, 1);
+  assert.strictEqual(devs[0].title, 'Nouveau');
+  assert.strictEqual(devs[0].content, 'XY');
+  assert.deepStrictEqual(devs[0].lessonIds, ['lesson-1']);
+  fs.rmSync(folder, { recursive: true, force: true });
+});
+
+test('deleteDevFile supprime, isPathInDevsDir protège les chemins', () => {
+  const folder = makeTempFolder();
+  const dev = writeDevFile(folder, { title: 'Test', lessonIds: [], content: 'Z' });
+  assert.strictEqual(isPathInDevsDir(folder, dev.path), true);
+  assert.strictEqual(isPathInDevsDir(folder, folder + '/settings.tex'), false);
+  assert.strictEqual(isPathInDevsDir(folder, folder + '/lecons/lecon-01-x.tex'), false);
+  assert.strictEqual(deleteDevFile(dev.path), true);
+  assert.strictEqual(listDevFiles(folder).length, 0);
+  assert.strictEqual(deleteDevFile(folder + '/settings.tex'), false);
+  fs.rmSync(folder, { recursive: true, force: true });
+});
+
+test('scanFolder ignore le dossier developpements/ (les devs ne polluent pas les notions)', () => {
+  const folder = makeTempFolder();
+  fs.writeFileSync(path.join(folder, 'settings.tex'), '\\newtheorem{df}{Définition}\n', 'utf-8');
+  fs.writeFileSync(
+    path.join(folder, 'cours.tex'),
+    '\\begin{df}{Adhérence}{}\nCorps\n\\end{df}\n',
+    'utf-8'
+  );
+  writeDevFile(folder, { title: 'Dev test', lessonIds: [], content: '\\begin{df}{Notion de dev}{}\nX\n\\end{df}' });
+  const scan = scanFolder(folder);
+  assert.strictEqual(scan.courses.length, 1);
+  assert.strictEqual(scan.courses[0].notions.length, 1);
+  assert.strictEqual(scan.courses[0].notions[0].title, 'Adhérence');
+  fs.rmSync(folder, { recursive: true, force: true });
+});
+
+asyncTest('createFolderWatcher ignore les fichiers du dossier developpements/', async () => {
+  const folder = makeTempFolder();
+  const devsDir = path.join(folder, 'developpements');
+  fs.mkdirSync(devsDir, { recursive: true });
+  const devPath = path.join(devsDir, 'dev-test.tex');
+  fs.writeFileSync(devPath, 'X', 'utf-8');
+  const events = [];
+  const watcher = createFolderWatcher({ onChange: (changed) => events.push(...changed), debounceMs: 50 });
+  assert.strictEqual(watcher.start(folder), true);
+  await new Promise((resolve) => setTimeout(resolve, 120));
+  fs.writeFileSync(devPath, 'Y', 'utf-8');
+  await new Promise((resolve) => setTimeout(resolve, 250));
+  watcher.stop();
+  assert.strictEqual(events.length, 0, 'aucun événement attendu pour developpements/');
 });
 
 async function runAsyncTests() {

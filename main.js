@@ -9,6 +9,7 @@ const { readSettings } = require('./lib/settings-parser');
 const { createFolderWatcher } = require('./lib/folder-watcher');
 const autoUpdate = require('./lib/auto-update');
 const lessonFiles = require('./lib/lesson-files');
+const devFiles = require('./lib/dev-files');
 
 const isDev = process.argv.includes('--dev');
 let mainWindow = null;
@@ -320,6 +321,49 @@ ipcMain.handle('app:lessons-delete', async (_event, lessonPath) => {
     return { error: 'path-outside-folder' };
   }
   const ok = lessonFiles.deleteLessonFile(lessonPath);
+  return ok ? { ok: true } : { error: 'delete-failed' };
+});
+
+ipcMain.handle('app:devs-list', async () => {
+  const folder = requireCourseFolder();
+  if (!folder) {
+    return { error: 'no-folder' };
+  }
+  try {
+    return { devs: devFiles.listDevFiles(folder) };
+  } catch (err) {
+    return { error: err.message };
+  }
+});
+
+ipcMain.handle('app:devs-save', async (_event, dev) => {
+  const folder = requireCourseFolder();
+  if (!folder) {
+    return { error: 'no-folder' };
+  }
+  if (!dev || typeof dev !== 'object') {
+    return { error: 'invalid-dev' };
+  }
+  if (dev.path && !devFiles.isPathInDevsDir(folder, dev.path)) {
+    return { error: 'path-outside-folder' };
+  }
+  try {
+    const saved = devFiles.writeDevFile(folder, dev);
+    return { dev: saved };
+  } catch (err) {
+    return { error: err.message };
+  }
+});
+
+ipcMain.handle('app:devs-delete', async (_event, devPath) => {
+  const folder = requireCourseFolder();
+  if (!folder) {
+    return { error: 'no-folder' };
+  }
+  if (typeof devPath !== 'string' || !devFiles.isPathInDevsDir(folder, devPath)) {
+    return { error: 'path-outside-folder' };
+  }
+  const ok = devFiles.deleteDevFile(devPath);
   return ok ? { ok: true } : { error: 'delete-failed' };
 });
 
