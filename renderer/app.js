@@ -2,6 +2,64 @@
 
 (function () {
 
+  function lessonStatsLocal(lesson) {
+    let missing = 0;
+    for (const notionId of lesson.notionIds) {
+      if (!state.notions.some((n) => n.id === notionId)) {
+        missing++;
+      }
+    }
+    return { total: lesson.notionIds.length, ok: lesson.notionIds.length - missing, missing };
+  }
+
+  function resolveLessonNotionsLocal(lesson) {
+    const byId = new Map();
+    for (const notion of state.notions) {
+      if (!byId.has(notion.id)) {
+        byId.set(notion.id, []);
+      }
+      byId.get(notion.id).push(notion);
+    }
+    return lesson.notionIds.map((notionId) => {
+      const entries = byId.get(notionId) || null;
+      return entries ? { ok: true, notionId, notions: entries } : { ok: false, notionId };
+    });
+  }
+
+  function lessonTouchLocal(lesson) {
+    lesson.updatedAt = new Date().toISOString();
+  }
+
+  function lessonSetTitleLocal(lesson, title) {
+    const clean = typeof title === 'string' && title.trim() ? title.trim() : null;
+    if (clean) {
+      lesson.title = clean;
+      lessonTouchLocal(lesson);
+    }
+  }
+
+  function lessonMoveNotionLocal(lesson, notionId, offset) {
+    const idx = lesson.notionIds.indexOf(notionId);
+    if (idx === -1) {
+      return;
+    }
+    const target = idx + offset;
+    if (target < 0 || target >= lesson.notionIds.length) {
+      return;
+    }
+    const [moved] = lesson.notionIds.splice(idx, 1);
+    lesson.notionIds.splice(target, 0, moved);
+    lessonTouchLocal(lesson);
+  }
+
+  function lessonRemoveNotionLocal(lesson, notionId) {
+    const idx = lesson.notionIds.indexOf(notionId);
+    if (idx !== -1) {
+      lesson.notionIds.splice(idx, 1);
+      lessonTouchLocal(lesson);
+    }
+  }
+
   const els = {
     activityIcons: document.querySelectorAll('.activity-icon'),
     openFolderBtn: document.getElementById('btn-open-folder'),
@@ -38,7 +96,19 @@
     notionsEmptyOpen: document.getElementById('notions-empty-open'),
     notionsFiltersList: document.getElementById('notions-filters-list'),
     notionsTop: document.getElementById('notions-top'),
-    notionsSplitter: document.getElementById('notions-splitter')
+    notionsSplitter: document.getElementById('notions-splitter'),
+    notionSelectToggle: document.getElementById('notion-select-toggle'),
+    notionSelectionCount: document.getElementById('notion-selection-count'),
+    notionSelectionAdd: document.getElementById('notion-selection-add'),
+    notionSelectionClear: document.getElementById('notion-selection-clear'),
+    leconsList: document.getElementById('lecons-list'),
+    readerLecons: document.getElementById('reader-lecons'),
+    leconsEmpty: document.getElementById('lecons-empty'),
+    lessonEdit: document.getElementById('lesson-edit'),
+    lessonBack: document.getElementById('lesson-back'),
+    lessonTitleInput: document.getElementById('lesson-title-input'),
+    lessonStats: document.getElementById('lesson-stats'),
+    lessonNotions: document.getElementById('lesson-notions')
   };
 
   const state = {
@@ -52,7 +122,11 @@
     notionTitleFilter: 'all',
     notionCourseExcluded: new Set(),
     notionEnvExcluded: new Set(),
-    notionsListRendered: 0
+    notionsListRendered: 0,
+    selectMode: false,
+    selectedNotionIds: new Set(),
+    lessons: [],
+    activeLessonId: null
   };
 
   const latexRenderCache = new Map();
@@ -646,6 +720,16 @@
       card.classList.add('active');
     }
     card.dataset.notionId = notion.id;
+    if (state.selectMode) {
+      card.classList.add('selectable');
+      if (state.selectedNotionIds.has(notion.id)) {
+        card.classList.add('selected');
+      }
+      const check = document.createElement('span');
+      check.className = 'notion-card-check';
+      check.textContent = '\u2713';
+      card.appendChild(check);
+    }
     const q = fold(state.notionFilter);
     if (q && fold(notion.title).includes(q)) {
       card.classList.add('title-match');
@@ -663,7 +747,19 @@
       proofBadge.title = 'Avec démonstration';
       card.appendChild(proofBadge);
     }
-    card.addEventListener('click', () => openNotion(notion));
+    card.addEventListener('click', () => {
+      if (state.selectMode) {
+        if (state.selectedNotionIds.has(notion.id)) {
+          state.selectedNotionIds.delete(notion.id);
+        } else {
+          state.selectedNotionIds.add(notion.id);
+        }
+        renderNotionsGrid();
+        updateSelectionUi();
+        return;
+      }
+      openNotion(notion);
+    });
     return card;
   }
 
@@ -726,24 +822,29 @@
     }
     show(els.coursList, section === 'cours');
     show(els.notionsFiltersList, section === 'notions');
+    show(els.leconsList, section === 'lecons');
+    if (section !== 'notions' && state.selectMode) {
+      toggleSelectMode(false);
+    }
+    if (section === 'lecons') {
+      renderLeconsSidebar();
+      updateLeconsView();
+    }
     updateMainView();
   }
 
   function updateMainView() {
     if (!state.scan) {
-      show(els.emptyState, true);
+      show(els.emptyState, state.section !== 'lecons');
       show(els.readerCours, false);
       show(els.readerNotions, false);
+      show(els.readerLecons, state.section === 'lecons');
       return;
     }
     show(els.emptyState, false);
-    if (state.section === 'cours') {
-      show(els.readerCours, true);
-      show(els.readerNotions, false);
-    } else {
-      show(els.readerCours, false);
-      show(els.readerNotions, true);
-    }
+    show(els.readerCours, state.section === 'cours');
+    show(els.readerNotions, state.section === 'notions');
+    show(els.readerLecons, state.section === 'lecons');
   }
 
   /* ---------- Folder & scan ---------- */
@@ -1848,10 +1949,247 @@
     els.notionViews.appendChild(frag);
   }
 
+  /* ---------- Leçons d'oral ---------- */
+
+  function toggleSelectMode(enabled) {
+    state.selectMode = typeof enabled === 'boolean' ? enabled : !state.selectMode;
+    if (!state.selectMode) {
+      state.selectedNotionIds.clear();
+    }
+    if (els.notionSelectToggle) {
+      els.notionSelectToggle.textContent = state.selectMode ? 'Annuler la sélection' : 'Sélectionner';
+      els.notionSelectToggle.classList.toggle('active', state.selectMode);
+    }
+    updateSelectionUi();
+    renderNotionsGrid();
+  }
+
+  function updateSelectionUi() {
+    const count = state.selectedNotionIds.size;
+    show(els.notionSelectionCount, state.selectMode && count > 0);
+    show(els.notionSelectionAdd, state.selectMode && count > 0);
+    show(els.notionSelectionClear, state.selectMode && count > 0);
+    if (els.notionSelectionCount) {
+      els.notionSelectionCount.textContent = `${count} notion${count > 1 ? 's' : ''} cochée${count > 1 ? 's' : ''}`;
+    }
+  }
+
+  async function loadLessons() {
+    const result = await window.api.getLessons();
+    state.lessons = Array.isArray(result && result.lessons) ? result.lessons : [];
+  }
+
+  async function persistLesson(lesson) {
+    const result = await window.api.saveLesson(lesson);
+    if (result && !result.error) {
+      state.lessons = result.lessons;
+    }
+    renderLeconsSidebar();
+    if (state.activeLessonId === lesson.id) {
+      renderLessonEditor();
+    }
+  }
+
+  async function createLessonFromSelection() {
+    const notionIds = Array.from(state.selectedNotionIds);
+    if (notionIds.length === 0) {
+      return;
+    }
+    const lesson = {
+      id: `lesson::${Date.now()}::${Math.random().toString(36).slice(2, 8)}`,
+      title: 'Nouvelle leçon',
+      notionIds,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    const result = await window.api.saveLesson(lesson);
+    if (result && !result.error) {
+      state.lessons = result.lessons;
+    }
+    toggleSelectMode(false);
+    state.activeLessonId = lesson.id;
+    switchSection('lecons');
+    if (els.lessonTitleInput) {
+      els.lessonTitleInput.focus();
+      els.lessonTitleInput.select();
+    }
+  }
+
+  function renderLeconsSidebar() {
+    if (!els.leconsList) {
+      return;
+    }
+    clearElement(els.leconsList);
+    if (state.lessons.length === 0) {
+      els.leconsList.appendChild(buildEmptyItem('Aucune leçon'));
+      return;
+    }
+    els.leconsList.appendChild(buildGroupHeader('Leçons', state.lessons.length));
+    for (const lesson of state.lessons) {
+      const stats = lessonStatsLocal(lesson);
+      els.leconsList.appendChild(
+        buildListItem({
+          icon: 'Σ',
+          label: lesson.title,
+          title: `${lesson.title} — ${stats.total} notion${stats.total > 1 ? 's' : ''}`,
+          active: state.activeLessonId === lesson.id,
+          onClick: () => {
+            state.activeLessonId = lesson.id;
+            renderLeconsSidebar();
+            updateLeconsView();
+          }
+        })
+      );
+    }
+  }
+
+  function updateLeconsView() {
+    const hasLesson = !!state.activeLessonId
+      && state.lessons.some((l) => l.id === state.activeLessonId);
+    if (!hasLesson) {
+      state.activeLessonId = null;
+    }
+    show(els.leconsEmpty, !hasLesson);
+    show(els.lessonEdit, hasLesson);
+    if (hasLesson) {
+      renderLessonEditor();
+    }
+  }
+
+  function getActiveLesson() {
+    return state.lessons.find((l) => l.id === state.activeLessonId) || null;
+  }
+
+  function renderLessonEditor() {
+    const lesson = getActiveLesson();
+    if (!lesson || !els.lessonEdit) {
+      return;
+    }
+    if (els.lessonTitleInput && document.activeElement !== els.lessonTitleInput) {
+      els.lessonTitleInput.value = lesson.title;
+    }
+    const stats = lessonStatsLocal(lesson);
+    if (els.lessonStats) {
+      els.lessonStats.textContent = `${stats.total} notion${stats.total > 1 ? 's' : ''}`
+        + (stats.missing > 0 ? ` — ${stats.missing} introuvable${stats.missing > 1 ? 's' : ''}` : '');
+    }
+    renderLessonNotions(lesson);
+  }
+
+  function renderLessonNotions(lesson) {
+    clearElement(els.lessonNotions);
+    const resolved = resolveLessonNotionsLocal(lesson);
+    if (resolved.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'list-empty';
+      empty.textContent = 'Leçon vide — cochez des notions dans la section Notions.';
+      els.lessonNotions.appendChild(empty);
+      return;
+    }
+    resolved.forEach((entry, index) => {
+      const row = document.createElement('div');
+      row.className = 'lesson-notion-row' + (entry.ok ? '' : ' missing');
+      const pos = document.createElement('span');
+      pos.className = 'lesson-notion-pos';
+      pos.textContent = String(index + 1);
+      row.appendChild(pos);
+      if (!entry.ok) {
+        const miss = document.createElement('span');
+        miss.className = 'lesson-notion-missing';
+        miss.textContent = 'Notion introuvable (cours modifié ou supprimé)';
+        row.appendChild(miss);
+      } else {
+        const first = entry.notions[0];
+        const label = document.createElement('span');
+        label.className = 'lesson-notion-label';
+        label.textContent = first.title;
+        label.style.color = notionEnvColor(first);
+        label.title = `${first.environmentDisplay} — ${courseNameToTitle(first.course)}`;
+        if (entry.notions.length > 1) {
+          label.title += ` (+${entry.notions.length - 1} autre${entry.notions.length - 1 > 1 ? 's' : ''})`;
+        }
+        row.appendChild(label);
+      }
+      const controls = document.createElement('span');
+      controls.className = 'lesson-notion-controls';
+      const up = document.createElement('button');
+      up.type = 'button';
+      up.textContent = '\u2191';
+      up.title = 'Monter';
+      up.disabled = index === 0;
+      up.addEventListener('click', async () => {
+        lessonMoveNotionLocal(lesson, entry.notionId, -1);
+        await persistLesson(lesson);
+      });
+      controls.appendChild(up);
+      const down = document.createElement('button');
+      down.type = 'button';
+      down.textContent = '\u2193';
+      down.title = 'Descendre';
+      down.disabled = index === resolved.length - 1;
+      down.addEventListener('click', async () => {
+        lessonMoveNotionLocal(lesson, entry.notionId, 1);
+        await persistLesson(lesson);
+      });
+      controls.appendChild(down);
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.textContent = '\u00d7';
+      remove.title = 'Retirer de la leçon';
+      remove.addEventListener('click', async () => {
+        lessonRemoveNotionLocal(lesson, entry.notionId);
+        await persistLesson(lesson);
+      });
+      controls.appendChild(remove);
+      row.appendChild(controls);
+      els.lessonNotions.appendChild(row);
+    });
+  }
+
+  async function deleteLessonById(lessonId) {
+    const result = await window.api.deleteLesson(lessonId);
+    if (result && !result.error) {
+      state.lessons = result.lessons;
+    }
+    if (state.activeLessonId === lessonId) {
+      state.activeLessonId = null;
+    }
+    renderLeconsSidebar();
+    updateLeconsView();
+  }
+
   /* ---------- Events ---------- */
 
   els.openFolderBtn.addEventListener('click', openFolderDialog);
   els.rescanBtn.addEventListener('click', () => rescan({ preserve: true }));
+
+  if (els.notionSelectToggle) {
+    els.notionSelectToggle.addEventListener('click', () => toggleSelectMode());
+  }
+  if (els.notionSelectionAdd) {
+    els.notionSelectionAdd.addEventListener('click', createLessonFromSelection);
+  }
+  if (els.notionSelectionClear) {
+    els.notionSelectionClear.addEventListener('click', () => toggleSelectMode(false));
+  }
+  if (els.lessonBack) {
+    els.lessonBack.addEventListener('click', () => {
+      state.activeLessonId = null;
+      renderLeconsSidebar();
+      updateLeconsView();
+    });
+  }
+  if (els.lessonTitleInput) {
+    els.lessonTitleInput.addEventListener('change', async () => {
+      const lesson = getActiveLesson();
+      if (!lesson) {
+        return;
+      }
+      lessonSetTitleLocal(lesson, els.lessonTitleInput.value);
+      await persistLesson(lesson);
+      renderLeconsSidebar();
+    });
+  }
 
   let autoRescanTimer = null;
   let lastAutoRescanAt = 0;
@@ -2053,5 +2391,6 @@
 
   initUpdateBanner();
   applyAppTitle();
+  loadLessons();
   init();
 })();

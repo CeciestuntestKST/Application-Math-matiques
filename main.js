@@ -8,6 +8,7 @@ const { flattenNotions } = require('./lib/notions-model');
 const { readSettings } = require('./lib/settings-parser');
 const { createFolderWatcher } = require('./lib/folder-watcher');
 const autoUpdate = require('./lib/auto-update');
+const { normalizeLessons } = require('./lib/lessons-model');
 
 const isDev = process.argv.includes('--dev');
 let mainWindow = null;
@@ -86,6 +87,13 @@ function savePrefs(prefs) {
   }
 }
 
+function updatePrefs(patch) {
+  const prefs = loadPrefs();
+  const merged = Object.assign({}, prefs, patch);
+  savePrefs(merged);
+  return merged;
+}
+
 function notifyUpdateStatus(status) {
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send('app:update-status', status);
@@ -155,7 +163,7 @@ ipcMain.handle('app:select-folder', async () => {
   }
   const folder = result.filePaths[0];
   setActiveFolder(folder);
-  savePrefs({ folder });
+  updatePrefs({ folder });
   return { canceled: false, folder };
 });
 
@@ -260,6 +268,38 @@ ipcMain.handle('app:check-updates', async () => {
 
 ipcMain.handle('app:install-update', async () => {
   return autoUpdate.quitAndInstall();
+});
+
+ipcMain.handle('app:lessons-get', async () => {
+  const prefs = loadPrefs();
+  return { lessons: normalizeLessons(prefs.lessons) };
+});
+
+ipcMain.handle('app:lessons-save', async (_event, lesson) => {
+  if (!lesson || typeof lesson !== 'object' || typeof lesson.id !== 'string') {
+    return { error: 'invalid-lesson' };
+  }
+  const prefs = loadPrefs();
+  const lessons = normalizeLessons(prefs.lessons);
+  const existingIdx = lessons.findIndex((l) => l.id === lesson.id);
+  const normalized = normalizeLessons([lesson])[0];
+  if (existingIdx !== -1) {
+    lessons[existingIdx] = Object.assign({}, lessons[existingIdx], normalized);
+  } else {
+    lessons.unshift(normalized);
+  }
+  updatePrefs({ lessons });
+  return { lessons };
+});
+
+ipcMain.handle('app:lessons-delete', async (_event, lessonId) => {
+  if (typeof lessonId !== 'string') {
+    return { error: 'invalid-lesson' };
+  }
+  const prefs = loadPrefs();
+  const lessons = normalizeLessons(prefs.lessons).filter((l) => l.id !== lessonId);
+  updatePrefs({ lessons });
+  return { lessons };
 });
 
 ipcMain.handle('app:open-external', async (_event, url) => {

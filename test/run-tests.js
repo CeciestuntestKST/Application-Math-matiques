@@ -17,6 +17,18 @@ const {
 } = require('../lib/latex-notions');
 const { flattenNotions } = require('../lib/notions-model');
 const { createFolderWatcher, isWatchedFile } = require('../lib/folder-watcher');
+const {
+  createLessonModel,
+  normalizeLessons,
+  resolveLessonNotions,
+  setLessonTitle,
+  addNotionToLesson,
+  removeNotionFromLesson,
+  moveNotionInLesson,
+  upsertLesson,
+  deleteLesson,
+  lessonStats
+} = require('../lib/lessons-model');
 
 function makeTempFolder() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'maths-app-test-'));
@@ -438,6 +450,102 @@ test('createFolderWatcher refuse un dossier inexistant', () => {
   const watcher = createFolderWatcher({});
   assert.strictEqual(watcher.start(path.join(os.tmpdir(), 'dossier-qui-n-existe-pas-xyz')), false);
   watcher.stop();
+});
+
+test('createLessonModel crée une leçon avec valeurs par défaut', () => {
+  const lesson = createLessonModel();
+  assert.strictEqual(lesson.title, 'Nouvelle leçon');
+  assert.deepStrictEqual(lesson.notionIds, []);
+  assert.ok(lesson.id.startsWith('lesson::'));
+  assert.ok(lesson.createdAt);
+  assert.ok(lesson.updatedAt);
+});
+
+test('createLessonModel normalise les entrées invalides', () => {
+  const lesson = createLessonModel({ title: '   ', notionIds: ['a', 42, null, 'b'] });
+  assert.strictEqual(lesson.title, 'Nouvelle leçon');
+  assert.deepStrictEqual(lesson.notionIds, ['a', 'b']);
+});
+
+test('normalizeLessons filtre les entrées invalides et trie par updatedAt décroissant', () => {
+  const lessons = normalizeLessons([
+    null,
+    'pas un objet',
+    { title: 'Vieille', notionIds: ['x'], updatedAt: '2026-01-01T00:00:00Z' },
+    { title: 'Récente', notionIds: ['y'], updatedAt: '2026-02-01T00:00:00Z' }
+  ]);
+  assert.strictEqual(lessons.length, 2);
+  assert.strictEqual(lessons[0].title, 'Récente');
+  assert.strictEqual(lessons[1].title, 'Vieille');
+});
+
+test('addNotionToLesson ajoute sans doublon, removeNotionFromLesson retire', () => {
+  const lessons = [createLessonModel({ title: 'L1', notionIds: [] })];
+  const id = lessons[0].id;
+  assert.strictEqual(addNotionToLesson(lessons, id, 'n1'), true);
+  assert.strictEqual(addNotionToLesson(lessons, id, 'n1'), true);
+  assert.deepStrictEqual(lessons[0].notionIds, ['n1']);
+  assert.strictEqual(addNotionToLesson(lessons, id, 'n2'), true);
+  assert.deepStrictEqual(lessons[0].notionIds, ['n1', 'n2']);
+  assert.strictEqual(removeNotionFromLesson(lessons, id, 'n1'), true);
+  assert.deepStrictEqual(lessons[0].notionIds, ['n2']);
+  assert.strictEqual(removeNotionFromLesson(lessons, 'id-inconnu', 'n2'), false);
+});
+
+test('moveNotionInLesson réordonne avec bornes', () => {
+  const lessons = [createLessonModel({ title: 'L1', notionIds: ['a', 'b', 'c'] })];
+  const id = lessons[0].id;
+  assert.strictEqual(moveNotionInLesson(lessons, id, 'b', -1), true);
+  assert.deepStrictEqual(lessons[0].notionIds, ['b', 'a', 'c']);
+  assert.strictEqual(moveNotionInLesson(lessons, id, 'b', -1), true);
+  assert.deepStrictEqual(lessons[0].notionIds, ['b', 'a', 'c']);
+  assert.strictEqual(moveNotionInLesson(lessons, id, 'c', 1), true);
+  assert.deepStrictEqual(lessons[0].notionIds, ['b', 'a', 'c']);
+  assert.strictEqual(moveNotionInLesson(lessons, id, 'a', 1), true);
+  assert.deepStrictEqual(lessons[0].notionIds, ['b', 'c', 'a']);
+});
+
+test('setLessonTitle ignore les titres vides et met à jour updatedAt', () => {
+  const lessons = [createLessonModel({ title: 'Avant', updatedAt: '2026-01-01T00:00:00Z' })];
+  const id = lessons[0].id;
+  setLessonTitle(lessons, id, '   ');
+  assert.strictEqual(lessons[0].title, 'Avant');
+  setLessonTitle(lessons, id, 'Leçon 42 — Développement limité');
+  assert.strictEqual(lessons[0].title, 'Leçon 42 — Développement limité');
+  assert.notStrictEqual(lessons[0].updatedAt, '2026-01-01T00:00:00Z');
+  assert.strictEqual(setLessonTitle(lessons, 'inconnu', 'X'), false);
+});
+
+test('resolveLessonNotions résout les notions fusionnées et signale les manquantes', () => {
+  const lesson = createLessonModel({ title: 'L', notionIds: ['titled::df::Adhérence', 'titled::tm::Inconnu'] });
+  const notions = [
+    { id: 'titled::df::Adhérence', title: 'Adhérence', course: 'Topologie' },
+    { id: 'titled::df::Adhérence', title: 'Adhérence', course: 'Analyse' },
+    { id: 'titled::tm::Autre', title: 'Autre', course: 'Topologie' }
+  ];
+  const resolved = resolveLessonNotions(lesson, notions);
+  assert.strictEqual(resolved.length, 2);
+  assert.strictEqual(resolved[0].ok, true);
+  assert.strictEqual(resolved[0].notions.length, 2);
+  assert.strictEqual(resolved[1].ok, false);
+  const stats = lessonStats(lesson, notions);
+  assert.strictEqual(stats.total, 2);
+  assert.strictEqual(stats.ok, 1);
+  assert.strictEqual(stats.missing, 1);
+});
+
+test('upsertLesson met à jour ou ajoute, deleteLesson retire', () => {
+  const lessons = [];
+  const lesson = createLessonModel({ title: 'L1', notionIds: ['a'] });
+  upsertLesson(lessons, lesson);
+  assert.strictEqual(lessons.length, 1);
+  lesson.title = 'L1 renommée';
+  upsertLesson(lessons, lesson);
+  assert.strictEqual(lessons.length, 1);
+  assert.strictEqual(lessons[0].title, 'L1 renommée');
+  assert.strictEqual(deleteLesson(lessons, lesson.id), true);
+  assert.strictEqual(lessons.length, 0);
+  assert.strictEqual(deleteLesson(lessons, lesson.id), false);
 });
 
 async function runAsyncTests() {

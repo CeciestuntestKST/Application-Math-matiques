@@ -21,11 +21,20 @@
           <path d="M17 5H7l5 7-5 7h10"/>
         </svg>
       </button>
+      <button class="activity-icon" data-section="lecons" title="Leçons d'oral">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v18"/>
+          <path d="M5 7h14"/>
+          <path d="M5 7v13a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V7"/>
+          <path d="M9 1.5h6"/>
+        </svg>
+      </button>
     </nav>
     <aside id="sidebar">
       <div id="sidebar-list">
         <div id="cours-list" class="list active"></div>
         <div id="notions-filters-list" class="list hidden"></div>
+        <div id="lecons-list" class="list hidden"></div>
       </div>
       <div id="sidebar-footer">
         <div id="update-banner" class="hidden"></div>
@@ -72,6 +81,11 @@
           <input id="notions-search" type="search" placeholder="Rechercher une notion (titre, type, matière, corps)…" />
           <span class="toolbar-spacer"></span>
           <span id="notions-count"></span>
+          <span class="toolbar-spacer"></span>
+          <button id="notion-select-toggle" title="Sélectionner des notions pour une leçon d'oral">Sélectionner</button>
+          <span id="notion-selection-count" class="hidden"></span>
+          <button id="notion-selection-add" class="hidden" title="Ajouter les notions cochées à une leçon d'oral">Créer la leçon</button>
+          <button id="notion-selection-clear" class="hidden" title="Vider la sélection">Vider</button>
         </div>
         <div id="notions-top">
           <div id="notion-grid"></div>
@@ -87,6 +101,23 @@
           <p class="hint">Plusieurs notions peuvent être ouvertes en même temps, une par onglet. Les notions portant le même nom sont réunies dans un même onglet.</p>
           </div>
         </div>
+        </div>
+      </div>
+      <div id="reader-lecons" class="reader hidden">
+        <div id="lecons-empty" class="hidden">
+          <div class="empty-icon">Σ</div>
+          <h1>Leçons d'oral</h1>
+          <p>Constituez vos plans de leçons d'oral à partir de la bibliothèque de notions.</p>
+          <p class="hint">Dans la section Notions, cliquez sur « Sélectionner », cochez des notions puis « Créer la leçon ». Vous pourrez ensuite les réordonner ici et exporter un fichier LaTeX.</p>
+        </div>
+        <div id="lesson-edit" class="hidden">
+          <div id="lesson-toolbar" class="toolbar">
+            <button id="lesson-back" title="Retour à la liste des leçons">←</button>
+            <input id="lesson-title-input" type="text" placeholder="Titre de la leçon…" />
+            <span class="toolbar-spacer"></span>
+            <span id="lesson-stats"></span>
+          </div>
+          <div id="lesson-notions"></div>
         </div>
       </div>
     </main>
