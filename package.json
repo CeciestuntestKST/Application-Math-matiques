@@ -1,7 +1,7 @@
 {
   "name": "application-mathematiques",
   "productName": "Application Mathématiques",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Application PC hors-ligne pour la lecture de cours et de notions mathématiques (agrégation externe)",
   "main": "main.js",
   "private": true,
