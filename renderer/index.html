@@ -138,8 +138,12 @@
           </div>
           <div id="lesson-edit-body">
             <div id="lesson-editor-pane">
-              <div class="lesson-pane-header">Plan de la leçon (LaTeX)</div>
-              <textarea id="lesson-tex-input" spellcheck="false" placeholder="% Plan de la leçon — LaTeX libre&#10;% Importez des notions depuis la bibliothèque à droite…"></textarea>
+              <div class="lesson-pane-header">Plan de la leçon
+                <span class="toolbar-spacer"></span>
+                <button id="lesson-view-code" class="dev-mode-btn" title="Basculer entre rendu et code LaTeX">Code source</button>
+              </div>
+              <div id="lesson-render-view"></div>
+              <textarea id="lesson-tex-input" class="hidden" spellcheck="false" placeholder="% Plan de la leçon — LaTeX libre&#10;% Importez des notions depuis la bibliothèque à droite…"></textarea>
             </div>
             <div id="lesson-import-pane">
               <div class="lesson-pane-header">Bibliothèque de notions</div>
