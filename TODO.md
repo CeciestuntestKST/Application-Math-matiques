@@ -13,7 +13,7 @@ Référentiel des fonctionnalités envisagées. Les statuts : **À faire** (prio
 
 ### Fait
 
-- [x] **Leçons / Développements — plein écran** : les deux sections remplissent désormais toute la zone de contenu (le conteneur `.reader` était en direction ligne par défaut pour ces sections, ce qui les écrasait en colonne étroite).
+- [x] **Leçons / Développements — sections indépendantes** : entrer dans une section affiche toujours son accueil (plus de reprise du dernier élément édité, qui donnait l'impression que la vue principale ne changeait pas) ; correctif de l'aperçu rendu des développements (la vue restait figée : la fonction n'attendait pas le parsing IPC) ; garde-fous contre les rendus asynchrones obsolètes (bascule rapide entre sections).
 
 - [x] **Développements — numéros de leçons libres** : champ « N° de leçons » (ex. `12, 142, 158`) dans le panneau latéral, stocké dans `% dev-meta:` (`lessonNumbers`), en plus des cases à cocher de leçons existantes. Les cartes de l'accueil affichent les numéros concernés.
 
