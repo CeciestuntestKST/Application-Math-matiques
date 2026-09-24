@@ -1919,6 +1919,15 @@
 
   /* ---------- Init ---------- */
 
+  async function applyAppTitle() {
+    try {
+      const version = await window.api.getVersion();
+      document.title = `Application Mathématiques v${version}`;
+    } catch (error) {
+      document.title = 'Application Mathématiques';
+    }
+  }
+
   async function init() {
     const stateResult = await window.api.getState();
     if (stateResult.prefsError) {
@@ -1934,5 +1943,6 @@
   }
 
   initUpdateBanner();
+  applyAppTitle();
   init();
 })();

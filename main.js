@@ -159,6 +159,8 @@ ipcMain.handle('app:select-folder', async () => {
   return { canceled: false, folder };
 });
 
+ipcMain.handle('app:get-version', () => app.getVersion());
+
 ipcMain.handle('app:get-state', async () => {
   const prefs = loadPrefs();
   return {

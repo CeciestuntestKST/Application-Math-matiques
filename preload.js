@@ -4,6 +4,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
   getState: () => ipcRenderer.invoke('app:get-state'),
+  getVersion: () => ipcRenderer.invoke('app:get-version'),
   selectFolder: () => ipcRenderer.invoke('app:select-folder'),
   scanFolder: () => ipcRenderer.invoke('app:scan-folder'),
   readSettings: () => ipcRenderer.invoke('app:read-settings'),
