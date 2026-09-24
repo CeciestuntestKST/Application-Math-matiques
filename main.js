@@ -8,7 +8,7 @@ const { flattenNotions } = require('./lib/notions-model');
 const { readSettings } = require('./lib/settings-parser');
 const { createFolderWatcher } = require('./lib/folder-watcher');
 const autoUpdate = require('./lib/auto-update');
-const { normalizeLessons } = require('./lib/lessons-model');
+const lessonFiles = require('./lib/lesson-files');
 
 const isDev = process.argv.includes('--dev');
 let mainWindow = null;
@@ -270,36 +270,57 @@ ipcMain.handle('app:install-update', async () => {
   return autoUpdate.quitAndInstall();
 });
 
-ipcMain.handle('app:lessons-get', async () => {
-  const prefs = loadPrefs();
-  return { lessons: normalizeLessons(prefs.lessons) };
+function requireCourseFolder() {
+  if (!state.folder) {
+    const prefs = loadPrefs();
+    if (prefs.folder && fs.existsSync(prefs.folder)) {
+      setActiveFolder(prefs.folder);
+    }
+  }
+  return state.folder || null;
+}
+
+ipcMain.handle('app:lessons-list', async () => {
+  const folder = requireCourseFolder();
+  if (!folder) {
+    return { error: 'no-folder' };
+  }
+  try {
+    return { lessons: lessonFiles.listLessonFiles(folder) };
+  } catch (err) {
+    return { error: err.message };
+  }
 });
 
 ipcMain.handle('app:lessons-save', async (_event, lesson) => {
-  if (!lesson || typeof lesson !== 'object' || typeof lesson.id !== 'string') {
+  const folder = requireCourseFolder();
+  if (!folder) {
+    return { error: 'no-folder' };
+  }
+  if (!lesson || typeof lesson !== 'object') {
     return { error: 'invalid-lesson' };
   }
-  const prefs = loadPrefs();
-  const lessons = normalizeLessons(prefs.lessons);
-  const existingIdx = lessons.findIndex((l) => l.id === lesson.id);
-  const normalized = normalizeLessons([lesson])[0];
-  if (existingIdx !== -1) {
-    lessons[existingIdx] = Object.assign({}, lessons[existingIdx], normalized);
-  } else {
-    lessons.unshift(normalized);
+  if (lesson.path && !lessonFiles.isPathInLessonsDir(folder, lesson.path)) {
+    return { error: 'path-outside-folder' };
   }
-  updatePrefs({ lessons });
-  return { lessons };
+  try {
+    const saved = lessonFiles.writeLessonFile(folder, lesson);
+    return { lesson: saved };
+  } catch (err) {
+    return { error: err.message };
+  }
 });
 
-ipcMain.handle('app:lessons-delete', async (_event, lessonId) => {
-  if (typeof lessonId !== 'string') {
-    return { error: 'invalid-lesson' };
+ipcMain.handle('app:lessons-delete', async (_event, lessonPath) => {
+  const folder = requireCourseFolder();
+  if (!folder) {
+    return { error: 'no-folder' };
   }
-  const prefs = loadPrefs();
-  const lessons = normalizeLessons(prefs.lessons).filter((l) => l.id !== lessonId);
-  updatePrefs({ lessons });
-  return { lessons };
+  if (typeof lessonPath !== 'string' || !lessonFiles.isPathInLessonsDir(folder, lessonPath)) {
+    return { error: 'path-outside-folder' };
+  }
+  const ok = lessonFiles.deleteLessonFile(lessonPath);
+  return ok ? { ok: true } : { error: 'delete-failed' };
 });
 
 ipcMain.handle('app:open-external', async (_event, url) => {

@@ -1263,84 +1263,133 @@ html, body {
   background: #6b6b6b;
 }
 
-/* ---------- Leçons d'oral : sélection dans la grille ---------- */
 
-#notions-toolbar button {
-  background: var(--vs-button-bg);
-  color: var(--vs-text);
-  border: 1px solid var(--vs-border);
-  border-radius: 4px;
-  padding: 4px 10px;
-  font-size: 12px;
-  cursor: pointer;
-  flex-shrink: 0;
+/* ---------- Leçons d'oral : accueil ---------- */
+
+#lecons-home {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px 28px;
 }
 
-#notions-toolbar button:hover {
-  background: var(--vs-button-hover);
+#lecons-home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
 }
 
-#notions-toolbar button.active {
-  background: var(--vs-accent);
-  border-color: var(--vs-accent);
-  color: #1e1e1e;
+#lecons-home-header h1 {
+  font-size: 20px;
+  color: var(--vs-text-bright);
   font-weight: 600;
 }
 
-#notion-selection-count {
-  font-size: 12px;
+#lesson-create {
+  background: var(--vs-button-bg);
+  color: #ffffff;
+  border: 1px solid var(--vs-button-bg);
+  border-radius: 4px;
+  padding: 7px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+#lesson-create:hover {
+  background: var(--vs-button-hover);
+}
+
+#lecons-create-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+#lecons-create-form input {
+  background: var(--vs-input-bg);
   color: var(--vs-text-bright);
-  flex-shrink: 0;
+  border: 1px solid var(--vs-border);
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-size: 12.5px;
 }
 
-.notion-card.selectable {
-  outline: none;
+#lesson-create-number {
+  width: 64px;
 }
 
-.notion-card.selected {
-  border-color: var(--vs-accent);
-  background: var(--vs-sidebar-active);
-  box-shadow: inset 0 0 0 1px var(--vs-accent);
+#lesson-create-title {
+  width: 280px;
 }
 
-.notion-card-check {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 18px;
-  height: 18px;
-  line-height: 18px;
-  text-align: center;
-  border-radius: 50%;
-  background: var(--vs-accent);
-  color: #1e1e1e;
-  font-size: 12px;
-  font-weight: 700;
-}
-
-/* ---------- Leçons d'oral : vue ---------- */
-
-#lecons-empty {
-  padding: 48px 24px;
+#lecons-empty-hint {
+  padding: 32px 8px;
   text-align: center;
   color: var(--vs-text-dim);
 }
 
-#lecons-empty h1 {
-  font-size: 20px;
-  margin: 12px 0 8px;
-  color: var(--vs-text-bright);
+#lecons-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
 }
 
-#lecons-empty .empty-icon {
-  font-size: 42px;
-  color: var(--vs-accent);
+.lesson-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 14px;
+  text-align: left;
+  background: var(--vs-bg-panel);
+  color: var(--vs-text);
+  border: 1px solid var(--vs-border);
+  border-radius: 6px;
+  cursor: pointer;
 }
+
+.lesson-card:hover {
+  background: var(--vs-sidebar-hover);
+  border-color: var(--vs-border-strong);
+}
+
+.lesson-card-number {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--vs-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.lesson-card-title {
+  font-size: 13.5px;
+  color: var(--vs-text-bright);
+  line-height: 1.3;
+}
+
+.lesson-card-hint {
+  font-size: 11px;
+  color: var(--vs-text-dim);
+}
+
+/* ---------- Leçons d'oral : éditeur ---------- */
 
 #lesson-edit {
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-height: 0;
+}
+
+.lesson-number-badge {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--vs-accent);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 #lesson-title-input {
@@ -1358,82 +1407,172 @@ html, body {
   outline: none;
 }
 
-#lesson-stats {
-  font-size: 12px;
+#lesson-save-status {
+  font-size: 11.5px;
   color: var(--vs-text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+#lesson-delete {
+  background: transparent;
+  color: var(--vs-text-dim);
+  border: 1px solid var(--vs-border);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
   flex-shrink: 0;
 }
 
-#lesson-notions {
+#lesson-delete:hover {
+  color: #f48771;
+  border-color: #f48771;
+}
+
+#lesson-edit-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+#lesson-editor-pane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.lesson-pane-header {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--vs-text-dim);
+  background: var(--vs-toolbar);
+  border-bottom: 1px solid var(--vs-border);
+  flex-shrink: 0;
+}
+
+#lesson-tex-input {
+  flex: 1;
+  resize: none;
+  background: var(--vs-bg-deep);
+  color: var(--vs-text-bright);
+  border: none;
+  outline: none;
+  padding: 12px 16px;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+/* ---------- Leçons d'oral : panneau d'import ---------- */
+
+#lesson-import-pane {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--vs-border);
+  background: var(--vs-bg-panel);
+  min-height: 0;
+}
+
+#lesson-import-pane .lesson-pane-header {
+  border-bottom: 1px solid var(--vs-border);
+}
+
+#lesson-import-search {
+  margin: 8px 10px;
+  background: var(--vs-input-bg);
+  color: var(--vs-text-bright);
+  border: 1px solid var(--vs-border);
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-size: 12.5px;
+  flex-shrink: 0;
+}
+
+#lesson-import-list {
   flex: 1;
   overflow-y: auto;
-  padding: 8px 16px 24px;
+  padding: 0 10px 12px;
+  min-height: 0;
 }
 
-.lesson-notion-row {
+.lesson-import-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  border: 1px solid var(--vs-border);
-  border-radius: 5px;
-  margin-bottom: 6px;
-  background: var(--vs-bg-panel);
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: copy;
+  border: 1px solid transparent;
 }
 
-.lesson-notion-row.missing {
-  border-style: dashed;
-  opacity: 0.7;
+.lesson-import-item:hover {
+  background: var(--vs-sidebar-hover);
+  border-color: var(--vs-border-strong);
 }
 
-.lesson-notion-pos {
+.lesson-import-env {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   flex-shrink: 0;
-  width: 22px;
-  text-align: right;
-  color: var(--vs-text-dim);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
+  opacity: 0.9;
 }
 
-.lesson-notion-label {
+.lesson-import-label {
+  font-size: 12.5px;
   flex: 1;
-  font-size: 13px;
-  color: var(--vs-text-bright);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.lesson-import-course {
+  font-size: 10.5px;
+  color: var(--vs-text-dim);
+  flex-shrink: 0;
+  max-width: 90px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.lesson-notion-missing {
-  flex: 1;
-  font-size: 12.5px;
-  color: var(--vs-text-dim);
-  font-style: italic;
-}
-
-.lesson-notion-controls {
-  display: flex;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.lesson-notion-controls button {
+#lesson-create-confirm {
   background: var(--vs-button-bg);
-  color: var(--vs-text);
-  border: 1px solid var(--vs-border);
+  color: #ffffff;
+  border: 1px solid var(--vs-button-bg);
   border-radius: 4px;
-  width: 24px;
-  height: 22px;
-  line-height: 1;
+  padding: 5px 12px;
+  font-size: 12.5px;
   cursor: pointer;
-  font-size: 12px;
 }
 
-.lesson-notion-controls button:hover:not(:disabled) {
+#lesson-create-confirm:hover {
   background: var(--vs-button-hover);
 }
 
-.lesson-notion-controls button:disabled {
-  opacity: 0.35;
-  cursor: default;
+#lesson-create-cancel {
+  background: transparent;
+  color: var(--vs-text-dim);
+  border: 1px solid var(--vs-border);
+  border-radius: 4px;
+  padding: 5px 12px;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+#lesson-create-cancel:hover {
+  color: var(--vs-text);
+  border-color: var(--vs-border-strong);
 }

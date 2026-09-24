@@ -24,8 +24,8 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.on('app:folder-changed', listener);
     return () => ipcRenderer.removeListener('app:folder-changed', listener);
   },
-  getLessons: () => ipcRenderer.invoke('app:lessons-get'),
+  listLessons: () => ipcRenderer.invoke('app:lessons-list'),
   saveLesson: (lesson) => ipcRenderer.invoke('app:lessons-save', lesson),
-  deleteLesson: (lessonId) => ipcRenderer.invoke('app:lessons-delete', lessonId),
+  deleteLesson: (lessonPath) => ipcRenderer.invoke('app:lessons-delete', lessonPath),
   platform: process.platform
 });
