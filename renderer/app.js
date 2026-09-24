@@ -57,6 +57,8 @@
     lessonSaveStatus: document.getElementById('lesson-save-status'),
     lessonDeleteBtn: document.getElementById('lesson-delete'),
     lessonTexInput: document.getElementById('lesson-tex-input'),
+    lessonRenderView: document.getElementById('lesson-render-view'),
+    lessonViewCodeBtn: document.getElementById('lesson-view-code'),
     lessonImportSearch: document.getElementById('lesson-import-search'),
     lessonImportList: document.getElementById('lesson-import-list'),
     devsList: document.getElementById('devs-list'),
@@ -97,6 +99,7 @@
     notionsListRendered: 0,
     lessons: [],
     activeLessonId: null,
+    lessonShowCode: false,
     devs: [],
     activeDevId: null,
     devShowCode: false
@@ -777,6 +780,7 @@
     show(els.devsList, section === 'developpements');
     if (section === 'lecons') {
       state.activeLessonId = null;
+      state.lessonShowCode = false;
       hideCreateLessonForm();
       renderLeconsSidebar();
       updateLeconsView();
@@ -2000,6 +2004,7 @@
           active: state.activeLessonId === lesson.id,
           onClick: () => {
             state.activeLessonId = lesson.id;
+            state.lessonShowCode = false;
             renderLeconsSidebar();
             updateLeconsView();
           }
@@ -2035,6 +2040,7 @@
       card.appendChild(hint);
       card.addEventListener('click', () => {
         state.activeLessonId = lesson.id;
+        state.lessonShowCode = false;
         renderLeconsSidebar();
         updateLeconsView();
       });
@@ -2071,6 +2077,67 @@
       els.lessonSaveStatus.textContent = lesson.path ? `Fichier : ${lesson.fileName}` : '';
     }
     renderLessonImportList();
+    renderLessonRenderView();
+    updateLessonModeVisibility();
+  }
+
+  let lessonRenderSeq = 0;
+
+  async function getLessonNotions(lesson) {
+    if (!lesson || !lesson.content) {
+      return [];
+    }
+    if (!window.api.parseDevContent) {
+      return [];
+    }
+    const seq = ++lessonRenderSeq;
+    const result = await window.api.parseDevContent(lesson.content);
+    if (seq !== lessonRenderSeq) {
+      return null;
+    }
+    return result && Array.isArray(result.notions) ? result.notions : [];
+  }
+
+  async function renderLessonRenderView() {
+    if (!els.lessonRenderView) {
+      return;
+    }
+    const lesson = getActiveLesson();
+    clearElement(els.lessonRenderView);
+    const notions = await getLessonNotions(lesson);
+    if (notions === null) {
+      return;
+    }
+    if (state.section !== 'lecons' || state.activeLessonId !== (lesson && lesson.id)) {
+      return;
+    }
+    if (notions.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'list-empty';
+      empty.style.padding = '24px 16px';
+      empty.textContent = lesson && lesson.content
+        ? 'Aucun environnement reconnu — utilisez « Code source » pour rédiger en LaTeX libre.'
+        : 'Plan vide — « Code source » pour commencer à rédiger.';
+      els.lessonRenderView.appendChild(empty);
+      return;
+    }
+    const frag = document.createDocumentFragment();
+    for (const notion of notions) {
+      frag.appendChild(buildDevNotionBlock(notion));
+    }
+    els.lessonRenderView.appendChild(frag);
+  }
+
+  function updateLessonModeVisibility() {
+    if (els.lessonRenderView) {
+      show(els.lessonRenderView, !state.lessonShowCode);
+    }
+    if (els.lessonTexInput) {
+      show(els.lessonTexInput, state.lessonShowCode);
+    }
+    if (els.lessonViewCodeBtn) {
+      els.lessonViewCodeBtn.textContent = state.lessonShowCode ? 'Aperçu rendu' : 'Code source';
+    }
   }
 
   function getImportableNotions() {
@@ -2149,6 +2216,10 @@
     if (!lesson) {
       return;
     }
+    if (!state.lessonShowCode) {
+      state.lessonShowCode = true;
+      updateLessonModeVisibility();
+    }
     const input = els.lessonTexInput;
     const value = input.value;
     let insert = latex;
@@ -2219,6 +2290,7 @@
       hideCreateLessonForm();
       await loadLessons();
       state.activeLessonId = result.lesson.id;
+      state.lessonShowCode = true;
       renderLeconsSidebar();
       updateLeconsView();
       if (els.lessonTitleInput) {
@@ -2757,6 +2829,7 @@
       }
       await saveActiveLesson();
       state.activeLessonId = null;
+      state.lessonShowCode = false;
       renderLeconsSidebar();
       updateLeconsView();
     });
@@ -2813,6 +2886,15 @@
       }
       lesson.content = els.lessonTexInput.value;
       scheduleLessonSave();
+    });
+  }
+  if (els.lessonViewCodeBtn) {
+    els.lessonViewCodeBtn.addEventListener('click', () => {
+      state.lessonShowCode = !state.lessonShowCode;
+      if (!state.lessonShowCode) {
+        renderLessonRenderView();
+      }
+      updateLessonModeVisibility();
     });
   }
   if (els.lessonImportSearch) {
