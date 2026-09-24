@@ -75,6 +75,9 @@
     devSaveStatus: document.getElementById('dev-save-status'),
     devDeleteBtn: document.getElementById('dev-delete'),
     devTexInput: document.getElementById('dev-tex-input'),
+    devRenderView: document.getElementById('dev-render-view'),
+    devViewCodeBtn: document.getElementById('dev-view-code'),
+    devLessonsNumbers: document.getElementById('dev-lessons-numbers'),
     devLessonsList: document.getElementById('dev-lessons-list'),
     devImportSearch: document.getElementById('dev-import-search'),
     devImportList: document.getElementById('dev-import-list')
@@ -95,7 +98,8 @@
     lessons: [],
     activeLessonId: null,
     devs: [],
-    activeDevId: null
+    activeDevId: null,
+    devShowCode: false
   };
 
   const latexRenderCache = new Map();
@@ -2270,6 +2274,7 @@
       fileName: dev.fileName || null,
       title: dev.title || '',
       lessonIds: Array.isArray(dev.lessonIds) ? dev.lessonIds : [],
+      lessonNumbers: Array.isArray(dev.lessonNumbers) ? dev.lessonNumbers : [],
       content: dev.content || ''
     });
     if (seq !== devSaveSeq) {
@@ -2317,12 +2322,27 @@
           active: state.activeDevId === dev.id,
           onClick: () => {
             state.activeDevId = dev.id;
+            state.devShowCode = false;
             renderDevsSidebar();
             updateDevsView();
           }
         })
       );
     }
+  }
+
+  function formatDevLessonNumbers(dev) {
+    const numbers = new Set(Array.isArray(dev.lessonNumbers) ? dev.lessonNumbers : []);
+    if (Array.isArray(dev.lessonIds)) {
+      for (const id of dev.lessonIds) {
+        const lesson = state.lessons.find((l) => l.id === id);
+        if (lesson && lesson.number) {
+          numbers.add(lesson.number);
+        }
+      }
+    }
+    const sorted = Array.from(numbers).sort((a, b) => a - b);
+    return sorted.join(', ');
   }
 
   function renderDevsCards() {
@@ -2338,8 +2358,10 @@
       card.title = dev.path || dev.title;
       const number = document.createElement('span');
       number.className = 'lesson-card-number';
-      number.textContent = dev.lessonIds.length > 0
-        ? `${dev.lessonIds.length} leçon${dev.lessonIds.length > 1 ? 's' : ''}`
+      const numCount = (Array.isArray(dev.lessonNumbers) ? dev.lessonNumbers.length : 0)
+        + (Array.isArray(dev.lessonIds) ? dev.lessonIds.length : 0);
+      number.textContent = numCount > 0
+        ? `Leçon${numCount > 1 ? 's' : ''} ${formatDevLessonNumbers(dev)}`
         : '–';
       card.appendChild(number);
       const title = document.createElement('span');
@@ -2354,6 +2376,7 @@
       card.appendChild(hint);
       card.addEventListener('click', () => {
         state.activeDevId = dev.id;
+        state.devShowCode = false;
         renderDevsSidebar();
         updateDevsView();
       });
@@ -2386,8 +2409,120 @@
     if (els.devSaveStatus) {
       els.devSaveStatus.textContent = dev.path ? `Fichier : ${dev.fileName}` : '';
     }
+    renderDevLessonsNumbers();
     renderDevLessonsList();
     renderDevImportList();
+    renderDevRenderView();
+    updateDevModeVisibility();
+  }
+
+  let devRenderSeq = 0;
+
+  async function getDevNotions(dev) {
+    if (!dev || !dev.content) {
+      return [];
+    }
+    if (!window.api.parseDevContent) {
+      return [];
+    }
+    const seq = ++devRenderSeq;
+    const result = await window.api.parseDevContent(dev.content);
+    if (seq !== devRenderSeq) {
+      return null;
+    }
+    return result && Array.isArray(result.notions) ? result.notions : [];
+  }
+
+  function buildDevNotionBlock(notion) {
+    const macros = getSettingsMacros();
+    const card = document.createElement('div');
+    card.className = 'notion dev-block';
+    const header = document.createElement('div');
+    header.className = 'notion-header';
+    const env = document.createElement('span');
+    env.className = 'notion-env';
+    env.textContent = notion.environmentDisplay || notion.environment;
+    header.appendChild(env);
+    const title = document.createElement('span');
+    title.className = 'notion-title';
+    title.innerHTML = renderLatexText(notion.title || '', macros);
+    header.appendChild(title);
+    card.appendChild(header);
+    const body = renderLatexBody(notion.body, macros);
+    card.appendChild(body);
+    for (const proof of notion.proofs || []) {
+      card.appendChild(buildProofSection(proof));
+    }
+    return card;
+  }
+
+  function renderDevRenderView() {
+    if (!els.devRenderView) {
+      return;
+    }
+    const dev = getActiveDev();
+    clearElement(els.devRenderView);
+    const notions = getDevNotions(dev);
+    if (notions.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'list-empty';
+      empty.style.padding = '24px 16px';
+      empty.textContent = dev && dev.content
+        ? 'Aucun environnement reconnu — utilisez « Code source » pour rédiger en LaTeX libre.'
+        : 'Développement vide — « Code source » pour commencer à rédiger.';
+      els.devRenderView.appendChild(empty);
+      return;
+    }
+    const frag = document.createDocumentFragment();
+    for (const notion of notions) {
+      frag.appendChild(buildDevNotionBlock(notion));
+    }
+    els.devRenderView.appendChild(frag);
+  }
+
+  function updateDevModeVisibility() {
+    if (els.devRenderView) {
+      show(els.devRenderView, !state.devShowCode);
+    }
+    if (els.devTexInput) {
+      show(els.devTexInput, state.devShowCode);
+    }
+    if (els.devViewCodeBtn) {
+      els.devViewCodeBtn.textContent = state.devShowCode ? 'Aperçu rendu' : 'Code source';
+    }
+  }
+
+  function renderDevLessonsNumbers() {
+    if (!els.devLessonsNumbers) {
+      return;
+    }
+    const dev = getActiveDev();
+    if (document.activeElement === els.devLessonsNumbers) {
+      return;
+    }
+    const numbers = dev && Array.isArray(dev.lessonNumbers) ? dev.lessonNumbers : [];
+    els.devLessonsNumbers.value = numbers.join(', ');
+  }
+
+  function setDevLessonNumbersFromInput() {
+    const dev = getActiveDev();
+    if (!dev || !els.devLessonsNumbers) {
+      return;
+    }
+    const raw = els.devLessonsNumbers.value;
+    const numbers = [];
+    for (const part of raw.split(/[,;\s]+/)) {
+      if (!part) {
+        continue;
+      }
+      const num = parseInt(part, 10);
+      if (Number.isInteger(num) && num > 0 && !numbers.includes(num)) {
+        numbers.push(num);
+      }
+    }
+    numbers.sort((a, b) => a - b);
+    dev.lessonNumbers = numbers;
+    scheduleDevSave();
   }
 
   function renderDevLessonsList() {
@@ -2507,6 +2642,10 @@
     if (!dev) {
       return;
     }
+    if (!state.devShowCode) {
+      state.devShowCode = true;
+      updateDevModeVisibility();
+    }
     const input = els.devTexInput;
     const value = input.value;
     let insert = latex;
@@ -2556,6 +2695,7 @@
       fileName: null,
       title: title || 'Nouveau développement',
       lessonIds: [],
+      lessonNumbers: [],
       content: '% Développement…\n\n',
       updatedAt: null
     };
@@ -2727,6 +2867,23 @@
       }
       dev.content = els.devTexInput.value;
       scheduleDevSave();
+    });
+  }
+  if (els.devViewCodeBtn) {
+    els.devViewCodeBtn.addEventListener('click', () => {
+      state.devShowCode = !state.devShowCode;
+      if (!state.devShowCode) {
+        renderDevRenderView();
+      }
+      updateDevModeVisibility();
+    });
+  }
+  if (els.devLessonsNumbers) {
+    els.devLessonsNumbers.addEventListener('input', () => {
+      setDevLessonNumbersFromInput();
+    });
+    els.devLessonsNumbers.addEventListener('blur', () => {
+      renderDevLessonsNumbers();
     });
   }
   if (els.devImportSearch) {

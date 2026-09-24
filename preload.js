@@ -30,5 +30,6 @@ contextBridge.exposeInMainWorld('api', {
   listDevs: () => ipcRenderer.invoke('app:devs-list'),
   saveDev: (dev) => ipcRenderer.invoke('app:devs-save', dev),
   deleteDev: (devPath) => ipcRenderer.invoke('app:devs-delete', devPath),
+  parseDevContent: (content) => ipcRenderer.invoke('app:dev-parse', content),
   platform: process.platform
 });
