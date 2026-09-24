@@ -81,11 +81,6 @@
           <input id="notions-search" type="search" placeholder="Rechercher une notion (titre, type, matière, corps)…" />
           <span class="toolbar-spacer"></span>
           <span id="notions-count"></span>
-          <span class="toolbar-spacer"></span>
-          <button id="notion-select-toggle" title="Sélectionner des notions pour une leçon d'oral">Sélectionner</button>
-          <span id="notion-selection-count" class="hidden"></span>
-          <button id="notion-selection-add" class="hidden" title="Ajouter les notions cochées à une leçon d'oral">Créer la leçon</button>
-          <button id="notion-selection-clear" class="hidden" title="Vider la sélection">Vider</button>
         </div>
         <div id="notions-top">
           <div id="notion-grid"></div>
@@ -104,20 +99,45 @@
         </div>
       </div>
       <div id="reader-lecons" class="reader hidden">
-        <div id="lecons-empty" class="hidden">
-          <div class="empty-icon">Σ</div>
-          <h1>Leçons d'oral</h1>
-          <p>Constituez vos plans de leçons d'oral à partir de la bibliothèque de notions.</p>
-          <p class="hint">Dans la section Notions, cliquez sur « Sélectionner », cochez des notions puis « Créer la leçon ». Vous pourrez ensuite les réordonner ici et exporter un fichier LaTeX.</p>
+        <div id="lecons-home">
+          <div id="lecons-home-header">
+            <h1>Leçons d'oral</h1>
+            <button id="lesson-create" title="Créer une nouvelle leçon d'oral">+ Créer une leçon</button>
+          </div>
+          <div id="lecons-create-form" class="hidden">
+            <input id="lesson-create-number" type="number" min="1" placeholder="N°" title="Numéro de la leçon (ex. 142)" />
+            <input id="lesson-create-title" type="text" placeholder="Titre de la leçon (ex. Séries de Fourier)…" />
+            <button id="lesson-create-confirm" title="Créer la leçon">Créer</button>
+            <button id="lesson-create-cancel" title="Annuler">Annuler</button>
+          </div>
+          <div id="lecons-grid">
+            <div id="lecons-empty-hint" class="hidden">
+              <p>Aucune leçon pour l'instant.</p>
+              <p class="hint">« Créer une leçon » pour commencer : numérotez-la, donnez-lui un titre, rédigez son plan en LaTeX et importez les notions de votre bibliothèque depuis le panneau latéral.</p>
+            </div>
+            <div id="lecons-cards"></div>
+          </div>
         </div>
         <div id="lesson-edit" class="hidden">
           <div id="lesson-toolbar" class="toolbar">
             <button id="lesson-back" title="Retour à la liste des leçons">←</button>
+            <span id="lesson-number-label" class="lesson-number-badge"></span>
             <input id="lesson-title-input" type="text" placeholder="Titre de la leçon…" />
             <span class="toolbar-spacer"></span>
-            <span id="lesson-stats"></span>
+            <span id="lesson-save-status"></span>
+            <button id="lesson-delete" title="Supprimer cette leçon">Supprimer</button>
           </div>
-          <div id="lesson-notions"></div>
+          <div id="lesson-edit-body">
+            <div id="lesson-editor-pane">
+              <div class="lesson-pane-header">Plan de la leçon (LaTeX)</div>
+              <textarea id="lesson-tex-input" spellcheck="false" placeholder="% Plan de la leçon — LaTeX libre&#10;% Importez des notions depuis la bibliothèque à droite…"></textarea>
+            </div>
+            <div id="lesson-import-pane">
+              <div class="lesson-pane-header">Bibliothèque de notions</div>
+              <input id="lesson-import-search" type="search" placeholder="Rechercher une notion…" />
+              <div id="lesson-import-list"></div>
+            </div>
+          </div>
         </div>
       </div>
     </main>
