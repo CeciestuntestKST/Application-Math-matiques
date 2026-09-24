@@ -179,12 +179,17 @@
           </div>
           <div id="dev-edit-body">
             <div id="dev-editor-pane">
-              <div class="lesson-pane-header">Développement (LaTeX)</div>
-              <textarea id="dev-tex-input" spellcheck="false" placeholder="% Développement — LaTeX libre&#10;% Importez des notions depuis la bibliothèque à droite…"></textarea>
+              <div class="lesson-pane-header">Développement
+                <span class="toolbar-spacer"></span>
+                <button id="dev-view-code" class="dev-mode-btn" title="Basculer entre rendu et code LaTeX">Code source</button>
+              </div>
+              <div id="dev-render-view"></div>
+              <textarea id="dev-tex-input" class="hidden" spellcheck="false" placeholder="% Développement — LaTeX libre&#10;% Importez des notions depuis la bibliothèque à droite…"></textarea>
             </div>
             <div id="dev-side-pane">
               <div id="dev-lessons-pane">
                 <div class="lesson-pane-header">Leçons compatibles</div>
+                <input id="dev-lessons-numbers" type="text" placeholder="N° de leçons (ex. 12, 142, 158)" title="Numéros des leçons d'oral concernées, séparés par des virgules" />
                 <div id="dev-lessons-list"></div>
               </div>
               <div id="dev-import-pane">

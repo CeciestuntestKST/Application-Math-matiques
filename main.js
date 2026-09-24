@@ -3,8 +3,8 @@
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { scanFolder } = require('./lib/latex-notions');
-const { flattenNotions } = require('./lib/notions-model');
+const { scanFolder, extractAllNotions, stripComments } = require('./lib/latex-notions');
+const { flattenNotions, environmentDisplay } = require('./lib/notions-model');
 const { readSettings } = require('./lib/settings-parser');
 const { createFolderWatcher } = require('./lib/folder-watcher');
 const autoUpdate = require('./lib/auto-update');
@@ -365,6 +365,55 @@ ipcMain.handle('app:devs-delete', async (_event, devPath) => {
   }
   const ok = devFiles.deleteDevFile(devPath);
   return ok ? { ok: true } : { error: 'delete-failed' };
+});
+
+ipcMain.handle('app:dev-parse', async (_event, content) => {
+  if (typeof content !== 'string') {
+    return { notions: [] };
+  }
+  try {
+    const settingsResult = readSettings(state.folder);
+    const displayMap = {};
+    for (const env of settingsResult.settings.environments || []) {
+      displayMap[env.name] = env.display;
+    }
+    const notions = extractAllNotions(stripComments(content), settingsResult.settings);
+    const view = notions.map((n) => ({
+      environment: n.environment,
+      environmentDisplay: environmentDisplay(n.environment, displayMap),
+      title: n.title,
+      hasTitle: n.hasTitle,
+      body: n.body,
+      proofs: []
+    }));
+    const proofEnvs = new Set(['proof', 'proof*', 'demonstration']);
+    const byTitle = new Map();
+    const queue = [];
+    let last = null;
+    for (const notion of view) {
+      if (proofEnvs.has(notion.environment)) {
+        if (notion.hasTitle && byTitle.has(notion.title)) {
+          byTitle.get(notion.title).proofs.push(notion);
+        } else {
+          queue.push({ proof: notion, after: last });
+        }
+        last = null;
+        continue;
+      }
+      if (notion.hasTitle) {
+        byTitle.set(notion.title, notion);
+      }
+      last = notion;
+    }
+    for (const { proof, after } of queue) {
+      if (after) {
+        after.proofs.push(proof);
+      }
+    }
+    return { notions: view.filter((n) => !proofEnvs.has(n.environment)) };
+  } catch (err) {
+    return { error: err.message };
+  }
 });
 
 ipcMain.handle('app:open-external', async (_event, url) => {

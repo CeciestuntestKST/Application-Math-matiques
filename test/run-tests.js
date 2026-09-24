@@ -39,7 +39,8 @@ const {
   listDevFiles,
   writeDevFile,
   deleteDevFile,
-  isPathInDevsDir
+  isPathInDevsDir,
+  normalizeLessonNumbers
 } = require('../lib/dev-files');
 
 function makeTempFolder() {
@@ -628,13 +629,24 @@ test('buildDevFileName slugifie avec préfixe dev- et évite les collisions', ()
 });
 
 test('encodeDevMeta / decodeDevMeta font l aller-retour et dédupliquent les leçons', () => {
-  const line = encodeDevMeta({ title: 'Kronecker', lessonIds: ['lesson-a', 'lesson-b', 'lesson-a', 42, null] });
+  const line = encodeDevMeta({
+    title: 'Kronecker',
+    lessonIds: ['lesson-a', 'lesson-b', 'lesson-a', 42, null],
+    lessonNumbers: [142, 12, '158', 12, 0, -3, 2.5]
+  });
   assert.ok(line.startsWith('% dev-meta:'));
   const meta = decodeDevMeta(line);
   assert.strictEqual(meta.title, 'Kronecker');
   assert.deepStrictEqual(meta.lessons, ['lesson-a', 'lesson-b']);
+  assert.deepStrictEqual(meta.lessonNumbers, [12, 142, 158]);
   assert.strictEqual(decodeDevMeta('% dev-meta: pas du json'), null);
   assert.strictEqual(decodeDevMeta('autre chose'), null);
+});
+
+test('normalizeLessonNumbers filtre, déduplique et trie', () => {
+  assert.deepStrictEqual(normalizeLessonNumbers(['12', 142, '158', 142, 0, -1, 'abc', 2.5]), [12, 142, 158]);
+  assert.deepStrictEqual(normalizeLessonNumbers(null), []);
+  assert.deepStrictEqual(normalizeLessonNumbers('12, 14'), []);
 });
 
 test('buildDevFileContent puis parseDevFile restituent le développement', () => {
@@ -675,13 +687,14 @@ test('writeDevFile écrit dans developpements/ et listDevFiles lit et trie', () 
 
 test('writeDevFile renomme proprement quand le titre change', () => {
   const folder = makeTempFolder();
-  const first = writeDevFile(folder, { title: 'Ancien', lessonIds: ['lesson-1'], content: 'X' });
+  const first = writeDevFile(folder, { title: 'Ancien', lessonIds: ['lesson-1'], lessonNumbers: [12], content: 'X' });
   assert.strictEqual(first.fileName, 'dev-ancien.tex');
   const second = writeDevFile(folder, {
     path: first.path,
     fileName: first.fileName,
     title: 'Nouveau',
     lessonIds: ['lesson-1'],
+    lessonNumbers: [12, 142],
     content: 'XY'
   });
   assert.strictEqual(second.fileName, 'dev-nouveau.tex');
@@ -690,7 +703,38 @@ test('writeDevFile renomme proprement quand le titre change', () => {
   assert.strictEqual(devs[0].title, 'Nouveau');
   assert.strictEqual(devs[0].content, 'XY');
   assert.deepStrictEqual(devs[0].lessonIds, ['lesson-1']);
+  assert.deepStrictEqual(devs[0].lessonNumbers, [12, 142]);
   fs.rmSync(folder, { recursive: true, force: true });
+});
+
+test('parseDevFile sans dev-meta mais avec lessonNumbers nulle part ne casse pas', () => {
+  const parsed = parseDevFile('% dev-meta: {"title":"K","lessons":[]}\nCorps\n', '/tmp/devs/k.tex');
+  assert.strictEqual(parsed.title, 'K');
+  assert.deepStrictEqual(parsed.lessonNumbers, []);
+});
+
+test('le parse IPC d un développement couple les démonstrations à leur théorème', () => {
+  const source = [
+    '\\begin{tm}{Théorème de Kronecker}{}',
+    'Si $\\alpha$ est un nombre algébrique…',
+    '\\end{tm}',
+    '\\begin{proof}',
+    'Posons $P$ le polynôme minimal.',
+    '\\end{proof}',
+    '\\begin{exo}{Exercice}{',
+    'Montrer la réciproque.',
+    '\\end{exo}'
+  ].join('\n');
+  const settings = { environments: [
+    { name: 'tm', display: 'Théorème' },
+    { name: 'exo', display: 'Exercice' }
+  ] };
+  const notions = extractAllNotions(source, settings);
+  const nonProofs = notions.filter((n) => n.environment !== 'proof');
+  assert.strictEqual(nonProofs.length, 2);
+  assert.strictEqual(nonProofs[0].environment, 'tm');
+  assert.strictEqual(nonProofs[0].title, 'Théorème de Kronecker');
+  assert.strictEqual(nonProofs[1].environment, 'exo');
 });
 
 test('deleteDevFile supprime, isPathInDevsDir protège les chemins', () => {
