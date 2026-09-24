@@ -6,9 +6,12 @@ Référentiel des fonctionnalités envisagées. Les statuts : **À faire** (prio
 
 ### À faire
 
-- [ ] **Mode « leçon d'oral »** : sélectionner des notions (coches sur les cartes de la grille), puis générer un fichier `.tex` autonome — préambule repris du `settings.tex` + les notions choisies dans l'ordre voulu — exportable et compilable, pour construire les plans de leçons directement depuis la bibliothèque de notions.
+- [ ] **Mode « leçon d'oral » — génération et export du `.tex`** : bouton d'export dans l'éditeur de leçon, fichier `.tex` autonome (préambule repris du `settings.tex` + les notions dans l'ordre) via une boîte de dialogue native, compilable avec pdflatex.
+- [ ] **Mode « leçon d'oral » — enrichissement de leçon existante** : ajouter des notions à une leçon déjà créée depuis le mode Sélection (actuellement, la sélection crée une nouvelle leçon à chaque fois).
 
 ### Fait
+
+- [x] **Mode « leçon d'oral » — fondations (v0.2.x)** : section dédiée « Leçons d'oral » dans la barre d'activité ; mode **Sélectionner** dans la toolbar Notions (coches sur les cartes, compteur, « Créer la leçon » / « Vider ») ; une leçon = titre + notions ordonnées ; éditeur avec titre éditable, réordonnancement ↑↓, retrait ×, notions fusionnées affichées ensemble, signalement des notions introuvables ; liste des leçons dans la sidebar ; persistance dans les préférences (`prefs.json`, jamais dans les `.tex`) avec sauvegarde en fusion (ne détruit plus les autres préférences) ; modèle `lib/lessons-model.js` (Node pur, 8 tests).
 
 - [x] **Recherche dans le corps des notions** : la recherche porte sur titre / nature / matière / corps (y compris démonstrations), avec priorité aux titres concordants (tri par pertinence : titre, puis nature, puis matière, puis corps ; cartes à titre concordant surlignées).
 
