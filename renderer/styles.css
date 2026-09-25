@@ -2549,3 +2549,94 @@ html, body {
   font-size: 10px;
   margin: 2px 0;
 }
+
+/* ---------- Dialogue applicatif (prompt/confirm maison) ---------- */
+#app-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#app-dialog.hidden {
+  display: none;
+}
+
+#app-dialog-box {
+  min-width: 380px;
+  max-width: 520px;
+  padding: 18px 20px 16px;
+  background: var(--vs-bg-panel);
+  border: 1px solid var(--vs-border-strong);
+  border-radius: 8px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#app-dialog-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--vs-text-bright);
+}
+
+#app-dialog-message {
+  font-size: 12.5px;
+  color: var(--vs-text);
+  line-height: 1.45;
+  white-space: pre-line;
+}
+
+#app-dialog-input {
+  background: var(--vs-input-bg);
+  color: var(--vs-text-bright);
+  border: 1px solid var(--vs-border);
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+#app-dialog-input:focus {
+  outline: none;
+  border-color: var(--vs-focus);
+}
+
+#app-dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+#app-dialog-cancel,
+#app-dialog-ok {
+  padding: 5px 14px;
+  font-size: 12.5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#app-dialog-cancel {
+  background: transparent;
+  color: var(--vs-text);
+  border: 1px solid var(--vs-border);
+}
+
+#app-dialog-cancel:hover {
+  color: var(--vs-text-bright);
+  border-color: var(--vs-border-strong);
+}
+
+#app-dialog-ok {
+  background: var(--vs-button-bg);
+  color: #ffffff;
+  border: 1px solid transparent;
+}
+
+#app-dialog-ok:hover {
+  background: var(--vs-button-hover);
+}

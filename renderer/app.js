@@ -519,6 +519,75 @@
     renderNotionsGrid();
   }
 
+  const dialogEls = {
+    root: document.getElementById('app-dialog'),
+    box: document.getElementById('app-dialog-box'),
+    title: document.getElementById('app-dialog-title'),
+    message: document.getElementById('app-dialog-message'),
+    input: document.getElementById('app-dialog-input'),
+    okBtn: document.getElementById('app-dialog-ok'),
+    cancelBtn: document.getElementById('app-dialog-cancel')
+  };
+
+  function showAppDialog(options) {
+    return new Promise((resolve) => {
+      if (!dialogEls.root || !dialogEls.box || !dialogEls.title || !dialogEls.message || !dialogEls.input || !dialogEls.okBtn || !dialogEls.cancelBtn) {
+        resolve(null);
+        return;
+      }
+      const done = (value) => {
+        dialogEls.okBtn.removeEventListener('click', onOk);
+        dialogEls.cancelBtn.removeEventListener('click', onCancel);
+        dialogEls.input.removeEventListener('keydown', onInputKey);
+        dialogEls.box.removeEventListener('keydown', onBoxKey);
+        dialogEls.root.classList.add('hidden');
+        resolve(value);
+      };
+      const onOk = () => {
+        if (options.mode === 'prompt') {
+          done(dialogEls.input.value);
+        } else {
+          done(true);
+        }
+      };
+      const onCancel = () => done(options.mode === 'prompt' ? null : false);
+      const onInputKey = (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          onOk();
+        }
+      };
+      const onBoxKey = (event) => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          onCancel();
+        }
+      };
+      dialogEls.title.textContent = options.title || '';
+      dialogEls.message.textContent = options.message || '';
+      dialogEls.message.classList.toggle('hidden', !options.message);
+      if (options.mode === 'prompt') {
+        dialogEls.input.value = options.value || '';
+        dialogEls.input.classList.remove('hidden');
+      } else {
+        dialogEls.input.classList.add('hidden');
+      }
+      dialogEls.okBtn.textContent = options.okLabel || 'OK';
+      dialogEls.cancelBtn.textContent = options.cancelLabel || 'Annuler';
+      dialogEls.okBtn.addEventListener('click', onOk);
+      dialogEls.cancelBtn.addEventListener('click', onCancel);
+      dialogEls.input.addEventListener('keydown', onInputKey);
+      dialogEls.box.addEventListener('keydown', onBoxKey);
+      dialogEls.root.classList.remove('hidden');
+      if (options.mode === 'prompt') {
+        dialogEls.input.focus();
+        dialogEls.input.select();
+      } else {
+        dialogEls.okBtn.focus();
+      }
+    });
+  }
+
   const foldedCache = new Map();
 
   function fold(text) {
@@ -2627,7 +2696,13 @@
   async function renameOralLesson(number) {
     const registered = state.oralLessons.find((l) => l.number === number) || null;
     const current = registered ? registered.title : '';
-    const title = window.prompt(`Titre officiel de la le\u00e7on ${number} :`, current);
+    const title = await showAppDialog({
+      mode: 'prompt',
+      title: `Renommer la le\u00e7on ${number}`,
+      message: 'Titre officiel de la le\u00e7on :',
+      value: current,
+      okLabel: 'Enregistrer'
+    });
     if (title === null) {
       return;
     }
@@ -2648,7 +2723,12 @@
 
   async function removeOralLesson(number) {
     const registered = state.oralLessons.find((l) => l.number === number) || null;
-    const ok = window.confirm(`Retirer la le\u00e7on ${number}${registered ? ` \u00ab ${registered.title} \u00bb` : ''} du registre de l'oral ?\nLes plans et d\u00e9veloppements ne seront pas supprim\u00e9s.`);
+    const ok = await showAppDialog({
+      mode: 'confirm',
+      title: `Retirer la le\u00e7on ${number}${registered ? ` \u00ab ${registered.title} \u00bb` : ''} ?`,
+      message: 'Les plans et d\u00e9veloppements ne seront pas supprim\u00e9s.',
+      okLabel: 'Retirer'
+    });
     if (!ok) {
       return;
     }
@@ -3003,7 +3083,12 @@
     if (!lesson || !lesson.path) {
       return;
     }
-    const ok = window.confirm(`Supprimer la leçon « ${lesson.title || lesson.fileName} » ?\nLe fichier ${lesson.fileName} sera supprimé du dossier de cours.`);
+    const ok = await showAppDialog({
+      mode: 'confirm',
+      title: `Supprimer le plan « ${lesson.title || lesson.fileName} » ?`,
+      message: `Le fichier ${lesson.fileName} sera supprimé du dossier de cours.`,
+      okLabel: 'Supprimer'
+    });
     if (!ok) {
       return;
     }
@@ -3556,7 +3641,12 @@
     if (!dev || !dev.path) {
       return;
     }
-    const ok = window.confirm(`Supprimer le développement « ${dev.title || dev.fileName} » ?\nLe fichier ${dev.fileName} sera supprimé du dossier de cours.`);
+    const ok = await showAppDialog({
+      mode: 'confirm',
+      title: `Supprimer le développement « ${dev.title || dev.fileName} » ?`,
+      message: `Le fichier ${dev.fileName} sera supprimé du dossier de cours.`,
+      okLabel: 'Supprimer'
+    });
     if (!ok) {
       return;
     }
