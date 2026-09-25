@@ -40,6 +40,27 @@
     notionsTop: document.getElementById('notions-top'),
     notionsSplitter: document.getElementById('notions-splitter'),
     leconsList: document.getElementById('lecons-list'),
+    oralList: document.getElementById('oral-list'),
+    readerOral: document.getElementById('reader-oral'),
+    oralHome: document.getElementById('oral-home'),
+    oralCards: document.getElementById('oral-cards'),
+    oralEmptyHint: document.getElementById('oral-empty-hint'),
+    oralCount: document.getElementById('oral-count'),
+    oralCreateBtn: document.getElementById('oral-create'),
+    oralCreateForm: document.getElementById('oral-create-form'),
+    oralCreateNumber: document.getElementById('oral-create-number'),
+    oralCreateTitle: document.getElementById('oral-create-title'),
+    oralCreateConfirm: document.getElementById('oral-create-confirm'),
+    oralCreateCancel: document.getElementById('oral-create-cancel'),
+    oralDetail: document.getElementById('oral-detail'),
+    oralBack: document.getElementById('oral-back'),
+    oralNumberLabel: document.getElementById('oral-number-label'),
+    oralTitleInput: document.getElementById('oral-title-input'),
+    oralSaveStatus: document.getElementById('oral-save-status'),
+    oralDeleteBtn: document.getElementById('oral-delete'),
+    oralPlansList: document.getElementById('oral-plans-list'),
+    oralNewPlanBtn: document.getElementById('oral-new-plan'),
+    oralDevsList: document.getElementById('oral-devs-list'),
     readerLecons: document.getElementById('reader-lecons'),
     leconsHome: document.getElementById('lecons-home'),
     leconsCards: document.getElementById('lecons-cards'),
@@ -100,6 +121,8 @@
     lessons: [],
     activeLessonId: null,
     lessonShowCode: false,
+    oralLessons: [],
+    activeOralNumber: null,
     devs: [],
     activeDevId: null,
     devShowCode: false
@@ -777,7 +800,13 @@
     show(els.coursList, section === 'cours');
     show(els.notionsFiltersList, section === 'notions');
     show(els.leconsList, section === 'lecons');
+    show(els.oralList, section === 'oral');
     show(els.devsList, section === 'developpements');
+    if (section === 'oral') {
+      state.activeOralNumber = null;
+      hideCreateOralForm();
+      refreshOralData();
+    }
     if (section === 'lecons') {
       state.activeLessonId = null;
       state.lessonShowCode = false;
@@ -795,13 +824,20 @@
     updateMainView();
   }
 
+  async function refreshOralData() {
+    await Promise.all([loadLessons(), loadDevs(), loadOralLessons()]);
+    renderOralSidebar();
+    updateOralView();
+  }
+
   function updateMainView() {
     if (!state.scan) {
-      const showSectionView = state.section === 'lecons' || state.section === 'developpements';
+      const showSectionView = state.section === 'lecons' || state.section === 'oral' || state.section === 'developpements';
       show(els.emptyState, !showSectionView);
       show(els.readerCours, false);
       show(els.readerNotions, false);
       show(els.readerLecons, state.section === 'lecons');
+      show(els.readerOral, state.section === 'oral');
       show(els.readerDevs, state.section === 'developpements');
       return;
     }
@@ -809,6 +845,7 @@
     show(els.readerCours, state.section === 'cours');
     show(els.readerNotions, state.section === 'notions');
     show(els.readerLecons, state.section === 'lecons');
+    show(els.readerOral, state.section === 'oral');
     show(els.readerDevs, state.section === 'developpements');
   }
 
@@ -1985,6 +2022,349 @@
     }, 600);
   }
 
+  /* ---------- Section Oral ---------- */
+
+  async function loadOralLessons() {
+    if (!window.api.listOralLessons) {
+      state.oralLessons = [];
+      return;
+    }
+    const result = await window.api.listOralLessons();
+    state.oralLessons = Array.isArray(result && result.lessons) ? result.lessons : [];
+  }
+
+  function getActiveOralLesson() {
+    return state.oralLessons.find((l) => l.number === state.activeOralNumber) || null;
+  }
+
+  function getOralNumberSet() {
+    const numbers = new Set();
+    for (const lesson of state.oralLessons) {
+      if (typeof lesson.number === 'number') {
+        numbers.add(lesson.number);
+      }
+    }
+    for (const lesson of state.lessons) {
+      if (typeof lesson.number === 'number') {
+        numbers.add(lesson.number);
+      }
+    }
+    for (const dev of state.devs) {
+      for (const num of Array.isArray(dev.lessonNumbers) ? dev.lessonNumbers : []) {
+        numbers.add(num);
+      }
+    }
+    return numbers;
+  }
+
+  function countPlansForNumber(number) {
+    return state.lessons.filter((l) => l.number === number).length;
+  }
+
+  function getDevsForNumber(number) {
+    return state.devs.filter((dev) => {
+      const numbers = new Set(Array.isArray(dev.lessonNumbers) ? dev.lessonNumbers : []);
+      if (Array.isArray(dev.lessonIds)) {
+        for (const id of dev.lessonIds) {
+          const lesson = state.lessons.find((l) => l.id === id);
+          if (lesson && lesson.number) {
+            numbers.add(lesson.number);
+          }
+        }
+      }
+      return numbers.has(number);
+    });
+  }
+
+  function renderOralSidebar() {
+    if (!els.oralList) {
+      return;
+    }
+    clearElement(els.oralList);
+    const numbers = Array.from(getOralNumberSet()).sort((a, b) => a - b);
+    if (numbers.length === 0) {
+      els.oralList.appendChild(buildEmptyItem('Aucune leçon d\u2019oral'));
+      return;
+    }
+    els.oralList.appendChild(buildGroupHeader('Num\u00e9ros', numbers.length));
+    for (const number of numbers) {
+      const registered = state.oralLessons.find((l) => l.number === number);
+      els.oralList.appendChild(
+        buildListItem({
+          icon: '\u2116',
+          label: `${number}. ${registered ? registered.title : 'Sans titre'}`,
+          title: registered ? registered.title : `Num\u00e9ro ${number}`,
+          active: state.activeOralNumber === number,
+          onClick: () => {
+            state.activeOralNumber = number;
+            renderOralSidebar();
+            updateOralView();
+          }
+        })
+      );
+    }
+  }
+
+  function renderOralCards() {
+    if (!els.oralCards) {
+      return;
+    }
+    clearElement(els.oralCards);
+    const numbers = Array.from(getOralNumberSet()).sort((a, b) => a - b);
+    show(els.oralEmptyHint, numbers.length === 0);
+    if (els.oralCount) {
+      els.oralCount.textContent = numbers.length > 0 ? `${numbers.length} num\u00e9ro${numbers.length > 1 ? 's' : ''}` : '';
+    }
+    for (const number of numbers) {
+      const registered = state.oralLessons.find((l) => l.number === number);
+      const plans = countPlansForNumber(number);
+      const devs = getDevsForNumber(number);
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'lesson-card oral-card';
+      card.title = registered ? registered.title : `Num\u00e9ro ${number}`;
+      const numberEl = document.createElement('span');
+      numberEl.className = 'lesson-card-number';
+      numberEl.textContent = String(number);
+      card.appendChild(numberEl);
+      const title = document.createElement('span');
+      title.className = 'lesson-card-title';
+      title.textContent = registered ? registered.title : 'Sans titre';
+      card.appendChild(title);
+      const hint = document.createElement('span');
+      hint.className = 'lesson-card-hint';
+      hint.textContent = `${plans} plan${plans > 1 ? 's' : ''} · ${devs.length} d\u00e9v.${devs.length > 1 ? 's' : ''}`;
+      card.appendChild(hint);
+      card.addEventListener('click', () => {
+        state.activeOralNumber = number;
+        renderOralSidebar();
+        updateOralView();
+      });
+      els.oralCards.appendChild(card);
+    }
+  }
+
+  function updateOralView() {
+    const hasDetail = state.activeOralNumber !== null;
+    show(els.oralHome, !hasDetail);
+    show(els.oralDetail, hasDetail);
+    if (hasDetail) {
+      renderOralDetail();
+    } else {
+      renderOralCards();
+    }
+  }
+
+  function renderOralDetail() {
+    const number = state.activeOralNumber;
+    const registered = getActiveOralLesson();
+    if (els.oralNumberLabel) {
+      els.oralNumberLabel.textContent = `Le\u00e7on ${number}`;
+    }
+    if (els.oralTitleInput && document.activeElement !== els.oralTitleInput) {
+      els.oralTitleInput.value = registered ? registered.title : '';
+    }
+    if (els.oralTitleInput) {
+      els.oralTitleInput.disabled = !registered;
+      els.oralTitleInput.placeholder = registered ? 'Titre officiel de la le\u00e7on\u2026' : 'Le\u00e7on non d\u00e9clar\u00e9e — \u00ab Ajouter une le\u00e7on \u00bb \u00e0 l\u2019accueil pour la titrer';
+    }
+    if (els.oralSaveStatus) {
+      els.oralSaveStatus.textContent = registered ? '' : 'Non d\u00e9clar\u00e9e';
+    }
+    if (els.oralDeleteBtn) {
+      show(els.oralDeleteBtn, !!registered);
+    }
+    renderOralPlansList();
+    renderOralDevsList();
+  }
+
+  function renderOralPlansList() {
+    if (!els.oralPlansList) {
+      return;
+    }
+    clearElement(els.oralPlansList);
+    const plans = state.lessons.filter((l) => l.number === state.activeOralNumber);
+    plans.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'fr'));
+    if (plans.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'list-empty';
+      empty.textContent = 'Aucun plan pour ce num\u00e9ro — \u00ab + Plan \u00bb pour en r\u00e9diger un.';
+      els.oralPlansList.appendChild(empty);
+      return;
+    }
+    for (const plan of plans) {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'oral-plan-item';
+      item.title = plan.path || plan.title;
+      const label = document.createElement('span');
+      label.className = 'oral-plan-title';
+      label.textContent = plan.title || plan.fileName;
+      item.appendChild(label);
+      const hint = document.createElement('span');
+      hint.className = 'oral-plan-hint';
+      hint.textContent = plan.updatedAt
+        ? `modifi\u00e9 le ${new Date(plan.updatedAt).toLocaleDateString('fr-FR')}`
+        : '';
+      item.appendChild(hint);
+      item.addEventListener('click', () => {
+        switchSection('lecons');
+        state.activeLessonId = plan.id;
+        state.lessonShowCode = false;
+        renderLeconsSidebar();
+        updateLeconsView();
+      });
+      els.oralPlansList.appendChild(item);
+    }
+  }
+
+  function renderOralDevsList() {
+    if (!els.oralDevsList) {
+      return;
+    }
+    clearElement(els.oralDevsList);
+    const devs = getDevsForNumber(state.activeOralNumber);
+    if (devs.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'list-empty';
+      empty.textContent = 'Aucun d\u00e9veloppement associ\u00e9 \u00e0 ce num\u00e9ro.';
+      els.oralDevsList.appendChild(empty);
+      return;
+    }
+    for (const dev of devs) {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'oral-plan-item';
+      item.title = dev.path || dev.title;
+      const label = document.createElement('span');
+      label.className = 'oral-plan-title';
+      label.textContent = dev.title || dev.fileName;
+      item.appendChild(label);
+      const hint = document.createElement('span');
+      hint.className = 'oral-plan-hint';
+      hint.textContent = dev.updatedAt
+        ? `modifi\u00e9 le ${new Date(dev.updatedAt).toLocaleDateString('fr-FR')}`
+        : '';
+      item.appendChild(hint);
+      item.addEventListener('click', () => {
+        switchSection('developpements');
+        state.activeDevId = dev.id;
+        state.devShowCode = false;
+        renderDevsSidebar();
+        updateDevsView();
+      });
+      els.oralDevsList.appendChild(item);
+    }
+  }
+
+  function showCreateOralForm() {
+    if (!state.scan) {
+      return;
+    }
+    show(els.oralCreateForm, true);
+    if (els.oralCreateNumber) {
+      els.oralCreateNumber.value = '';
+    }
+    if (els.oralCreateTitle) {
+      els.oralCreateTitle.value = '';
+      els.oralCreateTitle.focus();
+    }
+  }
+
+  function hideCreateOralForm() {
+    show(els.oralCreateForm, false);
+  }
+
+  async function createOralLesson() {
+    const numberStr = els.oralCreateNumber && els.oralCreateNumber.value
+      ? els.oralCreateNumber.value.trim()
+      : '';
+    const number = numberStr ? parseInt(numberStr, 10) : null;
+    const title = els.oralCreateTitle && els.oralCreateTitle.value
+      ? els.oralCreateTitle.value.trim()
+      : '';
+    if (!number || Number.isNaN(number) || number <= 0) {
+      if (els.oralSaveStatus) {
+        els.oralSaveStatus.textContent = 'Num\u00e9ro requis';
+      }
+      return;
+    }
+    if (state.oralLessons.some((l) => l.number === number)) {
+      if (els.oralSaveStatus) {
+        els.oralSaveStatus.textContent = `Le num\u00e9ro ${number} est d\u00e9j\u00e0 d\u00e9clar\u00e9`;
+      }
+      return;
+    }
+    if (!title) {
+      if (els.oralSaveStatus) {
+        els.oralSaveStatus.textContent = 'Titre requis';
+      }
+      return;
+    }
+    const result = await window.api.saveOralLesson({ number, title });
+    if (result && result.lesson && !result.error) {
+      hideCreateOralForm();
+      await loadOralLessons();
+      state.activeOralNumber = result.lesson.number;
+      renderOralSidebar();
+      updateOralView();
+    } else if (els.oralSaveStatus) {
+      els.oralSaveStatus.textContent = `Erreur : ${(result && result.error) || 'cr\u00e9ation impossible'}`;
+    }
+  }
+
+  async function saveActiveOralLesson() {
+    const number = state.activeOralNumber;
+    const registered = getActiveOralLesson();
+    if (number === null || !registered) {
+      return;
+    }
+    const title = els.oralTitleInput ? els.oralTitleInput.value.trim() : '';
+    if (!title) {
+      if (els.oralSaveStatus) {
+        els.oralSaveStatus.textContent = 'Titre requis';
+      }
+      return;
+    }
+    const result = await window.api.saveOralLesson({ number, title });
+    if (result && result.lesson && !result.error) {
+      await loadOralLessons();
+      renderOralSidebar();
+      renderOralCards();
+      if (els.oralSaveStatus) {
+        els.oralSaveStatus.textContent = 'Titre enregistr\u00e9';
+        setTimeout(() => {
+          if (els.oralSaveStatus && els.oralSaveStatus.textContent === 'Titre enregistr\u00e9') {
+            els.oralSaveStatus.textContent = '';
+          }
+        }, 2000);
+      }
+    } else if (els.oralSaveStatus) {
+      els.oralSaveStatus.textContent = `Erreur : ${(result && result.error) || 'sauvegarde impossible'}`;
+    }
+  }
+
+  async function deleteActiveOralLesson() {
+    const number = state.activeOralNumber;
+    const registered = getActiveOralLesson();
+    if (number === null || !registered) {
+      return;
+    }
+    const ok = window.confirm(`Retirer la le\u00e7on ${number} \u00ab ${registered.title} \u00bb du registre de l\u2019oral ?\nLes plans et d\u00e9veloppements ne seront pas supprim\u00e9s.`);
+    if (!ok) {
+      return;
+    }
+    const result = await window.api.deleteOralLesson(number);
+    if (result && !result.error) {
+      state.activeOralNumber = null;
+      await loadOralLessons();
+      renderOralSidebar();
+      updateOralView();
+    } else if (els.oralSaveStatus) {
+      els.oralSaveStatus.textContent = `Erreur : ${(result && result.error) || 'suppression impossible'}`;
+    }
+  }
+
   function renderLeconsSidebar() {
     if (!els.leconsList) {
       return;
@@ -2250,17 +2630,9 @@
       return;
     }
     show(els.lessonCreateForm, true);
-    if (els.lessonCreateTitle) {
-      els.lessonCreateTitle.value = '';
-    }
     if (els.lessonCreateNumber) {
       els.lessonCreateNumber.value = '';
-      const numbers = state.lessons
-        .map((l) => l.number)
-        .filter((n) => typeof n === 'number');
-      if (els.lessonCreateTitle) {
-        els.lessonCreateTitle.focus();
-      }
+      els.lessonCreateNumber.focus();
     }
   }
 
@@ -2268,20 +2640,27 @@
     show(els.lessonCreateForm, false);
   }
 
-  async function createNewLesson() {
-    const numberStr = els.lessonCreateNumber && els.lessonCreateNumber.value
-      ? els.lessonCreateNumber.value.trim()
-      : '';
+  async function createNewLesson(numberOverride) {
+    const numberStr = numberOverride !== undefined && numberOverride !== null
+      ? String(numberOverride)
+      : (els.lessonCreateNumber && els.lessonCreateNumber.value
+        ? els.lessonCreateNumber.value.trim()
+        : '');
     const number = numberStr ? parseInt(numberStr, 10) : null;
-    const title = els.lessonCreateTitle && els.lessonCreateTitle.value
-      ? els.lessonCreateTitle.value.trim()
-      : '';
+    if (!number || Number.isNaN(number) || number <= 0) {
+      if (els.lessonSaveStatus) {
+        els.lessonSaveStatus.textContent = 'Numéro requis';
+      }
+      return;
+    }
+    const planCount = state.lessons.filter((l) => l.number === number).length;
+    const title = `Plan ${planCount + 1}`;
     const lesson = {
       id: `pending::${Date.now()}`,
       path: null,
       fileName: null,
-      number: number && !Number.isNaN(number) && number > 0 ? number : null,
-      title: title || 'Nouvelle leçon',
+      number,
+      title,
       content: '% Plan de la leçon…\n\n',
       updatedAt: null
     };
@@ -2289,6 +2668,10 @@
     if (result && result.lesson && !result.error) {
       hideCreateLessonForm();
       await loadLessons();
+      if (state.section === 'oral') {
+        state.activeOralNumber = null;
+        switchSection('lecons');
+      }
       state.activeLessonId = result.lesson.id;
       state.lessonShowCode = true;
       renderLeconsSidebar();
@@ -2838,21 +3221,10 @@
     els.lessonCreateBtn.addEventListener('click', showCreateLessonForm);
   }
   if (els.lessonCreateConfirm) {
-    els.lessonCreateConfirm.addEventListener('click', createNewLesson);
+    els.lessonCreateConfirm.addEventListener('click', () => createNewLesson());
   }
   if (els.lessonCreateCancel) {
     els.lessonCreateCancel.addEventListener('click', hideCreateLessonForm);
-  }
-  if (els.lessonCreateTitle) {
-    els.lessonCreateTitle.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        createNewLesson();
-      }
-      if (event.key === 'Escape') {
-        hideCreateLessonForm();
-      }
-    });
   }
   if (els.lessonCreateNumber) {
     els.lessonCreateNumber.addEventListener('keydown', (event) => {
@@ -2917,6 +3289,61 @@
       state.activeDevId = null;
       renderDevsSidebar();
       updateDevsView();
+    });
+  }
+  if (els.oralCreateBtn) {
+    els.oralCreateBtn.addEventListener('click', showCreateOralForm);
+  }
+  if (els.oralCreateConfirm) {
+    els.oralCreateConfirm.addEventListener('click', createOralLesson);
+  }
+  if (els.oralCreateCancel) {
+    els.oralCreateCancel.addEventListener('click', hideCreateOralForm);
+  }
+  if (els.oralCreateTitle) {
+    els.oralCreateTitle.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        createOralLesson();
+      }
+      if (event.key === 'Escape') {
+        hideCreateOralForm();
+      }
+    });
+  }
+  if (els.oralCreateNumber) {
+    els.oralCreateNumber.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        createOralLesson();
+      }
+      if (event.key === 'Escape') {
+        hideCreateOralForm();
+      }
+    });
+  }
+  if (els.oralBack) {
+    els.oralBack.addEventListener('click', () => {
+      state.activeOralNumber = null;
+      renderOralSidebar();
+      updateOralView();
+    });
+  }
+  if (els.oralTitleInput) {
+    els.oralTitleInput.addEventListener('change', saveActiveOralLesson);
+    els.oralTitleInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        saveActiveOralLesson();
+      }
+    });
+  }
+  if (els.oralDeleteBtn) {
+    els.oralDeleteBtn.addEventListener('click', deleteActiveOralLesson);
+  }
+  if (els.oralNewPlanBtn) {
+    els.oralNewPlanBtn.addEventListener('click', () => {
+      createNewLesson(state.activeOralNumber);
     });
   }
   if (els.devCreateBtn) {
@@ -3191,6 +3618,9 @@
     await loadDevs();
     renderDevsSidebar();
     updateDevsView();
+    await loadOralLessons();
+    renderOralSidebar();
+    updateOralView();
   }
 
   initUpdateBanner();

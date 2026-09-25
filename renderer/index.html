@@ -21,6 +21,13 @@
           <path d="M17 5H7l5 7-5 7h10"/>
         </svg>
       </button>
+      <button class="activity-icon" data-section="oral" title="Oral">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 5h16"/>
+          <path d="M4 5v6a8 8 0 0 0 8 8 8 8 0 0 0 8-8V5"/>
+          <path d="M2 21h20"/>
+        </svg>
+      </button>
       <button class="activity-icon" data-section="lecons" title="Leçons d'oral">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 3v18"/>
@@ -43,6 +50,7 @@
         <div id="cours-list" class="list active"></div>
         <div id="notions-filters-list" class="list hidden"></div>
         <div id="lecons-list" class="list hidden"></div>
+        <div id="oral-list" class="list hidden"></div>
         <div id="devs-list" class="list hidden"></div>
       </div>
       <div id="sidebar-footer">
@@ -115,14 +123,13 @@
           </div>
           <div id="lecons-create-form" class="hidden">
             <input id="lesson-create-number" type="number" min="1" placeholder="N°" title="Numéro de la leçon (ex. 142)" />
-            <input id="lesson-create-title" type="text" placeholder="Titre de la leçon (ex. Séries de Fourier)…" />
             <button id="lesson-create-confirm" title="Créer la leçon">Créer</button>
             <button id="lesson-create-cancel" title="Annuler">Annuler</button>
           </div>
           <div id="lecons-grid">
             <div id="lecons-empty-hint" class="hidden">
               <p>Aucune leçon pour l'instant.</p>
-              <p class="hint">« Créer une leçon » pour commencer : numérotez-la, donnez-lui un titre, rédigez son plan en LaTeX et importez les notions de votre bibliothèque depuis le panneau latéral.</p>
+              <p class="hint">« Créer une leçon » pour commencer : numérotez-la, rédigez son plan en LaTeX et importez les notions de votre bibliothèque depuis le panneau latéral.</p>
             </div>
             <div id="lecons-cards"></div>
           </div>
@@ -201,6 +208,52 @@
                 <input id="dev-import-search" type="search" placeholder="Rechercher une notion…" />
                 <div id="dev-import-list"></div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="reader-oral" class="reader hidden">
+        <div id="oral-home">
+          <div id="oral-home-header">
+            <h1>Oral</h1>
+            <span id="oral-count" class="toolbar-hint"></span>
+            <span class="toolbar-spacer"></span>
+            <button id="oral-create" title="Déclarer une nouvelle leçon officielle de l'oral">+ Ajouter une leçon</button>
+          </div>
+          <div id="oral-create-form" class="hidden">
+            <input id="oral-create-number" type="number" min="1" placeholder="N°" title="Numéro officiel de la leçon (ex. 142)" />
+            <input id="oral-create-title" type="text" placeholder="Titre officiel (ex. Séries de Fourier)…" />
+            <button id="oral-create-confirm" title="Déclarer la leçon">Ajouter</button>
+            <button id="oral-create-cancel" title="Annuler">Annuler</button>
+          </div>
+          <div id="oral-grid">
+            <div id="oral-empty-hint" class="hidden">
+              <p>Aucune leçon déclarée pour l'instant.</p>
+              <p class="hint">« Ajouter une leçon » pour déclarer un numéro officiel de l'oral. Les numéros utilisés par vos plans et développements apparaissent ici automatiquement.</p>
+            </div>
+            <div id="oral-cards"></div>
+          </div>
+        </div>
+        <div id="oral-detail" class="hidden">
+          <div id="oral-toolbar" class="toolbar">
+            <button id="oral-back" title="Retour à la liste des leçons">←</button>
+            <span id="oral-number-label" class="lesson-number-badge"></span>
+            <input id="oral-title-input" type="text" placeholder="Titre officiel de la leçon…" />
+            <span class="toolbar-spacer"></span>
+            <span id="oral-save-status"></span>
+            <button id="oral-delete" title="Retirer cette leçon du registre de l'oral">Retirer</button>
+          </div>
+          <div id="oral-detail-body">
+            <div id="oral-plans-pane">
+              <div class="lesson-pane-header">Plans rédigés
+                <span class="toolbar-spacer"></span>
+                <button id="oral-new-plan" class="dev-mode-btn" title="Créer un nouveau plan pour ce numéro">+ Plan</button>
+              </div>
+              <div id="oral-plans-list"></div>
+            </div>
+            <div id="oral-devs-pane">
+              <div class="lesson-pane-header">Développements potentiels</div>
+              <div id="oral-devs-list"></div>
             </div>
           </div>
         </div>

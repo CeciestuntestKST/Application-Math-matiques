@@ -12,6 +12,10 @@ Référentiel des fonctionnalités envisagées. Les statuts : **À faire** (prio
 
 ### Fait
 
+- [x] **Section « Oral » (registre des numéros de leçon)** : troisième section de l'app — chaque numéro officiel (numéro unique + titre, « + Ajouter une leçon ») est affiché en carte avec le nombre de plans rédigés et le nombre de développements associés ; les numéros utilisés par des plans ou des développements apparaissent automatiquement (titre « Sans titre » s'ils ne sont pas déclarés) ; clic sur un numéro → vue détail : plans rédigés à gauche (clic = édition dans la section Leçons d'oral ; « + Plan » crée un nouveau plan pour ce numéro), développements potentiels à droite (clic = édition dans la section Développements) ; titre modifiable, « Retirer » retire le numéro du registre sans supprimer les plans ni les développements ; registre stocké dans `oral/lessons.json` (`lib/oral-files.js`, Node pur, testé).
+
+- [x] **Leçons d'oral — création à numéro seul** : le formulaire de création ne demande plus que le numéro de leçon (plus de titre) ; plusieurs plans peuvent exister pour un même numéro, chaque nouveau plan reçoit un titre auto « Plan N » (modifiable ensuite dans l'éditeur).
+
 - [x] **Leçons d'oral — aperçu compact « fiche »** : l'aperçu rendu des leçons adopte une présentation dense (interlignes et marges réduits, en-têtes et corps plus serrés, démonstrations compactes) pour tenir sur une fiche de révision ; la vue « Développements » garde son rendu standard.
 
 - [x] **Leçons d'oral — aperçu rendu** : prévisualisation KaTeX du plan dans l'éditeur — bascule « Code source » / « Aperçu rendu » ; le rendu décompose le plan en blocs type notions (démonstrations pliables), comme pour les développements ; à la création d'une leçon, l'éditeur s'ouvre directement en mode code ; l'import d'une notion bascule en mode code pour l'insertion au curseur.
@@ -76,6 +80,6 @@ Référentiel des fonctionnalités envisagées. Les statuts : **À faire** (prio
 - [x] Installateur Windows automatique via GitHub Actions (tag `v*` → release).
 - [x] **Mise à jour automatique** de l'app installée (electron-updater + releases GitHub) : bannière dans le footer de la sidebar, téléchargement en arrière-plan, bouton « Redémarrer » pour installer ; silence en dev et non-packagé ; `latest.yml` attaché à la release.
 - [x] Raccourcis basiques d'app (recherche, navigation dans la grille).
-- [x] **Suite de tests unitaires** (`npm test`) : 49 tests sur le parsing `settings.tex`, l'extraction des notions, le modèle (nommage, preuves, fusion), les fichiers de leçons (`lesson-files.js`) et de développements (`dev-files.js`) et le watcher — sans Electron.
+- [x] **Suite de tests unitaires** (`npm test`) : 54 tests sur le parsing `settings.tex`, l'extraction des notions, le modèle (nommage, preuves, fusion), les fichiers de leçons (`lesson-files.js`), de développements (`dev-files.js`), le registre de l'oral (`oral-files.js`) et le watcher — sans Electron.
 - [x] **Version dans le titre de la fenêtre** : « Application Mathématiques vX.Y.Z », lue dynamiquement depuis `package.json` (aucune mise à jour manuelle à prévoir).
 - [x] **Bannière de mise à jour corrigée** : la fonction `initUpdateBanner` manquante a été implémentée (ReferenceError qui bloquait le renderer) ; bannière en bas de la sidebar — téléchargement avec pourcentage, bouton « Redémarrer » quand la mise à jour est prête, bouton « Réessayer » en cas d'erreur.

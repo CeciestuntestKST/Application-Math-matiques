@@ -478,6 +478,12 @@ html, body {
   white-space: nowrap;
 }
 
+#oral-count {
+  font-size: 12px;
+  color: var(--vs-text-dim);
+  white-space: nowrap;
+}
+
 /* ---------- Lecteur PDF natif ---------- */
 
 .reader {
@@ -745,6 +751,7 @@ html, body {
 }
 
 #reader-lecons,
+#reader-oral,
 #reader-devs {
   flex-direction: column;
 }
@@ -1583,6 +1590,178 @@ html, body {
   border-color: var(--vs-border-strong);
 }
 
+
+/* ---------- Oral ---------- */
+
+#oral-home {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px 28px;
+}
+
+#oral-home-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+#oral-home-header h1 {
+  font-size: 20px;
+  color: var(--vs-text-bright);
+  font-weight: 600;
+  margin-right: auto;
+}
+
+#oral-create {
+  background: var(--vs-button-bg);
+  color: #ffffff;
+  border: 1px solid var(--vs-button-bg);
+  border-radius: 4px;
+  padding: 7px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+#oral-create:hover {
+  background: var(--vs-button-hover);
+}
+
+#oral-create-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+#oral-create-form input {
+  background: var(--vs-input-bg);
+  color: var(--vs-text-bright);
+  border: 1px solid var(--vs-border);
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-size: 12.5px;
+}
+
+#oral-create-number {
+  width: 64px;
+}
+
+#oral-create-title {
+  width: 280px;
+}
+
+#oral-create-confirm,
+#oral-create-cancel {
+  background: transparent;
+  color: var(--vs-text-dim);
+  border: 1px solid var(--vs-border);
+  border-radius: 4px;
+  padding: 5px 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+#oral-create-confirm:hover,
+#oral-create-cancel:hover {
+  color: var(--vs-text);
+  border-color: var(--vs-border-strong);
+}
+
+#oral-empty-hint {
+  padding: 32px 8px;
+  text-align: center;
+  color: var(--vs-text-dim);
+}
+
+#oral-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+}
+
+.oral-card .lesson-card-hint {
+  color: var(--vs-text);
+}
+
+#oral-detail {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+#oral-detail-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 0;
+}
+
+#oral-plans-pane,
+#oral-devs-pane {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--vs-border);
+}
+
+#oral-devs-pane {
+  border-right: none;
+  border-left: 1px solid var(--vs-border);
+}
+
+#oral-plans-list,
+#oral-devs-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.oral-plan-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 10px 12px;
+  text-align: left;
+  background: var(--vs-bg-panel);
+  color: var(--vs-text);
+  border: 1px solid var(--vs-border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.oral-plan-item:hover {
+  background: var(--vs-sidebar-hover);
+  border-color: var(--vs-border-strong);
+}
+
+.oral-plan-title {
+  font-size: 13px;
+  color: var(--vs-text-bright);
+  line-height: 1.3;
+}
+
+.oral-plan-hint {
+  font-size: 11px;
+  color: var(--vs-text-dim);
+}
+
+.oral-pane-empty {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--vs-text-dim);
+}
 
 /* ---------- Développements ---------- */
 

@@ -41,7 +41,7 @@ const {
   deleteDevFile,
   isPathInDevsDir,
   normalizeLessonNumbers
-} = require('../lib/dev-files');
+} = require('../lib/dev-files');const {  makeOralLessonId,  normalizeOralLesson,  readOralRegistry,  writeOralRegistry,  saveOralLesson,  deleteOralLesson} = require('../lib/oral-files');
 
 function makeTempFolder() {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'maths-app-test-'));
@@ -746,6 +746,61 @@ test('deleteDevFile supprime, isPathInDevsDir protège les chemins', () => {
   assert.strictEqual(deleteDevFile(dev.path), true);
   assert.strictEqual(listDevFiles(folder).length, 0);
   assert.strictEqual(deleteDevFile(folder + '/settings.tex'), false);
+  fs.rmSync(folder, { recursive: true, force: true });
+});
+
+/* ---------- oral-files ---------- */
+
+test('normalizeOralLesson exige un num\u00e9ro entier positif et un titre', () => {
+  assert.strictEqual(normalizeOralLesson({ number: 142, title: 'S\u00e9ries de Fourier' }).title, 'S\u00e9ries de Fourier');
+  assert.strictEqual(normalizeOralLesson(null), null);
+  assert.strictEqual(normalizeOralLesson({ number: 0, title: 'X' }), null);
+  assert.strictEqual(normalizeOralLesson({ number: 1.5, title: 'X' }), null);
+  assert.strictEqual(normalizeOralLesson({ number: 142, title: '   ' }), null);
+});
+
+test('makeOralLessonId diff\u00e8re du makeStableId des plans et est stable', () => {
+  const a = makeOralLessonId(142, 'S\u00e9ries de Fourier');
+  const b = makeOralLessonId(142, 'S\u00e9ries de Fourier');
+  assert.strictEqual(a, b);
+  assert.strictEqual(a.startsWith('oral-'), true);
+  assert.notStrictEqual(makeOralLessonId(142, 'X'), makeOralLessonId(143, 'X'));
+});
+
+test('saveOralLesson cr\u00e9e, d\u00e9doublonne par num\u00e9ro et met \u00e0 jour le titre', () => {
+  const folder = makeTempFolder();
+  const created = saveOralLesson(folder, { number: 142, title: 'S\u00e9ries de Fourier' });
+  assert.strictEqual(created.lesson.number, 142);
+  assert.strictEqual(created.lesson.title, 'S\u00e9ries de Fourier');
+  const dup = saveOralLesson(folder, { number: 142, title: 'S\u00e9ries de Fourier (mise \u00e0 jour)' });
+  assert.strictEqual(dup.lesson.title, 'S\u00e9ries de Fourier (mise \u00e0 jour)', 're-sauvegarder le num\u00e9ro met \u00e0 jour le titre');
+  const list = readOralRegistry(folder);
+  assert.strictEqual(list.length, 1);
+  assert.strictEqual(list[0].id, created.lesson.id);
+  fs.rmSync(folder, { recursive: true, force: true });
+});
+
+test('writeOralRegistry trie par num\u00e9ro et readOralRegistry ignore les entr\u00e9es invalides', () => {
+  const folder = makeTempFolder();
+  writeOralRegistry(folder, [
+    { number: 158, title: 'Z\u00e9ta' },
+    { number: 12, title: 'Suites' },
+    { number: 158, title: 'Doublon' },
+    { number: -3, title: 'Invalide' }
+  ]);
+  const list = readOralRegistry(folder);
+  assert.deepStrictEqual(list.map((l) => l.number), [12, 158]);
+  assert.strictEqual(list[1].title, 'Z\u00e9ta');
+  fs.rmSync(folder, { recursive: true, force: true });
+});
+
+test('deleteOralLesson retire une entr\u00e9e et signale les absentes', () => {
+  const folder = makeTempFolder();
+  saveOralLesson(folder, { number: 12, title: 'Suites' });
+  assert.strictEqual(deleteOralLesson(folder, 12).ok, true);
+  assert.strictEqual(readOralRegistry(folder).length, 0);
+  assert.strictEqual(deleteOralLesson(folder, 12).error, 'not-found');
+  assert.strictEqual(deleteOralLesson(folder, 'x').error, 'invalid-number');
   fs.rmSync(folder, { recursive: true, force: true });
 });
 

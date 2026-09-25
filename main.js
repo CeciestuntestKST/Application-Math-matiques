@@ -10,6 +10,7 @@ const { createFolderWatcher } = require('./lib/folder-watcher');
 const autoUpdate = require('./lib/auto-update');
 const lessonFiles = require('./lib/lesson-files');
 const devFiles = require('./lib/dev-files');
+const oralFiles = require('./lib/oral-files');
 
 const isDev = process.argv.includes('--dev');
 let mainWindow = null;
@@ -322,6 +323,42 @@ ipcMain.handle('app:lessons-delete', async (_event, lessonPath) => {
   }
   const ok = lessonFiles.deleteLessonFile(lessonPath);
   return ok ? { ok: true } : { error: 'delete-failed' };
+});
+
+ipcMain.handle('app:oral-list', async () => {
+  const folder = requireCourseFolder();
+  if (!folder) {
+    return { error: 'no-folder' };
+  }
+  try {
+    return { lessons: oralFiles.readOralRegistry(folder) };
+  } catch (err) {
+    return { error: err.message };
+  }
+});
+
+ipcMain.handle('app:oral-save', async (_event, lesson) => {
+  const folder = requireCourseFolder();
+  if (!folder) {
+    return { error: 'no-folder' };
+  }
+  try {
+    return oralFiles.saveOralLesson(folder, lesson);
+  } catch (err) {
+    return { error: err.message };
+  }
+});
+
+ipcMain.handle('app:oral-delete', async (_event, number) => {
+  const folder = requireCourseFolder();
+  if (!folder) {
+    return { error: 'no-folder' };
+  }
+  try {
+    return oralFiles.deleteOralLesson(folder, number);
+  } catch (err) {
+    return { error: err.message };
+  }
 });
 
 ipcMain.handle('app:devs-list', async () => {
