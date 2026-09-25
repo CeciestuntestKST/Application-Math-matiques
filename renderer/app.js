@@ -67,6 +67,12 @@
     oralPlanPreviewTitle: document.getElementById('oral-plan-preview-title'),
     oralPlanToc: document.getElementById('oral-plan-toc'),
     oralPlanRenderView: document.getElementById('oral-plan-render-view'),
+    oralDevPreviewPane: document.getElementById('oral-dev-preview-pane'),
+    oralDevPreviewTitle: document.getElementById('oral-dev-preview-title'),
+    oralDevToc: document.getElementById('oral-dev-toc'),
+    oralDevRenderView: document.getElementById('oral-dev-render-view'),
+    oralDevBackBtn: document.getElementById('oral-dev-back'),
+    oralDevOpenEditorBtn: document.getElementById('oral-dev-open-editor'),
     oralPlanBackBtn: document.getElementById('oral-plan-back'),
     oralPlanOpenEditorBtn: document.getElementById('oral-plan-open-editor'),
     readerLecons: document.getElementById('reader-lecons'),
@@ -132,6 +138,7 @@
     oralLessons: [],
     activeOralNumber: null,
     activeOralPlanId: null,
+    activeOralDevId: null,
     devs: [],
     activeDevId: null,
     devShowCode: false
@@ -814,6 +821,7 @@
     if (section === 'oral') {
       state.activeOralNumber = null;
       state.activeOralPlanId = null;
+      state.activeOralDevId = null;
       hideCreateOralForm();
       refreshOralData();
     }
@@ -2116,6 +2124,7 @@
           onClick: () => {
             state.activeOralNumber = number;
             state.activeOralPlanId = null;
+            state.activeOralDevId = null;
             renderOralSidebar();
             updateOralView();
           }
@@ -2160,6 +2169,7 @@
       card.addEventListener('click', () => {
         state.activeOralNumber = number;
         state.activeOralPlanId = null;
+        state.activeOralDevId = null;
         renderOralSidebar();
         updateOralView();
       });
@@ -2254,8 +2264,12 @@
     renderOralPlansList();
     renderOralDevsList();
     updateOralPlanPreviewVisibility();
+    updateOralDevPreviewVisibility();
     if (state.activeOralPlanId) {
       renderOralPlanPreview();
+    }
+    if (state.activeOralDevId) {
+      renderOralDevPreview();
     }
   }
 
@@ -2411,6 +2425,98 @@
     els.oralPlanRenderView.appendChild(frag);
   }
 
+  let oralDevRenderSeq = 0;
+
+  function getActiveOralDev() {
+    if (state.activeOralNumber === null) {
+      return null;
+    }
+    return state.devs.find((d) => d.id === state.activeOralDevId) || null;
+  }
+
+  function updateOralDevPreviewVisibility() {
+    const hasDev = !!getActiveOralDev();
+    if (els.oralDevsList) {
+      show(els.oralDevsList, !hasDev);
+    }
+    if (els.oralDevPreviewPane) {
+      show(els.oralDevPreviewPane, hasDev);
+    }
+  }
+
+  async function renderOralDevPreview() {
+    const dev = getActiveOralDev();
+    if (!dev || !els.oralDevRenderView) {
+      return;
+    }
+    const number = state.activeOralNumber;
+    const devId = dev.id;
+    if (els.oralDevPreviewTitle) {
+      els.oralDevPreviewTitle.textContent = dev.title || dev.fileName;
+    }
+    clearElement(els.oralDevRenderView);
+    if (els.oralDevToc) {
+      clearElement(els.oralDevToc);
+    }
+    const seq = ++oralDevRenderSeq;
+    const result = dev.content
+      ? await window.api.parseDevContent(dev.content)
+      : { notions: [], sections: [] };
+    if (seq !== oralDevRenderSeq) {
+      return;
+    }
+    if (state.section !== 'oral' || state.activeOralNumber !== number || state.activeOralDevId !== devId) {
+      return;
+    }
+    const sections = (result && Array.isArray(result.sections)) ? result.sections : [];
+    if (els.oralDevToc && sections.length > 0) {
+      const tocTitle = document.createElement('div');
+      tocTitle.className = 'oral-toc-title';
+      tocTitle.textContent = 'Sommaire';
+      els.oralDevToc.appendChild(tocTitle);
+      for (const section of sections) {
+        const line = document.createElement('div');
+        line.className = 'oral-toc-line';
+        line.style.paddingLeft = `${(section.level || 0) * 14 + 8}px`;
+        line.textContent = section.title;
+        els.oralDevToc.appendChild(line);
+      }
+    }
+    const notions = (result && Array.isArray(result.notions)) ? result.notions : [];
+    const outline = (result && Array.isArray(result.outline)) ? result.outline : null;
+    if (outline && outline.length > 0) {
+      els.oralDevRenderView.appendChild(buildOutlineFragment(outline, getSettingsMacros()));
+      return;
+    }
+    if (notions.length === 0 && sections.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'list-empty';
+      empty.style.padding = '24px 16px';
+      empty.textContent = dev.content
+        ? 'Aucun environnement reconnu dans ce d\u00e9veloppement.'
+        : 'D\u00e9veloppement vide \u2014 bouton crayon pour commencer \u00e0 le r\u00e9diger.';
+      els.oralDevRenderView.appendChild(empty);
+      return;
+    }
+    const frag = document.createDocumentFragment();
+    for (const notion of notions) {
+      frag.appendChild(buildDevNotionBlock(notion));
+    }
+    els.oralDevRenderView.appendChild(frag);
+  }
+
+  function openOralDevInDevs() {
+    const dev = getActiveOralDev();
+    if (!dev) {
+      return;
+    }
+    switchSection('developpements');
+    state.activeDevId = dev.id;
+    state.devShowCode = false;
+    renderDevsSidebar();
+    updateDevsView();
+  }
+
   function openOralPlanInLessons() {
     const plan = getActiveOralPlan();
     if (!plan) {
@@ -2452,11 +2558,9 @@
         : '';
       item.appendChild(hint);
       item.addEventListener('click', () => {
-        switchSection('developpements');
-        state.activeDevId = dev.id;
-        state.devShowCode = false;
-        renderDevsSidebar();
-        updateDevsView();
+        state.activeOralDevId = dev.id;
+        updateOralDevPreviewVisibility();
+        renderOralDevPreview();
       });
       els.oralDevsList.appendChild(item);
     }
@@ -2512,6 +2616,7 @@
       await loadOralLessons();
       state.activeOralNumber = result.lesson.number;
       state.activeOralPlanId = null;
+      state.activeOralDevId = null;
       renderOralSidebar();
       updateOralView();
     } else if (els.oralSaveStatus) {
@@ -2552,6 +2657,7 @@
       if (state.activeOralNumber === number) {
         state.activeOralNumber = null;
         state.activeOralPlanId = null;
+        state.activeOralDevId = null;
       }
       await loadOralLessons();
       renderOralSidebar();
@@ -3574,6 +3680,7 @@
     els.oralBack.addEventListener('click', () => {
       state.activeOralNumber = null;
       state.activeOralPlanId = null;
+      state.activeOralDevId = null;
       renderOralSidebar();
       updateOralView();
     });
@@ -3587,6 +3694,16 @@
   }
   if (els.oralPlanOpenEditorBtn) {
     els.oralPlanOpenEditorBtn.addEventListener('click', openOralPlanInLessons);
+  }
+  if (els.oralDevBackBtn) {
+    els.oralDevBackBtn.addEventListener('click', () => {
+      state.activeOralDevId = null;
+      updateOralDevPreviewVisibility();
+      renderOralDevsList();
+    });
+  }
+  if (els.oralDevOpenEditorBtn) {
+    els.oralDevOpenEditorBtn.addEventListener('click', openOralDevInDevs);
   }
   if (els.oralNewPlanBtn) {
     els.oralNewPlanBtn.addEventListener('click', () => {
