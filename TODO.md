@@ -12,6 +12,8 @@ Référentiel des fonctionnalités envisagées. Les statuts : **À faire** (prio
 
 ### Fait
 
+- [x] **Leçons d'oral — aperçu compact « fiche »** : l'aperçu rendu des leçons adopte une présentation dense (interlignes et marges réduits, en-têtes et corps plus serrés, démonstrations compactes) pour tenir sur une fiche de révision ; la vue « Développements » garde son rendu standard.
+
 - [x] **Leçons d'oral — aperçu rendu** : prévisualisation KaTeX du plan dans l'éditeur — bascule « Code source » / « Aperçu rendu » ; le rendu décompose le plan en blocs type notions (démonstrations pliables), comme pour les développements ; à la création d'une leçon, l'éditeur s'ouvre directement en mode code ; l'import d'une notion bascule en mode code pour l'insertion au curseur.
 
 - [x] **Leçons / Développements — sections indépendantes** : entrer dans une section affiche toujours son accueil (plus de reprise du dernier élément édité, qui donnait l'impression que la vue principale ne changeait pas) ; correctif de l'aperçu rendu des développements (la vue restait figée : la fonction n'attendait pas le parsing IPC) ; garde-fous contre les rendus asynchrones obsolètes (bascule rapide entre sections).

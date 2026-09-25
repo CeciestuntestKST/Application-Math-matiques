@@ -1841,15 +1841,78 @@ html, body {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 16px 24px;
+  padding: 10px 14px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 5px;
   align-items: stretch;
 }
 
 #lesson-render-view .dev-block {
-  max-width: 900px;
+  border-radius: 4px;
+}
+
+#lesson-render-view .notion-header {
+  padding: 3px 8px;
+  gap: 6px;
+}
+
+#lesson-render-view .notion-header .notion-env {
+  padding: 1px 6px;
+  font-size: 9px;
+  letter-spacing: 0.3px;
+}
+
+#lesson-render-view .notion-header .notion-title {
+  font-size: 12.5px;
+}
+
+#lesson-render-view .notion-body {
+  padding: 4px 8px;
+  line-height: 1.35;
+  font-size: 12.5px;
+}
+
+#lesson-render-view .notion-body p {
+  margin: 3px 0;
+}
+
+#lesson-render-view .notion-body .katex-display {
+  margin: 5px 0;
+}
+
+#lesson-render-view .notion-body ul.tex-list,
+#lesson-render-view .notion-body ol.tex-list {
+  margin: 3px 0 3px 18px;
+}
+
+#lesson-render-view .notion-body ul.tex-list > li,
+#lesson-render-view .notion-body ol.tex-list > li {
+  margin: 1px 0;
+}
+
+#lesson-render-view .notion-body pre.tex-raw {
+  padding: 5px 8px;
+  font-size: 10.5px;
+  margin: 4px 0;
+}
+
+#lesson-render-view .notion-proof {
+  padding: 0 8px;
+}
+
+#lesson-render-view .notion-proof-header {
+  padding: 2px 0 1px;
+  font-size: 11px;
+  gap: 6px;
+}
+
+#lesson-render-view .notion-proof-label {
+  font-size: 9.5px;
+}
+
+#lesson-render-view .notion-proof-body {
+  padding-bottom: 4px;
 }
 
 #lesson-render-view .list-empty {
