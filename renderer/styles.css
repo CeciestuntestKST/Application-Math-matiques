@@ -2462,3 +2462,79 @@ html, body {
   gap: 5px;
   align-items: stretch;
 }
+
+/* ---------- Aperçus Oral : blocs notions compacts + anti-troncature ---------- */
+#oral-plan-render-view .notion,
+#oral-dev-render-view .notion {
+  min-width: 0;
+  max-width: none;
+}
+
+.compact-notion .notion-type-line {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--vs-text-dim);
+  padding: 2px 8px 0;
+}
+
+#oral-plan-render-view,
+#oral-dev-render-view {
+  align-items: stretch;
+}
+
+#oral-plan-render-view > *,
+#oral-dev-render-view > * {
+  min-width: 0;
+}
+
+.compact-notion .notion-body .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0;
+}
+
+.compact-notion {
+  border-radius: 4px;
+}
+
+.compact-notion .notion-body {
+  padding: 2px 8px 4px;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.compact-notion .notion-body p {
+  margin: 2px 0;
+}
+
+.compact-notion .notion-body ul.tex-list,
+.compact-notion .notion-body ol.tex-list {
+  margin: 2px 0 2px 16px;
+}
+
+.compact-notion .notion-body ul.tex-list > li,
+.compact-notion .notion-body ol.tex-list > li {
+  margin: 0;
+}
+
+.compact-notion .notion-proof-header {
+  padding: 1px 0 0;
+  font-size: 10px;
+}
+
+.compact-notion .notion-proof-body {
+  padding-bottom: 2px;
+}
+
+#oral-plan-render-view .notion:not(.compact-notion),
+#oral-dev-render-view .notion:not(.compact-notion) {
+  min-width: 0;
+}
+
+.lesson-fiche .compact-notion .notion-body pre.tex-raw {
+  padding: 3px 6px;
+  font-size: 10px;
+  margin: 2px 0;
+}

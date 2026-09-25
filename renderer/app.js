@@ -2405,7 +2405,7 @@
     const notions = (result && Array.isArray(result.notions)) ? result.notions : [];
     const outline = (result && Array.isArray(result.outline)) ? result.outline : null;
     if (outline && outline.length > 0) {
-      els.oralPlanRenderView.appendChild(buildOutlineFragment(outline, getSettingsMacros()));
+      els.oralPlanRenderView.appendChild(buildOutlineFragment(outline, getSettingsMacros(), { compactHeader: true }));
       return;
     }
     if (notions.length === 0 && sections.length === 0) {
@@ -2420,7 +2420,7 @@
     }
     const frag = document.createDocumentFragment();
     for (const notion of notions) {
-      frag.appendChild(buildDevNotionBlock(notion));
+      frag.appendChild(buildDevNotionBlock(notion, { compactHeader: true }));
     }
     els.oralPlanRenderView.appendChild(frag);
   }
@@ -2485,7 +2485,7 @@
     const notions = (result && Array.isArray(result.notions)) ? result.notions : [];
     const outline = (result && Array.isArray(result.outline)) ? result.outline : null;
     if (outline && outline.length > 0) {
-      els.oralDevRenderView.appendChild(buildOutlineFragment(outline, getSettingsMacros()));
+      els.oralDevRenderView.appendChild(buildOutlineFragment(outline, getSettingsMacros(), { compactHeader: true }));
       return;
     }
     if (notions.length === 0 && sections.length === 0) {
@@ -2500,7 +2500,7 @@
     }
     const frag = document.createDocumentFragment();
     for (const notion of notions) {
-      frag.appendChild(buildDevNotionBlock(notion));
+      frag.appendChild(buildDevNotionBlock(notion, { compactHeader: true }));
     }
     els.oralDevRenderView.appendChild(frag);
   }
@@ -3222,7 +3222,7 @@
 
   const SECTION_LEVEL_CLASS = ['outline-chapter', 'outline-section', 'outline-subsection', 'outline-subsubsection'];
 
-  function buildOutlineFragment(outline, macros) {
+  function buildOutlineFragment(outline, macros, options) {
     const frag = document.createDocumentFragment();
     for (const item of outline) {
       if (item.type === 'section') {
@@ -3235,27 +3235,36 @@
         body.classList.add('outline-text');
         frag.appendChild(body);
       } else if (item.type === 'notion') {
-        frag.appendChild(buildDevNotionBlock(item));
+        frag.appendChild(buildDevNotionBlock(item, options));
       }
     }
     return frag;
   }
 
-  function buildDevNotionBlock(notion) {
+  function buildDevNotionBlock(notion, opts) {
+    const options = opts || {};
     const macros = getSettingsMacros();
     const card = document.createElement('div');
     card.className = 'notion dev-block';
-    const header = document.createElement('div');
-    header.className = 'notion-header';
-    const env = document.createElement('span');
-    env.className = 'notion-env';
-    env.textContent = notion.environmentDisplay || notion.environment;
-    header.appendChild(env);
-    const title = document.createElement('span');
-    title.className = 'notion-title';
-    title.innerHTML = renderLatexText(notion.title || '', macros);
-    header.appendChild(title);
-    card.appendChild(header);
+    if (options.compactHeader) {
+      card.classList.add('compact-notion');
+      const typeLine = document.createElement('div');
+      typeLine.className = 'notion-type-line';
+      typeLine.textContent = `Type de notions : ${notion.environmentDisplay || notion.environment}`;
+      card.appendChild(typeLine);
+    } else {
+      const header = document.createElement('div');
+      header.className = 'notion-header';
+      const env = document.createElement('span');
+      env.className = 'notion-env';
+      env.textContent = notion.environmentDisplay || notion.environment;
+      header.appendChild(env);
+      const title = document.createElement('span');
+      title.className = 'notion-title';
+      title.innerHTML = renderLatexText(notion.title || '', macros);
+      header.appendChild(title);
+      card.appendChild(header);
+    }
     const body = renderLatexBody(notion.body, macros);
     card.appendChild(body);
     for (const proof of notion.proofs || []) {
