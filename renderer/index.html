@@ -149,7 +149,7 @@
                 <span class="toolbar-spacer"></span>
                 <button id="lesson-view-code" class="dev-mode-btn" title="Basculer entre rendu et code LaTeX">Code source</button>
               </div>
-              <div id="lesson-render-view"></div>
+              <div id="lesson-render-view" class="lesson-fiche"></div>
               <textarea id="lesson-tex-input" class="hidden" spellcheck="false" placeholder="% Plan de la leçon — LaTeX libre&#10;% Importez des notions depuis la bibliothèque à droite…"></textarea>
             </div>
             <div id="lesson-import-pane">
@@ -250,6 +250,16 @@
                 <button id="oral-new-plan" class="dev-mode-btn" title="Créer un nouveau plan pour ce numéro">+ Plan</button>
               </div>
               <div id="oral-plans-list"></div>
+              <div id="oral-plan-preview-pane" class="hidden">
+                <div class="lesson-pane-header">
+                  <span id="oral-plan-preview-title"></span>
+                  <span class="toolbar-spacer"></span>
+                  <button id="oral-plan-back" class="dev-mode-btn" title="Revenir à la liste des plans">← Plans</button>
+                  <button id="oral-plan-open-editor" class="dev-mode-btn" title="Ouvrir ce plan dans la section Leçons d'oral pour l'éditer">Ouvrir dans Leçons ✎</button>
+                </div>
+                <div id="oral-plan-toc"></div>
+                <div id="oral-plan-render-view" class="lesson-fiche"></div>
+              </div>
             </div>
             <div id="oral-devs-pane">
               <div class="lesson-pane-header">Développements potentiels</div>

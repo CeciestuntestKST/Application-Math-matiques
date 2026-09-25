@@ -3,7 +3,7 @@
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { scanFolder, extractAllNotions, stripComments } = require('./lib/latex-notions');
+const { scanFolder, extractAllNotions, extractSections, stripComments } = require('./lib/latex-notions');
 const { flattenNotions, environmentDisplay } = require('./lib/notions-model');
 const { readSettings } = require('./lib/settings-parser');
 const { createFolderWatcher } = require('./lib/folder-watcher');
@@ -415,6 +415,7 @@ ipcMain.handle('app:dev-parse', async (_event, content) => {
       displayMap[env.name] = env.display;
     }
     const notions = extractAllNotions(stripComments(content), settingsResult.settings);
+    const sections = extractSections(content);
     const view = notions.map((n) => ({
       environment: n.environment,
       environmentDisplay: environmentDisplay(n.environment, displayMap),
@@ -447,7 +448,7 @@ ipcMain.handle('app:dev-parse', async (_event, content) => {
         after.proofs.push(proof);
       }
     }
-    return { notions: view.filter((n) => !proofEnvs.has(n.environment)) };
+    return { notions: view.filter((n) => !proofEnvs.has(n.environment)), sections };
   } catch (err) {
     return { error: err.message };
   }

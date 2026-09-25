@@ -12,6 +12,7 @@ const {
   extractTitledEnvironments,
   discoverTitledEnvironments,
   extractAllNotions,
+  extractSections,
   scanFolder,
   listFiles
 } = require('../lib/latex-notions');
@@ -747,6 +748,27 @@ test('deleteDevFile supprime, isPathInDevsDir protège les chemins', () => {
   assert.strictEqual(listDevFiles(folder).length, 0);
   assert.strictEqual(deleteDevFile(folder + '/settings.tex'), false);
   fs.rmSync(folder, { recursive: true, force: true });
+});
+
+test('extractSections detecte chapter/section/subsection (etoilees, optionnel, commentaires ignores)', () => {
+  const source = [
+    '% commentaire \\chapter{Ignore}',
+    '\\chapter{Suites et series}',
+    'Corps.',
+    '\\section*{Convergence}',
+    '\\subsection{Critere de Cauchy}',
+    '\\subsubsection{Detail}',
+    '\\section[ Sommaire court ]{Titre long}',
+    '\\section{}'
+  ].join('\n');
+  const sections = extractSections(source);
+  assert.strictEqual(sections.length, 5);
+  assert.deepStrictEqual(sections.map((s) => s.level), [0, 1, 2, 3, 1]);
+  assert.strictEqual(sections[0].title, 'Suites et series');
+  assert.strictEqual(sections[1].title, 'Convergence');
+  assert.strictEqual(sections[4].title, 'Titre long');
+  assert.deepStrictEqual(extractSections(''), []);
+  assert.deepStrictEqual(extractSections(null), []);
 });
 
 /* ---------- oral-files ---------- */

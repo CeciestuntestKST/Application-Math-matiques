@@ -61,6 +61,12 @@
     oralPlansList: document.getElementById('oral-plans-list'),
     oralNewPlanBtn: document.getElementById('oral-new-plan'),
     oralDevsList: document.getElementById('oral-devs-list'),
+    oralPlanPreviewPane: document.getElementById('oral-plan-preview-pane'),
+    oralPlanPreviewTitle: document.getElementById('oral-plan-preview-title'),
+    oralPlanToc: document.getElementById('oral-plan-toc'),
+    oralPlanRenderView: document.getElementById('oral-plan-render-view'),
+    oralPlanBackBtn: document.getElementById('oral-plan-back'),
+    oralPlanOpenEditorBtn: document.getElementById('oral-plan-open-editor'),
     readerLecons: document.getElementById('reader-lecons'),
     leconsHome: document.getElementById('lecons-home'),
     leconsCards: document.getElementById('lecons-cards'),
@@ -123,6 +129,7 @@
     lessonShowCode: false,
     oralLessons: [],
     activeOralNumber: null,
+    activeOralPlanId: null,
     devs: [],
     activeDevId: null,
     devShowCode: false
@@ -804,6 +811,7 @@
     show(els.devsList, section === 'developpements');
     if (section === 'oral') {
       state.activeOralNumber = null;
+      state.activeOralPlanId = null;
       hideCreateOralForm();
       refreshOralData();
     }
@@ -2097,6 +2105,7 @@
           active: state.activeOralNumber === number,
           onClick: () => {
             state.activeOralNumber = number;
+            state.activeOralPlanId = null;
             renderOralSidebar();
             updateOralView();
           }
@@ -2137,6 +2146,7 @@
       card.appendChild(hint);
       card.addEventListener('click', () => {
         state.activeOralNumber = number;
+        state.activeOralPlanId = null;
         renderOralSidebar();
         updateOralView();
       });
@@ -2165,17 +2175,21 @@
       els.oralTitleInput.value = registered ? registered.title : '';
     }
     if (els.oralTitleInput) {
-      els.oralTitleInput.disabled = !registered;
-      els.oralTitleInput.placeholder = registered ? 'Titre officiel de la le\u00e7on\u2026' : 'Le\u00e7on non d\u00e9clar\u00e9e — \u00ab Ajouter une le\u00e7on \u00bb \u00e0 l\u2019accueil pour la titrer';
+      els.oralTitleInput.disabled = false;
+      els.oralTitleInput.placeholder = registered ? 'Titre officiel de la le\u00e7on\u2026' : 'Titre officiel (saisir pour d\u00e9clarer la le\u00e7on)\u2026';
     }
     if (els.oralSaveStatus) {
-      els.oralSaveStatus.textContent = registered ? '' : 'Non d\u00e9clar\u00e9e';
+      els.oralSaveStatus.textContent = registered ? '' : 'Non d\u00e9clar\u00e9e — un titre l\u2019enregistrera';
     }
     if (els.oralDeleteBtn) {
       show(els.oralDeleteBtn, !!registered);
     }
     renderOralPlansList();
     renderOralDevsList();
+    updateOralPlanPreviewVisibility();
+    if (state.activeOralPlanId) {
+      renderOralPlanPreview();
+    }
   }
 
   function renderOralPlansList() {
@@ -2208,14 +2222,99 @@
         : '';
       item.appendChild(hint);
       item.addEventListener('click', () => {
-        switchSection('lecons');
-        state.activeLessonId = plan.id;
-        state.lessonShowCode = false;
-        renderLeconsSidebar();
-        updateLeconsView();
+        state.activeOralPlanId = plan.id;
+        updateOralPlanPreviewVisibility();
+        renderOralPlanPreview();
       });
       els.oralPlansList.appendChild(item);
     }
+  }
+
+  let oralPlanRenderSeq = 0;
+
+  function getActiveOralPlan() {
+    if (state.activeOralNumber === null) {
+      return null;
+    }
+    return state.lessons.find((l) => l.id === state.activeOralPlanId) || null;
+  }
+
+  function updateOralPlanPreviewVisibility() {
+    const hasPlan = !!getActiveOralPlan();
+    if (els.oralPlansList) {
+      show(els.oralPlansList, !hasPlan);
+    }
+    if (els.oralPlanPreviewPane) {
+      show(els.oralPlanPreviewPane, hasPlan);
+    }
+  }
+
+  async function renderOralPlanPreview() {
+    const plan = getActiveOralPlan();
+    if (!plan || !els.oralPlanRenderView) {
+      return;
+    }
+    const number = state.activeOralNumber;
+    const planId = plan.id;
+    if (els.oralPlanPreviewTitle) {
+      els.oralPlanPreviewTitle.textContent = plan.title || plan.fileName;
+    }
+    clearElement(els.oralPlanRenderView);
+    if (els.oralPlanToc) {
+      clearElement(els.oralPlanToc);
+    }
+    const seq = ++oralPlanRenderSeq;
+    const result = plan.content
+      ? await window.api.parseDevContent(plan.content)
+      : { notions: [], sections: [] };
+    if (seq !== oralPlanRenderSeq) {
+      return;
+    }
+    if (state.section !== 'oral' || state.activeOralNumber !== number || state.activeOralPlanId !== planId) {
+      return;
+    }
+    const sections = (result && Array.isArray(result.sections)) ? result.sections : [];
+    if (els.oralPlanToc && sections.length > 0) {
+      const tocTitle = document.createElement('div');
+      tocTitle.className = 'oral-toc-title';
+      tocTitle.textContent = 'Sommaire';
+      els.oralPlanToc.appendChild(tocTitle);
+      for (const section of sections) {
+        const line = document.createElement('div');
+        line.className = 'oral-toc-line';
+        line.style.paddingLeft = `${(section.level || 0) * 14 + 8}px`;
+        line.textContent = section.title;
+        els.oralPlanToc.appendChild(line);
+      }
+    }
+    const notions = (result && Array.isArray(result.notions)) ? result.notions : [];
+    if (notions.length === 0 && sections.length === 0) {
+      const empty = document.createElement('div');
+      empty.className = 'list-empty';
+      empty.style.padding = '24px 16px';
+      empty.textContent = plan.content
+        ? 'Aucun environnement reconnu dans ce plan.'
+        : 'Plan vide — « Ouvrir dans Leçons » pour commencer à le rédiger.';
+      els.oralPlanRenderView.appendChild(empty);
+      return;
+    }
+    const frag = document.createDocumentFragment();
+    for (const notion of notions) {
+      frag.appendChild(buildDevNotionBlock(notion));
+    }
+    els.oralPlanRenderView.appendChild(frag);
+  }
+
+  function openOralPlanInLessons() {
+    const plan = getActiveOralPlan();
+    if (!plan) {
+      return;
+    }
+    switchSection('lecons');
+    state.activeLessonId = plan.id;
+    state.lessonShowCode = false;
+    renderLeconsSidebar();
+    updateLeconsView();
   }
 
   function renderOralDevsList() {
@@ -2306,6 +2405,7 @@
       hideCreateOralForm();
       await loadOralLessons();
       state.activeOralNumber = result.lesson.number;
+      state.activeOralPlanId = null;
       renderOralSidebar();
       updateOralView();
     } else if (els.oralSaveStatus) {
@@ -2315,8 +2415,7 @@
 
   async function saveActiveOralLesson() {
     const number = state.activeOralNumber;
-    const registered = getActiveOralLesson();
-    if (number === null || !registered) {
+    if (number === null) {
       return;
     }
     const title = els.oralTitleInput ? els.oralTitleInput.value.trim() : '';
@@ -3325,9 +3424,20 @@
   if (els.oralBack) {
     els.oralBack.addEventListener('click', () => {
       state.activeOralNumber = null;
+      state.activeOralPlanId = null;
       renderOralSidebar();
       updateOralView();
     });
+  }
+  if (els.oralPlanBackBtn) {
+    els.oralPlanBackBtn.addEventListener('click', () => {
+      state.activeOralPlanId = null;
+      updateOralPlanPreviewVisibility();
+      renderOralPlansList();
+    });
+  }
+  if (els.oralPlanOpenEditorBtn) {
+    els.oralPlanOpenEditorBtn.addEventListener('click', openOralPlanInLessons);
   }
   if (els.oralTitleInput) {
     els.oralTitleInput.addEventListener('change', saveActiveOralLesson);
