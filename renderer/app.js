@@ -2207,6 +2207,8 @@
       return;
     }
     for (const plan of plans) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'oral-plan-entry';
       const item = document.createElement('button');
       item.type = 'button';
       item.className = 'oral-plan-item';
@@ -2226,8 +2228,40 @@
         updateOralPlanPreviewVisibility();
         renderOralPlanPreview();
       });
-      els.oralPlansList.appendChild(item);
+      wrapper.appendChild(item);
+      const toc = document.createElement('div');
+      toc.className = 'oral-plan-toc';
+      wrapper.appendChild(toc);
+      els.oralPlansList.appendChild(wrapper);
+      fillOralPlanToc(toc, plan);
     }
+  }
+
+  async function fillOralPlanToc(tocElement, plan) {
+    if (!tocElement || !plan || !plan.content || !window.api.parseDevContent) {
+      return;
+    }
+    const number = state.activeOralNumber;
+    const planId = plan.id;
+    const result = await window.api.parseDevContent(plan.content);
+    if (!tocElement.isConnected
+      || state.section !== 'oral'
+      || state.activeOralNumber !== number) {
+      return;
+    }
+    const sections = (result && Array.isArray(result.sections)) ? result.sections : [];
+    if (sections.length === 0) {
+      return;
+    }
+    const frag = document.createDocumentFragment();
+    for (const section of sections) {
+      const line = document.createElement('div');
+      line.className = 'oral-plan-toc-line';
+      line.style.paddingLeft = `${(section.level || 0) * 12 + 6}px`;
+      line.textContent = section.title;
+      frag.appendChild(line);
+    }
+    tocElement.appendChild(frag);
   }
 
   let oralPlanRenderSeq = 0;
@@ -2288,6 +2322,11 @@
       }
     }
     const notions = (result && Array.isArray(result.notions)) ? result.notions : [];
+    const outline = (result && Array.isArray(result.outline)) ? result.outline : null;
+    if (outline && outline.length > 0) {
+      els.oralPlanRenderView.appendChild(buildOutlineFragment(outline, getSettingsMacros()));
+      return;
+    }
     if (notions.length === 0 && sections.length === 0) {
       const empty = document.createElement('div');
       empty.className = 'list-empty';
@@ -2574,7 +2613,10 @@
     if (seq !== lessonRenderSeq) {
       return null;
     }
-    return result && Array.isArray(result.notions) ? result.notions : [];
+    if (!result || !Array.isArray(result.notions)) {
+      return { notions: [], sections: [], outline: [] };
+    }
+    return result;
   }
 
   async function renderLessonRenderView() {
@@ -2583,11 +2625,17 @@
     }
     const lesson = getActiveLesson();
     clearElement(els.lessonRenderView);
-    const notions = await getLessonNotions(lesson);
-    if (notions === null) {
+    const parsed = await getLessonNotions(lesson);
+    if (parsed === null) {
       return;
     }
     if (state.section !== 'lecons' || state.activeLessonId !== (lesson && lesson.id)) {
+      return;
+    }
+    const notions = parsed.notions || [];
+    const outline = parsed.outline || [];
+    if (outline.length > 0) {
+      els.lessonRenderView.appendChild(buildOutlineFragment(outline, getSettingsMacros()));
       return;
     }
     if (notions.length === 0) {
@@ -2989,7 +3037,31 @@
     if (seq !== devRenderSeq) {
       return null;
     }
-    return result && Array.isArray(result.notions) ? result.notions : [];
+    if (!result || !Array.isArray(result.notions)) {
+      return { notions: [], sections: [], outline: [] };
+    }
+    return result;
+  }
+
+  const SECTION_LEVEL_CLASS = ['outline-chapter', 'outline-section', 'outline-subsection', 'outline-subsubsection'];
+
+  function buildOutlineFragment(outline, macros) {
+    const frag = document.createDocumentFragment();
+    for (const item of outline) {
+      if (item.type === 'section') {
+        const heading = document.createElement('div');
+        heading.className = `outline-heading ${SECTION_LEVEL_CLASS[item.level] || 'outline-section'}`;
+        heading.innerHTML = renderLatexText(item.title || '', macros);
+        frag.appendChild(heading);
+      } else if (item.type === 'text') {
+        const body = renderLatexBody(item.text, macros);
+        body.classList.add('outline-text');
+        frag.appendChild(body);
+      } else if (item.type === 'notion') {
+        frag.appendChild(buildDevNotionBlock(item));
+      }
+    }
+    return frag;
   }
 
   function buildDevNotionBlock(notion) {
@@ -3021,11 +3093,17 @@
     }
     const dev = getActiveDev();
     clearElement(els.devRenderView);
-    const notions = await getDevNotions(dev);
-    if (notions === null) {
+    const parsed = await getDevNotions(dev);
+    if (parsed === null) {
       return;
     }
     if (state.section !== 'developpements' || state.activeDevId !== (dev && dev.id)) {
+      return;
+    }
+    const notions = parsed.notions || [];
+    const outline = parsed.outline || [];
+    if (outline.length > 0) {
+      els.devRenderView.appendChild(buildOutlineFragment(outline, getSettingsMacros()));
       return;
     }
     if (notions.length === 0) {

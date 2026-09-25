@@ -414,15 +414,18 @@ ipcMain.handle('app:dev-parse', async (_event, content) => {
     for (const env of settingsResult.settings.environments || []) {
       displayMap[env.name] = env.display;
     }
-    const notions = extractAllNotions(stripComments(content), settingsResult.settings);
-    const sections = extractSections(content);
+    const cleaned = stripComments(content);
+    const notions = extractAllNotions(cleaned, settingsResult.settings);
+    const sections = extractSections(cleaned);
     const view = notions.map((n) => ({
       environment: n.environment,
       environmentDisplay: environmentDisplay(n.environment, displayMap),
       title: n.title,
       hasTitle: n.hasTitle,
       body: n.body,
-      proofs: []
+      proofs: [],
+      position: n.position,
+      positionEnd: n.positionEnd
     }));
     const proofEnvs = new Set(['proof', 'proof*', 'demonstration']);
     const byTitle = new Map();
@@ -448,7 +451,49 @@ ipcMain.handle('app:dev-parse', async (_event, content) => {
         after.proofs.push(proof);
       }
     }
-    return { notions: view.filter((n) => !proofEnvs.has(n.environment)), sections };
+    const nonProofNotions = view.filter((n) => !proofEnvs.has(n.environment));
+    const outline = [];
+    const events = [];
+    for (const notion of view) {
+      events.push({ type: 'notion', position: notion.position, end: notion.positionEnd, notion });
+    }
+    for (const section of sections) {
+      events.push({ type: 'section', position: section.position, end: section.end, section });
+    }
+    events.sort((a, b) => a.position - b.position);
+    let cursor = 0;
+    for (const event of events) {
+      if (event.position > cursor) {
+        const text = cleaned.slice(cursor, event.position).trim();
+        if (text) {
+          outline.push({ type: 'text', text });
+        }
+      }
+      if (event.type === 'notion') {
+        const { notion } = event;
+        if (!proofEnvs.has(notion.environment)) {
+          outline.push({
+            type: 'notion',
+            environment: notion.environment,
+            environmentDisplay: notion.environmentDisplay,
+            title: notion.title,
+            hasTitle: notion.hasTitle,
+            body: notion.body,
+            proofs: notion.proofs
+          });
+        }
+      } else {
+        outline.push({ type: 'section', level: event.section.level, title: event.section.title });
+      }
+      cursor = Math.max(cursor, event.end);
+    }
+    if (cursor < cleaned.length) {
+      const text = cleaned.slice(cursor).trim();
+      if (text) {
+        outline.push({ type: 'text', text });
+      }
+    }
+    return { notions: nonProofNotions, sections, outline };
   } catch (err) {
     return { error: err.message };
   }
