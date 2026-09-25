@@ -2470,13 +2470,10 @@ html, body {
   max-width: none;
 }
 
-.compact-notion .notion-type-line {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  color: var(--vs-text-dim);
-  padding: 2px 8px 0;
+.compact-notion .notion-type-label {
+  font-weight: 700;
+  color: var(--vs-accent);
+  font-size: 12px;
 }
 
 #oral-plan-render-view,
@@ -2489,10 +2486,14 @@ html, body {
   min-width: 0;
 }
 
-.compact-notion .notion-body .katex-display {
+.notion-body .katex-display {
   overflow-x: auto;
   overflow-y: hidden;
   padding: 2px 0;
+}
+
+.notion-body .katex-display > .katex {
+  text-align: safe center;
 }
 
 .compact-notion {
@@ -2500,7 +2501,7 @@ html, body {
 }
 
 .compact-notion .notion-body {
-  padding: 2px 8px 4px;
+  padding: 3px 8px 4px;
   font-size: 12px;
   line-height: 1.3;
 }

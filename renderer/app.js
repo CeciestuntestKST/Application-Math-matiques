@@ -3248,10 +3248,17 @@
     card.className = 'notion dev-block';
     if (options.compactHeader) {
       card.classList.add('compact-notion');
-      const typeLine = document.createElement('div');
-      typeLine.className = 'notion-type-line';
-      typeLine.textContent = `Type de notions : ${notion.environmentDisplay || notion.environment}`;
-      card.appendChild(typeLine);
+      const body = renderLatexBody(notion.body, macros);
+      const label = document.createElement('span');
+      label.className = 'notion-type-label';
+      label.textContent = `${notion.environmentDisplay || notion.environment} : `;
+      const firstP = body.querySelector('p');
+      if (firstP) {
+        firstP.insertBefore(label, firstP.firstChild);
+      } else {
+        body.insertBefore(label, body.firstChild);
+      }
+      card.appendChild(body);
     } else {
       const header = document.createElement('div');
       header.className = 'notion-header';
@@ -3264,9 +3271,9 @@
       title.innerHTML = renderLatexText(notion.title || '', macros);
       header.appendChild(title);
       card.appendChild(header);
+      const body = renderLatexBody(notion.body, macros);
+      card.appendChild(body);
     }
-    const body = renderLatexBody(notion.body, macros);
-    card.appendChild(body);
     for (const proof of notion.proofs || []) {
       card.appendChild(buildProofSection(proof));
     }
