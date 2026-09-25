@@ -1065,7 +1065,6 @@ html, body {
 .notion-body {
   padding: 14px 16px;
   line-height: 1.7;
-  overflow-x: auto;
   color: var(--vs-katex-text);
   font-size: 14px;
 }
@@ -1768,7 +1767,12 @@ html, body {
   line-height: 1.35;
   font-size: 12.5px;
   color: var(--vs-katex-text);
+}
+
+.outline-text .katex-display {
   overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0;
 }
 
 .outline-text p {
@@ -2483,6 +2487,12 @@ html, body {
 
 #oral-plan-render-view > *,
 #oral-dev-render-view > * {
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.lesson-fiche > * {
+  flex-shrink: 0;
   min-width: 0;
 }
 
