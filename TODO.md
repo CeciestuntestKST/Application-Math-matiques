@@ -11,6 +11,7 @@ Référentiel des fonctionnalités envisagées. Les statuts : **À faire** (prio
 - [ ] **Développements — compilation autonome** : bouton d'export d'un `.tex` autonome compilable (préambule repris du `settings.tex`), comme pour les leçons.
 
 ### Fait
+- [x] **Ergonomie — recherches, menus ⋯ et flèches retour stylées** : champ de recherche dans la section **Oral** (filtre cartes et liste latérale « Numéros de leçons » par numéro ou titre), dans **Plans** (par numéro de leçon) et dans **Développements** (par numéro de leçon ou par titre) ; petit menu **⋯** en haut à droite de chaque carte Oral (Renommer / Retirer, à la place des contrôles de la toolbar de détail, qui affiche désormais le titre en simple libellé) ; la section « Leçons d'oral » est renommée **« Plans »** ; flèches de retour stylées (`.back-btn`, icône SVG) dans toutes les sections créées.
 
 - [x] **Aperçus « dans l'ordre du document »** : les aperçus rendus des leçons, développements et plans (section Oral) affichent désormais les titres `\chapter` / `\section` / `\subsection` / `\subsubsection` et le **texte libre entre les blocs** (pas seulement les environnements reconnus) — flux ordonné construit côté main (`outline` de l'IPC `app:dev-parse`, positions des notions/sections dans `lib/latex-notions.js`). Mini-sommaire sous chaque plan de la liste de la section Oral.
 

@@ -28,7 +28,7 @@
           <path d="M2 21h20"/>
         </svg>
       </button>
-      <button class="activity-icon" data-section="lecons" title="Leçons d'oral">
+      <button class="activity-icon" data-section="lecons" title="Plans">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 3v18"/>
           <path d="M5 7h14"/>
@@ -118,27 +118,28 @@
       <div id="reader-lecons" class="reader hidden">
         <div id="lecons-home">
           <div id="lecons-home-header">
-            <h1>Leçons d'oral</h1>
-            <button id="lesson-create" title="Créer une nouvelle leçon d'oral">+ Créer une leçon</button>
+            <h1>Plans</h1>
+            <button id="lesson-create" title="Créer un nouveau plan">+ Créer un plan</button>
           </div>
           <div id="lecons-create-form" class="hidden">
             <input id="lesson-create-number" type="number" min="1" placeholder="N°" title="Numéro de la leçon (ex. 142)" />
             <button id="lesson-create-confirm" title="Créer la leçon">Créer</button>
             <button id="lesson-create-cancel" title="Annuler">Annuler</button>
           </div>
+          <input id="lecons-search" type="search" placeholder="Rechercher par numéro de leçon…" />
           <div id="lecons-grid">
             <div id="lecons-empty-hint" class="hidden">
-              <p>Aucune leçon pour l'instant.</p>
-              <p class="hint">« Créer une leçon » pour commencer : numérotez-la, rédigez son plan en LaTeX et importez les notions de votre bibliothèque depuis le panneau latéral.</p>
+              <p>Aucun plan pour l'instant.</p>
+              <p class="hint">« Créer un plan » pour commencer : donnez son numéro de leçon, rédigez-le en LaTeX et importez les notions de votre bibliothèque depuis le panneau latéral.</p>
             </div>
             <div id="lecons-cards"></div>
           </div>
         </div>
         <div id="lesson-edit" class="hidden">
           <div id="lesson-toolbar" class="toolbar">
-            <button id="lesson-back" title="Retour à la liste des leçons">←</button>
+            <button id="lesson-back" class="back-btn" title="Retour à la liste des plans"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
             <span id="lesson-number-label" class="lesson-number-badge"></span>
-            <input id="lesson-title-input" type="text" placeholder="Titre de la leçon…" />
+            <input id="lesson-title-input" type="text" placeholder="Titre du plan…" />
             <span class="toolbar-spacer"></span>
             <span id="lesson-save-status"></span>
             <button id="lesson-delete" title="Supprimer cette leçon">Supprimer</button>
@@ -171,6 +172,7 @@
             <button id="dev-create-confirm" title="Créer le développement">Créer</button>
             <button id="dev-create-cancel" title="Annuler">Annuler</button>
           </div>
+          <input id="devs-search" type="search" placeholder="Rechercher par numéro de leçon ou titre…" />
           <div id="devs-grid">
             <div id="devs-empty-hint" class="hidden">
               <p>Aucun développement pour l'instant.</p>
@@ -181,7 +183,7 @@
         </div>
         <div id="dev-edit" class="hidden">
           <div id="dev-toolbar" class="toolbar">
-            <button id="dev-back" title="Retour à la liste des développements">←</button>
+            <button id="dev-back" class="back-btn" title="Retour à la liste des développements"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
             <span id="dev-title-label" class="lesson-number-badge">Développement</span>
             <input id="dev-title-input" type="text" placeholder="Titre du développement…" />
             <span class="toolbar-spacer"></span>
@@ -226,6 +228,7 @@
             <button id="oral-create-confirm" title="Déclarer la leçon">Ajouter</button>
             <button id="oral-create-cancel" title="Annuler">Annuler</button>
           </div>
+          <input id="oral-search" type="search" placeholder="Rechercher un numéro ou un titre de leçon…" />
           <div id="oral-grid">
             <div id="oral-empty-hint" class="hidden">
               <p>Aucune leçon déclarée pour l'instant.</p>
@@ -236,12 +239,11 @@
         </div>
         <div id="oral-detail" class="hidden">
           <div id="oral-toolbar" class="toolbar">
-            <button id="oral-back" title="Retour à la liste des leçons">←</button>
+            <button id="oral-back" class="back-btn" title="Retour à la liste des numéros"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
             <span id="oral-number-label" class="lesson-number-badge"></span>
-            <input id="oral-title-input" type="text" placeholder="Titre officiel de la leçon…" />
+            <span id="oral-title-label" class="oral-detail-title"></span>
             <span class="toolbar-spacer"></span>
             <span id="oral-save-status"></span>
-            <button id="oral-delete" title="Retirer cette leçon du registre de l'oral">Retirer</button>
           </div>
           <div id="oral-detail-body">
             <div id="oral-plans-pane">
@@ -255,7 +257,7 @@
                   <span id="oral-plan-preview-title"></span>
                   <span class="toolbar-spacer"></span>
                   <button id="oral-plan-back" class="dev-mode-btn" title="Revenir à la liste des plans">← Plans</button>
-                  <button id="oral-plan-open-editor" class="dev-mode-btn" title="Ouvrir ce plan dans la section Leçons d'oral pour l'éditer">Ouvrir dans Leçons ✎</button>
+                  <button id="oral-plan-open-editor" class="dev-mode-btn" title="Ouvrir ce plan dans la section Plans pour l'éditer">Ouvrir dans Plans ✎</button>
                 </div>
                 <div id="oral-plan-toc"></div>
                 <div id="oral-plan-render-view" class="lesson-fiche"></div>
