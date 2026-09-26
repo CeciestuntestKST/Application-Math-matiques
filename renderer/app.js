@@ -68,7 +68,6 @@
     oralPlanRenderView: document.getElementById('oral-plan-render-view'),
     oralDevPreviewPane: document.getElementById('oral-dev-preview-pane'),
     oralDevPreviewTitle: document.getElementById('oral-dev-preview-title'),
-    oralDevToc: document.getElementById('oral-dev-toc'),
     oralDevRenderView: document.getElementById('oral-dev-render-view'),
     oralDevBackBtn: document.getElementById('oral-dev-back'),
     oralDevOpenEditorBtn: document.getElementById('oral-dev-open-editor'),
@@ -2523,9 +2522,6 @@
       els.oralDevPreviewTitle.textContent = dev.title || dev.fileName;
     }
     clearElement(els.oralDevRenderView);
-    if (els.oralDevToc) {
-      clearElement(els.oralDevToc);
-    }
     const seq = ++oralDevRenderSeq;
     const result = dev.content
       ? await window.api.parseDevContent(dev.content)
@@ -2536,27 +2532,13 @@
     if (state.section !== 'oral' || state.activeOralNumber !== number || state.activeOralDevId !== devId) {
       return;
     }
-    const sections = (result && Array.isArray(result.sections)) ? result.sections : [];
-    if (els.oralDevToc && sections.length > 0) {
-      const tocTitle = document.createElement('div');
-      tocTitle.className = 'oral-toc-title';
-      tocTitle.textContent = 'Sommaire';
-      els.oralDevToc.appendChild(tocTitle);
-      for (const section of sections) {
-        const line = document.createElement('div');
-        line.className = 'oral-toc-line';
-        line.style.paddingLeft = `${(section.level || 0) * 14 + 8}px`;
-        line.textContent = section.title;
-        els.oralDevToc.appendChild(line);
-      }
-    }
     const notions = (result && Array.isArray(result.notions)) ? result.notions : [];
     const outline = (result && Array.isArray(result.outline)) ? result.outline : null;
     if (outline && outline.length > 0) {
       els.oralDevRenderView.appendChild(buildOutlineFragment(outline, getSettingsMacros(), { compactHeader: true }));
       return;
     }
-    if (notions.length === 0 && sections.length === 0) {
+    if (notions.length === 0) {
       const empty = document.createElement('div');
       empty.className = 'list-empty';
       empty.style.padding = '24px 16px';
