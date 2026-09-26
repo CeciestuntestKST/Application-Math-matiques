@@ -2862,7 +2862,7 @@
     const notions = parsed.notions || [];
     const outline = parsed.outline || [];
     if (outline.length > 0) {
-      els.lessonRenderView.appendChild(buildOutlineFragment(outline, getSettingsMacros()));
+      els.lessonRenderView.appendChild(buildOutlineFragment(outline, getSettingsMacros(), { compactHeader: true }));
       return;
     }
     if (notions.length === 0) {
@@ -2877,7 +2877,7 @@
     }
     const frag = document.createDocumentFragment();
     for (const notion of notions) {
-      frag.appendChild(buildDevNotionBlock(notion));
+      frag.appendChild(buildDevNotionBlock(notion, { compactHeader: true }));
     }
     els.lessonRenderView.appendChild(frag);
   }
@@ -3362,7 +3362,7 @@
     const notions = parsed.notions || [];
     const outline = parsed.outline || [];
     if (outline.length > 0) {
-      els.devRenderView.appendChild(buildOutlineFragment(outline, getSettingsMacros()));
+      els.devRenderView.appendChild(buildOutlineFragment(outline, getSettingsMacros(), { compactHeader: true }));
       return;
     }
     if (notions.length === 0) {
@@ -3377,7 +3377,7 @@
     }
     const frag = document.createDocumentFragment();
     for (const notion of notions) {
-      frag.appendChild(buildDevNotionBlock(notion));
+      frag.appendChild(buildDevNotionBlock(notion, { compactHeader: true }));
     }
     els.devRenderView.appendChild(frag);
   }

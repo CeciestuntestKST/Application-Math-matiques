@@ -2250,11 +2250,15 @@ html, body {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 16px 24px;
+  padding: 10px 14px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 5px;
   align-items: stretch;
+}
+#dev-render-view > * {
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 #dev-render-view .dev-block {
