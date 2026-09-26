@@ -61,7 +61,6 @@
     leconsSearch: document.getElementById('lecons-search'),
     devsSearch: document.getElementById('devs-search'),
     oralPlansList: document.getElementById('oral-plans-list'),
-    oralNewPlanBtn: document.getElementById('oral-new-plan'),
     oralDevsList: document.getElementById('oral-devs-list'),
     oralPlanPreviewPane: document.getElementById('oral-plan-preview-pane'),
     oralPlanPreviewTitle: document.getElementById('oral-plan-preview-title'),
@@ -3810,11 +3809,6 @@
   }
   if (els.oralDevOpenEditorBtn) {
     els.oralDevOpenEditorBtn.addEventListener('click', openOralDevInDevs);
-  }
-  if (els.oralNewPlanBtn) {
-    els.oralNewPlanBtn.addEventListener('click', () => {
-      createNewLesson(state.activeOralNumber);
-    });
   }
   if (els.oralSearch) {
     els.oralSearch.addEventListener('input', () => {
